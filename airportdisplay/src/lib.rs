@@ -1,6 +1,12 @@
 mod display;
-mod net;
+mod protocol;
+mod commands;
+mod geometry;
+mod text;
 
-pub use display::commands::{Command, Text, TextRaw, TextBuffer, Window};
-pub use display::protocol::Data;
-pub use net::display::Display;
+pub const TEXT_COLUMNS: usize = 56;
+pub const TEXT_ROWS: usize = 20;
+
+pub use commands::{Command};
+pub use protocol::Data;
+pub use display::Display;
