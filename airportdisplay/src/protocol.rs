@@ -4,8 +4,8 @@ use codepage_437::{ToCp437, CP437_WINGDINGS};
 
 use super::{
     commands::Command,
-    geometry::{Origin, Size, Window},
-    text, TEXT_COLUMNS, TEXT_ROWS,
+    geometry::{Origin, Size, Window, COLUMNS, ROWS},
+    text,
 };
 
 const CMD_RAW_TEXT: &'static [u8] = &[0x00, 0x03];
@@ -42,7 +42,7 @@ impl From<Window> for Frame {
 impl From<text::Raw> for Data {
     fn from(text::Raw(origin, bytes): text::Raw) -> Data {
         let mut bytes = bytes.clone();
-        bytes.truncate(TEXT_COLUMNS);
+        bytes.truncate(COLUMNS);
         let size = Size(bytes.len() as u16, 1);
         vec![[CMD_RAW_TEXT.into(), origin.into(), size.into(), bytes].concat()]
     }
@@ -52,14 +52,14 @@ impl From<text::Raw> for Data {
 impl From<text::Buffer> for Data {
     fn from(text::Buffer(Origin(x, y), text): text::Buffer) -> Data {
         let mut lines: Vec<&str> = text.split("\n").collect();
-        lines.truncate(TEXT_ROWS);
+        lines.truncate(ROWS);
 
         let mut data = vec![];
         for (i, line) in lines.iter().enumerate() {
             // Convert utf8 to codepage 437
             if let Ok(bytes) = line.to_cp437(&CP437_WINGDINGS) {
                 let mut bytes: Frame = bytes.into();
-                bytes.truncate(TEXT_COLUMNS);
+                bytes.truncate(COLUMNS);
 
                 let len = bytes.len() as u16;
                 let pos = Origin(x, y + i as u16);

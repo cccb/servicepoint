@@ -1,3 +1,6 @@
+pub const COLUMNS: usize = 56;
+pub const ROWS: usize = 20;
+
 /// An origin marks the top left position of the
 /// data sent to the display.
 #[derive(Default)]
