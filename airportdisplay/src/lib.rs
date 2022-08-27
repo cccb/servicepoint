@@ -1,8 +1,8 @@
 mod commands;
 mod display;
-mod geometry;
 mod protocol;
-mod text;
+pub mod geometry;
+pub mod text;
 
 pub const TEXT_COLUMNS: usize = 56;
 pub const TEXT_ROWS: usize = 20;
