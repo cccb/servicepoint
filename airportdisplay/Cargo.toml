@@ -5,5 +5,4 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1"
-bytes = "1.2"
 codepage-437 = "0.1.0"
