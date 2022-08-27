@@ -1,4 +1,3 @@
-
 /// An origin marks the top left position of the
 /// data sent to the display.
 #[derive(Default)]
@@ -7,7 +6,7 @@ pub struct Origin(pub u16, pub u16);
 /// Size defines the width and height of a window
 pub struct Size(pub u16, pub u16);
 
-/// A window 
+/// A window
 pub struct Window(pub Origin, pub Size);
 
 impl Window {
@@ -15,4 +14,3 @@ impl Window {
         Window(Origin(x, y), Size(w, h))
     }
 }
-

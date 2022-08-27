@@ -1,12 +1,11 @@
 use std::convert::From;
 
-use codepage_437::{CP437_WINGDINGS, ToCp437};
+use codepage_437::{ToCp437, CP437_WINGDINGS};
 
 use super::{
-    commands::{Command},
-    text,
-    geometry::{Window, Origin, Size},
-    TEXT_COLUMNS, TEXT_ROWS,
+    commands::Command,
+    geometry::{Origin, Size, Window},
+    text, TEXT_COLUMNS, TEXT_ROWS,
 };
 
 const CMD_RAW_TEXT: &'static [u8] = &[0x00, 0x03];
@@ -21,20 +20,14 @@ pub type Data = Vec<Frame>;
 /// Encode position data as big endian
 impl From<Origin> for Frame {
     fn from(Origin(x, y): Origin) -> Self {
-        vec![
-            (x >> 8) as u8, x as u8,
-            (y >> 8) as u8, y as u8,
-        ]
+        vec![(x >> 8) as u8, x as u8, (y >> 8) as u8, y as u8]
     }
 }
 
 /// Encode size as big endian
 impl From<Size> for Frame {
     fn from(Size(w, h): Size) -> Self {
-        vec![
-            (w >> 8) as u8, w as u8,
-            (h >> 8) as u8, h as u8,
-        ]
+        vec![(w >> 8) as u8, w as u8, (h >> 8) as u8, h as u8]
     }
 }
 
@@ -62,23 +55,31 @@ impl From<text::Buffer> for Data {
         lines.truncate(TEXT_ROWS);
 
         let mut data = vec![];
-        for (i, line) in lines.iter().enumerate() {    
+        for (i, line) in lines.iter().enumerate() {
+            // Convert utf8 to codepage 437
             if let Ok(bytes) = line.to_cp437(&CP437_WINGDINGS) {
+                let mut bytes: Frame = bytes.into();
+                bytes.truncate(TEXT_COLUMNS);
+
                 let len = bytes.len() as u16;
                 let pos = Origin(x, y + i as u16);
                 let size = Size(len, 1);
-                data.push([
-                    Frame::from(CMD_RAW_TEXT),
-                    pos.into(),
-                    size.into(),
-                    bytes.into(),
-                ].concat());
+                data.push(
+                    [
+                        Frame::from(CMD_RAW_TEXT),
+                        pos.into(),
+                        size.into(),
+                        bytes.into(),
+                    ]
+                    .concat(),
+                );
             }
         }
         data
     }
 }
 
+/// Encode text command
 impl From<text::Text> for Data {
     fn from(text: text::Text) -> Data {
         match text {

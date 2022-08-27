@@ -1,8 +1,6 @@
-
 use std::convert::From;
 
 use super::geometry::Origin;
-
 
 /// TextRaw holds bytes and a window
 pub struct Raw(pub Origin, pub Vec<u8>);
@@ -14,14 +12,13 @@ impl From<Vec<u8>> for Raw {
     }
 }
 
-
 /// TextBuffer holds a multiline block of utf8 text
 /// data and a origin.
 pub struct Buffer(pub Origin, pub String);
 
 impl Buffer {
     pub fn at(x: u16, y: u16, text: String) -> Self {
-        Self(Origin(x, y), text) 
+        Self(Origin(x, y), text)
     }
 }
 
