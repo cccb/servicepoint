@@ -1,8 +1,10 @@
-use anyhow::Result;
 use std::net::UdpSocket;
+use std::io::Result;
 
-use super::commands::Command;
-use crate::protocol::Data;
+use super::{
+    commands::Command,
+    protocol::Data,
+};
 
 pub struct Display {
     addr: String,
