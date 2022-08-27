@@ -1,16 +1,21 @@
 use anyhow::Result;
-
-use std::net::UdpSocket;
+use airportdisplay::{
+    Command,
+    Display,
+    Text,
+    TextBuffer,
+};
 
 fn main() -> Result<()> {
     println!("Sending hello display...");
+    let display = Display::open("172.23.42.29:2342".into())?;
 
-    let socket = UdpSocket::bind("0.0.0.0:17382")?;
+    let text = Command::Text(Text::Buffer(
+        TextBuffer::from(
+            "♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥\n♥ mauuu          ♥\n♥ mau mauuuunz!  ♥\n♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥".into())));
 
-
-    for frame in frames {
-    socket.send_to(frame, "
-        }
+    display.send(Command::Clear)?;
+    display.send(text)?;
 
     Ok(())
 }
