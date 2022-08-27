@@ -1,46 +1,59 @@
 use std::convert::From;
 
 use bytes::BufMut;
+use codepage_437::{CP437_WINGDINGS, ToCp437};
 
 use super::{
-    commands::{Command, Text, TextBuffer, TextRaw},
-    window::Window,
+    commands::{Command, Text, TextBuffer, TextRaw, Window},
     TEXT_COLUMNS, TEXT_ROWS,
 };
 
 /// A frame holds a single encoded display command,
 /// like set text at pos x, y.
-type Frame = Vec<u8>;
+pub type Frame = Vec<u8>;
 
 /// Data is a list of commands to be sent to the display.
-type Data = Vec<Frame>;
+pub type Data = Vec<Frame>;
 
 /// Encode window data
 impl From<Window> for Frame {
     fn from(Window { x, y, w, h }: Window) -> Self {
         let mut buf = vec![];
-        buf.put_u16_le(x);
-        buf.put_u16_le(y);
-        buf.put_u16_le(w);
-        buf.put_u16_le(h);
+        buf.put_u16(x);
+        buf.put_u16(y);
+        buf.put_u16(w);
+        buf.put_u16(h);
         buf
     }
 }
 
 impl From<TextRaw> for Data {
-    fn from(TextRaw(window, bytes): TextRaw) -> Data {
+    fn from(TextRaw(position, bytes): TextRaw) -> Data {
         let mut bytes = bytes.clone();
         bytes.truncate(TEXT_COLUMNS);
-        vec![[vec![0x03, 0x00], window.into(), bytes].concat()]
+        let window = Window::new(position.x, position.y, bytes.len() as u16, 1);
+        vec![[vec![0x00, 0x03], window.into(), bytes].concat()]
     }
 }
 
 impl From<TextBuffer> for Data {
-    fn from(TextBuffer(window, text): TextBuffer) -> Data {
-        // let Window { x, y, w, h } = window;
+    fn from(TextBuffer(position, text): TextBuffer) -> Data {
         let mut lines: Vec<&str> = text.split("\n").collect();
         lines.truncate(TEXT_ROWS);
-        vec![vec![]]
+
+        let mut data = vec![];
+        for (i, line) in lines.iter().enumerate() {    
+            if let Ok(bytes) = line.to_cp437(&CP437_WINGDINGS) {
+                let len = bytes.len() as u16;
+                let window = Window::new(position.x, position.y + i as u16, len as u16, 1);
+                data.push([
+                    vec![0x00, 0x03],
+                    window.into(),
+                    bytes.into(),
+                ].concat());
+            }
+        }
+        data
     }
 }
 
@@ -57,10 +70,10 @@ impl From<Text> for Data {
 impl From<Command> for Data {
     fn from(cmd: Command) -> Self {
         match cmd {
-            Command::Reset => vec![vec![0x08, 0x00]],
-            Command::Clear => vec![vec![0x02, 0x00]],
-            Command::Reboot => vec![vec![0x0b, 0x00]],
-            Command::Fadeout => vec![vec![0x0d, 0x00]],
+            Command::Reset => vec![vec![0x00, 0x08]],
+            Command::Clear => vec![vec![0x00, 0x02]],
+            Command::Reboot => vec![vec![0x00, 0x0b]],
+            Command::Fadeout => vec![vec![0x00, 0x0d]],
             Command::Text(text) => text.into(),
         }
     }
