@@ -9,7 +9,14 @@ pub struct Origin(pub u16, pub u16);
 /// Size defines the width and height of a window
 pub struct Size(pub u16, pub u16);
 
+impl Default for Size {
+    fn default() -> Self {
+        Self(1, 1)
+    }
+}
+
 /// A window
+#[derive(Default)]
 pub struct Window(pub Origin, pub Size);
 
 impl Window {

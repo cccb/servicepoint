@@ -5,10 +5,12 @@ use codepage_437::{ToCp437, CP437_WINGDINGS};
 use super::{
     commands::Command,
     geometry::{Origin, Size, Window, COLUMNS, ROWS},
+    luminance::Luminance,
     text,
 };
 
 const CMD_RAW_TEXT: &'static [u8] = &[0x00, 0x03];
+const CMD_RAW_LUM: &'static [u8] = &[0x00, 0x05];
 
 /// A frame holds a single encoded display command,
 /// like set text at pos x, y.
@@ -17,17 +19,21 @@ pub type Frame = Vec<u8>;
 /// Data is a list of commands to be sent to the display.
 pub type Data = Vec<Frame>;
 
+fn encode_u16(v: u16) -> Frame {
+    vec![(v >> 8) as u8, v as u8]
+}
+
 /// Encode position data as big endian
 impl From<Origin> for Frame {
     fn from(Origin(x, y): Origin) -> Self {
-        vec![(x >> 8) as u8, x as u8, (y >> 8) as u8, y as u8]
+        [encode_u16(x), encode_u16(y)].concat()
     }
 }
 
 /// Encode size as big endian
 impl From<Size> for Frame {
     fn from(Size(w, h): Size) -> Self {
-        vec![(w >> 8) as u8, w as u8, (h >> 8) as u8, h as u8]
+        [encode_u16(w), encode_u16(h)].concat()
     }
 }
 
@@ -45,6 +51,14 @@ impl From<text::Raw> for Data {
         bytes.truncate(COLUMNS);
         let size = Size(bytes.len() as u16, 1);
         vec![[CMD_RAW_TEXT.into(), origin.into(), size.into(), bytes].concat()]
+    }
+}
+
+/// Encode luminance
+impl From<Luminance> for Data {
+    fn from(luminance: Luminance) -> Data {
+        let Luminance(window, value) = luminance;
+        vec![[CMD_RAW_LUM.into(), Vec::from(window), encode_u16(value)].concat()]
     }
 }
 
@@ -98,6 +112,7 @@ impl From<Command> for Data {
             Command::Reboot => vec![vec![0x00, 0x0b]],
             Command::Fadeout => vec![vec![0x00, 0x0d]],
             Command::Text(text) => text.into(),
+            Command::Luminance(lum) => lum.into(),
         }
     }
 }

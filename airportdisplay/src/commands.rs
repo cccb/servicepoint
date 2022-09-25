@@ -1,6 +1,9 @@
 use std::convert::From;
 
-use super::text;
+use super::{
+    luminance::Luminance,
+    text::{Buffer as TextBuffer, Raw as TextRaw, Text},
+};
 
 /// Display Commands
 pub enum Command {
@@ -8,21 +11,30 @@ pub enum Command {
     Clear,
     Reboot,
     Fadeout,
-    Text(text::Text),
+    Text(Text),
+    Luminance(Luminance),
 }
 
 /// Directly converty a raw text into a command which
 /// can be sent to the display.
-impl From<text::Raw> for Command {
-    fn from(raw: text::Raw) -> Self {
-        Command::Text(text::Text::Raw(raw))
+impl From<TextRaw> for Command {
+    fn from(raw: TextRaw) -> Self {
+        Command::Text(Text::Raw(raw))
     }
 }
 
 /// Shortcut to directly convert a text buffer into
 /// a commmand which can be sent to the display.
-impl From<text::Buffer> for Command {
-    fn from(buffer: text::Buffer) -> Self {
-        Command::Text(text::Text::Buffer(buffer))
+impl From<TextBuffer> for Command {
+    fn from(buffer: TextBuffer) -> Self {
+        Command::Text(Text::Buffer(buffer))
+    }
+}
+
+/// Shortcut to convert a luminance window
+/// to a command.
+impl From<Luminance> for Command {
+    fn from(luminance: Luminance) -> Self {
+        Command::Luminance(luminance)
     }
 }
