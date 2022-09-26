@@ -1,6 +1,7 @@
 use std::convert::From;
 
 use super::{
+    graphics::Graphics,
     luminance::Luminance,
     text::{Buffer as TextBuffer, Raw as TextRaw, Text},
 };
@@ -13,6 +14,7 @@ pub enum Command {
     Fadeout,
     Text(Text),
     Luminance(Luminance),
+    Graphics(Graphics),
 }
 
 /// Directly converty a raw text into a command which
@@ -36,5 +38,12 @@ impl From<TextBuffer> for Command {
 impl From<Luminance> for Command {
     fn from(luminance: Luminance) -> Self {
         Command::Luminance(luminance)
+    }
+}
+
+/// Shortcut for graphics
+impl From<Graphics> for Command {
+    fn from(gfx: Graphics) -> Self {
+        Command::Graphics(gfx)
     }
 }

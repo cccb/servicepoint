@@ -1,6 +1,7 @@
 mod commands;
 mod display;
 pub mod geometry;
+pub mod graphics;
 pub mod luminance;
 mod protocol;
 pub mod text;

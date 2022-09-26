@@ -5,12 +5,14 @@ use codepage_437::{ToCp437, CP437_WINGDINGS};
 use super::{
     commands::Command,
     geometry::{Origin, Size, Window, COLUMNS, ROWS},
+    graphics::Raw as GraphicsRaw,
     luminance::Luminance,
-    text,
+    text::{Buffer as TextBuffer, Raw as TextRaw, Text},
 };
 
 const CMD_RAW_TEXT: &'static [u8] = &[0x00, 0x03];
 const CMD_RAW_LUM: &'static [u8] = &[0x00, 0x05];
+const CMD_RAW_GFX: &'static [u8] = &[0x00, 0x12];
 
 /// A frame holds a single encoded display command,
 /// like set text at pos x, y.
@@ -44,9 +46,25 @@ impl From<Window> for Frame {
     }
 }
 
+/// Encode raw graphics
+impl From<GraphicsRaw> for Data {
+    fn from(raw: GraphicsRaw) -> Self {
+        let GraphicsRaw(offset, data) = raw;
+        vec![[
+            CMD_RAW_GFX.into(),
+            encode_u16(offset),
+            encode_u16(data.len() as u16),
+            encode_u16(0),
+            encode_u16(0),
+            data.into(),
+        ]
+        .concat()]
+    }
+}
+
 /// Encode raw text byte command
-impl From<text::Raw> for Data {
-    fn from(text::Raw(origin, bytes): text::Raw) -> Data {
+impl From<TextRaw> for Data {
+    fn from(TextRaw(origin, bytes): TextRaw) -> Data {
         let mut bytes = bytes.clone();
         bytes.truncate(COLUMNS);
         let size = Size(bytes.len() as u16, 1);
@@ -63,8 +81,8 @@ impl From<Luminance> for Data {
 }
 
 /// Encode a text buffer as a series of commands (data).
-impl From<text::Buffer> for Data {
-    fn from(text::Buffer(Origin(x, y), text): text::Buffer) -> Data {
+impl From<TextBuffer> for Data {
+    fn from(TextBuffer(Origin(x, y), text): TextBuffer) -> Data {
         let mut lines: Vec<&str> = text.split("\n").collect();
         lines.truncate(ROWS);
 
@@ -94,11 +112,11 @@ impl From<text::Buffer> for Data {
 }
 
 /// Encode text command
-impl From<text::Text> for Data {
-    fn from(text: text::Text) -> Data {
+impl From<Text> for Data {
+    fn from(text: Text) -> Data {
         match text {
-            text::Text::Raw(raw) => raw.into(),
-            text::Text::Buffer(buffer) => buffer.into(),
+            Text::Raw(raw) => raw.into(),
+            Text::Buffer(buffer) => buffer.into(),
         }
     }
 }
