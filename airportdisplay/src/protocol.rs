@@ -5,14 +5,14 @@ use codepage_437::{ToCp437, CP437_WINGDINGS};
 use super::{
     commands::Command,
     geometry::{Origin, Size, Window, COLUMNS, ROWS},
-    graphics::Raw as GraphicsRaw,
+    graphics::{Graphics, Raw as GraphicsRaw},
     luminance::Luminance,
     text::{Buffer as TextBuffer, Raw as TextRaw, Text},
 };
 
-const CMD_RAW_TEXT: &'static [u8] = &[0x00, 0x03];
-const CMD_RAW_LUM: &'static [u8] = &[0x00, 0x05];
-const CMD_RAW_GFX: &'static [u8] = &[0x00, 0x12];
+const CMD_TEXT_RAW: &'static [u8] = &[0x00, 0x03];
+const CMD_LUM_RAW: &'static [u8] = &[0x00, 0x05];
+const CMD_GFX_RAW: &'static [u8] = &[0x00, 0x12];
 
 /// A frame holds a single encoded display command,
 /// like set text at pos x, y.
@@ -51,7 +51,7 @@ impl From<GraphicsRaw> for Data {
     fn from(raw: GraphicsRaw) -> Self {
         let GraphicsRaw(offset, data) = raw;
         vec![[
-            CMD_RAW_GFX.into(),
+            CMD_GFX_RAW.into(),
             encode_u16(offset),
             encode_u16(data.len() as u16),
             encode_u16(0),
@@ -68,7 +68,7 @@ impl From<TextRaw> for Data {
         let mut bytes = bytes.clone();
         bytes.truncate(COLUMNS);
         let size = Size(bytes.len() as u16, 1);
-        vec![[CMD_RAW_TEXT.into(), origin.into(), size.into(), bytes].concat()]
+        vec![[CMD_TEXT_RAW.into(), origin.into(), size.into(), bytes].concat()]
     }
 }
 
@@ -76,7 +76,7 @@ impl From<TextRaw> for Data {
 impl From<Luminance> for Data {
     fn from(luminance: Luminance) -> Data {
         let Luminance(window, value) = luminance;
-        vec![[CMD_RAW_LUM.into(), Vec::from(window), encode_u16(value)].concat()]
+        vec![[CMD_LUM_RAW.into(), Vec::from(window), encode_u16(value)].concat()]
     }
 }
 
@@ -98,7 +98,7 @@ impl From<TextBuffer> for Data {
                 let size = Size(len, 1);
                 data.push(
                     [
-                        Frame::from(CMD_RAW_TEXT),
+                        Frame::from(CMD_TEXT_RAW),
                         pos.into(),
                         size.into(),
                         bytes.into(),
@@ -121,6 +121,14 @@ impl From<Text> for Data {
     }
 }
 
+impl From<Graphics> for Data {
+    fn from(gfx: Graphics) -> Data {
+        match gfx {
+            Graphics::Raw(raw) => raw.into(),
+        }
+    }
+}
+
 /// Encode command
 impl From<Command> for Data {
     fn from(cmd: Command) -> Self {
@@ -131,6 +139,7 @@ impl From<Command> for Data {
             Command::Fadeout => vec![vec![0x00, 0x0d]],
             Command::Text(text) => text.into(),
             Command::Luminance(lum) => lum.into(),
+            Command::Graphics(gfx) => gfx.into(),
         }
     }
 }
