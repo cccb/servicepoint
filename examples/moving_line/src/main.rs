@@ -5,7 +5,7 @@ fn main() {
     let connection = Connection::open("localhost:2342").unwrap();
 
     for x_offset in 0..usize::MAX {
-        let mut pixels = PixelGrid::new(PIXEL_WIDTH as usize, PIXEL_HEIGHT as usize);
+        let mut pixels = PixelGrid::max_sized();
 
         for y in 0..PIXEL_HEIGHT as usize {
             pixels.set((y + x_offset) % PIXEL_WIDTH as usize, y, true);

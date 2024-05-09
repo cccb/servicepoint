@@ -1,6 +1,6 @@
-use crate::{BitVec};
+use crate::{BitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PixelGrid {
     pub width: usize,
     pub height: usize,
@@ -8,7 +8,7 @@ pub struct PixelGrid {
 }
 
 impl PixelGrid {
-    pub fn new(width: usize, height: usize) -> PixelGrid {
+    pub fn new(width: usize, height: usize) -> Self {
         assert_eq!(width % 8, 0);
         assert_eq!(height % 8, 0);
         Self {
@@ -16,6 +16,10 @@ impl PixelGrid {
             height,
             bit_vec: BitVec::new(width * height),
         }
+    }
+
+    pub fn max_sized() -> Self {
+        Self::new(PIXEL_WIDTH as usize, PIXEL_HEIGHT as usize)
     }
 
     pub fn set(&mut self, x: usize, y: usize, value: bool) -> bool {

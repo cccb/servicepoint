@@ -1,5 +1,5 @@
 /// A vector of bits
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BitVec {
     data: Vec<u8>,
 }
