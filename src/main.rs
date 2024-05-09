@@ -13,8 +13,8 @@ fn main() {
         for x_offset in 0..usize::MAX {
             let mut pixels = PixelGrid::new(PIXEL_WIDTH as usize, PIXEL_HEIGHT as usize);
             for y in 0..PIXEL_HEIGHT as usize {
-                for x_add in 0..=y%8 {
-                    pixels.set((y + x_offset +x_add) % PIXEL_WIDTH as usize, y, true);
+                for x_add in 0..=y % 8 {
+                    pixels.set((y + x_offset + x_add) % PIXEL_WIDTH as usize, y, true);
                 }
             }
 

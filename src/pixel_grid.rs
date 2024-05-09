@@ -1,4 +1,4 @@
-use crate::{BitVec, Packet};
+use crate::{BitVec};
 
 #[derive(Debug)]
 pub struct PixelGrid {
@@ -27,8 +27,8 @@ impl PixelGrid {
     }
 }
 
-impl From<PixelGrid> for Packet {
-    fn from(value: PixelGrid) -> Self {
-        value.bit_vec.into()
+impl Into<Vec<u8>> for PixelGrid {
+    fn into(self) -> Vec<u8> {
+        self.bit_vec.into()
     }
 }

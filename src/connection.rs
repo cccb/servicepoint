@@ -1,8 +1,12 @@
 use std::net::{ToSocketAddrs, UdpSocket};
-use crate::{Command, Packet};
+use crate::{Packet};
 
 pub struct Connection {
     socket: UdpSocket,
+}
+
+pub trait ToPacket {
+    fn to_packet(self) -> Packet;
 }
 
 impl Connection {
@@ -14,9 +18,9 @@ impl Connection {
     }
 
     /// Send a command to the display
-    pub fn send(&self, command: Command) -> std::io::Result<()> {
-        let packet: Packet = command.into();
-        self.socket.send(&packet)?;
+    pub fn send(&self, packet: impl ToPacket) -> std::io::Result<()> {
+        let packet = packet.to_packet();
+        self.socket.send(&*packet.to_bytes())?;
         Ok(())
     }
 }
