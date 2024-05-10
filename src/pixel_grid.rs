@@ -22,6 +22,17 @@ impl PixelGrid {
         Self::new(PIXEL_WIDTH as usize, PIXEL_HEIGHT as usize)
     }
 
+    pub fn load(width: usize, height: usize, data: &[u8]) -> Self {
+        assert_eq!(width % 8, 0);
+        assert_eq!(height % 8, 0);
+        assert_eq!(data.len(), height * width / 8);
+        Self {
+            width,
+            height,
+            bit_vec: BitVec::load(data),
+        }
+    }
+
     pub fn set(&mut self, x: usize, y: usize, value: bool) -> bool {
         self.bit_vec.set(x + y * self.width, value)
     }

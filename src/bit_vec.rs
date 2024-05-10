@@ -10,6 +10,10 @@ impl BitVec {
         Self { data: vec!(0; size / 8) }
     }
 
+    pub fn load(data: &[u8]) -> BitVec {
+        Self { data: Vec::from(data) }
+    }
+
     pub fn set(&mut self, index: usize, value: bool) -> bool {
         let (byte_index, bit_mask) = self.get_indexes(index);
 
@@ -30,8 +34,8 @@ impl BitVec {
         return self.data[byte_index] & bit_mask != 0;
     }
 
-    pub fn fill(&mut self, value: bool){
-        let byte: u8 = if value {0xFF} else {0x00};
+    pub fn fill(&mut self, value: bool) {
+        let byte: u8 = if value { 0xFF } else { 0x00 };
         self.data.fill(byte);
     }
 
