@@ -9,6 +9,9 @@ struct Cli {
     text: Vec<String>,
 }
 
+/// example: `cargo run -- --text "Hallo,
+/// CCCB"`
+
 fn main() {
     let cli = Cli::parse();
     println!("starting with args: {:?}", &cli);

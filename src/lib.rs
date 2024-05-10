@@ -5,12 +5,12 @@ mod packet;
 mod command;
 mod command_codes;
 
-pub use crate::connection::{Connection, ToPacket};
+pub use crate::connection::{Connection};
 pub use crate::pixel_grid::{PixelGrid};
 pub use crate::bit_vec::{BitVec};
 pub use crate::packet::{Packet, Header, Payload};
 pub use crate::command::{Command, Size, Origin, Window};
-pub use crate::command_codes::{DisplayCommandCode};
+pub use crate::command_codes::{CommandCode};
 
 pub const TILE_SIZE: u16 = 8;
 pub const TILE_WIDTH: u16 = 56;

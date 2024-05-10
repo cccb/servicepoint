@@ -3,9 +3,9 @@ use num_derive::{FromPrimitive, ToPrimitive};
 
 #[repr(u16)]
 #[derive(Debug, FromPrimitive, ToPrimitive)]
-pub enum DisplayCommandCode {
+pub enum CommandCode {
     Clear = 0x0002,
-    Cp437data = 0x0003,
+    Cp437Data = 0x0003,
     CharBrightness = 0x0005,
     Brightness = 0x0007,
     HardReset = 0x000b,
@@ -18,7 +18,7 @@ pub enum DisplayCommandCode {
     BitmapLinearXor = 0x0016,
 }
 
-impl DisplayCommandCode {
+impl CommandCode {
     pub fn from_primitive(value: u16) -> Option<Self> {
         FromPrimitive::from_u16(value)
     }
