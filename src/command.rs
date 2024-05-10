@@ -94,8 +94,9 @@ impl Into<Packet> for Command {
 #[derive(Debug)]
 pub enum TryFromPacketError {
     InvalidCommand(u16),
-    ExtraneousPayload(usize, usize),
+    UnexpectedPayloadSize(usize, usize),
     ExtraneousHeaderValues,
+    UnsupportedSubcommand(u16),
 }
 
 fn check_empty_header(packet: &Packet) -> Option<TryFromPacketError> {
@@ -110,10 +111,24 @@ fn check_empty_header(packet: &Packet) -> Option<TryFromPacketError> {
 fn check_command_only(packet: &Packet) -> Option<TryFromPacketError> {
     let Packet(_, payload) = packet;
     if payload.len() != 0 {
-        Some(TryFromPacketError::ExtraneousPayload(0, payload.len()))
+        Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
     } else {
         check_empty_header(packet)
     }
+}
+
+fn check_linear_bitmap(packet: &Packet) -> Option<TryFromPacketError> {
+    let Packet(Header(_, offset, length, sub, reserved), payload) = packet;
+    if *reserved != 0 {
+        return Some(TryFromPacketError::ExtraneousHeaderValues);
+    }
+    if *sub != 0 {
+        return Some(TryFromPacketError::UnsupportedSubcommand(*sub));
+    }
+    if payload.len() != *length as usize {
+        return Some(TryFromPacketError::UnexpectedPayloadSize(*length as usize, payload.len()));
+    }
+    None
 }
 
 impl TryFrom<Packet> for Command {
@@ -167,16 +182,36 @@ impl TryFrom<Packet> for Command {
             CommandCode::BitmapLegacy => {
                 Ok(Command::BitmapLegacy)
             }
-            CommandCode::BitmapLinear => { todo!() }
             CommandCode::BitmapLinearWin => {
                 Ok(Command::BitmapLinearWin(
                     Origin(*a * TILE_SIZE, *b),
                     PixelGrid::load(*c as usize * TILE_SIZE as usize, *d as usize, payload),
                 ))
             }
-            CommandCode::BitmapLinearAnd => { todo!() }
-            CommandCode::BitmapLinearOr => { todo!() }
-            CommandCode::BitmapLinearXor => { todo!() }
+            CommandCode::BitmapLinear => {
+                if let Some(err) = check_linear_bitmap(&value) {
+                    return Err(err);
+                }
+                Ok(Command::BitmapLinear(*a, BitVec::load(payload)))
+            }
+            CommandCode::BitmapLinearAnd => {
+                if let Some(err) = check_linear_bitmap(&value) {
+                    return Err(err);
+                }
+                Ok(Command::BitmapLinearAnd(*a, BitVec::load(payload)))
+            }
+            CommandCode::BitmapLinearOr => {
+                if let Some(err) = check_linear_bitmap(&value) {
+                    return Err(err);
+                }
+                Ok(Command::BitmapLinearOr(*a, BitVec::load(payload)))
+            }
+            CommandCode::BitmapLinearXor => {
+                if let Some(err) = check_linear_bitmap(&value) {
+                    return Err(err);
+                }
+                Ok(Command::BitmapLinearXor(*a, BitVec::load(payload)))
+            }
         }
     }
 }
