@@ -20,3 +20,23 @@ impl Into<Vec<u8>> for Packet {
         return packet;
     }
 }
+
+fn u16_from_be_slice(slice: &[u8]) -> u16 {
+    let mut bytes = [0u8; 2];
+    bytes[0] = slice[0];
+    bytes[1] = slice[1];
+    u16::from_be_bytes(bytes)
+}
+
+impl From<Vec<u8>> for Packet {
+    fn from(value: Vec<u8>) -> Self {
+        let mode = u16_from_be_slice(&value[0..=1]);
+        let a = u16_from_be_slice(&value[2..=3]);
+        let b = u16_from_be_slice(&value[4..=5]);
+        let c = u16_from_be_slice(&value[6..=7]);
+        let d = u16_from_be_slice(&value[8..=9]);
+        let payload = value[10..].to_vec();
+
+        Packet(Header(mode, a, b, c, d), payload)
+    }
+}
