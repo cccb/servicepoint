@@ -1,7 +1,9 @@
+#[derive(Debug)]
 pub struct Header(pub u16, pub u16, pub u16, pub u16, pub u16);
 
 pub type Payload = Vec<u8>;
 
+#[derive(Debug)]
 pub struct Packet(pub Header, pub Payload);
 
 impl Into<Vec<u8>> for Packet {

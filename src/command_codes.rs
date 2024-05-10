@@ -10,6 +10,7 @@ pub enum CommandCode {
     Brightness = 0x0007,
     HardReset = 0x000b,
     FadeOut = 0x000d,
+    #[deprecated]
     BitmapLegacy = 0x0010,
     BitmapLinear = 0x0012,
     BitmapLinearWin = 0x0013,

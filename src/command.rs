@@ -26,6 +26,8 @@ pub enum Command {
     FadeOut,
     CharBrightness(Window, Vec<Brightness>),
     Brightness(Brightness),
+    #[deprecated]
+    BitmapLegacy,
     BitmapLinear(Offset, BitVec),
     BitmapLinearAnd(Offset, BitVec),
     BitmapLinearOr(Offset, BitVec),
@@ -53,6 +55,8 @@ impl Into<Packet> for Command {
             Command::Clear => command_code_only(CommandCode::Clear),
             Command::FadeOut => command_code_only(CommandCode::FadeOut),
             Command::HardReset => command_code_only(CommandCode::HardReset),
+            #[allow(deprecated)]
+            Command::BitmapLegacy => command_code_only(CommandCode::BitmapLegacy),
 
             Command::CharBrightness(window, payload) => {
                 window_and_payload(CommandCode::CharBrightness, window, payload)
@@ -159,7 +163,10 @@ impl TryFrom<Packet> for Command {
                     payload.clone(),
                 ))
             }
-            CommandCode::BitmapLegacy => { todo!() }
+            #[allow(deprecated)]
+            CommandCode::BitmapLegacy => {
+                Ok(Command::BitmapLegacy)
+            }
             CommandCode::BitmapLinear => { todo!() }
             CommandCode::BitmapLinearWin => {
                 Ok(Command::BitmapLinearWin(
