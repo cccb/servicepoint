@@ -39,6 +39,10 @@ impl BitVec {
         self.data.fill(byte);
     }
 
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
+
     fn get_indexes(&self, index: usize) -> (usize, u8) {
         let byte_index = index / 8;
         let bit_in_byte_index = 7 - index % 8;
