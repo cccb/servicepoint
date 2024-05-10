@@ -11,9 +11,7 @@ impl BitVec {
     }
 
     pub fn set(&mut self, index: usize, value: bool) -> bool {
-        let byte_index = index / 8;
-        let bit_in_byte_index = 7 - index % 8;
-        let bit_mask = 1 << bit_in_byte_index;
+        let (byte_index, bit_mask) = self.get_indexes(index);
 
         let byte = self.data[byte_index];
         let old_value = byte & bit_mask != 0;
@@ -21,17 +19,27 @@ impl BitVec {
         self.data[byte_index] = if value {
             byte | bit_mask
         } else {
-            byte ^ bit_mask
+            byte & (u8::MAX ^ bit_mask)
         };
 
         return old_value;
     }
 
     pub fn get(&self, index: usize) -> bool {
+        let (byte_index, bit_mask) = self.get_indexes(index);
+        return self.data[byte_index] & bit_mask != 0;
+    }
+
+    pub fn fill(&mut self, value: bool){
+        let byte: u8 = if value {0xFF} else {0x00};
+        self.data.fill(byte);
+    }
+
+    fn get_indexes(&self, index: usize) -> (usize, u8) {
         let byte_index = index / 8;
         let bit_in_byte_index = 7 - index % 8;
-        let bit_mask = 1 << bit_in_byte_index;
-        return self.data[byte_index] & bit_mask != 0;
+        let bit_mask: u8 = 1 << bit_in_byte_index;
+        return (byte_index, bit_mask);
     }
 }
 

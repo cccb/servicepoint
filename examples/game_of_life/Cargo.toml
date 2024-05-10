@@ -1,0 +1,10 @@
+[package]
+name = "game_of_life"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+servicepoint2 = { path = "../.." }
+rand = "0.8.5"
+clap = { version = "4.5.4", features = ["derive"] }
+log = "0.4.21"

@@ -1,24 +1,21 @@
-use crate::{BitVec, Header, Packet, PixelGrid, ToPacket};
+use crate::{BitVec, Header, Packet, PixelGrid, TILE_SIZE, ToPacket};
 
 /// A window
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Window(pub Origin, pub Size);
 
 /// An origin marks the top left position of the
 /// data sent to the display.
-/// A window
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Origin(pub u16, pub u16);
 
 /// Size defines the width and height of a window
-/// A window
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Size(pub u16, pub u16);
 
 type Offset = u16;
 
 type Brightness = u8;
-
 
 #[derive(Debug)]
 pub enum Command {
@@ -32,7 +29,7 @@ pub enum Command {
     BitmapLinearOr(Offset, BitVec),
     BitmapLinearXor(Offset, BitVec),
     Cp437Data(Window, Vec<u8>),
-    BitmapLinearWin(Window, PixelGrid),
+    BitmapLinearWin(Origin, PixelGrid),
 }
 
 fn offset_and_payload(command: u16, offset: Offset, payload: Vec<u8>) -> Packet {
@@ -53,7 +50,11 @@ impl ToPacket for Command {
             Command::HardReset => Packet(Header(0x000b, 0x0000, 0x0000, 0x0000, 0x0000), vec!()),
             Command::FadeOut => Packet(Header(0x000d, 0x0000, 0x0000, 0x0000, 0x0000), vec!()),
             Command::BitmapLinear(offset, bits) => offset_and_payload(0x0012, offset, bits.into()),
-            Command::BitmapLinearWin(window, pixels) => window_and_payload(0x0013, window, pixels.into()),
+            Command::BitmapLinearWin(Origin(pixel_x, pixel_y), pixels) => {
+                debug_assert_eq!(pixel_x % 8, 0);
+                debug_assert_eq!(pixels.width % 8, 0);
+                Packet(Header(0x0013, pixel_x / TILE_SIZE, pixel_y, pixels.width as u16/ TILE_SIZE,pixels.height as u16), pixels.into())
+            }
             Command::BitmapLinearAnd(offset, bits) => offset_and_payload(0x0014, offset, bits.into()),
             Command::BitmapLinearOr(offset, bits) => offset_and_payload(0x0015, offset, bits.into()),
             Command::BitmapLinearXor(offset, bits) => offset_and_payload(0x0016, offset, bits.into()),

@@ -29,6 +29,10 @@ impl PixelGrid {
     pub fn get(&self, x: usize, y: usize) -> bool {
         self.bit_vec.get(x + y * self.width)
     }
+
+    pub fn fill(&mut self, value: bool) {
+        self.bit_vec.fill(value);
+    }
 }
 
 impl Into<Vec<u8>> for PixelGrid {
