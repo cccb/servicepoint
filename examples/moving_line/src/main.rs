@@ -1,10 +1,19 @@
 use std::thread;
 use std::time::Duration;
+use clap::Parser;
 use servicepoint2::{Connection, Origin, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
 use servicepoint2::Command::BitmapLinearWin;
 
+#[derive(Parser, Debug)]
+struct Cli {
+    #[arg(short, long, default_value = "localhost:2342")]
+    destination: String,
+}
+
 fn main() {
-    let connection = Connection::open("localhost:2342").unwrap();
+    let cli = Cli::parse();
+    println!("starting with args: {:?}", &cli);
+    let connection = Connection::open(cli.destination).unwrap();
 
     let origin = Origin(0, 0);
     let mut pixels = PixelGrid::max_sized();
