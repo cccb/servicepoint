@@ -1,5 +1,5 @@
 /// A vector of bits
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct BitVec {
     data: Vec<u8>,
 }
@@ -40,7 +40,7 @@ impl BitVec {
     }
 
     pub fn len(&self) -> usize {
-        self.data.len()
+        self.data.len() * 8
     }
 
     fn get_indexes(&self, index: usize) -> (usize, u8) {
@@ -54,5 +54,14 @@ impl BitVec {
 impl Into<Vec<u8>> for BitVec {
     fn into(self) -> Vec<u8> {
         self.data
+    }
+}
+
+impl std::fmt::Debug for BitVec {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("BitVec")
+            .field("len", &self.len())
+            .field("data", &self.data)
+            .finish()
     }
 }
