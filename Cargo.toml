@@ -1,9 +1,9 @@
 [package]
 name = "servicepoint2"
-version = "0.1.1"
+version = "0.1.2"
 publish = true
 edition = "2021"
-license-file = "LICENSE"
+license = "GPL-3.0-or-later"
 description = "A rust library for the CCCB Service Point Display."
 homepage = "https://github.com/kaesaecracker/servicepoint"
 repository = "https://github.com/kaesaecracker/servicepoint"
