@@ -1,5 +1,8 @@
 # servicepoint
 
+[![crates.io](https://img.shields.io/crates/v/servicepoint2.svg)](https://crates.io/crates/servicepoint2)
+[![GPLv3 licensed](https://img.shields.io/badge/license-GPLv3-blue.svg)](./LICENSE)
+
 In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. It is called  "Service Point Display" or "Airport Display".
 This repository contains a library for parsing, encoding and sending packets to this display via UDP.
 
