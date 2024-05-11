@@ -1,6 +1,4 @@
-use crate::{BitVec, Packet, PixelGrid, TILE_SIZE};
-use crate::command_codes::CommandCode;
-use crate::packet::Header;
+use crate::{BitVec, ByteGrid, CommandCode, Header, Packet, PixelGrid, TILE_SIZE};
 
 /// A window
 #[derive(Debug, Copy, Clone)]
@@ -24,7 +22,7 @@ pub enum Command {
     Clear,
     HardReset,
     FadeOut,
-    CharBrightness(Window, Vec<Brightness>),
+    CharBrightness(Origin, ByteGrid),
     Brightness(Brightness),
     #[deprecated]
     BitmapLegacy,
@@ -32,7 +30,7 @@ pub enum Command {
     BitmapLinearAnd(Offset, BitVec),
     BitmapLinearOr(Offset, BitVec),
     BitmapLinearXor(Offset, BitVec),
-    Cp437Data(Window, Vec<u8>),
+    Cp437Data(Origin, ByteGrid),
     BitmapLinearWin(Origin, PixelGrid),
 }
 
@@ -58,8 +56,10 @@ impl Into<Packet> for Command {
             #[allow(deprecated)]
             Command::BitmapLegacy => command_code_only(CommandCode::BitmapLegacy),
 
-            Command::CharBrightness(window, payload) => {
-                window_and_payload(CommandCode::CharBrightness, window, payload)
+            Command::CharBrightness(origin, grid) => {
+                window_and_payload(CommandCode::CharBrightness,
+                                   Window(origin, Size(grid.width as u16, grid.height as u16)),
+                                   grid.into())
             }
             Command::Brightness(brightness) => {
                 Packet(Header(CommandCode::Brightness.to_primitive(), 0x00000, 0x0000, 0x0000, 0x0000), vec!(brightness))
@@ -72,7 +72,11 @@ impl Into<Packet> for Command {
                 debug_assert_eq!(pixel_x % 8, 0);
                 debug_assert_eq!(pixels.width % 8, 0);
                 Packet(
-                    Header(CommandCode::BitmapLinearWin.to_primitive(), pixel_x / TILE_SIZE, pixel_y, pixels.width as u16 / TILE_SIZE, pixels.height as u16),
+                    Header(CommandCode::BitmapLinearWin.to_primitive(),
+                           pixel_x / TILE_SIZE,
+                           pixel_y,
+                           pixels.width as u16 / TILE_SIZE,
+                           pixels.height as u16),
                     pixels.into())
             }
             Command::BitmapLinearAnd(offset, bits) => {
@@ -84,8 +88,10 @@ impl Into<Packet> for Command {
             Command::BitmapLinearXor(offset, bits) => {
                 offset_and_payload(CommandCode::BitmapLinearXor, offset, bits.into())
             }
-            Command::Cp437Data(window, payload) => {
-                window_and_payload(CommandCode::Cp437Data, window, payload)
+            Command::Cp437Data(origin, grid) => {
+                window_and_payload(CommandCode::Cp437Data,
+                                   Window(origin, Size(grid.width as u16, grid.height as u16)),
+                                   grid.into())
             }
         }
     }
@@ -118,7 +124,7 @@ fn check_command_only(packet: &Packet) -> Option<TryFromPacketError> {
 }
 
 fn check_linear_bitmap(packet: &Packet) -> Option<TryFromPacketError> {
-    let Packet(Header(_, offset, length, sub, reserved), payload) = packet;
+    let Packet(Header(_, _, length, sub, reserved), payload) = packet;
     if *reserved != 0 {
         return Some(TryFromPacketError::ExtraneousHeaderValues);
     }
@@ -168,14 +174,14 @@ impl TryFrom<Packet> for Command {
             }
             CommandCode::Cp437Data => {
                 Ok(Command::Cp437Data(
-                    Window(Origin(*a, *b), Size(*c, *d)),
-                    payload.clone(),
+                    Origin(*a, *b),
+                    ByteGrid::load(*c as usize, *d as usize, payload),
                 ))
             }
             CommandCode::CharBrightness => {
                 Ok(Command::CharBrightness(
-                    Window(Origin(*a, *b), Size(*c, *d)),
-                    payload.clone(),
+                    Origin(*a, *b),
+                    ByteGrid::load(*c as usize, *d as usize, payload),
                 ))
             }
             #[allow(deprecated)]

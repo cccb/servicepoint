@@ -4,13 +4,15 @@ mod bit_vec;
 mod packet;
 mod command;
 mod command_codes;
+mod byte_grid;
 
-pub use crate::connection::{Connection};
-pub use crate::pixel_grid::{PixelGrid};
-pub use crate::bit_vec::{BitVec};
+pub use crate::connection::Connection;
+pub use crate::pixel_grid::PixelGrid;
+pub use crate::bit_vec::BitVec;
 pub use crate::packet::{Packet, Header, Payload};
 pub use crate::command::{Command, Size, Origin, Window};
-pub use crate::command_codes::{CommandCode};
+pub use crate::command_codes::CommandCode;
+pub use crate::byte_grid::ByteGrid;
 
 pub const TILE_SIZE: u16 = 8;
 pub const TILE_WIDTH: u16 = 56;
