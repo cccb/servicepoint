@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-servicepoint2 = { path = "../.." }
+servicepoint2 = { path = "../.." , default-features = false }
 rand = "0.8.5"
 clap = { version = "4.5.4", features = ["derive"] }
 log = "0.4.21"

@@ -1,4 +1,3 @@
-use std::cmp::Ord;
 use std::time::Duration;
 use clap::Parser;
 use rand::Rng;

@@ -8,4 +8,15 @@ num = "0.4"
 num-derive = "0.4"
 num-traits = "0.2"
 log = "0.4"
-flate2 = "1.0"
+flate2 = { version = "1.0", optional = true }
+bzip2 = { version = "0.4", optional = true }
+lz4 = { version = "1.24", optional = true }
+zstd = { version = "0.13", optional = true }
+
+[features]
+default = ["compression-gz", "compression-bz", "compression-lz", "compression-zs"]
+compression-gz = ["dep:flate2"]
+compression-bz = ["dep:bzip2"]
+compression-lz = ["dep:lz4"]
+compression-zs = ["dep:zstd"]
+

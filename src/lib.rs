@@ -5,6 +5,7 @@ mod packet;
 mod command;
 mod command_codes;
 mod byte_grid;
+mod compression;
 
 pub use crate::connection::Connection;
 pub use crate::pixel_grid::PixelGrid;

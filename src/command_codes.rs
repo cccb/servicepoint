@@ -33,9 +33,13 @@ impl CommandCode {
 #[derive(Debug, FromPrimitive, ToPrimitive, Clone, Copy)]
 pub enum CompressionCode {
     None = 0x0,
+    #[cfg(feature = "compression-gz")]
     Gz = 0x677a,
+    #[cfg(feature = "compression-bz")]
     Bz = 0x627a,
+    #[cfg(feature = "compression-lz")]
     Lz = 0x6c7a,
+    #[cfg(feature = "compression-zs")]
     Zs = 0x7a73,
 }
 

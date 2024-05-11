@@ -1,9 +1,7 @@
-use std::io::Read;
-use flate2::bufread::GzEncoder;
-use flate2::Compression;
-use flate2::read::GzDecoder;
-use crate::{BitVec, ByteGrid, Header, Packet, Payload, PixelGrid, TILE_SIZE};
+use crate::{BitVec, ByteGrid, Header, Packet, PixelGrid, TILE_SIZE};
 use crate::command_codes::{CommandCode, CompressionCode};
+use crate::compression::{into_compressed, into_decompressed};
+
 
 /// An origin marks the top left position of the
 /// data sent to the display.
@@ -239,38 +237,3 @@ fn packet_into_linear_bitmap(packet: Packet) -> Result<(BitVec, CompressionCode)
     };
     Ok((BitVec::load(&payload), sub))
 }
-
-fn into_decompressed(kind: CompressionCode, payload: Payload) -> Option<Payload> {
-    match kind {
-        CompressionCode::None => Some(payload),
-        CompressionCode::Gz => {
-            let mut decoder = GzDecoder::new(&*payload);
-            let mut decompressed = vec!();
-            match decoder.read_to_end(&mut decompressed) {
-                Err(_) => None,
-                Ok(_) => Some(decompressed)
-            }
-        }
-        CompressionCode::Bz => todo!(),
-        CompressionCode::Lz => todo!(),
-        CompressionCode::Zs => todo!(),
-    }
-}
-
-fn into_compressed(kind: CompressionCode, payload: Payload) -> Payload {
-    match kind {
-        CompressionCode::None => payload,
-        CompressionCode::Gz => {
-            let mut encoder = GzEncoder::new(&*payload, Compression::best());
-            let mut compressed = vec!();
-            match encoder.read_to_end(&mut compressed) {
-                Err(err) => panic!("could not compress payload: {}", err),
-                Ok(_) => compressed,
-            }
-        }
-        CompressionCode::Bz => todo!(),
-        CompressionCode::Lz => todo!(),
-        CompressionCode::Zs => todo!(),
-    }
-}
-
