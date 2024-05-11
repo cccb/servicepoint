@@ -2,6 +2,7 @@
 name = "random_brightness"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 servicepoint2 = { path = "../.." }
