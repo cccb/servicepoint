@@ -2,6 +2,11 @@
 name = "servicepoint2"
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+description = "A rust library for the CCCB Service Point Display."
+homepage = "https://github.com/kaesaecracker/servicepoint"
+repository = "https://github.com/kaesaecracker/servicepoint"
+readme = "README.md"
 
 [dependencies]
 num = "0.4"
