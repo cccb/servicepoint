@@ -220,16 +220,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "moving_transparent_line"
-version = "0.1.0"
-dependencies = [
- "clap",
- "env_logger",
- "log",
- "servicepoint2",
-]
-
-[[package]]
 name = "num"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -524,3 +514,13 @@ name = "windows_x86_64_msvc"
 version = "0.52.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bec47e5bfd1bff0eeaf6d8b485cc1074891a197ab4225d504cb7a1ab88b02bf0"
+
+[[package]]
+name = "wiping_clear"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "env_logger",
+ "log",
+ "servicepoint2",
+]

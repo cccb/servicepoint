@@ -4,6 +4,6 @@ members = [
     "announce",
     "game_of_life",
     "moving_line",
-    "moving_transparent_line",
+    "wiping_clear",
     "random_brightness",
 ]
