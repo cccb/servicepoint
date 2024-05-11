@@ -34,7 +34,7 @@ fn main() {
 
         // this works because the pixel grid has max size
         let pixel_data: Vec<u8> = enabled_pixels.clone().into();
-        let bit_vec = BitVec::load(&*pixel_data);
+        let bit_vec = BitVec::from(&*pixel_data);
 
         connection
             .send(BitmapLinearAnd(0, bit_vec, CompressionCode::Gz))

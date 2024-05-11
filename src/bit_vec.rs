@@ -5,6 +5,13 @@ pub struct BitVec {
 }
 
 impl BitVec {
+    /// Create a new bit vector.
+    ///
+    /// # Arguments
+    ///
+    /// * `size`: size in bits. Must be dividable by 8.
+    ///
+    /// returns: bit vector with all bits set to false.
     pub fn new(size: usize) -> BitVec {
         assert_eq!(size % 8, 0);
         Self {
@@ -12,12 +19,14 @@ impl BitVec {
         }
     }
 
-    pub fn load(data: &[u8]) -> BitVec {
-        Self {
-            data: Vec::from(data),
-        }
-    }
-
+    /// Sets the value of a bit.
+    ///
+    /// # Arguments
+    ///
+    /// * `index`: the bit index to edit
+    /// * `value`: the value to set the bit to
+    ///
+    /// returns: old value of the bit
     pub fn set(&mut self, index: usize, value: bool) -> bool {
         let (byte_index, bit_mask) = self.get_indexes(index);
 
@@ -33,11 +42,30 @@ impl BitVec {
         return old_value;
     }
 
+    /// Gets the value of a bit.
+    ///
+    /// # Arguments
+    ///
+    /// * `index`: the bit index to read
+    ///
+    /// returns: value of the bit
     pub fn get(&self, index: usize) -> bool {
         let (byte_index, bit_mask) = self.get_indexes(index);
         return self.data[byte_index] & bit_mask != 0;
     }
 
+    /// Sets all bits to the specified value
+    ///
+    /// # Arguments
+    ///
+    /// * `value`: the value to set all bits to
+    ///
+    /// # Examples
+    /// ```
+    ///  use servicepoint2::BitVec;
+    ///  let mut vec = BitVec::new(8);
+    ///  vec.fill(true);
+    /// ```
     pub fn fill(&mut self, value: bool) {
         let byte: u8 = if value { 0xFF } else { 0x00 };
         self.data.fill(byte);
@@ -58,6 +86,12 @@ impl BitVec {
 impl Into<Vec<u8>> for BitVec {
     fn into(self) -> Vec<u8> {
         self.data
+    }
+}
+
+impl From<&[u8]> for BitVec {
+    fn from(value: &[u8]) -> Self {
+        Self { data: Vec::from(value) }
     }
 }
 

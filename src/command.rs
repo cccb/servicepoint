@@ -1,9 +1,8 @@
+use crate::{BitVec, ByteGrid, Header, Packet, PixelGrid, TILE_SIZE};
 use crate::command_codes::{CommandCode, CompressionCode};
 use crate::compression::{into_compressed, into_decompressed};
-use crate::{BitVec, ByteGrid, Header, Packet, PixelGrid, TILE_SIZE};
 
-/// An origin marks the top left position of the
-/// data sent to the display.
+/// An origin marks the top left position of a window sent to the display.
 #[derive(Debug, Clone, Copy)]
 pub struct Origin(pub u16, pub u16);
 
@@ -23,18 +22,32 @@ type Brightness = u8;
 
 #[derive(Debug)]
 pub enum Command {
+    /// Set all pixels to the off state
     Clear,
+    /// Kills the udp daemon, usually results in a reboot of the display.
     HardReset,
     FadeOut,
+    /// Set the brightness of tiles
     CharBrightness(Origin, ByteGrid),
+    /// Set the brightness of all tiles
     Brightness(Brightness),
     #[deprecated]
     BitmapLegacy,
+    /// Set pixel data starting at the offset.
+    /// The contained BitVec is always uncompressed.
     BitmapLinear(Offset, BitVec, CompressionCode),
+    /// Set pixel data according to an and-mask starting at the offset.
+    /// The contained BitVec is always uncompressed.
     BitmapLinearAnd(Offset, BitVec, CompressionCode),
+    /// Set pixel data according to an or-mask starting at the offset.
+    /// The contained BitVec is always uncompressed.
     BitmapLinearOr(Offset, BitVec, CompressionCode),
+    /// Set pixel data according to an xor-mask starting at the offset.
+    /// The contained BitVec is always uncompressed.
     BitmapLinearXor(Offset, BitVec, CompressionCode),
+    /// Show text on the screen. Note that the byte data has to be CP437 encoded.
     Cp437Data(Origin, ByteGrid),
+    /// Sets a window of pixels to the specified values
     BitmapLinearWin(Origin, PixelGrid),
 }
 
@@ -122,10 +135,17 @@ impl Into<Packet> for Command {
 
 #[derive(Debug)]
 pub enum TryFromPacketError {
+    /// the contained command code does not correspond to a known command
     InvalidCommand(u16),
+    /// the expected payload size was n, but size m was found
     UnexpectedPayloadSize(usize, usize),
+    /// Header fields not needed for the command have been used.
+    ///
+    /// Note that these commands would usually still work on the actual display.
     ExtraneousHeaderValues,
+    /// The contained compression code is not known. This could be of disabled features.
     InvalidCompressionCode(u16),
+    /// Decompression of the payload failed. This can be caused by corrupted packets.
     DecompressionFailed,
 }
 
@@ -136,7 +156,7 @@ impl TryFrom<Packet> for Command {
         let Packet(Header(command_u16, a, b, c, d), _) = value;
         let command_code = match CommandCode::from_primitive(command_u16) {
             None => {
-                return Err(TryFromPacketError::InvalidCommand(command_u16))
+                return Err(TryFromPacketError::InvalidCommand(command_u16));
             }
             Some(value) => value,
         };
@@ -294,5 +314,5 @@ fn packet_into_linear_bitmap(
         None => return Err(TryFromPacketError::DecompressionFailed),
         Some(value) => value,
     };
-    Ok((BitVec::load(&payload), sub))
+    Ok((BitVec::from(&*payload), sub))
 }

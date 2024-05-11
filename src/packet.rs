@@ -1,8 +1,11 @@
+/// A raw header. Should probably not be used directly.
 #[derive(Debug)]
 pub struct Header(pub u16, pub u16, pub u16, pub u16, pub u16);
 
+/// The raw payload. Should probably not be used directly.
 pub type Payload = Vec<u8>;
 
+/// The raw packet. Should probably not be used directly.
 #[derive(Debug)]
 pub struct Packet(pub Header, pub Payload);
 

@@ -1,6 +1,7 @@
 use num::{FromPrimitive, ToPrimitive};
 use num_derive::{FromPrimitive, ToPrimitive};
 
+/// The codes used for the commands. See the documentation on the corresponding commands.
 #[repr(u16)]
 #[derive(Debug, FromPrimitive, ToPrimitive, Copy, Clone)]
 pub enum CommandCode {
@@ -20,15 +21,18 @@ pub enum CommandCode {
 }
 
 impl CommandCode {
+    /// convert u16 to CommandCode enum
     pub fn from_primitive(value: u16) -> Option<Self> {
         FromPrimitive::from_u16(value)
     }
 
+    /// convert CommandCode enum to u16
     pub fn to_primitive(&self) -> u16 {
         ToPrimitive::to_u16(self).unwrap()
     }
 }
 
+/// Specifies the kind of compression to use. Availability depends on features.
 #[repr(u16)]
 #[derive(Debug, FromPrimitive, ToPrimitive, Clone, Copy)]
 pub enum CompressionCode {
@@ -44,11 +48,15 @@ pub enum CompressionCode {
 }
 
 impl CompressionCode {
-    pub fn from_primitive(value: u16) -> Option<Self> {
-        FromPrimitive::from_u16(value)
-    }
-
+    /// convert CompressionCode enum to u16
     pub fn to_primitive(&self) -> u16 {
         ToPrimitive::to_u16(self).unwrap()
+    }
+
+    /// Convert u16 to CommandCode enum.
+    ///
+    /// returns: None if the provided value is not one of the valid enum values.
+    pub fn from_primitive(value: u16) -> Option<Self> {
+        FromPrimitive::from_u16(value)
     }
 }
