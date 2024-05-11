@@ -8,6 +8,10 @@ This repository contains a library for parsing, encoding and sending packets to 
 
 ### Installation
 ```bash
+# release version
+cargo add servicepoint2
+
+# development version
 cargo add --git https://github.com/kaesaecracker/servicepoint.git
 ```
 
