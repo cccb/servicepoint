@@ -7,11 +7,15 @@ pub struct BitVec {
 impl BitVec {
     pub fn new(size: usize) -> BitVec {
         assert_eq!(size % 8, 0);
-        Self { data: vec!(0; size / 8) }
+        Self {
+            data: vec![0; size / 8],
+        }
     }
 
     pub fn load(data: &[u8]) -> BitVec {
-        Self { data: Vec::from(data) }
+        Self {
+            data: Vec::from(data),
+        }
     }
 
     pub fn set(&mut self, index: usize, value: bool) -> bool {

@@ -31,7 +31,7 @@ impl ByteGrid {
         self.data[x + y * self.width] = value;
     }
 
-    pub fn fill(&mut self, value: u8){
+    pub fn fill(&mut self, value: u8) {
         self.data.fill(value)
     }
 }

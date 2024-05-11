@@ -1,6 +1,8 @@
 use std::fmt::Debug;
 use std::net::{ToSocketAddrs, UdpSocket};
+
 use log::{debug, info};
+
 use crate::Packet;
 
 pub struct Connection {
@@ -17,7 +19,10 @@ impl Connection {
     }
 
     /// Send a command to the display
-    pub fn send(&self, packet: impl Into<Packet> + Debug) -> Result<(), std::io::Error> {
+    pub fn send(
+        &self,
+        packet: impl Into<Packet> + Debug,
+    ) -> Result<(), std::io::Error> {
         debug!("sending {packet:?}");
         let packet: Packet = packet.into();
         let data: Vec<u8> = packet.into();

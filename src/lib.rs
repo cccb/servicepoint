@@ -1,19 +1,19 @@
-mod connection;
-mod pixel_grid;
+pub use crate::bit_vec::BitVec;
+pub use crate::byte_grid::ByteGrid;
+pub use crate::command::{Command, Origin, Size};
+pub use crate::command_codes::{CommandCode, CompressionCode};
+pub use crate::connection::Connection;
+pub use crate::packet::{Header, Packet, Payload};
+pub use crate::pixel_grid::PixelGrid;
+
 mod bit_vec;
-mod packet;
+mod byte_grid;
 mod command;
 mod command_codes;
-mod byte_grid;
 mod compression;
-
-pub use crate::connection::Connection;
-pub use crate::pixel_grid::PixelGrid;
-pub use crate::bit_vec::BitVec;
-pub use crate::packet::{Packet, Header, Payload};
-pub use crate::command::{Command, Size, Origin};
-pub use crate::command_codes::{CommandCode, CompressionCode};
-pub use crate::byte_grid::ByteGrid;
+mod connection;
+mod packet;
+mod pixel_grid;
 
 pub const TILE_SIZE: u16 = 8;
 pub const TILE_WIDTH: u16 = 56;

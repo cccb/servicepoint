@@ -10,7 +10,7 @@ impl Into<Vec<u8>> for Packet {
     fn into(self) -> Vec<u8> {
         let Packet(Header(mode, a, b, c, d), payload) = self;
 
-        let mut packet = vec!(0u8; 10 + payload.len());
+        let mut packet = vec![0u8; 10 + payload.len()];
         packet[0..=1].copy_from_slice(&u16::to_be_bytes(mode));
         packet[2..=3].copy_from_slice(&u16::to_be_bytes(a));
         packet[4..=5].copy_from_slice(&u16::to_be_bytes(b));

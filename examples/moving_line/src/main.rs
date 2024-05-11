@@ -1,8 +1,10 @@
 use std::thread;
 use std::time::Duration;
+
 use clap::Parser;
-use servicepoint2::{Connection, Origin, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
+
 use servicepoint2::Command::BitmapLinearWin;
+use servicepoint2::{Connection, Origin, PixelGrid, PIXEL_HEIGHT, PIXEL_WIDTH};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -24,7 +26,9 @@ fn main() {
         for y in 0..PIXEL_HEIGHT as usize {
             pixels.set((y + x_offset) % PIXEL_WIDTH as usize, y, true);
         }
-        connection.send(BitmapLinearWin(Origin::top_left(), pixels.clone())).unwrap();
+        connection
+            .send(BitmapLinearWin(Origin::top_left(), pixels.clone()))
+            .unwrap();
         thread::sleep(Duration::from_millis(14));
     }
 }

@@ -1,9 +1,11 @@
 use std::thread;
 use std::time::Duration;
-use rand::{distributions, Rng};
+
 use clap::Parser;
-use servicepoint2::{Connection, Origin, PixelGrid};
+use rand::{distributions, Rng};
+
 use servicepoint2::Command::BitmapLinearWin;
+use servicepoint2::{Connection, Origin, PixelGrid};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -23,7 +25,9 @@ fn main() {
     let mut field = make_random_field(cli.probability);
 
     loop {
-        connection.send(BitmapLinearWin(Origin::top_left(), field.clone())).expect("could not send");
+        connection
+            .send(BitmapLinearWin(Origin::top_left(), field.clone()))
+            .expect("could not send");
         thread::sleep(Duration::from_millis(14));
         field = iteration(field);
     }
@@ -39,7 +43,7 @@ fn iteration(field: PixelGrid) -> PixelGrid {
                 (true, 2) => true,
                 (true, 3) => true,
                 (false, 3) => true,
-                _ => false
+                _ => false,
             };
             next.set(x, y, new_state);
         }
@@ -55,7 +59,11 @@ fn count_neighbors(field: &PixelGrid, x: i32, y: i32) -> i32 {
                 continue; // the cell itself does not count
             }
 
-            if nx < 0 || ny < 0 || nx >= field.width as i32 || ny >= field.height as i32 {
+            if nx < 0
+                || ny < 0
+                || nx >= field.width as i32
+                || ny >= field.height as i32
+            {
                 continue; // pixels outside the grid do not count
             }
 

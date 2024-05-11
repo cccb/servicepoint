@@ -1,8 +1,12 @@
 use std::time::Duration;
+
 use clap::Parser;
 use rand::Rng;
-use servicepoint2::{ByteGrid, Connection, Origin, PixelGrid, TILE_HEIGHT, TILE_WIDTH};
-use servicepoint2::Command::{Brightness, CharBrightness, BitmapLinearWin};
+
+use servicepoint2::Command::{BitmapLinearWin, Brightness, CharBrightness};
+use servicepoint2::{
+    ByteGrid, Connection, Origin, PixelGrid, TILE_HEIGHT, TILE_WIDTH,
+};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -27,7 +31,9 @@ fn main() {
     if cli.enable_all {
         let mut filled_grid = PixelGrid::max_sized();
         filled_grid.fill(true);
-        connection.send(BitmapLinearWin(Origin::top_left(), filled_grid)).unwrap();
+        connection
+            .send(BitmapLinearWin(Origin::top_left(), filled_grid))
+            .unwrap();
     }
 
     // set all pixels to the same random brightness

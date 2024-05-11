@@ -1,4 +1,5 @@
 use clap::Parser;
+
 use servicepoint2::{ByteGrid, Command, Connection, Origin};
 
 #[derive(Parser, Debug)]
@@ -44,5 +45,7 @@ fn main() {
         }
     }
 
-    connection.send(Command::Cp437Data(Origin::top_left(), chars)).unwrap();
+    connection
+        .send(Command::Cp437Data(Origin::top_left(), chars))
+        .unwrap();
 }
