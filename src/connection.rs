@@ -17,9 +17,9 @@ impl Connection {
     }
 
     /// Send a command to the display
-    pub fn send(&self, packet: impl Into<Packet> + Debug) -> std::io::Result<()> {
+    pub fn send(&self, packet: impl Into<Packet> + Debug) -> Result<(), std::io::Error> {
         debug!("sending {packet:?}");
-        let packet = packet.into();
+        let packet: Packet = packet.into();
         let data: Vec<u8> = packet.into();
         self.socket.send(&*data)?;
         Ok(())

@@ -28,3 +28,23 @@ impl CommandCode {
         ToPrimitive::to_u16(self).unwrap()
     }
 }
+
+#[repr(u16)]
+#[derive(Debug, FromPrimitive, ToPrimitive)]
+pub enum CompressionCode {
+    None = 0x0,
+    Gz = 0x677a,
+    Bz = 0x627a,
+    Lz = 0x6c7a,
+    Zs = 0x7a73,
+}
+
+impl CompressionCode {
+    pub fn from_primitive(value: u16) -> Option<Self> {
+        FromPrimitive::from_u16(value)
+    }
+
+    pub fn to_primitive(&self) -> u16 {
+        ToPrimitive::to_u16(self).unwrap()
+    }
+}

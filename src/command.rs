@@ -1,5 +1,9 @@
+use std::io::Read;
+use flate2::bufread::GzEncoder;
+use flate2::Compression;
+use flate2::read::GzDecoder;
 use crate::{BitVec, ByteGrid, Header, Packet, PixelGrid, TILE_SIZE};
-use crate::command_codes::CommandCode;
+use crate::command_codes::{CommandCode, CompressionCode};
 
 /// An origin marks the top left position of the
 /// data sent to the display.
@@ -29,26 +33,12 @@ pub enum Command {
     Brightness(Brightness),
     #[deprecated]
     BitmapLegacy,
-    BitmapLinear(Offset, BitVec),
-    BitmapLinearAnd(Offset, BitVec),
-    BitmapLinearOr(Offset, BitVec),
-    BitmapLinearXor(Offset, BitVec),
+    BitmapLinear(Offset, BitVec, CompressionCode),
+    BitmapLinearAnd(Offset, BitVec, CompressionCode),
+    BitmapLinearOr(Offset, BitVec, CompressionCode),
+    BitmapLinearXor(Offset, BitVec, CompressionCode),
     Cp437Data(Origin, ByteGrid),
     BitmapLinearWin(Origin, PixelGrid),
-}
-
-fn offset_and_payload(command: CommandCode, offset: Offset, payload: Vec<u8>) -> Packet {
-    Packet(Header(command.to_primitive(), offset, payload.len() as u16, 0, 0), payload)
-}
-
-fn origin_size_payload(command: CommandCode, origin: Origin, size: Size, payload: Vec<u8>) -> Packet {
-    let Origin(x, y) = origin;
-    let Size(w, h) = size;
-    Packet(Header(command.to_primitive(), x, y, w, h), payload.into())
-}
-
-fn command_code_only(code: CommandCode) -> Packet {
-    Packet(Header(code.to_primitive(), 0x0000, 0x0000, 0x0000, 0x0000), vec!())
 }
 
 impl Into<Packet> for Command {
@@ -59,7 +49,6 @@ impl Into<Packet> for Command {
             Command::HardReset => command_code_only(CommandCode::HardReset),
             #[allow(deprecated)]
             Command::BitmapLegacy => command_code_only(CommandCode::BitmapLegacy),
-
             Command::CharBrightness(origin, grid) => {
                 origin_size_payload(CommandCode::CharBrightness,
                                     origin,
@@ -68,10 +57,6 @@ impl Into<Packet> for Command {
             }
             Command::Brightness(brightness) => {
                 Packet(Header(CommandCode::Brightness.to_primitive(), 0x00000, 0x0000, 0x0000, 0x0000), vec!(brightness))
-            }
-
-            Command::BitmapLinear(offset, bits) => {
-                offset_and_payload(CommandCode::BitmapLinear, offset, bits.into())
             }
             Command::BitmapLinearWin(Origin(pixel_x, pixel_y), pixels) => {
                 debug_assert_eq!(pixel_x % 8, 0);
@@ -84,14 +69,17 @@ impl Into<Packet> for Command {
                            pixels.height as u16),
                     pixels.into())
             }
-            Command::BitmapLinearAnd(offset, bits) => {
-                offset_and_payload(CommandCode::BitmapLinearAnd, offset, bits.into())
+            Command::BitmapLinear(offset, bits, compression) => {
+                bitmap_linear_into_packet(CommandCode::BitmapLinear, offset, compression, bits.into())
             }
-            Command::BitmapLinearOr(offset, bits) => {
-                offset_and_payload(CommandCode::BitmapLinearOr, offset, bits.into())
+            Command::BitmapLinearAnd(offset, bits, compression) => {
+                bitmap_linear_into_packet(CommandCode::BitmapLinearAnd, offset, compression, bits.into())
             }
-            Command::BitmapLinearXor(offset, bits) => {
-                offset_and_payload(CommandCode::BitmapLinearXor, offset, bits.into())
+            Command::BitmapLinearOr(offset, bits, compression) => {
+                bitmap_linear_into_packet(CommandCode::BitmapLinearOr, offset, compression, bits.into())
+            }
+            Command::BitmapLinearXor(offset, bits, compression) => {
+                bitmap_linear_into_packet(CommandCode::BitmapLinearXor, offset, compression, bits.into())
             }
             Command::Cp437Data(origin, grid) => {
                 origin_size_payload(CommandCode::Cp437Data,
@@ -108,86 +96,62 @@ pub enum TryFromPacketError {
     InvalidCommand(u16),
     UnexpectedPayloadSize(usize, usize),
     ExtraneousHeaderValues,
-    UnsupportedSubcommand(u16),
-}
-
-fn check_empty_header(packet: &Packet) -> Option<TryFromPacketError> {
-    let Packet(Header(_, a, b, c, d), _) = &packet;
-    if *a != 0 || *b != 0 || *c != 0 || *d != 0 {
-        Some(TryFromPacketError::ExtraneousHeaderValues)
-    } else {
-        None
-    }
-}
-
-fn check_command_only(packet: &Packet) -> Option<TryFromPacketError> {
-    let Packet(_, payload) = packet;
-    if payload.len() != 0 {
-        Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
-    } else {
-        check_empty_header(packet)
-    }
-}
-
-fn check_linear_bitmap(packet: &Packet) -> Option<TryFromPacketError> {
-    let Packet(Header(_, _, length, sub, reserved), payload) = packet;
-    if *reserved != 0 {
-        return Some(TryFromPacketError::ExtraneousHeaderValues);
-    }
-    if *sub != 0 {
-        return Some(TryFromPacketError::UnsupportedSubcommand(*sub));
-    }
-    if payload.len() != *length as usize {
-        return Some(TryFromPacketError::UnexpectedPayloadSize(*length as usize, payload.len()));
-    }
-    None
+    InvalidCompressionCode(u16),
+    DecompressionFailed(std::io::Error),
 }
 
 impl TryFrom<Packet> for Command {
     type Error = TryFromPacketError;
 
     fn try_from(value: Packet) -> Result<Self, Self::Error> {
-        let Packet(Header(command_u16, a, b, c, d), payload) = &value;
-        let command_code = match CommandCode::from_primitive(*command_u16) {
-            None => return Err(TryFromPacketError::InvalidCommand(*command_u16)),
+        let Packet(Header(command_u16, a, b, c, d), _) = value;
+        let command_code = match CommandCode::from_primitive(command_u16) {
+            None => return Err(TryFromPacketError::InvalidCommand(command_u16)),
             Some(value) => value
         };
 
         match command_code {
             CommandCode::Clear => {
-                if let Some(err) = check_command_only(&value) {
-                    return Err(err);
+                match check_command_only(value) {
+                    Some(err) => Err(err),
+                    None => Ok(Command::Clear),
                 }
-                Ok(Command::Clear)
             }
             CommandCode::Brightness => {
-                if let Some(err) = check_empty_header(&value) {
-                    return Err(err);
+                let Packet(header, payload) = value;
+                if payload.len() != 1 {
+                    return Err(TryFromPacketError::UnexpectedPayloadSize(1, payload.len()));
                 }
-                Ok(Command::Brightness(payload[0]))
+
+                match check_empty_header(header) {
+                    Some(err) => Err(err),
+                    None => Ok(Command::Brightness(payload[0])),
+                }
             }
             CommandCode::HardReset => {
-                if let Some(err) = check_command_only(&value) {
-                    return Err(err);
+                match check_command_only(value) {
+                    Some(err) => Err(err),
+                    None => Ok(Command::HardReset),
                 }
-                Ok(Command::HardReset)
             }
             CommandCode::FadeOut => {
-                if let Some(err) = check_command_only(&value) {
-                    return Err(err);
+                match check_command_only(value) {
+                    Some(err) => Err(err),
+                    None => Ok(Command::FadeOut),
                 }
-                Ok(Command::FadeOut)
             }
             CommandCode::Cp437Data => {
+                let Packet(_, payload) = value;
                 Ok(Command::Cp437Data(
-                    Origin(*a, *b),
-                    ByteGrid::load(*c as usize, *d as usize, payload),
+                    Origin(a, b),
+                    ByteGrid::load(c as usize, d as usize, &payload),
                 ))
             }
             CommandCode::CharBrightness => {
+                let Packet(_, payload) = value;
                 Ok(Command::CharBrightness(
-                    Origin(*a, *b),
-                    ByteGrid::load(*c as usize, *d as usize, payload),
+                    Origin(a, b),
+                    ByteGrid::load(c as usize, d as usize, &payload),
                 ))
             }
             #[allow(deprecated)]
@@ -195,35 +159,109 @@ impl TryFrom<Packet> for Command {
                 Ok(Command::BitmapLegacy)
             }
             CommandCode::BitmapLinearWin => {
+                let Packet(_, payload) = value;
                 Ok(Command::BitmapLinearWin(
-                    Origin(*a * TILE_SIZE, *b),
-                    PixelGrid::load(*c as usize * TILE_SIZE as usize, *d as usize, payload),
+                    Origin(a * TILE_SIZE, b),
+                    PixelGrid::load(c as usize * TILE_SIZE as usize, d as usize, &payload),
                 ))
             }
             CommandCode::BitmapLinear => {
-                if let Some(err) = check_linear_bitmap(&value) {
-                    return Err(err);
-                }
-                Ok(Command::BitmapLinear(*a, BitVec::load(payload)))
+                let (vec, compression) = packet_into_linear_bitmap(value)?;
+                Ok(Command::BitmapLinear(a, vec, compression))
             }
             CommandCode::BitmapLinearAnd => {
-                if let Some(err) = check_linear_bitmap(&value) {
-                    return Err(err);
-                }
-                Ok(Command::BitmapLinearAnd(*a, BitVec::load(payload)))
+                let (vec, compression) = packet_into_linear_bitmap(value)?;
+                Ok(Command::BitmapLinearAnd(a, vec, compression))
             }
             CommandCode::BitmapLinearOr => {
-                if let Some(err) = check_linear_bitmap(&value) {
-                    return Err(err);
-                }
-                Ok(Command::BitmapLinearOr(*a, BitVec::load(payload)))
+                let (vec, compression) = packet_into_linear_bitmap(value)?;
+                Ok(Command::BitmapLinearOr(a, vec, compression))
             }
             CommandCode::BitmapLinearXor => {
-                if let Some(err) = check_linear_bitmap(&value) {
-                    return Err(err);
-                }
-                Ok(Command::BitmapLinearXor(*a, BitVec::load(payload)))
+                let (vec, compression) = packet_into_linear_bitmap(value)?;
+                Ok(Command::BitmapLinearXor(a, vec, compression))
             }
         }
     }
+}
+
+fn bitmap_linear_into_packet(command: CommandCode, offset: Offset, compression: CompressionCode, payload: Vec<u8>) -> Packet {
+    let payload = match compression {
+        CompressionCode::None => payload,
+        CompressionCode::Gz => {
+            let mut encoder = GzEncoder::new(&*payload, Compression::best());
+            let mut compressed = vec!();
+            match encoder.read_to_end(&mut compressed) {
+                Err(err) => panic!("could not compress payload: {}", err),
+                Ok(_) => compressed,
+            }
+        }
+        CompressionCode::Bz => todo!(),
+        CompressionCode::Lz => todo!(),
+        CompressionCode::Zs => todo!(),
+    };
+
+    let compression = CompressionCode::to_primitive(&compression);
+    Packet(Header(command.to_primitive(), offset, payload.len() as u16, compression, 0), payload)
+}
+
+fn origin_size_payload(command: CommandCode, origin: Origin, size: Size, payload: Vec<u8>) -> Packet {
+    let Origin(x, y) = origin;
+    let Size(w, h) = size;
+    Packet(Header(command.to_primitive(), x, y, w, h), payload.into())
+}
+
+fn command_code_only(code: CommandCode) -> Packet {
+    Packet(Header(code.to_primitive(), 0x0000, 0x0000, 0x0000, 0x0000), vec!())
+}
+
+fn check_empty_header(header: Header) -> Option<TryFromPacketError> {
+    let Header(_, a, b, c, d) = header;
+    if a != 0 || b != 0 || c != 0 || d != 0 {
+        Some(TryFromPacketError::ExtraneousHeaderValues)
+    } else {
+        None
+    }
+}
+
+fn check_command_only(packet: Packet) -> Option<TryFromPacketError> {
+    let Packet(Header(_, a, b, c, d), payload) = packet;
+    if payload.len() != 0 {
+        Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
+    } else if a != 0 || b != 0 || c != 0 || d != 0 {
+        Some(TryFromPacketError::ExtraneousHeaderValues)
+    } else {
+        None
+    }
+}
+
+fn packet_into_linear_bitmap(packet: Packet) -> Result<(BitVec, CompressionCode), TryFromPacketError> {
+    let Packet(Header(_, _, length, sub, reserved), payload) = packet;
+    if reserved != 0 {
+        return Err(TryFromPacketError::ExtraneousHeaderValues);
+    }
+    if payload.len() != length as usize {
+        return Err(TryFromPacketError::UnexpectedPayloadSize(length as usize, payload.len()));
+    }
+    let sub = match CompressionCode::from_primitive(sub) {
+        None => return Err(TryFromPacketError::InvalidCompressionCode(sub)),
+        Some(value) => value
+    };
+    let payload = match sub {
+        CompressionCode::None => payload,
+        CompressionCode::Gz => {
+            let mut decoder = GzDecoder::new(&*payload);
+            let mut decompressed = vec!();
+            match decoder.read_to_end(&mut decompressed) {
+                Err(err) => return Err(TryFromPacketError::DecompressionFailed(err)),
+                Ok(_) => {}
+            }
+            decompressed
+        }
+        CompressionCode::Bz => todo!(),
+        CompressionCode::Lz => todo!(),
+        CompressionCode::Zs => todo!(),
+    };
+
+    Ok((BitVec::load(&payload), sub))
 }

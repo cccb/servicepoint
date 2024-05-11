@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use servicepoint2::{BitVec, Connection, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
+use servicepoint2::{BitVec, CompressionCode, Connection, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
 use servicepoint2::Command::BitmapLinearAnd;
 
 #[derive(Parser, Debug)]
@@ -16,7 +16,7 @@ struct Cli {
 
 fn main() {
     env_logger::builder()
-        .filter_level(log::LevelFilter::Info)
+        .filter_level(log::LevelFilter::Debug)
         .init();
     let cli = Cli::parse();
 
@@ -35,7 +35,7 @@ fn main() {
         let pixel_data: Vec<u8> = enabled_pixels.clone().into();
         let bit_vec = BitVec::load(&*pixel_data);
 
-        connection.send(BitmapLinearAnd(0, bit_vec)).unwrap();
+        connection.send(BitmapLinearAnd(0, bit_vec, CompressionCode::Gz)).unwrap();
         thread::sleep(sleep_duration);
     }
 }

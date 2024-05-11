@@ -11,7 +11,7 @@ pub use crate::pixel_grid::PixelGrid;
 pub use crate::bit_vec::BitVec;
 pub use crate::packet::{Packet, Header, Payload};
 pub use crate::command::{Command, Size, Origin};
-pub use crate::command_codes::CommandCode;
+pub use crate::command_codes::{CommandCode, CompressionCode};
 pub use crate::byte_grid::ByteGrid;
 
 pub const TILE_SIZE: u16 = 8;
