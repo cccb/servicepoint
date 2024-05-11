@@ -2,7 +2,7 @@ use std::io::Read;
 use flate2::bufread::GzEncoder;
 use flate2::Compression;
 use flate2::read::GzDecoder;
-use crate::{BitVec, ByteGrid, Header, Packet, PixelGrid, TILE_SIZE};
+use crate::{BitVec, ByteGrid, Header, Packet, Payload, PixelGrid, TILE_SIZE};
 use crate::command_codes::{CommandCode, CompressionCode};
 
 /// An origin marks the top left position of the
@@ -97,7 +97,7 @@ pub enum TryFromPacketError {
     UnexpectedPayloadSize(usize, usize),
     ExtraneousHeaderValues,
     InvalidCompressionCode(u16),
-    DecompressionFailed(std::io::Error),
+    DecompressionFailed,
 }
 
 impl TryFrom<Packet> for Command {
@@ -186,21 +186,7 @@ impl TryFrom<Packet> for Command {
 }
 
 fn bitmap_linear_into_packet(command: CommandCode, offset: Offset, compression: CompressionCode, payload: Vec<u8>) -> Packet {
-    let payload = match compression {
-        CompressionCode::None => payload,
-        CompressionCode::Gz => {
-            let mut encoder = GzEncoder::new(&*payload, Compression::best());
-            let mut compressed = vec!();
-            match encoder.read_to_end(&mut compressed) {
-                Err(err) => panic!("could not compress payload: {}", err),
-                Ok(_) => compressed,
-            }
-        }
-        CompressionCode::Bz => todo!(),
-        CompressionCode::Lz => todo!(),
-        CompressionCode::Zs => todo!(),
-    };
-
+    let payload = into_compressed(compression, payload);
     let compression = CompressionCode::to_primitive(&compression);
     Packet(Header(command.to_primitive(), offset, payload.len() as u16, compression, 0), payload)
 }
@@ -247,21 +233,44 @@ fn packet_into_linear_bitmap(packet: Packet) -> Result<(BitVec, CompressionCode)
         None => return Err(TryFromPacketError::InvalidCompressionCode(sub)),
         Some(value) => value
     };
-    let payload = match sub {
-        CompressionCode::None => payload,
+    let payload = match into_decompressed(sub, payload) {
+        None => return Err(TryFromPacketError::DecompressionFailed),
+        Some(value) => value
+    };
+    Ok((BitVec::load(&payload), sub))
+}
+
+fn into_decompressed(kind: CompressionCode, payload: Payload) -> Option<Payload> {
+    match kind {
+        CompressionCode::None => Some(payload),
         CompressionCode::Gz => {
             let mut decoder = GzDecoder::new(&*payload);
             let mut decompressed = vec!();
             match decoder.read_to_end(&mut decompressed) {
-                Err(err) => return Err(TryFromPacketError::DecompressionFailed(err)),
-                Ok(_) => {}
+                Err(_) => None,
+                Ok(_) => Some(decompressed)
             }
-            decompressed
         }
         CompressionCode::Bz => todo!(),
         CompressionCode::Lz => todo!(),
         CompressionCode::Zs => todo!(),
-    };
-
-    Ok((BitVec::load(&payload), sub))
+    }
 }
+
+fn into_compressed(kind: CompressionCode, payload: Payload) -> Payload {
+    match kind {
+        CompressionCode::None => payload,
+        CompressionCode::Gz => {
+            let mut encoder = GzEncoder::new(&*payload, Compression::best());
+            let mut compressed = vec!();
+            match encoder.read_to_end(&mut compressed) {
+                Err(err) => panic!("could not compress payload: {}", err),
+                Ok(_) => compressed,
+            }
+        }
+        CompressionCode::Bz => todo!(),
+        CompressionCode::Lz => todo!(),
+        CompressionCode::Zs => todo!(),
+    }
+}
+

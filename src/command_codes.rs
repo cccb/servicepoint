@@ -2,7 +2,7 @@ use num::{FromPrimitive, ToPrimitive};
 use num_derive::{FromPrimitive, ToPrimitive};
 
 #[repr(u16)]
-#[derive(Debug, FromPrimitive, ToPrimitive)]
+#[derive(Debug, FromPrimitive, ToPrimitive, Copy, Clone)]
 pub enum CommandCode {
     Clear = 0x0002,
     Cp437Data = 0x0003,
@@ -30,7 +30,7 @@ impl CommandCode {
 }
 
 #[repr(u16)]
-#[derive(Debug, FromPrimitive, ToPrimitive)]
+#[derive(Debug, FromPrimitive, ToPrimitive, Clone, Copy)]
 pub enum CompressionCode {
     None = 0x0,
     Gz = 0x677a,
