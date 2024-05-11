@@ -14,44 +14,37 @@ struct Cli {
 }
 
 fn main() {
+    env_logger::builder()
+        .filter_level(log::LevelFilter::Info)
+        .init();
     let cli = Cli::parse();
-    println!("starting with args: {:?}", &cli);
 
     let connection = Connection::open(&cli.destination).unwrap();
+    let mut field = make_random_field(cli.probability);
 
-    let mut field = PixelGrid::max_sized();
+    loop {
+        connection.send(BitmapLinearWin(Origin::top_left(), field.clone())).expect("could not send");
+        thread::sleep(Duration::from_millis(14));
+        field = iteration(field);
+    }
+}
 
-    let mut rng = rand::thread_rng();
-    let d = distributions::Bernoulli::new(cli.probability).unwrap();
+fn iteration(field: PixelGrid) -> PixelGrid {
+    let mut next = field.clone();
     for x in 0..field.width {
         for y in 0..field.height {
-            field.set(x, y, rng.sample(d));
+            let old_state = field.get(x, y);
+            let neighbors = count_neighbors(&field, x as i32, y as i32);
+            let new_state = match (old_state, neighbors) {
+                (true, 2) => true,
+                (true, 3) => true,
+                (false, 3) => true,
+                _ => false
+            };
+            next.set(x, y, new_state);
         }
     }
-
-    let origin = Origin(0, 0);
-    loop {
-        connection.send(BitmapLinearWin(origin, field.clone())).expect("could not send");
-        thread::sleep(Duration::from_millis(14));
-
-        let mut next = field.clone();
-
-        for x in 0..field.width {
-            for y in 0..field.height {
-                let old_state = field.get(x, y);
-                let neighbors = count_neighbors(&field, x as i32, y as i32);
-                let new_state = match (old_state, neighbors) {
-                    (true, 2) => true,
-                    (true, 3) => true,
-                    (false, 3) => true,
-                    _ => false
-                };
-                next.set(x, y, new_state);
-            }
-        }
-
-        field = next;
-    }
+    next
 }
 
 fn count_neighbors(field: &PixelGrid, x: i32, y: i32) -> i32 {
@@ -75,4 +68,16 @@ fn count_neighbors(field: &PixelGrid, x: i32, y: i32) -> i32 {
     }
 
     return count;
+}
+
+fn make_random_field(probability: f64) -> PixelGrid {
+    let mut field = PixelGrid::max_sized();
+    let mut rng = rand::thread_rng();
+    let d = distributions::Bernoulli::new(probability).unwrap();
+    for x in 0..field.width {
+        for y in 0..field.height {
+            field.set(x, y, rng.sample(d));
+        }
+    }
+    return field;
 }

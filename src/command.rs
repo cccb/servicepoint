@@ -1,13 +1,16 @@
-use crate::{BitVec, ByteGrid, CommandCode, Header, Packet, PixelGrid, TILE_SIZE};
-
-/// A window
-#[derive(Debug, Copy, Clone)]
-pub struct Window(pub Origin, pub Size);
+use crate::{BitVec, ByteGrid, Header, Packet, PixelGrid, TILE_SIZE};
+use crate::command_codes::CommandCode;
 
 /// An origin marks the top left position of the
 /// data sent to the display.
 #[derive(Debug, Clone, Copy)]
 pub struct Origin(pub u16, pub u16);
+
+impl Origin {
+    pub fn top_left() -> Self {
+        Self(0, 0)
+    }
+}
 
 /// Size defines the width and height of a window
 #[derive(Debug, Clone, Copy)]
@@ -38,8 +41,9 @@ fn offset_and_payload(command: CommandCode, offset: Offset, payload: Vec<u8>) ->
     Packet(Header(command.to_primitive(), offset, payload.len() as u16, 0, 0), payload)
 }
 
-fn window_and_payload(command: CommandCode, window: Window, payload: Vec<u8>) -> Packet {
-    let Window(Origin(x, y), Size(w, h)) = window;
+fn origin_size_payload(command: CommandCode, origin: Origin, size: Size, payload: Vec<u8>) -> Packet {
+    let Origin(x, y) = origin;
+    let Size(w, h) = size;
     Packet(Header(command.to_primitive(), x, y, w, h), payload.into())
 }
 
@@ -57,9 +61,10 @@ impl Into<Packet> for Command {
             Command::BitmapLegacy => command_code_only(CommandCode::BitmapLegacy),
 
             Command::CharBrightness(origin, grid) => {
-                window_and_payload(CommandCode::CharBrightness,
-                                   Window(origin, Size(grid.width as u16, grid.height as u16)),
-                                   grid.into())
+                origin_size_payload(CommandCode::CharBrightness,
+                                    origin,
+                                    Size(grid.width as u16, grid.height as u16),
+                                    grid.into())
             }
             Command::Brightness(brightness) => {
                 Packet(Header(CommandCode::Brightness.to_primitive(), 0x00000, 0x0000, 0x0000, 0x0000), vec!(brightness))
@@ -89,9 +94,10 @@ impl Into<Packet> for Command {
                 offset_and_payload(CommandCode::BitmapLinearXor, offset, bits.into())
             }
             Command::Cp437Data(origin, grid) => {
-                window_and_payload(CommandCode::Cp437Data,
-                                   Window(origin, Size(grid.width as u16, grid.height as u16)),
-                                   grid.into())
+                origin_size_payload(CommandCode::Cp437Data,
+                                    origin,
+                                    Size(grid.width as u16, grid.height as u16),
+                                    grid.into())
             }
         }
     }

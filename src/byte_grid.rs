@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ByteGrid {
     pub width: usize,
     pub height: usize,

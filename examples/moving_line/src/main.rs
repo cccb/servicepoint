@@ -11,11 +11,12 @@ struct Cli {
 }
 
 fn main() {
-    let cli = Cli::parse();
-    println!("starting with args: {:?}", &cli);
-    let connection = Connection::open(cli.destination).unwrap();
+    env_logger::builder()
+        .filter_level(log::LevelFilter::Debug)
+        .init();
 
-    let origin = Origin(0, 0);
+    let connection = Connection::open(Cli::parse().destination).unwrap();
+
     let mut pixels = PixelGrid::max_sized();
     for x_offset in 0..usize::MAX {
         pixels.fill(false);
@@ -23,7 +24,7 @@ fn main() {
         for y in 0..PIXEL_HEIGHT as usize {
             pixels.set((y + x_offset) % PIXEL_WIDTH as usize, y, true);
         }
-        connection.send(BitmapLinearWin(origin, pixels.clone())).unwrap();
+        connection.send(BitmapLinearWin(Origin::top_left(), pixels.clone())).unwrap();
         thread::sleep(Duration::from_millis(14));
     }
 }

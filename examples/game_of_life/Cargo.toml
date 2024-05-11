@@ -8,3 +8,4 @@ servicepoint2 = { path = "../.." }
 rand = "0.8.5"
 clap = { version = "4.5.4", features = ["derive"] }
 log = "0.4.21"
+env_logger = "0.11.3"
