@@ -76,6 +76,10 @@ impl PixelGrid {
     pub fn fill(&mut self, value: bool) {
         self.bit_vec.fill(value);
     }
+
+    pub fn data_ref(&self) -> &[u8] {
+        self.bit_vec.data_ref()
+    }
 }
 
 impl Into<Vec<u8>> for PixelGrid {
@@ -147,5 +151,12 @@ pub mod c_api
     #[no_mangle]
     pub unsafe extern "C" fn sp2_pixel_grid_height(this: *const PixelGrid) -> usize {
         (*this).height
+    }
+
+    /// Gets a reference to the data of the `PixelGrid` instance.
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_pixel_grid_data_ref(this: *const PixelGrid) -> *const u8 {
+        // TODO: also return length
+        (*this).data_ref().as_ptr_range().start
     }
 }

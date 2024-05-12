@@ -80,6 +80,18 @@ public sealed class PixelGrid : Sp2NativeInstance<BindGen.PixelGrid>
         }
     }
 
+    public Span<byte> Data
+    {
+        get
+        {
+            unsafe
+            {
+                var ptr = NativeMethods.sp2_pixel_grid_data_ref(Instance);
+                return new Span<byte>(ptr, Width * Height / 8);
+            }
+        }
+    }
+
     private unsafe PixelGrid(BindGen.PixelGrid* instance) : base(instance)
     {
     }

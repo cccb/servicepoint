@@ -192,6 +192,10 @@ namespace ServicePoint2.BindGen
         [DllImport(__DllName, EntryPoint = "sp2_pixel_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern nuint sp2_pixel_grid_height(PixelGrid* @this);
 
+        /// <summary>Gets a reference to the data of the `PixelGrid` instance.</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_pixel_grid_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern byte* sp2_pixel_grid_data_ref(PixelGrid* @this);
+
 
     }
 

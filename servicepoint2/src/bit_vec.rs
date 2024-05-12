@@ -75,6 +75,10 @@ impl BitVec {
         self.data.len() * 8
     }
 
+    pub fn data_ref(&self) -> &[u8] {
+        &*self.data
+    }
+
     fn get_indexes(&self, index: usize) -> (usize, u8) {
         let byte_index = index / 8;
         let bit_in_byte_index = 7 - index % 8;
@@ -160,7 +164,7 @@ pub mod c_api {
 
     /// Gets the length of the `BitVec` in bits.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_bit_vec_len(this: *const BitVec) -> usize{
+    pub unsafe extern "C" fn sp2_bit_vec_len(this: *const BitVec) -> usize {
         (*this).len()
     }
 }

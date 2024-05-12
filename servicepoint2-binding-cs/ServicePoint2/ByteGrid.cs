@@ -1,3 +1,4 @@
+using System.Text;
 using ServicePoint2.BindGen;
 
 namespace ServicePoint2;
@@ -47,6 +48,36 @@ public sealed class ByteGrid : Sp2NativeInstance<BindGen.ByteGrid>
             {
                 NativeMethods.sp2_byte_grid_set(Instance, (nuint)x, (nuint)y, value);
             }
+        }
+    }
+
+    public string this[int y]
+    {
+        set
+        {
+            var width = Width;
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value.Length, width);
+
+            var x = 0;
+            for (; x < value.Length; x++)
+                this[x, y] = (byte)value[x];
+
+            for (; x < width; x++)
+                this[x, y] = 0;
+        }
+
+        get
+        {
+            var sb = new StringBuilder();
+            for (int x = 0; x < Width; x++)
+            {
+                var val = this[x, y];
+                if (val == 0)
+                    break;
+                sb.Append((char)val);
+            }
+
+            return sb.ToString();
         }
     }
 
