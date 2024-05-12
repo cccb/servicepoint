@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../../servicepoint2/sp2-bindings.h"
+#include "sp2/sp2-bindings.h"
 
 int main(void) {
     sp2_Connection *connection = sp2_connection_open("localhost:2342");
