@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-rm -r include || true
-
-# if the script crashes here, run `cargo install cbindgen`
-cbindgen --config cbindgen.toml --clean --output include/servicepoint2.h
