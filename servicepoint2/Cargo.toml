@@ -9,6 +9,9 @@ homepage = "https://docs.rs/crate/servicepoint2"
 repository = "https://github.com/kaesaecracker/servicepoint"
 readme = "../README.md"
 
+[lib]
+crate-type = ["staticlib", "rlib"]
+
 [dependencies]
 log = "0.4"
 flate2 = { version = "1.0", optional = true }
@@ -23,6 +26,7 @@ compression-bz = ["dep:bzip2", "compression"]
 compression-lz = ["dep:lz4", "compression"]
 compression-zs = ["dep:zstd", "compression"]
 compression = []
+c-api = []
 
 [build-dependencies]
 cbindgen = "0.26.0"

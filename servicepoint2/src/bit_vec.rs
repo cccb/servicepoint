@@ -106,53 +106,61 @@ impl std::fmt::Debug for BitVec {
     }
 }
 
-#[allow(unused)]
+#[cfg(feature = "c-api")]
 pub mod c_api {
     use crate::BitVec;
 
     /// Creates a new `BitVec` instance.
     /// The returned instance has to be freed with `bit_vec_dealloc`.
-    pub unsafe extern "C" fn bit_vec_new(size: usize) -> *mut BitVec {
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_new(size: usize) -> *mut BitVec {
         Box::into_raw(Box::new(BitVec::new(size)))
     }
 
     /// Loads a `BitVec` from the provided data.
     /// The returned instance has to be freed with `bit_vec_dealloc`.
-    pub unsafe extern "C" fn byte_grid_load(data: *const u8, data_length: usize) -> *mut BitVec {
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_load(data: *const u8, data_length: usize) -> *mut BitVec {
         let data = std::slice::from_raw_parts(data, data_length);
         Box::into_raw(Box::new(BitVec::from(data)))
     }
 
     /// Clones a `BitVec`.
     /// The returned instance has to be freed with `bit_vec_dealloc`.
-    pub unsafe extern "C" fn byte_grid_clone(this: *const BitVec) -> *mut BitVec {
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_clone(this: *const BitVec) -> *mut BitVec {
         Box::into_raw(Box::new((*this).clone()))
     }
 
     /// Deallocates a `BitVec`.
     ///
     /// Note: do not call this if the grid has been consumed in another way, e.g. to create a command.
-    pub unsafe extern "C" fn byte_grid_dealloc(this: *mut BitVec) {
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_dealloc(this: *mut BitVec) {
         _ = Box::from_raw(this);
     }
 
     /// Gets the value of a bit from the `BitVec`.
-    pub unsafe extern "C" fn byte_grid_get(this: *const BitVec, index: usize) -> bool {
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_get(this: *const BitVec, index: usize) -> bool {
         (*this).get(index)
     }
 
     /// Sets the value of a bit in the `BitVec`.
-    pub unsafe extern "C" fn byte_grid_set(this: *mut BitVec, index: usize, value: bool) -> bool {
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_set(this: *mut BitVec, index: usize, value: bool) -> bool {
         (*this).set(index, value)
     }
 
     /// Sets the value of all bits in the `BitVec`.
-    pub unsafe extern "C" fn byte_grid_fill(this: *mut BitVec, value: bool) {
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_fill(this: *mut BitVec, value: bool) {
         (*this).fill(value)
     }
 
     /// Gets the length of the `BitVec` in bits.
-    pub unsafe extern "C" fn byte_grid_len(this: *const BitVec) -> usize{
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_len(this: *const BitVec) -> usize{
         (*this).len()
     }
 }

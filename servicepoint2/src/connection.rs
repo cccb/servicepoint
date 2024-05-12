@@ -65,6 +65,7 @@ impl Connection {
     }
 }
 
+#[cfg(feature = "c-api")]
 pub mod c_api
 {
     use std::ffi::{c_char, CStr};
@@ -79,7 +80,7 @@ pub mod c_api
     ///
     /// Panics: bad string encoding
     #[no_mangle]
-    pub unsafe extern "C" fn connection_open(host: *const c_char) -> *mut Connection {
+    pub unsafe extern "C" fn sp2_connection_open(host: *const c_char) -> *mut Connection {
         let host = CStr::from_ptr(host).to_str().expect("Bad encoding");
         let connection = match Connection::open(host) {
             Err(_) => return null_mut(),
@@ -92,14 +93,14 @@ pub mod c_api
 
     /// Sends the command instance. The instance is consumed / destroyed and cannot be used after this call.
     #[no_mangle]
-    pub unsafe extern "C" fn connection_send(connection: *const Connection, command_ptr: *mut Command) -> bool{
+    pub unsafe extern "C" fn sp2_connection_send(connection: *const Connection, command_ptr: *mut Command) -> bool{
         let command = Box::from_raw(command_ptr);
         (*connection).send(*command).is_ok()
     }
 
     /// Closes and deallocates a connection instance
     #[no_mangle]
-    pub unsafe extern "C" fn connection_dealloc(ptr: *mut Connection) {
+    pub unsafe extern "C" fn sp2_connection_dealloc(ptr: *mut Connection) {
         _ = Box::from_raw(ptr);
     }
 }

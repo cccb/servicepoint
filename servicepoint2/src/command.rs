@@ -316,18 +316,18 @@ fn packet_into_linear_bitmap(
     Ok((BitVec::from(&*payload), sub))
 }
 
-#[allow(unused)]
+#[cfg(feature = "c-api")]
 pub mod c_api
 {
     use std::ptr::null_mut;
 
     use crate::{BitVec, Brightness, ByteGrid, Command, CompressionCode, Offset, Origin, Packet, PixelGrid};
 
-    /// Tries to load a command from the passed array with the specified length.
+    /// Tries to load a `Command` from the passed array with the specified length.
     ///
     /// returns: NULL in case of an error, pointer to the allocated command otherwise
     #[no_mangle]
-    pub unsafe extern "C" fn command_try_load(data: *const u8, length: usize) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_try_load(data: *const u8, length: usize) -> *mut Command {
         let data = std::slice::from_raw_parts(data, length);
         let packet = match Packet::try_from(data) {
             Err(_) => return null_mut(),
@@ -342,38 +342,38 @@ pub mod c_api
 
     /// Clones a `Command` instance
     #[no_mangle]
-    pub unsafe extern "C" fn command_clone(original: *const Command) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_clone(original: *const Command) -> *mut Command {
         Box::into_raw(Box::new((*original).clone()))
     }
 
     /// Allocates a new `Command::Clear` instance
     #[no_mangle]
-    pub unsafe extern "C" fn command_clear() -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_clear() -> *mut Command {
         Box::into_raw(Box::new(Command::Clear))
     }
 
     /// Allocates a new `Command::HardReset` instance
     #[no_mangle]
-    pub unsafe extern "C" fn command_hard_reset() -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_hard_reset() -> *mut Command {
         Box::into_raw(Box::new(Command::HardReset))
     }
 
     /// Allocates a new `Command::FadeOut` instance
     #[no_mangle]
-    pub unsafe extern "C" fn command_fade_out() -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_fade_out() -> *mut Command {
         Box::into_raw(Box::new(Command::FadeOut))
     }
 
     /// Allocates a new `Command::Brightness` instance
     #[no_mangle]
-    pub unsafe extern "C" fn command_brightness(brightness: Brightness) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_brightness(brightness: Brightness) -> *mut Command {
         Box::into_raw(Box::new(Command::Brightness(brightness)))
     }
 
     /// Allocates a new `Command::CharBrightness` instance.
     /// The passed `ByteGrid` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn command_char_brightness(x: u16, y: u16, byte_grid: *mut ByteGrid) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_char_brightness(x: u16, y: u16, byte_grid: *mut ByteGrid) -> *mut Command {
         let byte_grid = *Box::from_raw(byte_grid);
         Box::into_raw(Box::new(Command::CharBrightness(Origin(x, y), byte_grid)))
     }
@@ -381,7 +381,7 @@ pub mod c_api
     /// Allocates a new `Command::BitmapLinear` instance.
     /// The passed `BitVec` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn command_bitmap_linear(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
         let bit_vec = *Box::from_raw(bit_vec);
         Box::into_raw(Box::new(Command::BitmapLinear(offset, bit_vec, compression)))
     }
@@ -389,7 +389,7 @@ pub mod c_api
     /// Allocates a new `Command::BitmapLinearAnd` instance.
     /// The passed `BitVec` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn command_bitmap_linear_and(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear_and(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
         let bit_vec = *Box::from_raw(bit_vec);
         Box::into_raw(Box::new(Command::BitmapLinearAnd(offset, bit_vec, compression)))
     }
@@ -397,7 +397,7 @@ pub mod c_api
     /// Allocates a new `Command::BitmapLinearOr` instance.
     /// The passed `BitVec` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn command_bitmap_linear_or(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear_or(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
         let bit_vec = *Box::from_raw(bit_vec);
         Box::into_raw(Box::new(Command::BitmapLinearOr(offset, bit_vec, compression)))
     }
@@ -405,7 +405,7 @@ pub mod c_api
     /// Allocates a new `Command::BitmapLinearXor` instance.
     /// The passed `BitVec` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn command_bitmap_linear_xor(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear_xor(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
         let bit_vec = *Box::from_raw(bit_vec);
         Box::into_raw(Box::new(Command::BitmapLinearXor(offset, bit_vec, compression)))
     }
@@ -413,7 +413,7 @@ pub mod c_api
     /// Allocates a new `Command::Cp437Data` instance.
     /// The passed `ByteGrid` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn command_cp437_data(x: u16, y: u16, byte_grid: *mut ByteGrid) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_cp437_data(x: u16, y: u16, byte_grid: *mut ByteGrid) -> *mut Command {
         let byte_grid = *Box::from_raw(byte_grid);
         Box::into_raw(Box::new(Command::Cp437Data(Origin(x, y), byte_grid)))
     }
@@ -421,15 +421,15 @@ pub mod c_api
     /// Allocates a new `Command::BitmapLinearWin` instance.
     /// The passed `PixelGrid` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn command_bitmap_linear_win(x: u16, y: u16, byte_grid: *mut PixelGrid) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear_win(x: u16, y: u16, byte_grid: *mut PixelGrid) -> *mut Command {
         let byte_grid = *Box::from_raw(byte_grid);
         Box::into_raw(Box::new(Command::BitmapLinearWin(Origin(x, y), byte_grid)))
     }
 
-    /// Deallocates a command. Note that connection_send does this implicitly, so you only need
+    /// Deallocates a `Command`. Note that connection_send does this implicitly, so you only need
     /// to do this if you use the library for parsing commands.
     #[no_mangle]
-    pub unsafe extern "C" fn command_dealloc(ptr: *mut Command) {
+    pub unsafe extern "C" fn sp2_command_dealloc(ptr: *mut Command) {
         _ = Box::from_raw(ptr);
     }
 }
