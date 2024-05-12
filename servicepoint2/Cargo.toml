@@ -10,7 +10,7 @@ repository = "https://github.com/kaesaecracker/servicepoint"
 readme = "../README.md"
 
 [lib]
-crate-type = ["staticlib", "rlib"]
+crate-type = ["staticlib", "rlib", "cdylib"]
 
 [dependencies]
 log = "0.4"

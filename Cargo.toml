@@ -7,4 +7,5 @@ members = [
     "examples/moving_line",
     "examples/wiping_clear",
     "examples/random_brightness",
+    "servicepoint2-binding-cs",
 ]

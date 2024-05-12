@@ -61,7 +61,7 @@ impl Into<Vec<u8>> for ByteGrid {
 #[cfg(feature = "c-api")]
 pub mod c_api
 {
-    use crate::{ByteGrid, PixelGrid};
+    use crate::ByteGrid;
 
     /// Creates a new `ByteGrid` instance.
     /// The returned instance has to be freed with `byte_grid_dealloc`.
@@ -113,13 +113,13 @@ pub mod c_api
 
     /// Gets the width in pixels of the `ByteGrid` instance.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_width(this: *const PixelGrid) -> usize {
+    pub unsafe extern "C" fn sp2_byte_grid_width(this: *const ByteGrid) -> usize {
         (*this).width
     }
 
     /// Gets the height in pixels of the `ByteGrid` instance.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_height(this: *const PixelGrid) -> usize {
+    pub unsafe extern "C" fn sp2_byte_grid_height(this: *const ByteGrid) -> usize {
         (*this).height
     }
 }
