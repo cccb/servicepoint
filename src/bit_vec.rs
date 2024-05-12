@@ -91,7 +91,9 @@ impl Into<Vec<u8>> for BitVec {
 
 impl From<&[u8]> for BitVec {
     fn from(value: &[u8]) -> Self {
-        Self { data: Vec::from(value) }
+        Self {
+            data: Vec::from(value),
+        }
     }
 }
 

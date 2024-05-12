@@ -35,7 +35,7 @@ impl TryFrom<u16> for CompressionCode {
             value if value == Lz as u16 => Ok(Lz),
             #[cfg(feature = "compression-zs")]
             value if value == Zs as u16 => Ok(Zs),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }

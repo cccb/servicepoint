@@ -1,11 +1,11 @@
-#[cfg(feature = "compression")]
-use std::io::{Read, Write};
 #[cfg(feature = "compression-bz")]
 use bzip2::read::{BzDecoder, BzEncoder};
 #[cfg(feature = "compression-gz")]
 use flate2::read::{GzDecoder, GzEncoder};
 #[cfg(feature = "compression-lz")]
 use lz4::{Decoder as Lz4Decoder, EncoderBuilder as Lz4EncoderBuilder};
+#[cfg(feature = "compression")]
+use std::io::{Read, Write};
 #[cfg(feature = "compression-zs")]
 use zstd::{Decoder as ZstdDecoder, Encoder as ZstdEncoder};
 

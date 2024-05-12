@@ -11,7 +11,6 @@ pub struct PixelGrid {
 }
 
 impl PixelGrid {
-
     /// Creates a new pixel grid with the specified dimensions.
     ///
     /// # Arguments

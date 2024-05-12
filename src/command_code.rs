@@ -43,7 +43,7 @@ impl TryFrom<u16> for CommandCode {
             value if value == BitmapLinearAnd as u16 => Ok(BitmapLinearAnd),
             value if value == BitmapLinearOr as u16 => Ok(BitmapLinearOr),
             value if value == BitmapLinearXor as u16 => Ok(BitmapLinearXor),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }
