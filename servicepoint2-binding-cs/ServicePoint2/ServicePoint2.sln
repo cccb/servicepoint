@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePoint2", "ServicePoint2.csproj", "{70EFFA3F-012A-4518-9627-466BEAE4252E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lang-cs", "..\..\examples\lang-cs\lang-cs.csproj", "{DA3B8B6E-993A-47DA-844B-F92AF520FF59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lang-cs", "..\..\examples\lang_cs\lang_cs.csproj", "{DA3B8B6E-993A-47DA-844B-F92AF520FF59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
