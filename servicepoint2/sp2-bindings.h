@@ -183,7 +183,7 @@ uintptr_t sp2_byte_grid_width(const struct sp2_PixelGrid *this_);
 uintptr_t sp2_byte_grid_height(const struct sp2_PixelGrid *this_);
 
 /**
- * Tries to load a command from the passed array with the specified length.
+ * Tries to load a `Command` from the passed array with the specified length.
  *
  * returns: NULL in case of an error, pointer to the allocated command otherwise
  */
@@ -269,7 +269,7 @@ struct sp2_Command *sp2_command_bitmap_linear_win(uint16_t x,
                                                   struct sp2_PixelGrid *byte_grid);
 
 /**
- * Deallocates a command. Note that connection_send does this implicitly, so you only need
+ * Deallocates a `Command`. Note that connection_send does this implicitly, so you only need
  * to do this if you use the library for parsing commands.
  */
 void sp2_command_dealloc(struct sp2_Command *ptr);
