@@ -1,5 +1,5 @@
+#[cfg(feature = "compression")]
 use std::io::{Read, Write};
-
 #[cfg(feature = "compression-bz")]
 use bzip2::read::{BzDecoder, BzEncoder};
 #[cfg(feature = "compression-gz")]
@@ -16,7 +16,7 @@ pub(crate) fn into_decompressed(
     payload: Payload,
 ) -> Option<Payload> {
     match kind {
-        CompressionCode::None => Some(payload),
+        CompressionCode::Uncompressed => Some(payload),
         #[cfg(feature = "compression-gz")]
         CompressionCode::Gz => {
             let mut decoder = GzDecoder::new(&*payload);
@@ -67,7 +67,7 @@ pub(crate) fn into_compressed(
     payload: Payload,
 ) -> Payload {
     match kind {
-        CompressionCode::None => payload,
+        CompressionCode::Uncompressed => payload,
         #[cfg(feature = "compression-gz")]
         CompressionCode::Gz => {
             let mut encoder =

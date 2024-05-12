@@ -1,19 +1,21 @@
 pub use crate::bit_vec::BitVec;
 pub use crate::byte_grid::ByteGrid;
 pub use crate::command::{Command, Origin, Size};
-pub use crate::command_codes::{CommandCode, CompressionCode};
 pub use crate::connection::Connection;
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
+pub use crate::command_code::CommandCode;
+pub use crate::compression_code::CompressionCode;
 
 mod bit_vec;
 mod byte_grid;
 mod command;
-mod command_codes;
+mod command_code;
 mod compression;
 mod connection;
 mod packet;
 mod pixel_grid;
+mod compression_code;
 
 /// size of a single tile in one dimension
 pub const TILE_SIZE: u16 = 8;

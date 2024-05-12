@@ -1,13 +1,17 @@
 # servicepoint
 
 [![crates.io](https://img.shields.io/crates/v/servicepoint2.svg)](https://crates.io/crates/servicepoint2)
-![Crates.io Total Downloads](https://img.shields.io/crates/d/servicepoint2)
+[![Crates.io Total Downloads](https://img.shields.io/crates/d/servicepoint2)](https://crates.io/crates/servicepoint2)
 [![docs.rs](https://img.shields.io/docsrs/servicepoint2)](https://docs.rs/servicepoint2/latest/servicepoint2/)
 [![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint2)](./LICENSE)
 
 In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. It is called  "Service Point
 Display" or "Airport Display".
 This repository contains a library for parsing, encoding and sending packets to this display via UDP.
+
+This library is still in early development.
+You can absolutely use it and it works, but expect minor breaking changes with every version bump.
+Please specify the full version including patch in your Cargo.toml until 1.0 is released.
 
 ### Installation
 

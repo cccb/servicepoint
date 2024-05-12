@@ -9,7 +9,7 @@ pub type Payload = Vec<u8>;
 #[derive(Debug)]
 pub struct Packet(pub Header, pub Payload);
 
-impl Into<Vec<u8>> for Packet {
+impl Into<Payload> for Packet {
     fn into(self) -> Vec<u8> {
         let Packet(Header(mode, a, b, c, d), payload) = self;
 
@@ -33,7 +33,7 @@ fn u16_from_be_slice(slice: &[u8]) -> u16 {
     u16::from_be_bytes(bytes)
 }
 
-impl From<Vec<u8>> for Packet {
+impl From<Payload> for Packet {
     fn from(value: Vec<u8>) -> Self {
         let mode = u16_from_be_slice(&value[0..=1]);
         let a = u16_from_be_slice(&value[2..=3]);

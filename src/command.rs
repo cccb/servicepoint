@@ -1,5 +1,4 @@
-use crate::{BitVec, ByteGrid, Header, Packet, PixelGrid, TILE_SIZE};
-use crate::command_codes::{CommandCode, CompressionCode};
+use crate::{BitVec, ByteGrid, CommandCode, CompressionCode, Header, Packet, PixelGrid, TILE_SIZE};
 use crate::compression::{into_compressed, into_decompressed};
 
 /// An origin marks the top left position of a window sent to the display.
@@ -20,6 +19,7 @@ type Offset = u16;
 
 type Brightness = u8;
 
+/// A command to send to the display.
 #[derive(Debug)]
 pub enum Command {
     /// Set all pixels to the off state
@@ -69,7 +69,7 @@ impl Into<Packet> for Command {
             ),
             Command::Brightness(brightness) => Packet(
                 Header(
-                    CommandCode::Brightness.to_primitive(),
+                    CommandCode::Brightness.into(),
                     0x00000,
                     0x0000,
                     0x0000,
@@ -82,7 +82,7 @@ impl Into<Packet> for Command {
                 debug_assert_eq!(pixels.width % 8, 0);
                 Packet(
                     Header(
-                        CommandCode::BitmapLinearWin.to_primitive(),
+                        CommandCode::BitmapLinearWin.into(),
                         pixel_x / TILE_SIZE,
                         pixel_y,
                         pixels.width as u16 / TILE_SIZE,
@@ -154,11 +154,11 @@ impl TryFrom<Packet> for Command {
 
     fn try_from(value: Packet) -> Result<Self, Self::Error> {
         let Packet(Header(command_u16, a, b, c, d), _) = value;
-        let command_code = match CommandCode::from_primitive(command_u16) {
-            None => {
+        let command_code = match CommandCode::try_from(command_u16) {
+            Err(_) => {
                 return Err(TryFromPacketError::InvalidCommand(command_u16));
             }
-            Some(value) => value,
+            Ok(value) => value,
         };
 
         match command_code {
@@ -242,13 +242,12 @@ fn bitmap_linear_into_packet(
     payload: Vec<u8>,
 ) -> Packet {
     let payload = into_compressed(compression, payload);
-    let compression = CompressionCode::to_primitive(&compression);
     Packet(
         Header(
-            command.to_primitive(),
+            command.into(),
             offset,
             payload.len() as u16,
-            compression,
+            compression.into(),
             0,
         ),
         payload,
@@ -263,12 +262,12 @@ fn origin_size_payload(
 ) -> Packet {
     let Origin(x, y) = origin;
     let Size(w, h) = size;
-    Packet(Header(command.to_primitive(), x, y, w, h), payload.into())
+    Packet(Header(command.into(), x, y, w, h), payload.into())
 }
 
 fn command_code_only(code: CommandCode) -> Packet {
     Packet(
-        Header(code.to_primitive(), 0x0000, 0x0000, 0x0000, 0x0000),
+        Header(code.into(), 0x0000, 0x0000, 0x0000, 0x0000),
         vec![],
     )
 }
@@ -306,9 +305,9 @@ fn packet_into_linear_bitmap(
             payload.len(),
         ));
     }
-    let sub = match CompressionCode::from_primitive(sub) {
-        None => return Err(TryFromPacketError::InvalidCompressionCode(sub)),
-        Some(value) => value,
+    let sub = match CompressionCode::try_from(sub) {
+        Err(_) => return Err(TryFromPacketError::InvalidCompressionCode(sub)),
+        Ok(value) => value,
     };
     let payload = match into_decompressed(sub, payload) {
         None => return Err(TryFromPacketError::DecompressionFailed),
