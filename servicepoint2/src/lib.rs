@@ -1,6 +1,6 @@
 pub use crate::bit_vec::BitVec;
 pub use crate::byte_grid::ByteGrid;
-pub use crate::command::{Command, Origin, Size};
+pub use crate::command::{Brightness, Command, Offset, Origin, Size};
 pub use crate::command_code::CommandCode;
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;

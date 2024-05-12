@@ -83,3 +83,60 @@ impl Into<Vec<u8>> for PixelGrid {
         self.bit_vec.into()
     }
 }
+
+#[allow(unused)]
+pub mod c_api
+{
+    use crate::PixelGrid;
+
+    /// Creates a new `PixelGrid` instance.
+    /// The returned instance has to be freed with `pixel_grid_dealloc`.
+    pub unsafe extern "C" fn pixel_grid_new(width: usize, height: usize) -> *mut PixelGrid {
+        Box::into_raw(Box::new(PixelGrid::new(width, height)))
+    }
+
+    /// Loads a `PixelGrid` with the specified dimensions from the provided data.
+    /// The returned instance has to be freed with `pixel_grid_dealloc`.
+    pub unsafe extern "C" fn pixel_grid_load(width: usize, height: usize, data: *const u8, data_length: usize) -> *mut PixelGrid {
+        let data = std::slice::from_raw_parts(data, data_length);
+        Box::into_raw(Box::new(PixelGrid::load(width, height, data)))
+    }
+
+    /// Clones a `PixelGrid`.
+    /// The returned instance has to be freed with `pixel_grid_dealloc`.
+    pub unsafe extern "C" fn pixel_grid_clone(this: *const PixelGrid) -> *mut PixelGrid {
+        Box::into_raw(Box::new((*this).clone()))
+    }
+
+    /// Deallocates a `PixelGrid`.
+    ///
+    /// Note: do not call this if the grid has been consumed in another way, e.g. to create a command.
+    pub unsafe extern "C" fn pixel_grid_dealloc(this: *mut PixelGrid) {
+        _ = Box::from_raw(this);
+    }
+
+    /// Get the current value at the specified position
+    pub unsafe extern "C" fn pixel_grid_get(this: *const PixelGrid, x: usize, y: usize) -> bool {
+        (*this).get(x, y)
+    }
+
+    /// Sets the current value at the specified position
+    pub unsafe extern "C" fn pixel_grid_set(this: *mut PixelGrid, x: usize, y: usize, value: bool) {
+        (*this).set(x, y, value);
+    }
+
+    /// Fills the whole `PixelGrid` with the specified value
+    pub unsafe extern "C" fn pixel_grid_fill(this: *mut PixelGrid, value: bool) {
+        (*this).fill(value);
+    }
+
+    /// Gets the width in pixels of the `PixelGrid` instance.
+    pub unsafe extern "C" fn pixel_grid_width(this: *const PixelGrid) -> usize {
+        (*this).width
+    }
+
+    /// Gets the height in pixels of the `PixelGrid` instance.
+    pub unsafe extern "C" fn pixel_grid_height(this: *const PixelGrid) -> usize {
+        (*this).height
+    }
+}

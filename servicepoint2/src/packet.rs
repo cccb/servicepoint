@@ -45,3 +45,16 @@ impl From<Payload> for Packet {
         Packet(Header(mode, a, b, c, d), payload)
     }
 }
+
+impl From<&[u8]> for Packet {
+    fn from(value: &[u8]) -> Self {
+        let mode = u16_from_be_slice(&value[0..=1]);
+        let a = u16_from_be_slice(&value[2..=3]);
+        let b = u16_from_be_slice(&value[4..=5]);
+        let c = u16_from_be_slice(&value[6..=7]);
+        let d = u16_from_be_slice(&value[8..=9]);
+        let payload = value[10..].to_vec();
+
+        Packet(Header(mode, a, b, c, d), payload)
+    }
+}

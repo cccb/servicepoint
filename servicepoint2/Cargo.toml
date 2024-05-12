@@ -23,3 +23,6 @@ compression-bz = ["dep:bzip2", "compression"]
 compression-lz = ["dep:lz4", "compression"]
 compression-zs = ["dep:zstd", "compression"]
 compression = []
+
+[build-dependencies]
+cbindgen = "0.26.0"
