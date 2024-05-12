@@ -1,5 +1,4 @@
 use clap::Parser;
-
 use servicepoint2::{ByteGrid, Command, Connection, Origin};
 
 #[derive(Parser, Debug)]
@@ -16,9 +15,7 @@ struct Cli {
 /// CCCB"`
 
 fn main() {
-    env_logger::builder()
-        .filter_level(log::LevelFilter::Debug)
-        .init();
+    env_logger::init();
     let cli = Cli::parse();
 
     let connection = Connection::open(&cli.destination).unwrap();

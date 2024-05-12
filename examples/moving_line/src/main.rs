@@ -13,9 +13,7 @@ struct Cli {
 }
 
 fn main() {
-    env_logger::builder()
-        .filter_level(log::LevelFilter::Debug)
-        .init();
+    env_logger::init();
 
     let connection = Connection::open(Cli::parse().destination).unwrap();
 

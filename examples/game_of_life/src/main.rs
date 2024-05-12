@@ -4,8 +4,8 @@ use std::time::Duration;
 use clap::Parser;
 use rand::{distributions, Rng};
 
-use servicepoint2::Command::BitmapLinearWin;
 use servicepoint2::{Connection, Origin, PixelGrid};
+use servicepoint2::Command::BitmapLinearWin;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -16,9 +16,7 @@ struct Cli {
 }
 
 fn main() {
-    env_logger::builder()
-        .filter_level(log::LevelFilter::Info)
-        .init();
+    env_logger::init();
     let cli = Cli::parse();
 
     let connection = Connection::open(&cli.destination).unwrap();
@@ -39,12 +37,7 @@ fn iteration(field: PixelGrid) -> PixelGrid {
         for y in 0..field.height {
             let old_state = field.get(x, y);
             let neighbors = count_neighbors(&field, x as i32, y as i32);
-            let new_state = match (old_state, neighbors) {
-                (true, 2) => true,
-                (true, 3) => true,
-                (false, 3) => true,
-                _ => false,
-            };
+            let new_state = matches!((old_state, neighbors), (true, 2) | (true, 3) | (false, 3));
             next.set(x, y, new_state);
         }
     }
@@ -75,7 +68,7 @@ fn count_neighbors(field: &PixelGrid, x: i32, y: i32) -> i32 {
         }
     }
 
-    return count;
+    count
 }
 
 fn make_random_field(probability: f64) -> PixelGrid {
@@ -87,5 +80,5 @@ fn make_random_field(probability: f64) -> PixelGrid {
             field.set(x, y, rng.sample(d));
         }
     }
-    return field;
+    field
 }
