@@ -17,37 +17,13 @@ Please specify the full version including patch in your Cargo.toml until 1.0 is 
 
 Expect bugs and/or missing features in the language bindings for now. If you need something specific, open an issue or a pull request.
 
-## Installation
-
-### Rust
-
-```bash
-cargo add servicepoint2
-```
-
-### C / C++
-
-Copy the header to your project and compile against.
-
-You have the choice of linking statically (recommended) or dynamically.
-- The C example shows how to link statically against the `staticlib` variant.
-- When linked dynamically, you have to provide the `cdylib` at runtime in the _same_ version, as there are no API/ABI guarantees yet.
-
-### C# / F#
-
-NuGet packages are not a good way to distribute native projects ([relevant issue](https://github.com/dotnet/sdk/issues/33845)).
-Because of that, there is no NuGet package you can use directly.
-
-I recommend adding this repository as a submodule and building from source. You'll need the `cdylib` build of the native library at runtime for the relevant platform. On Linux/macOS/BSD, this should be `servicepoint2/target/release/libservicepoint2.so`.
-Building the `ServicePoint2` class library automatically regenerates the BindGen folder, which means the language binding will always match your library.
-
 ## Examples
 
 More are available in the `examples` folder.
 
 ### Rust
 
-This is where the library works the best. 
+This is where the library works the best.
 
 Any API usage accepted by the compiler in a safe context is either safe or buggy (issues welcome).
 
@@ -98,7 +74,7 @@ while (true)
 The lowest common denominator. Things to keep in mind:
 
 - This is a chainsaw. You will cut your leg.
-- function names are: `sp2_` \<struct_name\> \<rust name\>. 
+- function names are: `sp2_` \<struct_name\> \<rust name\>.
 - Use the rust documentation.
 - Instances get consumed in the same way they do when writing rust / C# code. Do not use an instance after an (implicit!) free.
 - Option<T> or Result<T, E> turn into nullable return values - check for NULL!
@@ -127,6 +103,38 @@ int main(void) {
     return 0;
 }
 ```
+
+## Installation
+
+### Rust
+
+```bash
+cargo add servicepoint2
+```
+
+### C / C++
+
+Copy the header to your project and compile against.
+
+You have the choice of linking statically (recommended) or dynamically.
+- The C example shows how to link statically against the `staticlib` variant.
+- When linked dynamically, you have to provide the `cdylib` at runtime in the _same_ version, as there are no API/ABI guarantees yet.
+
+### C# / F#
+
+NuGet packages are not a good way to distribute native projects ([relevant issue](https://github.com/dotnet/sdk/issues/33845)).
+Because of that, there is no NuGet package you can use directly. 
+Including this repository as a submodule and building from source is the recommended way of using the library.
+
+```bash
+git submodule add https://github.com/kaesaecracker/servicepoint.git
+git commit -m "add servicepoint submodule"
+```
+
+You can now reference `servicepoint2-bindings-cs/src/ServicePoint2.csproj` in your project.
+The rust library will automatically be built.
+
+Please provide more information in the form of an issue if you need the build to copy a different library file for your platform.
 
 ## Features
 
