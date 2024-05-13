@@ -12,6 +12,6 @@ fn main() {
         .csharp_namespace("ServicePoint2.BindGen")
         .csharp_use_nint_types(true)
         .csharp_class_accessibility("public")
-        .generate_csharp_file("ServicePoint2/BindGen/ServicePoint2.g.cs")
+        .generate_csharp_file("src/BindGen/ServicePoint2.g.cs")
         .unwrap();
 }

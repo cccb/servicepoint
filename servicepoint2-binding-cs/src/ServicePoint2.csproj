@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <RuntimeIdentifiers>linux-x64;linux-x64-musl;win-x64;</RuntimeIdentifiers>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -27,9 +26,13 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
-    <ItemGroup>
-        <None Include="../../README.md" Pack="true" PackagePath="\"/>
-    </ItemGroup>
+    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Release'" BeforeTargets="PrepareForBuild">
+        <Exec Command="cargo build --manifest-path ../../servicepoint2/Cargo.toml --all-features --release"/>
+    </Target>
+
+    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Debug'" BeforeTargets="PrepareForBuild">
+        <Exec Command="cargo build --manifest-path ../../servicepoint2/Cargo.toml --all-features"/>
+    </Target>
 
     <Target Name="BuildBindings" Condition="'$(Configuration)'=='Release'" BeforeTargets="PrepareForBuild">
         <Exec Command="cargo build --release"/>
@@ -51,9 +54,17 @@
         </Content>
     </ItemGroup>
 
-    <!-- include link to source code at revision -->
     <ItemGroup>
+        <!-- include link to source code at revision -->
+        <None Include="../../README.md" Pack="true" PackagePath="\"/>
+        <!-- add README.md to package -->
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\build.rs">
+        <Link>build.rs</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
