@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RuntimeIdentifiers>linux-x64;linux-x64-musl;win-x64;</RuntimeIdentifiers>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+        <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>ServicePoint2</PackageId>
+        <Version>0.2.0</Version>
+        <Authors>Repository Authors</Authors>
+        <Company>None</Company>
+        <Product>ServicePoint2</Product>
+        <PackageTags>CCCB</PackageTags>
+        <Description>
+            C# bindings for the rust crate servicepoint2. You will need a suitable native shared library to use this.
+            For documentation, see the rust documentation: https://docs.rs/servicepoint2/latest/servicepoint2/.
+            Note that this library is still in early development. Breaking changes are expected before 1.0 is released.
+        </Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Release'" BeforeTargets="PrepareForBuild">
+        <Exec Command="cargo build --release"/>
+    </Target>
+
+    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Debug'" BeforeTargets="PrepareForBuild">
+        <Exec Command="cargo build"/>
+    </Target>
+
+    <ItemGroup Condition="'$(Configuration)'=='Debug'">
+        <Content Include="../../servicepoint2/target/debug/libservicepoint2.so" CopyToOutputDirectory="Always">
+            <Link>libservicepoint2.so</Link>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)'=='Release'">
+        <Content Include="../../servicepoint2/target/release/libservicepoint2.so" CopyToOutputDirectory="Always">
+            <Link>libservicepoint2.so</Link>
+        </Content>
+    </ItemGroup>
+
+    <!-- include link to source code at revision -->
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    </ItemGroup>
+
+</Project>

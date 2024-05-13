@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = [
+    "announce",
+    "game_of_life",
+    "moving_line",
+    "wiping_clear",
+    "random_brightness"
+]

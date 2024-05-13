@@ -7,7 +7,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-servicepoint2 = { path = "../servicepoint2" }
+servicepoint2 = { path = "../servicepoint2", features = ["c-api"] }
 
 [build-dependencies]
 csbindgen = "1.8.0"

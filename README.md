@@ -25,25 +25,21 @@ Expect bugs and/or missing features in the language bindings for now. If you nee
 cargo add servicepoint2
 ```
 
-### C# / F#
+### C / C++
 
-(!) not published yet - build from source
+Copy the header to your project and compile against.
 
-``` 
-dotnet add ServicePoint2
-```
-
-You will also need a `cdylib` build of the native library at runtime for the relevant platform. On Linux/macOS/BSD, this should be `target/release/libservicepoint2.so`.
-
-As there is no API stability yet, your language binding has to match the used library version exactly.
-
-### C
-
-Copy the header to your project and compile against. 
-
-You have the choice of linking statically (recommended) or dynamically. 
+You have the choice of linking statically (recommended) or dynamically.
 - The C example shows how to link statically against the `staticlib` variant.
 - When linked dynamically, you have to provide the `cdylib` at runtime in the _same_ version, as there are no API/ABI guarantees yet.
+
+### C# / F#
+
+NuGet packages are not a good way to distribute native projects ([relevant issue](https://github.com/dotnet/sdk/issues/33845)).
+Because of that, there is no NuGet package you can use directly.
+
+I recommend adding this repository as a submodule and building from source. You'll need the `cdylib` build of the native library at runtime for the relevant platform. On Linux/macOS/BSD, this should be `servicepoint2/target/release/libservicepoint2.so`.
+Building the `ServicePoint2` class library automatically regenerates the BindGen folder, which means the language binding will always match your library.
 
 ## Examples
 
