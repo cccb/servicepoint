@@ -58,9 +58,8 @@ impl Connection {
         packet: Packet,
     ) -> Result<(), std::io::Error> {
         debug!("sending {packet:?}");
-        let packet: Packet = packet.into();
         let data: Vec<u8> = packet.into();
-        self.socket.send(&*data)?;
+        self.socket.send(&data)?;
         Ok(())
     }
 }

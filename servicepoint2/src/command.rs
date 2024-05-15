@@ -273,7 +273,7 @@ fn command_code_only(code: CommandCode) -> Packet {
 /// Helper method for checking that a packet is empty and only contains a command code
 fn check_command_only(packet: Packet) -> Option<TryFromPacketError> {
     let Packet(Header(_, a, b, c, d), payload) = packet;
-    if payload.len() != 0 {
+    if !payload.is_empty() {
         Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
     } else if a != 0 || b != 0 || c != 0 || d != 0 {
         Some(TryFromPacketError::ExtraneousHeaderValues)
@@ -322,7 +322,7 @@ pub mod c_api
     pub unsafe extern "C" fn sp2_command_try_from_packet(packet: *mut Packet) -> *mut Command {
         let packet = *Box::from_raw(packet);
         match Command::try_from(packet) {
-            Err(_) => return null_mut(),
+            Err(_) => null_mut(),
             Ok(command) => Box::into_raw(Box::new(command)),
         }
     }

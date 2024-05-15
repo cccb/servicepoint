@@ -17,15 +17,15 @@ impl From<Packet> for Vec<u8> {
         let Packet(Header(mode, a, b, c, d), payload) = value;
 
         let mut packet = vec![0u8; 10 + payload.len()];
-        packet[0..=1].copy_from_slice(&u16::to_be_bytes(mode.into()));
+        packet[0..=1].copy_from_slice(&u16::to_be_bytes(mode));
         packet[2..=3].copy_from_slice(&u16::to_be_bytes(a));
         packet[4..=5].copy_from_slice(&u16::to_be_bytes(b));
         packet[6..=7].copy_from_slice(&u16::to_be_bytes(c));
         packet[8..=9].copy_from_slice(&u16::to_be_bytes(d));
 
-        packet[10..].copy_from_slice(&*payload);
+        packet[10..].copy_from_slice(&payload);
 
-        return packet;
+        packet
     }
 }
 

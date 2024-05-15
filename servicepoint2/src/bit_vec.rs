@@ -39,7 +39,7 @@ impl BitVec {
             byte & (u8::MAX ^ bit_mask)
         };
 
-        return old_value;
+        old_value
     }
 
     /// Gets the value of a bit.
@@ -51,7 +51,7 @@ impl BitVec {
     /// returns: value of the bit
     pub fn get(&self, index: usize) -> bool {
         let (byte_index, bit_mask) = self.get_indexes(index);
-        return self.data[byte_index] & bit_mask != 0;
+        self.data[byte_index] & bit_mask != 0
     }
 
     /// Sets all bits to the specified value
@@ -86,7 +86,7 @@ impl BitVec {
         let byte_index = index / 8;
         let bit_in_byte_index = 7 - index % 8;
         let bit_mask: u8 = 1 << bit_in_byte_index;
-        return (byte_index, bit_mask);
+        (byte_index, bit_mask)
     }
 }
 
