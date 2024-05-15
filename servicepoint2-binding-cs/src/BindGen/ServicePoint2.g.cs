@@ -50,6 +50,11 @@ namespace ServicePoint2.BindGen
         [DllImport(__DllName, EntryPoint = "sp2_bit_vec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern nuint sp2_bit_vec_len(BitVec* @this);
 
+        /// <summary>Returns true if length is 0.</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_bit_vec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp2_bit_vec_is_empty(BitVec* @this);
+
         /// <summary>Gets an unsafe reference to the data of the `BitVec` instance.  ## Safety  The caller has to make sure to never access the returned memory after the `BitVec` instance has been consumed or manually deallocated.  Reading and writing concurrently to either the original instance or the returned data will result in undefined behavior.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_bit_vec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern CByteSlice sp2_bit_vec_unsafe_data_ref(BitVec* @this);

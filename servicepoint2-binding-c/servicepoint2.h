@@ -93,7 +93,7 @@ typedef struct sp2_Packet sp2_Packet;
 typedef struct sp2_PixelGrid sp2_PixelGrid;
 
 /**
- * Represents a `&mut [u8]` as a struct usable by C code.
+ * Represents a span of memory (`&mut [u8]` ) as a struct usable by C code.
  *
  * Usage of this type is inherently unsafe.
  */
@@ -144,6 +144,11 @@ void sp2_bit_vec_fill(struct sp2_BitVec *this_, bool value);
  * Gets the value of a bit from the `BitVec`.
  */
 bool sp2_bit_vec_get(const struct sp2_BitVec *this_, size_t index);
+
+/**
+ * Returns true if length is 0.
+ */
+bool sp2_bit_vec_is_empty(const struct sp2_BitVec *this_);
 
 /**
  * Gets the length of the `BitVec` in bits.
@@ -344,13 +349,6 @@ struct sp2_Command *sp2_command_hard_reset(void);
 struct sp2_Command *sp2_command_try_from_packet(struct sp2_Packet *packet);
 
 /**
- * Tries to load a `Command` from the passed array with the specified length.
- *
- * returns: NULL in case of an error, pointer to the allocated command otherwise
- */
-struct sp2_Command *sp2_command_try_load(const uint8_t *data, size_t length);
-
-/**
  * Closes and deallocates a connection instance
  */
 void sp2_connection_dealloc(struct sp2_Connection *ptr);
@@ -372,9 +370,23 @@ bool sp2_connection_send(const struct sp2_Connection *connection,
                          struct sp2_Packet *command_ptr);
 
 /**
+ * Deallocates a `Packet`.
+ *
+ * Note: do not call this if the instance has been consumed in another way, e.g. by sending it.
+ */
+void sp2_packet_dealloc(struct sp2_Packet *this_);
+
+/**
  * Turns a `Command` into a `Packet`. The command gets deallocated in the process.
  */
 struct sp2_Packet *sp2_packet_from_command(struct sp2_Command *command);
+
+/**
+ * Tries to load a `Packet` from the passed array with the specified length.
+ *
+ * returns: NULL in case of an error, pointer to the allocated packet otherwise
+ */
+struct sp2_Packet *sp2_packet_try_load(const uint8_t *data, size_t length);
 
 /**
  * Clones a `PixelGrid`.
