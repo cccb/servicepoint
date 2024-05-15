@@ -42,7 +42,7 @@ impl Connection {
     ///     .expect("connection failed");
     ///
     ///  // turn off all pixels
-    ///  connection.send(servicepoint2::Command::Clear)
+    ///  connection.send(servicepoint2::Command::Clear.into())
     ///     .expect("send failed");
     ///
     ///  // turn on all pixels
@@ -50,12 +50,12 @@ impl Connection {
     ///  pixels.fill(true);
     ///
     ///  // send pixels to display
-    ///  connection.send(servicepoint2::Command::BitmapLinearWin(servicepoint2::Origin::top_left(), pixels))
+    ///  connection.send(servicepoint2::Command::BitmapLinearWin(servicepoint2::Origin::top_left(), pixels).into())
     ///     .expect("send failed");
     /// ```
     pub fn send(
         &self,
-        packet: impl Into<Packet> + Debug,
+        packet: Packet,
     ) -> Result<(), std::io::Error> {
         debug!("sending {packet:?}");
         let packet: Packet = packet.into();
@@ -71,7 +71,7 @@ pub mod c_api
     use std::ffi::{c_char, CStr};
     use std::ptr::null_mut;
 
-    use crate::{Command, Connection};
+    use crate::{Connection, Packet};
 
     /// Creates a new instance of Connection.
     /// The returned instance has to be deallocated with `connection_dealloc`.
@@ -87,15 +87,14 @@ pub mod c_api
             Ok(value) => value
         };
 
-        let boxed = Box::new(connection);
-        Box::into_raw(boxed)
+        Box::into_raw(Box::new(connection))
     }
 
     /// Sends the command instance. The instance is consumed / destroyed and cannot be used after this call.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_connection_send(connection: *const Connection, command_ptr: *mut Command) -> bool{
-        let command = Box::from_raw(command_ptr);
-        (*connection).send(*command).is_ok()
+    pub unsafe extern "C" fn sp2_connection_send(connection: *const Connection, command_ptr: *mut Packet) -> bool{
+        let packet = Box::from_raw(command_ptr);
+        (*connection).send(*packet).is_ok()
     }
 
     /// Closes and deallocates a connection instance

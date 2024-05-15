@@ -1,11 +1,13 @@
 pub use crate::bit_vec::BitVec;
 pub use crate::byte_grid::ByteGrid;
 pub use crate::command::{Brightness, Command, Offset, Origin, Size};
-pub use crate::command_code::CommandCode;
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
+
+#[cfg(feature = "c-api")]
+pub use crate::c_slice::CByteSlice;
 
 mod bit_vec;
 mod byte_grid;
@@ -16,6 +18,7 @@ mod compression_code;
 mod connection;
 mod packet;
 mod pixel_grid;
+mod c_slice;
 
 /// size of a single tile in one dimension
 pub const TILE_SIZE: u16 = 8;

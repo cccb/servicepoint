@@ -36,7 +36,7 @@ fn main() {
         let bit_vec = BitVec::from(&*pixel_data);
 
         connection
-            .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Gz))
+            .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Gz).into())
             .unwrap();
         thread::sleep(sleep_duration);
     }

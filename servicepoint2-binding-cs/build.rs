@@ -8,6 +8,8 @@ fn main() {
         .input_extern_file("../servicepoint2/src/connection.rs")
         .input_extern_file("../servicepoint2/src/pixel_grid.rs")
         .input_extern_file("../servicepoint2/src/lib.rs")
+        .input_extern_file("../servicepoint2/src/c_slice.rs")
+        .input_extern_file("../servicepoint2/src/packet.rs")
         .csharp_dll_name("servicepoint2")
         .csharp_namespace("ServicePoint2.BindGen")
         .csharp_use_nint_types(true)

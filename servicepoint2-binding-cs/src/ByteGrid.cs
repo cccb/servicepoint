@@ -111,11 +111,23 @@ public sealed class ByteGrid : Sp2NativeInstance<BindGen.ByteGrid>
         }
     }
 
+    public Span<byte> Data
+    {
+        get
+        {
+            unsafe
+            {
+                var slice = NativeMethods.sp2_byte_grid_unsafe_data_ref(Instance);
+                return new Span<byte>(slice.start, (int)slice.length);
+            }
+        }
+    }
+
     private unsafe ByteGrid(BindGen.ByteGrid* instance) : base(instance)
     {
     }
 
-    protected override unsafe void Dealloc()
+    private protected override unsafe void Dealloc()
     {
         NativeMethods.sp2_byte_grid_dealloc(Instance);
     }

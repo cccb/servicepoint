@@ -71,14 +71,17 @@ impl BitVec {
         self.data.fill(byte);
     }
 
+    /// Gets the length in bits
     pub fn len(&self) -> usize {
         self.data.len() * 8
     }
 
-    pub fn data_ref(&self) -> &[u8] {
-        &*self.data
+    /// Get the underlying bits in their raw packed bytes form
+    pub fn mut_data_ref(&mut self) -> &mut [u8] {
+        self.data.as_mut_slice()
     }
 
+    /// Calculates the byte index and bitmask for a specific bit in the vector
     fn get_indexes(&self, index: usize) -> (usize, u8) {
         let byte_index = index / 8;
         let bit_in_byte_index = 7 - index % 8;
@@ -87,13 +90,15 @@ impl BitVec {
     }
 }
 
-impl Into<Vec<u8>> for BitVec {
-    fn into(self) -> Vec<u8> {
-        self.data
+impl From<BitVec> for Vec<u8> {
+    /// Turns the `BitVec` into the underlying `Vec<u8>`
+    fn from(value: BitVec) -> Self {
+        value.data
     }
 }
 
 impl From<&[u8]> for BitVec {
+    /// Interpret the data as a series of bits and load then into a new `BitVec` instance.
     fn from(value: &[u8]) -> Self {
         Self {
             data: Vec::from(value),
@@ -102,6 +107,7 @@ impl From<&[u8]> for BitVec {
 }
 
 impl std::fmt::Debug for BitVec {
+    /// Formats a `BitVec` for debug. The manual implementation includes the length of the instance.
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_struct("BitVec")
             .field("len", &self.len())
@@ -112,7 +118,7 @@ impl std::fmt::Debug for BitVec {
 
 #[cfg(feature = "c-api")]
 pub mod c_api {
-    use crate::BitVec;
+    use crate::{BitVec, CByteSlice};
 
     /// Creates a new `BitVec` instance.
     /// The returned instance has to be freed with `bit_vec_dealloc`.
@@ -166,5 +172,23 @@ pub mod c_api {
     #[no_mangle]
     pub unsafe extern "C" fn sp2_bit_vec_len(this: *const BitVec) -> usize {
         (*this).len()
+    }
+
+    /// Gets an unsafe reference to the data of the `BitVec` instance.
+    ///
+    /// ## Safety
+    ///
+    /// The caller has to make sure to never access the returned memory after the `BitVec`
+    /// instance has been consumed or manually deallocated.
+    ///
+    /// Reading and writing concurrently to either the original instance or the returned data will
+    /// result in undefined behavior.
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_unsafe_data_ref(this: *mut BitVec) -> CByteSlice {
+        let data = (*this).mut_data_ref();
+        CByteSlice {
+            start: data.as_mut_ptr_range().start,
+            length: data.len(),
+        }
     }
 }

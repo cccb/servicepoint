@@ -1,9 +1,7 @@
-use CommandCode::*;
-
-/// The codes used for the commands. See the documentation on the corresponding commands.
+/// The u16 command codes used for the `Commands`.
 #[repr(u16)]
 #[derive(Debug, Copy, Clone)]
-pub enum CommandCode {
+pub(crate) enum CommandCode {
     Clear = 0x0002,
     Cp437Data = 0x0003,
     CharBrightness = 0x0005,
@@ -19,16 +17,20 @@ pub enum CommandCode {
     BitmapLinearXor = 0x0016,
 }
 
-impl Into<u16> for CommandCode {
-    fn into(self) -> u16 {
-        self as u16
+impl From<CommandCode> for u16 {
+    /// returns the u16 command code corresponding to the enum value
+    fn from(value: CommandCode) -> Self {
+        value as u16
     }
 }
 
 impl TryFrom<u16> for CommandCode {
     type Error = ();
 
+    /// Returns the enum value for the specified `u16` or `Error` if the code is unknown.
     fn try_from(value: u16) -> Result<Self, Self::Error> {
+        use CommandCode::*;
+
         match value {
             value if value == Clear as u16 => Ok(Clear),
             value if value == Cp437Data as u16 => Ok(Cp437Data),

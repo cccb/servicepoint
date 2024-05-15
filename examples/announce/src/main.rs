@@ -20,7 +20,7 @@ fn main() {
 
     let connection = Connection::open(&cli.destination).unwrap();
     if cli.clear {
-        connection.send(Command::Clear).unwrap();
+        connection.send(Command::Clear.into()).unwrap();
     }
 
     let mut max_width = 0;
@@ -43,6 +43,6 @@ fn main() {
     }
 
     connection
-        .send(Command::Cp437Data(Origin::top_left(), chars))
+        .send(Command::Cp437Data(Origin::top_left(), chars).into())
         .unwrap();
 }

@@ -23,7 +23,7 @@ fn main() {
 
     loop {
         connection
-            .send(Command::BitmapLinearWin(Origin::top_left(), field.clone()))
+            .send(Command::BitmapLinearWin(Origin::top_left(), field.clone()).into())
             .expect("could not send");
         thread::sleep(Duration::from_millis(14));
         field = iteration(field);

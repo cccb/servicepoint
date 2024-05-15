@@ -49,6 +49,7 @@ Uses C bindings internally to provide a similar API to rust. Things to keep in m
 - C# specifics are documented in the library. Use the rust documentation for everything else. Naming and semantics are the same apart from CamelCase instead of kebap_case.
 - You will only get rust backtraces in debug builds of the native code.
 - F# is not explicitly tested. If there are usability or functionality problems, please open an issue.
+- Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.
 
 ```csharp
 using ServicePoint2;
@@ -79,6 +80,7 @@ The lowest common denominator. Things to keep in mind:
 - Instances get consumed in the same way they do when writing rust / C# code. Do not use an instance after an (implicit!) free.
 - Option<T> or Result<T, E> turn into nullable return values - check for NULL!
 - There are no specifics for C++ here yet. You might get a nicer header when generating directly for C++, but it should be usable.
+- Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.
 
 ```c++
 #include <stdio.h>

@@ -22,7 +22,7 @@ public abstract class Sp2NativeInstance<T>
         _instance = instance;
     }
 
-    protected abstract void Dealloc();
+    private protected abstract void Dealloc();
 
     internal unsafe T* Into()
     {

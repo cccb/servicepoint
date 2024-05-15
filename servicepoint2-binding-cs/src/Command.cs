@@ -5,26 +5,27 @@ namespace ServicePoint2;
 
 public sealed class Command : Sp2NativeInstance<BindGen.Command>
 {
+    public static bool TryFromPacket(Packet packet, [MaybeNullWhen(false)] out Command command)
+    {
+        unsafe
+        {
+            var result = NativeMethods.sp2_command_try_from_packet(packet.Into());
+            if (result == null)
+            {
+                command = null;
+                return false;
+            }
+
+            command = new Command(result);
+            return true;
+        }
+    }
+
     public Command Clone()
     {
         unsafe
         {
             return new Command(NativeMethods.sp2_command_clone(Instance));
-        }
-    }
-
-    public static bool TryLoad(Span<byte> bytes, [MaybeNullWhen(false)] out Command command)
-    {
-        unsafe
-        {
-            fixed (byte* bytesPtr = bytes)
-            {
-                var instance = NativeMethods.sp2_command_try_load(bytesPtr, (nuint)bytes.Length);
-                command = instance == null
-                    ? null
-                    : new Command(instance);
-                return command != null;
-            }
         }
     }
 
@@ -124,7 +125,7 @@ public sealed class Command : Sp2NativeInstance<BindGen.Command>
     {
     }
 
-    protected override unsafe void Dealloc()
+    private protected override unsafe void Dealloc()
     {
         NativeMethods.sp2_command_dealloc(Instance);
     }

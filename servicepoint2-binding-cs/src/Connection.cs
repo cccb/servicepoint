@@ -16,15 +16,15 @@ public sealed class Connection : Sp2NativeInstance<BindGen.Connection>
         }
     }
 
-    public bool Send(Command command)
+    public bool Send(Packet packet)
     {
         unsafe
         {
-            return NativeMethods.sp2_connection_send(Instance, command.Into());
+            return NativeMethods.sp2_connection_send(Instance, packet.Into());
         }
     }
 
-    protected override unsafe void Dealloc()
+    private protected override unsafe void Dealloc()
     {
         NativeMethods.sp2_connection_dealloc(Instance);
     }

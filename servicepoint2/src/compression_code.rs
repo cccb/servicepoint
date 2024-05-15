@@ -15,9 +15,9 @@ pub enum CompressionCode {
     Zs = 0x7a73,
 }
 
-impl Into<u16> for CompressionCode {
-    fn into(self) -> u16 {
-        self as u16
+impl From<CompressionCode> for u16 {
+    fn from(value: CompressionCode) -> Self {
+        value as u16
     }
 }
 

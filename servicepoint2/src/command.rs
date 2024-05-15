@@ -1,7 +1,8 @@
 use crate::{
-    BitVec, ByteGrid, CommandCode, CompressionCode, Header, Packet, PixelGrid,
+    BitVec, ByteGrid, CompressionCode, Header, Packet, PixelGrid,
     TILE_SIZE,
 };
+use crate::command_code::CommandCode;
 use crate::compression::{into_compressed, into_decompressed};
 
 /// An origin marks the top left position of a window sent to the display.
@@ -18,8 +19,10 @@ impl Origin {
 #[derive(Debug, Clone, Copy)]
 pub struct Size(pub u16, pub u16);
 
+/// Type alias for documenting the meaning of the u16 in enum values
 pub type Offset = u16;
 
+/// Type alias for documenting the meaning of the u16 in enum values
 pub type Brightness = u8;
 
 /// A command to send to the display.
@@ -29,12 +32,14 @@ pub enum Command {
     Clear,
     /// Kills the udp daemon, usually results in a reboot of the display.
     HardReset,
+    /// Slowly decrease brightness until off? Untested.
     FadeOut,
     /// Set the brightness of tiles
     CharBrightness(Origin, ByteGrid),
     /// Set the brightness of all tiles
     Brightness(Brightness),
     #[deprecated]
+    /// Legacy command code, gets ignored by the real display.
     BitmapLegacy,
     /// Set pixel data starting at the offset.
     /// The contained BitVec is always uncompressed.
@@ -54,9 +59,10 @@ pub enum Command {
     BitmapLinearWin(Origin, PixelGrid),
 }
 
-impl Into<Packet> for Command {
-    fn into(self) -> Packet {
-        match self {
+impl From<Command> for Packet {
+    /// Move the `Command` into a `Packet` instance for sending.
+    fn from(value: Command) -> Self {
+        match value {
             Command::Clear => command_code_only(CommandCode::Clear),
             Command::FadeOut => command_code_only(CommandCode::FadeOut),
             Command::HardReset => command_code_only(CommandCode::HardReset),
@@ -64,10 +70,9 @@ impl Into<Packet> for Command {
             Command::BitmapLegacy => {
                 command_code_only(CommandCode::BitmapLegacy)
             }
-            Command::CharBrightness(origin, grid) => origin_size_payload(
-                CommandCode::CharBrightness,
-                origin,
-                Size(grid.width as u16, grid.height as u16),
+            Command::CharBrightness(Origin(x, y), grid) => Packet(
+                Header(CommandCode::CharBrightness.into(),
+                       x, y, grid.width as u16, grid.height as u16),
                 grid.into(),
             ),
             Command::Brightness(brightness) => Packet(
@@ -126,10 +131,8 @@ impl Into<Packet> for Command {
                     bits.into(),
                 )
             }
-            Command::Cp437Data(origin, grid) => origin_size_payload(
-                CommandCode::Cp437Data,
-                origin,
-                Size(grid.width as u16, grid.height as u16),
+            Command::Cp437Data(Origin(x, y), grid) => Packet(
+                Header(CommandCode::Cp437Data.into(), x, y, grid.width as u16, grid.height as u16),
                 grid.into(),
             ),
         }
@@ -137,6 +140,7 @@ impl Into<Packet> for Command {
 }
 
 #[derive(Debug)]
+/// Err values for `Command::try_from`.
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
     InvalidCommand(u16),
@@ -155,6 +159,7 @@ pub enum TryFromPacketError {
 impl TryFrom<Packet> for Command {
     type Error = TryFromPacketError;
 
+    /// Try to interpret the `Packet` as one containing a `Command`
     fn try_from(value: Packet) -> Result<Self, Self::Error> {
         let Packet(Header(command_u16, a, b, c, d), _) = value;
         let command_code = match CommandCode::try_from(command_u16) {
@@ -178,9 +183,11 @@ impl TryFrom<Packet> for Command {
                     ));
                 }
 
-                match check_empty_header(header) {
-                    Some(err) => Err(err),
-                    None => Ok(Command::Brightness(payload[0])),
+                let Header(_, a, b, c, d) = header;
+                if a != 0 || b != 0 || c != 0 || d != 0 {
+                    Err(TryFromPacketError::ExtraneousHeaderValues)
+                } else {
+                    Ok(Command::Brightness(payload[0]))
                 }
             }
             CommandCode::HardReset => match check_command_only(value) {
@@ -238,6 +245,7 @@ impl TryFrom<Packet> for Command {
     }
 }
 
+/// Helper method for BitMapLinear*-Commands into Packet
 fn bitmap_linear_into_packet(
     command: CommandCode,
     offset: Offset,
@@ -257,30 +265,12 @@ fn bitmap_linear_into_packet(
     )
 }
 
-fn origin_size_payload(
-    command: CommandCode,
-    origin: Origin,
-    size: Size,
-    payload: Vec<u8>,
-) -> Packet {
-    let Origin(x, y) = origin;
-    let Size(w, h) = size;
-    Packet(Header(command.into(), x, y, w, h), payload.into())
-}
-
+/// Helper method for creating empty packets only containing the command code
 fn command_code_only(code: CommandCode) -> Packet {
     Packet(Header(code.into(), 0x0000, 0x0000, 0x0000, 0x0000), vec![])
 }
 
-fn check_empty_header(header: Header) -> Option<TryFromPacketError> {
-    let Header(_, a, b, c, d) = header;
-    if a != 0 || b != 0 || c != 0 || d != 0 {
-        Some(TryFromPacketError::ExtraneousHeaderValues)
-    } else {
-        None
-    }
-}
-
+/// Helper method for checking that a packet is empty and only contains a command code
 fn check_command_only(packet: Packet) -> Option<TryFromPacketError> {
     let Packet(Header(_, a, b, c, d), payload) = packet;
     if payload.len() != 0 {
@@ -292,6 +282,7 @@ fn check_command_only(packet: Packet) -> Option<TryFromPacketError> {
     }
 }
 
+/// Helper method for Packets into BitMapLinear*-Commands
 fn packet_into_linear_bitmap(
     packet: Packet,
 ) -> Result<(BitVec, CompressionCode), TryFromPacketError> {
@@ -323,21 +314,17 @@ pub mod c_api
 
     use crate::{BitVec, Brightness, ByteGrid, Command, CompressionCode, Offset, Origin, Packet, PixelGrid};
 
-    /// Tries to load a `Command` from the passed array with the specified length.
+
+    /// Tries to turn a `Packet` into a `Command`. The packet is gets deallocated in the process.
     ///
-    /// returns: NULL in case of an error, pointer to the allocated command otherwise
+    /// Returns: pointer to command or NULL
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_try_load(data: *const u8, length: usize) -> *mut Command {
-        let data = std::slice::from_raw_parts(data, length);
-        let packet = match Packet::try_from(data) {
+    pub unsafe extern "C" fn sp2_command_try_from_packet(packet: *mut Packet) -> *mut Command {
+        let packet = *Box::from_raw(packet);
+        match Command::try_from(packet) {
             Err(_) => return null_mut(),
-            Ok(packet) => packet
-        };
-        let command = match Command::try_from(packet) {
-            Err(_) => return null_mut(),
-            Ok(command) => command,
-        };
-        Box::into_raw(Box::new(command))
+            Ok(command) => Box::into_raw(Box::new(command)),
+        }
     }
 
     /// Clones a `Command` instance

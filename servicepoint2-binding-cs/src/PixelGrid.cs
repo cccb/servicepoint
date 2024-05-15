@@ -86,8 +86,8 @@ public sealed class PixelGrid : Sp2NativeInstance<BindGen.PixelGrid>
         {
             unsafe
             {
-                var ptr = NativeMethods.sp2_pixel_grid_data_ref(Instance);
-                return new Span<byte>(ptr, Width * Height / 8);
+                var slice = NativeMethods.sp2_pixel_grid_unsafe_data_ref(Instance);
+                return new Span<byte>(slice.start, (int)slice.length);
             }
         }
     }
@@ -96,7 +96,7 @@ public sealed class PixelGrid : Sp2NativeInstance<BindGen.PixelGrid>
     {
     }
 
-    protected override unsafe void Dealloc()
+    private protected override unsafe void Dealloc()
     {
         NativeMethods.sp2_pixel_grid_dealloc(Instance);
     }

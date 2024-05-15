@@ -68,11 +68,23 @@ public sealed class BitVec : Sp2NativeInstance<BindGen.BitVec>
         }
     }
 
+    public Span<byte> Data
+    {
+        get
+        {
+            unsafe
+            {
+                var slice = NativeMethods.sp2_bit_vec_unsafe_data_ref(Instance);
+                return new Span<byte>(slice.start, (int)slice.length);
+            }
+        }
+    }
+
     private unsafe BitVec(BindGen.BitVec* instance) : base(instance)
     {
     }
 
-    protected override unsafe void Dealloc()
+    private protected override unsafe void Dealloc()
     {
         NativeMethods.sp2_bit_vec_dealloc(Instance);
     }

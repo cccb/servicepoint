@@ -68,7 +68,7 @@ typedef uint16_t sp2_CompressionCode;
 typedef struct sp2_BitVec sp2_BitVec;
 
 /**
- * A grid of bytes
+ * A 2D grid of bytes
  */
 typedef struct sp2_ByteGrid sp2_ByteGrid;
 
@@ -83,12 +83,39 @@ typedef struct sp2_Command sp2_Command;
 typedef struct sp2_Connection sp2_Connection;
 
 /**
+ * The raw packet. Should probably not be used directly.
+ */
+typedef struct sp2_Packet sp2_Packet;
+
+/**
  * A grid of pixels stored in packed bytes.
  */
 typedef struct sp2_PixelGrid sp2_PixelGrid;
 
+/**
+ * Represents a `&mut [u8]` as a struct usable by C code.
+ *
+ * Usage of this type is inherently unsafe.
+ */
+typedef struct sp2_CByteSlice {
+    /**
+     * The start address of the memory
+     */
+    uint8_t *start;
+    /**
+     * The amount of memory in bytes
+     */
+    size_t length;
+} sp2_CByteSlice;
+
+/**
+ * Type alias for documenting the meaning of the u16 in enum values
+ */
 typedef uint16_t sp2_Offset;
 
+/**
+ * Type alias for documenting the meaning of the u16 in enum values
+ */
 typedef uint8_t sp2_Brightness;
 
 #ifdef __cplusplus
@@ -141,6 +168,19 @@ struct sp2_BitVec *sp2_bit_vec_new(size_t size);
 bool sp2_bit_vec_set(struct sp2_BitVec *this_, size_t index, bool value);
 
 /**
+ * Gets an unsafe reference to the data of the `BitVec` instance.
+ *
+ * ## Safety
+ *
+ * The caller has to make sure to never access the returned memory after the `BitVec`
+ * instance has been consumed or manually deallocated.
+ *
+ * Reading and writing concurrently to either the original instance or the returned data will
+ * result in undefined behavior.
+ */
+struct sp2_CByteSlice sp2_bit_vec_unsafe_data_ref(struct sp2_BitVec *this_);
+
+/**
  * Clones a `ByteGrid`.
  * The returned instance has to be freed with `byte_grid_dealloc`.
  */
@@ -166,7 +206,7 @@ uint8_t sp2_byte_grid_get(const struct sp2_ByteGrid *this_, size_t x, size_t y);
 /**
  * Gets the height in pixels of the `ByteGrid` instance.
  */
-size_t sp2_byte_grid_height(const struct sp2_PixelGrid *this_);
+size_t sp2_byte_grid_height(const struct sp2_ByteGrid *this_);
 
 /**
  * Loads a `ByteGrid` with the specified dimensions from the provided data.
@@ -192,9 +232,22 @@ void sp2_byte_grid_set(struct sp2_ByteGrid *this_,
                        uint8_t value);
 
 /**
+ * Gets an unsafe reference to the data of the `ByteGrid` instance.
+ *
+ * ## Safety
+ *
+ * The caller has to make sure to never access the returned memory after the `ByteGrid`
+ * instance has been consumed or manually deallocated.
+ *
+ * Reading and writing concurrently to either the original instance or the returned data will
+ * result in undefined behavior.
+ */
+struct sp2_CByteSlice sp2_byte_grid_unsafe_data_ref(struct sp2_ByteGrid *this_);
+
+/**
  * Gets the width in pixels of the `ByteGrid` instance.
  */
-size_t sp2_byte_grid_width(const struct sp2_PixelGrid *this_);
+size_t sp2_byte_grid_width(const struct sp2_ByteGrid *this_);
 
 /**
  * Allocates a new `Command::BitmapLinear` instance.
@@ -284,6 +337,13 @@ struct sp2_Command *sp2_command_fade_out(void);
 struct sp2_Command *sp2_command_hard_reset(void);
 
 /**
+ * Tries to turn a `Packet` into a `Command`. The packet is gets deallocated in the process.
+ *
+ * Returns: pointer to command or NULL
+ */
+struct sp2_Command *sp2_command_try_from_packet(struct sp2_Packet *packet);
+
+/**
  * Tries to load a `Command` from the passed array with the specified length.
  *
  * returns: NULL in case of an error, pointer to the allocated command otherwise
@@ -309,7 +369,12 @@ struct sp2_Connection *sp2_connection_open(const char *host);
  * Sends the command instance. The instance is consumed / destroyed and cannot be used after this call.
  */
 bool sp2_connection_send(const struct sp2_Connection *connection,
-                         struct sp2_Command *command_ptr);
+                         struct sp2_Packet *command_ptr);
+
+/**
+ * Turns a `Command` into a `Packet`. The command gets deallocated in the process.
+ */
+struct sp2_Packet *sp2_packet_from_command(struct sp2_Command *command);
 
 /**
  * Clones a `PixelGrid`.
@@ -361,6 +426,19 @@ void sp2_pixel_grid_set(struct sp2_PixelGrid *this_,
                         size_t x,
                         size_t y,
                         bool value);
+
+/**
+ * Gets an unsafe reference to the data of the `PixelGrid` instance.
+ *
+ * ## Safety
+ *
+ * The caller has to make sure to never access the returned memory after the `PixelGrid`
+ * instance has been consumed or manually deallocated.
+ *
+ * Reading and writing concurrently to either the original instance or the returned data will
+ * result in undefined behavior.
+ */
+struct sp2_CByteSlice sp2_pixel_grid_unsafe_data_ref(struct sp2_PixelGrid *this_);
 
 /**
  * Gets the width in pixels of the `PixelGrid` instance.

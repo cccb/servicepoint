@@ -3,11 +3,11 @@ OUT_DIR := ${ROOT_DIR}/out
 
 SP2_DIR := ${ROOT_DIR}/../../servicepoint2
 SP2_INCLUDE := ${ROOT_DIR}/../../servicepoint2-binding-c
-SP2_TARGET_RELEASE := ${ROOT_DIR}/../../target/release
+SP2_TARGET_RELEASE := ${SP2_DIR}/target/release
 
 .PHONY: build run clean
 
-build: ${OUT_DIR}/lang_c
+all: ${OUT_DIR}/lang_c
 
 run: ${OUT_DIR}/lang_c
 	out/lang_c

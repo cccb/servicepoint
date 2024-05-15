@@ -24,7 +24,7 @@ fn main() {
             pixels.set((y + x_offset) % PIXEL_WIDTH as usize, y, true);
         }
         connection
-            .send(Command::BitmapLinearWin(Origin::top_left(), pixels.clone()))
+            .send(Command::BitmapLinearWin(Origin::top_left(), pixels.clone()).into())
             .unwrap();
         thread::sleep(Duration::from_millis(14));
     }

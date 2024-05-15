@@ -1,7 +1,9 @@
-/// A grid of bytes
+/// A 2D grid of bytes
 #[derive(Debug, Clone)]
 pub struct ByteGrid {
+    /// Size in the x-axis
     pub width: usize,
+    /// Size in the y-axis
     pub height: usize,
     data: Vec<u8>,
 }
@@ -50,18 +52,24 @@ impl ByteGrid {
     pub fn fill(&mut self, value: u8) {
         self.data.fill(value)
     }
+
+    /// Get the underlying byte rows
+    pub fn mut_data_ref(&mut self) -> &mut [u8] {
+        self.data.as_mut_slice()
+    }
 }
 
-impl Into<Vec<u8>> for ByteGrid {
-    fn into(self) -> Vec<u8> {
-        self.data
+impl From<ByteGrid> for Vec<u8> {
+    /// Turn into the underlying `Vec<u8>` containing the rows of bytes.
+    fn from(value: ByteGrid) -> Self {
+        value.data
     }
 }
 
 #[cfg(feature = "c-api")]
 pub mod c_api
 {
-    use crate::ByteGrid;
+    use crate::{ByteGrid, CByteSlice};
 
     /// Creates a new `ByteGrid` instance.
     /// The returned instance has to be freed with `byte_grid_dealloc`.
@@ -121,5 +129,23 @@ pub mod c_api
     #[no_mangle]
     pub unsafe extern "C" fn sp2_byte_grid_height(this: *const ByteGrid) -> usize {
         (*this).height
+    }
+
+    /// Gets an unsafe reference to the data of the `ByteGrid` instance.
+    ///
+    /// ## Safety
+    ///
+    /// The caller has to make sure to never access the returned memory after the `ByteGrid`
+    /// instance has been consumed or manually deallocated.
+    ///
+    /// Reading and writing concurrently to either the original instance or the returned data will
+    /// result in undefined behavior.
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_byte_grid_unsafe_data_ref(this: *mut ByteGrid) -> CByteSlice {
+        let data = (*this).mut_data_ref();
+        CByteSlice {
+            start: data.as_mut_ptr_range().start,
+            length: data.len(),
+        }
     }
 }

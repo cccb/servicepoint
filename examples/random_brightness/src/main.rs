@@ -30,13 +30,13 @@ fn main() {
         let mut filled_grid = PixelGrid::max_sized();
         filled_grid.fill(true);
         connection
-            .send(BitmapLinearWin(Origin::top_left(), filled_grid))
+            .send(BitmapLinearWin(Origin::top_left(), filled_grid).into())
             .unwrap();
     }
 
     // set all pixels to the same random brightness
     let mut rng = rand::thread_rng();
-    connection.send(Brightness(rng.gen())).unwrap();
+    connection.send(Brightness(rng.gen()).into()).unwrap();
 
     // continuously update random windows to new random brightness
     loop {
@@ -56,7 +56,7 @@ fn main() {
             }
         }
 
-        connection.send(CharBrightness(origin, luma)).unwrap();
+        connection.send(CharBrightness(origin, luma).into()).unwrap();
         std::thread::sleep(wait_duration);
     }
 }

@@ -50,6 +50,10 @@ namespace ServicePoint2.BindGen
         [DllImport(__DllName, EntryPoint = "sp2_bit_vec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern nuint sp2_bit_vec_len(BitVec* @this);
 
+        /// <summary>Gets an unsafe reference to the data of the `BitVec` instance.  ## Safety  The caller has to make sure to never access the returned memory after the `BitVec` instance has been consumed or manually deallocated.  Reading and writing concurrently to either the original instance or the returned data will result in undefined behavior.</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_bit_vec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern CByteSlice sp2_bit_vec_unsafe_data_ref(BitVec* @this);
+
         /// <summary>Creates a new `ByteGrid` instance. The returned instance has to be freed with `byte_grid_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_byte_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern ByteGrid* sp2_byte_grid_new(nuint width, nuint height);
@@ -86,9 +90,13 @@ namespace ServicePoint2.BindGen
         [DllImport(__DllName, EntryPoint = "sp2_byte_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern nuint sp2_byte_grid_height(ByteGrid* @this);
 
-        /// <summary>Tries to load a `Command` from the passed array with the specified length.  returns: NULL in case of an error, pointer to the allocated command otherwise</summary>
-        [DllImport(__DllName, EntryPoint = "sp2_command_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_try_load(byte* data, nuint length);
+        /// <summary>Gets an unsafe reference to the data of the `ByteGrid` instance.  ## Safety  The caller has to make sure to never access the returned memory after the `ByteGrid` instance has been consumed or manually deallocated.  Reading and writing concurrently to either the original instance or the returned data will result in undefined behavior.</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_byte_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern CByteSlice sp2_byte_grid_unsafe_data_ref(ByteGrid* @this);
+
+        /// <summary>Tries to turn a `Packet` into a `Command`. The packet is gets deallocated in the process.  Returns: pointer to command or NULL</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp2_command_try_from_packet(Packet* packet);
 
         /// <summary>Clones a `Command` instance</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -149,7 +157,7 @@ namespace ServicePoint2.BindGen
         /// <summary>Sends the command instance. The instance is consumed / destroyed and cannot be used after this call.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_connection_send", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp2_connection_send(Connection* connection, Command* command_ptr);
+        public static extern bool sp2_connection_send(Connection* connection, Packet* command_ptr);
 
         /// <summary>Closes and deallocates a connection instance</summary>
         [DllImport(__DllName, EntryPoint = "sp2_connection_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -192,9 +200,21 @@ namespace ServicePoint2.BindGen
         [DllImport(__DllName, EntryPoint = "sp2_pixel_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern nuint sp2_pixel_grid_height(PixelGrid* @this);
 
-        /// <summary>Gets a reference to the data of the `PixelGrid` instance.</summary>
-        [DllImport(__DllName, EntryPoint = "sp2_pixel_grid_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte* sp2_pixel_grid_data_ref(PixelGrid* @this);
+        /// <summary>Gets an unsafe reference to the data of the `PixelGrid` instance.  ## Safety  The caller has to make sure to never access the returned memory after the `PixelGrid` instance has been consumed or manually deallocated.  Reading and writing concurrently to either the original instance or the returned data will result in undefined behavior.</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_pixel_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern CByteSlice sp2_pixel_grid_unsafe_data_ref(PixelGrid* @this);
+
+        /// <summary>Turns a `Command` into a `Packet`. The command gets deallocated in the process.</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp2_packet_from_command(Command* command);
+
+        /// <summary>Tries to load a `Packet` from the passed array with the specified length.  returns: NULL in case of an error, pointer to the allocated packet otherwise</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp2_packet_try_load(byte* data, nuint length);
+
+        /// <summary>Deallocates a `Packet`.  Note: do not call this if the instance has been consumed in another way, e.g. by sending it.</summary>
+        [DllImport(__DllName, EntryPoint = "sp2_packet_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp2_packet_dealloc(Packet* @this);
 
 
     }
@@ -216,6 +236,18 @@ namespace ServicePoint2.BindGen
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct PixelGrid
+    {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct CByteSlice
+    {
+        public byte* start;
+        public nuint length;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct Packet
     {
     }
 

@@ -77,20 +77,22 @@ impl PixelGrid {
         self.bit_vec.fill(value);
     }
 
-    pub fn data_ref(&self) -> &[u8] {
-        self.bit_vec.data_ref()
+    pub fn mut_data_ref(&mut self) -> &mut [u8] {
+        self.bit_vec.mut_data_ref()
     }
 }
 
-impl Into<Vec<u8>> for PixelGrid {
-    fn into(self) -> Vec<u8> {
-        self.bit_vec.into()
+impl From<PixelGrid> for Vec<u8> {
+    /// Turns a `PixelGrid` into the underlying `Vec<u8>`.
+    fn from(value: PixelGrid) -> Self {
+        value.bit_vec.into()
     }
 }
 
 #[cfg(feature = "c-api")]
 pub mod c_api
 {
+    use crate::c_slice::CByteSlice;
     use crate::PixelGrid;
 
     /// Creates a new `PixelGrid` instance.
@@ -153,10 +155,21 @@ pub mod c_api
         (*this).height
     }
 
-    /// Gets a reference to the data of the `PixelGrid` instance.
+    /// Gets an unsafe reference to the data of the `PixelGrid` instance.
+    ///
+    /// ## Safety
+    ///
+    /// The caller has to make sure to never access the returned memory after the `PixelGrid`
+    /// instance has been consumed or manually deallocated.
+    ///
+    /// Reading and writing concurrently to either the original instance or the returned data will
+    /// result in undefined behavior.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_data_ref(this: *const PixelGrid) -> *const u8 {
-        // TODO: also return length
-        (*this).data_ref().as_ptr_range().start
+    pub unsafe extern "C" fn sp2_pixel_grid_unsafe_data_ref(this: *mut PixelGrid) -> CByteSlice {
+        let data = (*this).mut_data_ref();
+        CByteSlice {
+            start: data.as_mut_ptr_range().start,
+            length: data.len(),
+        }
     }
 }
