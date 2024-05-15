@@ -12,20 +12,19 @@ This repository contains a library for parsing, encoding and sending packets to 
 ## Note on stability
 
 This library is still in early development.
-You can absolutely use it and it works, but expect minor breaking changes with every version bump.
+You can absolutely use it, and it works, but expect minor breaking changes with every version bump.
 Please specify the full version including patch in your Cargo.toml until 1.0 is released.
 
 Expect bugs and/or missing features in the language bindings for now. If you need something specific, open an issue or a pull request.
 
-## Examples
-
-More are available in the `examples` folder.
-
-### Rust
+## Rust
 
 This is where the library works the best.
+Any API usage accepted by the compiler in a safe context is either safe or buggy (issues welcome)
 
-Any API usage accepted by the compiler in a safe context is either safe or buggy (issues welcome).
+```bash
+cargo add servicepoint2
+```
 
 ```rust
 fn main() {
@@ -39,38 +38,9 @@ fn main() {
 }
 ```
 
-### C# / F#
+More examples are available in the repository folder and in the [Projects using the library]() section
 
-Uses C bindings internally to provide a similar API to rust. Things to keep in mind:
-
-- You will get a `NullPointerException` when trying to call a method where the native instance has been consumed already (e.g. when `Send`ing a command instance twice). Send a clone instead of the original if you want to keep using it.
-- Some lower-level APIs _will_ panic in native code when used improperly.
-  Example: manipulating the `Span<byte>` of an object after freeing the instance.
-- C# specifics are documented in the library. Use the rust documentation for everything else. Naming and semantics are the same apart from CamelCase instead of kebap_case.
-- You will only get rust backtraces in debug builds of the native code.
-- F# is not explicitly tested. If there are usability or functionality problems, please open an issue.
-- Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.
-
-```csharp
-using ServicePoint2;
-
-// using statement calls Dispose() on scope exit, which frees unmanaged instances
-using var connection = Connection.Open("127.0.0.1:2342");
-using var pixels = PixelGrid.New(Constants.PixelWidth, Constants.PixelHeight);
-
-while (true)
-{
-    pixels.Fill(true);
-    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone()));
-    Thread.Sleep(5000);
-
-    pixels.Fill(false);
-    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone()));
-    Thread.Sleep(5000);
-}
-```
-
-### C and other languages
+## C / C++
 
 The lowest common denominator. Things to keep in mind:
 
@@ -106,26 +76,41 @@ int main(void) {
 }
 ```
 
-## Installation
+## C# / F#
 
-### Rust
+Uses C bindings internally to provide a similar API to rust. Things to keep in mind:
 
-```bash
-cargo add servicepoint2
+- You will get a `NullPointerException` when trying to call a method where the native instance has been consumed already (e.g. when `Send`ing a command instance twice). Send a clone instead of the original if you want to keep using it.
+- Some lower-level APIs _will_ panic in native code when used improperly.
+  Example: manipulating the `Span<byte>` of an object after freeing the instance.
+- C# specifics are documented in the library. Use the rust documentation for everything else. Naming and semantics are the same apart from CamelCase instead of kebab_case.
+- You will only get rust backtraces in debug builds of the native code.
+- F# is not explicitly tested. If there are usability or functionality problems, please open an issue.
+- Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.
+
+```csharp
+using ServicePoint2;
+
+// using statement calls Dispose() on scope exit, which frees unmanaged instances
+using var connection = Connection.Open("127.0.0.1:2342");
+using var pixels = PixelGrid.New(Constants.PixelWidth, Constants.PixelHeight);
+
+while (true)
+{
+    pixels.Fill(true);
+    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone()));
+    Thread.Sleep(5000);
+
+    pixels.Fill(false);
+    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone()));
+    Thread.Sleep(5000);
+}
 ```
 
-### C / C++
-
-Copy the header to your project and compile against.
-
-You have the choice of linking statically (recommended) or dynamically.
-- The C example shows how to link statically against the `staticlib` variant.
-- When linked dynamically, you have to provide the `cdylib` at runtime in the _same_ version, as there are no API/ABI guarantees yet.
-
-### C# / F#
+### Installation
 
 NuGet packages are not a good way to distribute native projects ([relevant issue](https://github.com/dotnet/sdk/issues/33845)).
-Because of that, there is no NuGet package you can use directly. 
+Because of that, there is no NuGet package you can use directly.
 Including this repository as a submodule and building from source is the recommended way of using the library.
 
 ```bash
@@ -137,6 +122,14 @@ You can now reference `servicepoint2-bindings-cs/src/ServicePoint2.csproj` in yo
 The rust library will automatically be built.
 
 Please provide more information in the form of an issue if you need the build to copy a different library file for your platform.
+
+### Installation
+
+Copy the header to your project and compile against.
+
+You have the choice of linking statically (recommended) or dynamically.
+- The C example shows how to link statically against the `staticlib` variant.
+- When linked dynamically, you have to provide the `cdylib` at runtime in the _same_ version, as there are no API/ABI guarantees yet.
 
 ## Features
 
