@@ -76,6 +76,11 @@ impl BitVec {
         self.data.len() * 8
     }
 
+    /// returns true if length is 0.
+    pub fn is_empty(&self) -> bool {
+        self.data.is_empty()
+    }
+
     /// Get the underlying bits in their raw packed bytes form
     pub fn mut_data_ref(&mut self) -> &mut [u8] {
         self.data.as_mut_slice()
@@ -172,6 +177,12 @@ pub mod c_api {
     #[no_mangle]
     pub unsafe extern "C" fn sp2_bit_vec_len(this: *const BitVec) -> usize {
         (*this).len()
+    }
+
+    /// Returns true if length is 0.
+    #[no_mangle]
+    pub unsafe extern "C" fn sp2_bit_vec_is_empty(this: *const BitVec) -> bool {
+        (*this).is_empty()
     }
 
     /// Gets an unsafe reference to the data of the `BitVec` instance.

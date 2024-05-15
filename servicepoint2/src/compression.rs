@@ -93,7 +93,7 @@ pub(crate) fn into_compressed(
             let mut encoder = Lz4EncoderBuilder::new()
                 .build(vec![])
                 .expect("could not create encoder");
-            encoder.write(&payload).expect("could not write payload");
+            encoder.write_all(&payload).expect("could not write payload");
             let (payload, _) = encoder.finish();
             payload
         }
@@ -103,7 +103,7 @@ pub(crate) fn into_compressed(
                 ZstdEncoder::new(vec![], zstd::DEFAULT_COMPRESSION_LEVEL)
                     .expect("could not create encoder");
             encoder
-                .write(&payload)
+                .write_all(&payload)
                 .expect("could not compress payload");
             encoder.finish().expect("could not finish encoding")
         }
