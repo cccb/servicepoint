@@ -3,9 +3,8 @@ use std::io::{Read, Write};
 
 #[cfg(feature = "compression_bzip2")]
 use bzip2::read::{BzDecoder, BzEncoder};
+#[cfg(feature = "compression_zlib")]
 use flate2::{FlushCompress, FlushDecompress, Status};
-#[cfg(feature = "compression_lzma")]
-use lzma;
 #[cfg(feature = "compression_zstd")]
 use zstd::{Decoder as ZstdDecoder, Encoder as ZstdEncoder};
 
@@ -13,7 +12,7 @@ use crate::{CompressionCode, Payload};
 
 pub(crate) fn into_decompressed(
     kind: CompressionCode,
-    mut payload: Payload,
+    payload: Payload,
 ) -> Option<Payload> {
     match kind {
         CompressionCode::Uncompressed => Some(payload),
@@ -22,7 +21,7 @@ pub(crate) fn into_decompressed(
             let mut decompress = flate2::Decompress::new(true);
             let mut buffer = [0u8; 10000];
 
-            let status = match decompress.decompress(&*payload, &mut buffer, FlushDecompress::Finish) {
+            let status = match decompress.decompress(&payload, &mut buffer, FlushDecompress::Finish) {
                 Err(_) => return None,
                 Ok(status) => status,
             };
@@ -44,7 +43,7 @@ pub(crate) fn into_decompressed(
         }
         #[cfg(feature = "compression_lzma")]
         CompressionCode::Lzma => {
-            Some(lzma::decompress(&mut payload).unwrap())
+            Some(lzma::decompress(&payload).unwrap())
         }
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
@@ -72,7 +71,7 @@ pub(crate) fn into_compressed(
             let mut compress = flate2::Compress::new(flate2::Compression::fast(), true);
             let mut buffer = [0u8; 10000];
 
-            match compress.compress(&*payload, &mut buffer, FlushCompress::Finish).expect("compress failed") {
+            match compress.compress(&payload, &mut buffer, FlushCompress::Finish).expect("compress failed") {
                 Status::Ok => panic!("buffer should be big enough"),
                 Status::BufError => panic!("BufError"),
                 Status::StreamEnd => {}
