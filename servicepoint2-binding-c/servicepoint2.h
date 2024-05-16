@@ -284,7 +284,8 @@ struct sp2_Command *sp2_command_bitmap_linear_or(sp2_Offset offset,
  */
 struct sp2_Command *sp2_command_bitmap_linear_win(uint16_t x,
                                                   uint16_t y,
-                                                  struct sp2_PixelGrid *byte_grid);
+                                                  struct sp2_PixelGrid *byte_grid,
+                                                  sp2_CompressionCode compression_code);
 
 /**
  * Allocates a new `Command::BitmapLinearXor` instance.

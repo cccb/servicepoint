@@ -11,10 +11,14 @@ pub(crate) enum CommandCode {
     #[deprecated]
     BitmapLegacy = 0x0010,
     BitmapLinear = 0x0012,
-    BitmapLinearWin = 0x0013,
+    BitmapLinearWinUncompressed = 0x0013,
     BitmapLinearAnd = 0x0014,
     BitmapLinearOr = 0x0015,
     BitmapLinearXor = 0x0016,
+    BitmapLinearWinZlib = 0x0017,
+    BitmapLinearWinBzip2 = 0x0018,
+    BitmapLinearWinLzma = 0x0019,
+    BitmapLinearWinZstd = 0x001A,
 }
 
 impl From<CommandCode> for u16 {
@@ -41,7 +45,7 @@ impl TryFrom<u16> for CommandCode {
             #[allow(deprecated)]
             value if value == BitmapLegacy as u16 => Ok(BitmapLegacy),
             value if value == BitmapLinear as u16 => Ok(BitmapLinear),
-            value if value == BitmapLinearWin as u16 => Ok(BitmapLinearWin),
+            value if value == BitmapLinearWinUncompressed as u16 => Ok(BitmapLinearWinUncompressed),
             value if value == BitmapLinearAnd as u16 => Ok(BitmapLinearAnd),
             value if value == BitmapLinearOr as u16 => Ok(BitmapLinearOr),
             value if value == BitmapLinearXor as u16 => Ok(BitmapLinearXor),

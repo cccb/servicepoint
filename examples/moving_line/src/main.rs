@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use servicepoint2::{Command, Connection, Origin, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
+use servicepoint2::{Command, CompressionCode, Connection, Origin, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -24,7 +24,7 @@ fn main() {
             pixels.set((y + x_offset) % PIXEL_WIDTH as usize, y, true);
         }
         connection
-            .send(Command::BitmapLinearWin(Origin::top_left(), pixels.clone()).into())
+            .send(Command::BitmapLinearWin(Origin::top_left(), pixels.clone(), CompressionCode::Lzma).into())
             .unwrap();
         thread::sleep(Duration::from_millis(14));
     }

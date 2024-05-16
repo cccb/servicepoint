@@ -149,7 +149,7 @@ namespace ServicePoint2.BindGen
 
         /// <summary>Allocates a new `Command::BitmapLinearWin` instance. The passed `PixelGrid` gets deallocated in the process.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_bitmap_linear_win(ushort x, ushort y, PixelGrid* byte_grid);
+        public static extern Command* sp2_command_bitmap_linear_win(ushort x, ushort y, PixelGrid* byte_grid, CompressionCode compression_code);
 
         /// <summary>Deallocates a `Command`. Note that connection_send does this implicitly, so you only need to do this if you use the library for parsing commands.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
