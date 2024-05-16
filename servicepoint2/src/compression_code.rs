@@ -5,14 +5,14 @@ use CompressionCode::*;
 #[derive(Debug, Clone, Copy)]
 pub enum CompressionCode {
     Uncompressed = 0x0,
-    #[cfg(feature = "compression-gz")]
-    Gz = 0x677a,
-    #[cfg(feature = "compression-bz")]
-    Bz = 0x627a,
-    #[cfg(feature = "compression-lz")]
-    Lz = 0x6c7a,
-    #[cfg(feature = "compression-zs")]
-    Zs = 0x7a73,
+    #[cfg(feature = "compression_zlib")]
+    Zlib = 0x677a,
+    #[cfg(feature = "compression_bzip2")]
+    Bzip2 = 0x627a,
+    #[cfg(feature = "compression_lzma")]
+    Lzma = 0x6c7a,
+    #[cfg(feature = "compression_zstd")]
+    Zstd = 0x7a73,
 }
 
 impl From<CompressionCode> for u16 {
@@ -27,14 +27,14 @@ impl TryFrom<u16> for CompressionCode {
     fn try_from(value: u16) -> Result<Self, Self::Error> {
         match value {
             value if value == Uncompressed as u16 => Ok(Uncompressed),
-            #[cfg(feature = "compression-gz")]
-            value if value == Gz as u16 => Ok(Gz),
-            #[cfg(feature = "compression-bz")]
-            value if value == Bz as u16 => Ok(Bz),
-            #[cfg(feature = "compression-lz")]
-            value if value == Lz as u16 => Ok(Lz),
-            #[cfg(feature = "compression-zs")]
-            value if value == Zs as u16 => Ok(Zs),
+            #[cfg(feature = "compression_zlib")]
+            value if value == Zlib as u16 => Ok(Zlib),
+            #[cfg(feature = "compression_bzip2")]
+            value if value == Bzip2 as u16 => Ok(Bzip2),
+            #[cfg(feature = "compression_lzma")]
+            value if value == Lzma as u16 => Ok(Lzma),
+            #[cfg(feature = "compression_zstd")]
+            value if value == Zstd as u16 => Ok(Zstd),
             _ => Err(()),
         }
     }

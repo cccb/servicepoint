@@ -276,10 +276,10 @@ namespace ServicePoint2.BindGen
     public enum CompressionCode : ushort
     {
         Uncompressed = 0,
-        Gz = 26490,
-        Bz = 25210,
-        Lz = 27770,
-        Zs = 31347,
+        Zlib = 26490,
+        Bzip2 = 25210,
+        Lzma = 27770,
+        Zstd = 31347,
     }
 
 

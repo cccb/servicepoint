@@ -3,9 +3,7 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use servicepoint2::{
-    BitVec, Command, CompressionCode, Connection, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid
-};
+use servicepoint2::{BitVec, Command, CompressionCode, Connection, Origin, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -20,6 +18,12 @@ fn main() {
     let cli = Cli::parse();
 
     let connection = Connection::open(cli.destination).unwrap();
+
+    let mut buf = PixelGrid::max_sized();
+    buf.fill(true);
+    connection.send(Command::BitmapLinearWin(Origin(0, 0), buf).into())
+        .expect("send failed");
+
     let sleep_duration = Duration::from_millis(cli.time / PIXEL_WIDTH as u64);
 
     let mut enabled_pixels =
@@ -36,7 +40,7 @@ fn main() {
         let bit_vec = BitVec::from(&*pixel_data);
 
         connection
-            .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Gz).into())
+            .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma).into())
             .unwrap();
         thread::sleep(sleep_duration);
     }

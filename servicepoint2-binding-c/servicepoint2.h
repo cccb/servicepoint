@@ -45,17 +45,17 @@ enum sp2_CompressionCode
 #endif // __cplusplus
  {
     Uncompressed = 0,
-#if defined(SP2_FEATURE_compression_gz)
-    Gz = 26490,
+#if defined(SP2_FEATURE_compression_zlib)
+    Zlib = 26490,
 #endif
-#if defined(SP2_FEATURE_compression_bz)
-    Bz = 25210,
+#if defined(SP2_FEATURE_compression_bzip2)
+    Bzip2 = 25210,
 #endif
-#if defined(SP2_FEATURE_compression_lz)
-    Lz = 27770,
+#if defined(SP2_FEATURE_compression_lzma)
+    Lzma = 27770,
 #endif
-#if defined(SP2_FEATURE_compression_zs)
-    Zs = 31347,
+#if defined(SP2_FEATURE_compression_zstd)
+    Zstd = 31347,
 #endif
 };
 #ifndef __cplusplus

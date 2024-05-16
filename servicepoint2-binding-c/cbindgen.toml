@@ -19,11 +19,10 @@ sort_by = "Name"
 usize_is_size_t = true
 
 [defines]
-"feature = compression-gz" = "SP2_FEATURE_compression_gz"
-"feature = compression-bz" = "SP2_FEATURE_compression_bz"
-"feature = compression-lz" = "SP2_FEATURE_compression_lz"
-"feature = compression-zs" = "SP2_FEATURE_compression_zs"
-#"feature = c-api" = "SP2_FEATURE_c-api"
+"feature = compression_zlib" = "SP2_FEATURE_compression_zlib"
+"feature = compression_bzip2" = "SP2_FEATURE_compression_bzip2"
+"feature = compression_lzma" = "SP2_FEATURE_compression_lzma"
+"feature = compression_zstd" = "SP2_FEATURE_compression_zstd"
 
 [export]
 prefix = "sp2_"

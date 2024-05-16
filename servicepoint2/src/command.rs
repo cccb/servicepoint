@@ -252,12 +252,13 @@ fn bitmap_linear_into_packet(
     compression: CompressionCode,
     payload: Vec<u8>,
 ) -> Packet {
+    let length = payload.len() as u16;
     let payload = into_compressed(compression, payload);
     Packet(
         Header(
             command.into(),
             offset,
-            payload.len() as u16,
+            length,
             compression.into(),
             0,
         ),
@@ -290,12 +291,6 @@ fn packet_into_linear_bitmap(
     if reserved != 0 {
         return Err(TryFromPacketError::ExtraneousHeaderValues);
     }
-    if payload.len() != length as usize {
-        return Err(TryFromPacketError::UnexpectedPayloadSize(
-            length as usize,
-            payload.len(),
-        ));
-    }
     let sub = match CompressionCode::try_from(sub) {
         Err(_) => return Err(TryFromPacketError::InvalidCompressionCode(sub)),
         Ok(value) => value,
@@ -304,6 +299,12 @@ fn packet_into_linear_bitmap(
         None => return Err(TryFromPacketError::DecompressionFailed),
         Some(value) => value,
     };
+    if payload.len() != length as usize {
+        return Err(TryFromPacketError::UnexpectedPayloadSize(
+            length as usize,
+            payload.len(),
+        ));
+    }
     Ok((BitVec::from(&*payload), sub))
 }
 
