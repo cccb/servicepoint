@@ -64,7 +64,7 @@ impl Connection {
     }
 }
 
-#[cfg(feature = "c-api")]
+#[cfg(feature = "c_api")]
 pub mod c_api
 {
     use std::ffi::{c_char, CStr};

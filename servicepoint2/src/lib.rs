@@ -6,7 +6,7 @@ pub use crate::connection::Connection;
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
 
-#[cfg(feature = "c-api")]
+#[cfg(feature = "c_api")]
 pub use crate::c_slice::CByteSlice;
 
 mod bit_vec;

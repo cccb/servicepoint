@@ -58,7 +58,7 @@ impl TryFrom<&[u8]> for Packet {
     }
 }
 
-#[cfg(feature = "c-api")]
+#[cfg(feature = "c_api")]
 mod c_api {
     use std::ptr::null_mut;
 

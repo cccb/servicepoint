@@ -121,7 +121,7 @@ impl std::fmt::Debug for BitVec {
     }
 }
 
-#[cfg(feature = "c-api")]
+#[cfg(feature = "c_api")]
 pub mod c_api {
     use crate::{BitVec, CByteSlice};
 

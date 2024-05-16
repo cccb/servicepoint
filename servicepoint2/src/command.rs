@@ -335,7 +335,7 @@ fn packet_into_linear_bitmap(
     Ok((BitVec::from(&*payload), sub))
 }
 
-#[cfg(feature = "c-api")]
+#[cfg(feature = "c_api")]
 pub mod c_api
 {
     use std::ptr::null_mut;
