@@ -38,7 +38,8 @@ impl Connection {
     /// # Examples
     ///
     /// ```rust
-    ///  let connection = servicepoint2::Connection::open("172.23.42.29:2342")
+    ///  use servicepoint2::CompressionCode;
+    /// let connection = servicepoint2::Connection::open("172.23.42.29:2342")
     ///     .expect("connection failed");
     ///
     ///  // turn off all pixels
@@ -50,7 +51,7 @@ impl Connection {
     ///  pixels.fill(true);
     ///
     ///  // send pixels to display
-    ///  connection.send(servicepoint2::Command::BitmapLinearWin(servicepoint2::Origin::top_left(), pixels).into())
+    ///  connection.send(servicepoint2::Command::BitmapLinearWin(servicepoint2::Origin::top_left(), pixels, CompressionCode::Lzma).into())
     ///     .expect("send failed");
     /// ```
     pub fn send(

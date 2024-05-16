@@ -1,4 +1,5 @@
 ﻿using ServicePoint2;
+using CompressionCode = ServicePoint2.BindGen.CompressionCode;
 
 using var connection = Connection.Open("127.0.0.1:2342");
 
@@ -14,6 +15,6 @@ for (var offset = 0; offset < int.MaxValue; offset++)
     for (var y = 0; y < pixels.Height; y++)
         pixels[(y + offset) % Constants.PixelWidth, y] = true;
 
-    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone()).IntoPacket());
+    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone(), CompressionCode.Lzma).IntoPacket());
     Thread.Sleep(14);
 }
