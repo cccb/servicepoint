@@ -54,10 +54,7 @@ impl Connection {
     ///  connection.send(servicepoint2::Command::BitmapLinearWin(servicepoint2::Origin::top_left(), pixels, CompressionCode::Lzma).into())
     ///     .expect("send failed");
     /// ```
-    pub fn send(
-        &self,
-        packet: Packet,
-    ) -> Result<(), std::io::Error> {
+    pub fn send(&self, packet: Packet) -> Result<(), std::io::Error> {
         debug!("sending {packet:?}");
         let data: Vec<u8> = packet.into();
         self.socket.send(&data)?;
@@ -66,8 +63,7 @@ impl Connection {
 }
 
 #[cfg(feature = "c_api")]
-pub mod c_api
-{
+pub mod c_api {
     use std::ffi::{c_char, CStr};
     use std::ptr::null_mut;
 
@@ -80,11 +76,13 @@ pub mod c_api
     ///
     /// Panics: bad string encoding
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_connection_open(host: *const c_char) -> *mut Connection {
+    pub unsafe extern "C" fn sp2_connection_open(
+        host: *const c_char,
+    ) -> *mut Connection {
         let host = CStr::from_ptr(host).to_str().expect("Bad encoding");
         let connection = match Connection::open(host) {
             Err(_) => return null_mut(),
-            Ok(value) => value
+            Ok(value) => value,
         };
 
         Box::into_raw(Box::new(connection))
@@ -92,7 +90,10 @@ pub mod c_api
 
     /// Sends the command instance. The instance is consumed / destroyed and cannot be used after this call.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_connection_send(connection: *const Connection, command_ptr: *mut Packet) -> bool{
+    pub unsafe extern "C" fn sp2_connection_send(
+        connection: *const Connection,
+        command_ptr: *mut Packet,
+    ) -> bool {
         let packet = Box::from_raw(command_ptr);
         (*connection).send(*packet).is_ok()
     }

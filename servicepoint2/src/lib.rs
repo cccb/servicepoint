@@ -11,6 +11,7 @@ pub use crate::c_slice::CByteSlice;
 
 mod bit_vec;
 mod byte_grid;
+mod c_slice;
 mod command;
 mod command_code;
 mod compression;
@@ -18,7 +19,6 @@ mod compression_code;
 mod connection;
 mod packet;
 mod pixel_grid;
-mod c_slice;
 
 /// size of a single tile in one dimension
 pub const TILE_SIZE: u16 = 8;

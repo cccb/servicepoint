@@ -23,7 +23,14 @@ fn main() {
 
     loop {
         connection
-            .send(Command::BitmapLinearWin(Origin::top_left(), field.clone(), CompressionCode::Bzip2).into())
+            .send(
+                Command::BitmapLinearWin(
+                    Origin::top_left(),
+                    field.clone(),
+                    CompressionCode::Bzip2,
+                )
+                .into(),
+            )
             .expect("could not send");
         thread::sleep(Duration::from_millis(30));
         field = iteration(field);
@@ -37,7 +44,10 @@ fn iteration(field: PixelGrid) -> PixelGrid {
             let old_state = field.get(x, y);
             let neighbors = count_neighbors(&field, x as i32, y as i32);
 
-            let new_state = matches!((old_state, neighbors), (true, 2) | (true, 3) | (false, 3));
+            let new_state = matches!(
+                (old_state, neighbors),
+                (true, 2) | (true, 3) | (false, 3)
+            );
             next.set(x, y, new_state);
         }
     }

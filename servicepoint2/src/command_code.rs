@@ -45,7 +45,9 @@ impl TryFrom<u16> for CommandCode {
             #[allow(deprecated)]
             value if value == BitmapLegacy as u16 => Ok(BitmapLegacy),
             value if value == BitmapLinear as u16 => Ok(BitmapLinear),
-            value if value == BitmapLinearWinUncompressed as u16 => Ok(BitmapLinearWinUncompressed),
+            value if value == BitmapLinearWinUncompressed as u16 => {
+                Ok(BitmapLinearWinUncompressed)
+            }
             value if value == BitmapLinearAnd as u16 => Ok(BitmapLinearAnd),
             value if value == BitmapLinearOr as u16 => Ok(BitmapLinearOr),
             value if value == BitmapLinearXor as u16 => Ok(BitmapLinearXor),

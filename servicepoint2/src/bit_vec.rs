@@ -135,7 +135,10 @@ pub mod c_api {
     /// Loads a `BitVec` from the provided data.
     /// The returned instance has to be freed with `bit_vec_dealloc`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_bit_vec_load(data: *const u8, data_length: usize) -> *mut BitVec {
+    pub unsafe extern "C" fn sp2_bit_vec_load(
+        data: *const u8,
+        data_length: usize,
+    ) -> *mut BitVec {
         let data = std::slice::from_raw_parts(data, data_length);
         Box::into_raw(Box::new(BitVec::from(data)))
     }
@@ -143,7 +146,9 @@ pub mod c_api {
     /// Clones a `BitVec`.
     /// The returned instance has to be freed with `bit_vec_dealloc`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_bit_vec_clone(this: *const BitVec) -> *mut BitVec {
+    pub unsafe extern "C" fn sp2_bit_vec_clone(
+        this: *const BitVec,
+    ) -> *mut BitVec {
         Box::into_raw(Box::new((*this).clone()))
     }
 
@@ -157,13 +162,20 @@ pub mod c_api {
 
     /// Gets the value of a bit from the `BitVec`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_bit_vec_get(this: *const BitVec, index: usize) -> bool {
+    pub unsafe extern "C" fn sp2_bit_vec_get(
+        this: *const BitVec,
+        index: usize,
+    ) -> bool {
         (*this).get(index)
     }
 
     /// Sets the value of a bit in the `BitVec`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_bit_vec_set(this: *mut BitVec, index: usize, value: bool) -> bool {
+    pub unsafe extern "C" fn sp2_bit_vec_set(
+        this: *mut BitVec,
+        index: usize,
+        value: bool,
+    ) -> bool {
         (*this).set(index, value)
     }
 
@@ -195,7 +207,9 @@ pub mod c_api {
     /// Reading and writing concurrently to either the original instance or the returned data will
     /// result in undefined behavior.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_bit_vec_unsafe_data_ref(this: *mut BitVec) -> CByteSlice {
+    pub unsafe extern "C" fn sp2_bit_vec_unsafe_data_ref(
+        this: *mut BitVec,
+    ) -> CByteSlice {
         let data = (*this).mut_data_ref();
         CByteSlice {
             start: data.as_mut_ptr_range().start,

@@ -67,21 +67,28 @@ impl From<ByteGrid> for Vec<u8> {
 }
 
 #[cfg(feature = "c_api")]
-pub mod c_api
-{
+pub mod c_api {
     use crate::{ByteGrid, CByteSlice};
 
     /// Creates a new `ByteGrid` instance.
     /// The returned instance has to be freed with `byte_grid_dealloc`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_new(width: usize, height: usize) -> *mut ByteGrid {
+    pub unsafe extern "C" fn sp2_byte_grid_new(
+        width: usize,
+        height: usize,
+    ) -> *mut ByteGrid {
         Box::into_raw(Box::new(ByteGrid::new(width, height)))
     }
 
     /// Loads a `ByteGrid` with the specified dimensions from the provided data.
     /// The returned instance has to be freed with `byte_grid_dealloc`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_load(width: usize, height: usize, data: *const u8, data_length: usize) -> *mut ByteGrid {
+    pub unsafe extern "C" fn sp2_byte_grid_load(
+        width: usize,
+        height: usize,
+        data: *const u8,
+        data_length: usize,
+    ) -> *mut ByteGrid {
         let data = std::slice::from_raw_parts(data, data_length);
         Box::into_raw(Box::new(ByteGrid::load(width, height, data)))
     }
@@ -89,7 +96,9 @@ pub mod c_api
     /// Clones a `ByteGrid`.
     /// The returned instance has to be freed with `byte_grid_dealloc`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_clone(this: *const ByteGrid) -> *mut ByteGrid {
+    pub unsafe extern "C" fn sp2_byte_grid_clone(
+        this: *const ByteGrid,
+    ) -> *mut ByteGrid {
         Box::into_raw(Box::new((*this).clone()))
     }
 
@@ -103,31 +112,47 @@ pub mod c_api
 
     /// Get the current value at the specified position
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_get(this: *const ByteGrid, x: usize, y: usize) -> u8 {
+    pub unsafe extern "C" fn sp2_byte_grid_get(
+        this: *const ByteGrid,
+        x: usize,
+        y: usize,
+    ) -> u8 {
         (*this).get(x, y)
     }
 
     /// Sets the current value at the specified position
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_set(this: *mut ByteGrid, x: usize, y: usize, value: u8) {
+    pub unsafe extern "C" fn sp2_byte_grid_set(
+        this: *mut ByteGrid,
+        x: usize,
+        y: usize,
+        value: u8,
+    ) {
         (*this).set(x, y, value);
     }
 
     /// Fills the whole `ByteGrid` with the specified value
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_fill(this: *mut ByteGrid, value: u8) {
+    pub unsafe extern "C" fn sp2_byte_grid_fill(
+        this: *mut ByteGrid,
+        value: u8,
+    ) {
         (*this).fill(value);
     }
 
     /// Gets the width in pixels of the `ByteGrid` instance.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_width(this: *const ByteGrid) -> usize {
+    pub unsafe extern "C" fn sp2_byte_grid_width(
+        this: *const ByteGrid,
+    ) -> usize {
         (*this).width
     }
 
     /// Gets the height in pixels of the `ByteGrid` instance.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_height(this: *const ByteGrid) -> usize {
+    pub unsafe extern "C" fn sp2_byte_grid_height(
+        this: *const ByteGrid,
+    ) -> usize {
         (*this).height
     }
 
@@ -141,7 +166,9 @@ pub mod c_api
     /// Reading and writing concurrently to either the original instance or the returned data will
     /// result in undefined behavior.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_byte_grid_unsafe_data_ref(this: *mut ByteGrid) -> CByteSlice {
+    pub unsafe extern "C" fn sp2_byte_grid_unsafe_data_ref(
+        this: *mut ByteGrid,
+    ) -> CByteSlice {
         let data = (*this).mut_data_ref();
         CByteSlice {
             start: data.as_mut_ptr_range().start,

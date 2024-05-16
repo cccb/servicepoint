@@ -1,6 +1,8 @@
-use crate::{BitVec, ByteGrid, CompressionCode, Header, Packet, PixelGrid, TILE_SIZE};
 use crate::command_code::CommandCode;
 use crate::compression::{into_compressed, into_decompressed};
+use crate::{
+    BitVec, ByteGrid, CompressionCode, Header, Packet, PixelGrid, TILE_SIZE,
+};
 
 /// An origin marks the top left position of a window sent to the display.
 #[derive(Debug, Clone, Copy)]
@@ -68,8 +70,13 @@ impl From<Command> for Packet {
                 command_code_only(CommandCode::BitmapLegacy)
             }
             Command::CharBrightness(Origin(x, y), grid) => Packet(
-                Header(CommandCode::CharBrightness.into(),
-                       x, y, grid.width as u16, grid.height as u16),
+                Header(
+                    CommandCode::CharBrightness.into(),
+                    x,
+                    y,
+                    grid.width as u16,
+                    grid.height as u16,
+                ),
                 grid.into(),
             ),
             Command::Brightness(brightness) => Packet(
@@ -82,7 +89,11 @@ impl From<Command> for Packet {
                 ),
                 vec![brightness],
             ),
-            Command::BitmapLinearWin(Origin(pixel_x, pixel_y), pixels, compression) => {
+            Command::BitmapLinearWin(
+                Origin(pixel_x, pixel_y),
+                pixels,
+                compression,
+            ) => {
                 debug_assert_eq!(pixel_x % 8, 0);
                 debug_assert_eq!(pixels.width % 8, 0);
 
@@ -91,7 +102,9 @@ impl From<Command> for Packet {
                 let pixel_h = pixels.height as u16;
                 let payload = into_compressed(compression, pixels.into());
                 let command = match compression {
-                    CompressionCode::Uncompressed => CommandCode::BitmapLinearWinUncompressed,
+                    CompressionCode::Uncompressed => {
+                        CommandCode::BitmapLinearWinUncompressed
+                    }
                     CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
                     CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
                     CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
@@ -136,7 +149,13 @@ impl From<Command> for Packet {
                 )
             }
             Command::Cp437Data(Origin(x, y), grid) => Packet(
-                Header(CommandCode::Cp437Data.into(), x, y, grid.width as u16, grid.height as u16),
+                Header(
+                    CommandCode::Cp437Data.into(),
+                    x,
+                    y,
+                    grid.width as u16,
+                    grid.height as u16,
+                ),
                 grid.into(),
             ),
         }
@@ -253,7 +272,10 @@ impl TryFrom<Packet> for Command {
     }
 }
 
-fn packet_into_bitmap_win(packet: Packet, compression: CompressionCode) -> Result<Command, TryFromPacketError> {
+fn packet_into_bitmap_win(
+    packet: Packet,
+    compression: CompressionCode,
+) -> Result<Command, TryFromPacketError> {
     let Packet(Header(_, tiles_x, pixels_y, tile_w, pixel_h), payload) = packet;
 
     let payload = match into_decompressed(compression, payload) {
@@ -282,13 +304,7 @@ fn bitmap_linear_into_packet(
     let length = payload.len() as u16;
     let payload = into_compressed(compression, payload);
     Packet(
-        Header(
-            command.into(),
-            offset,
-            length,
-            compression.into(),
-            0,
-        ),
+        Header(command.into(), offset, length, compression.into(), 0),
         payload,
     )
 }
@@ -336,17 +352,21 @@ fn packet_into_linear_bitmap(
 }
 
 #[cfg(feature = "c_api")]
-pub mod c_api
-{
+pub mod c_api {
     use std::ptr::null_mut;
 
-    use crate::{BitVec, Brightness, ByteGrid, Command, CompressionCode, Offset, Origin, Packet, PixelGrid};
+    use crate::{
+        BitVec, Brightness, ByteGrid, Command, CompressionCode, Offset, Origin,
+        Packet, PixelGrid,
+    };
 
     /// Tries to turn a `Packet` into a `Command`. The packet is gets deallocated in the process.
     ///
     /// Returns: pointer to command or NULL
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_try_from_packet(packet: *mut Packet) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_try_from_packet(
+        packet: *mut Packet,
+    ) -> *mut Command {
         let packet = *Box::from_raw(packet);
         match Command::try_from(packet) {
             Err(_) => null_mut(),
@@ -356,7 +376,9 @@ pub mod c_api
 
     /// Clones a `Command` instance
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_clone(original: *const Command) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_clone(
+        original: *const Command,
+    ) -> *mut Command {
         Box::into_raw(Box::new((*original).clone()))
     }
 
@@ -380,54 +402,99 @@ pub mod c_api
 
     /// Allocates a new `Command::Brightness` instance
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_brightness(brightness: Brightness) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_brightness(
+        brightness: Brightness,
+    ) -> *mut Command {
         Box::into_raw(Box::new(Command::Brightness(brightness)))
     }
 
     /// Allocates a new `Command::CharBrightness` instance.
     /// The passed `ByteGrid` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_char_brightness(x: u16, y: u16, byte_grid: *mut ByteGrid) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_char_brightness(
+        x: u16,
+        y: u16,
+        byte_grid: *mut ByteGrid,
+    ) -> *mut Command {
         let byte_grid = *Box::from_raw(byte_grid);
-        Box::into_raw(Box::new(Command::CharBrightness(Origin(x, y), byte_grid)))
+        Box::into_raw(Box::new(Command::CharBrightness(
+            Origin(x, y),
+            byte_grid,
+        )))
     }
 
     /// Allocates a new `Command::BitmapLinear` instance.
     /// The passed `BitVec` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_bitmap_linear(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear(
+        offset: Offset,
+        bit_vec: *mut BitVec,
+        compression: CompressionCode,
+    ) -> *mut Command {
         let bit_vec = *Box::from_raw(bit_vec);
-        Box::into_raw(Box::new(Command::BitmapLinear(offset, bit_vec, compression)))
+        Box::into_raw(Box::new(Command::BitmapLinear(
+            offset,
+            bit_vec,
+            compression,
+        )))
     }
 
     /// Allocates a new `Command::BitmapLinearAnd` instance.
     /// The passed `BitVec` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_bitmap_linear_and(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear_and(
+        offset: Offset,
+        bit_vec: *mut BitVec,
+        compression: CompressionCode,
+    ) -> *mut Command {
         let bit_vec = *Box::from_raw(bit_vec);
-        Box::into_raw(Box::new(Command::BitmapLinearAnd(offset, bit_vec, compression)))
+        Box::into_raw(Box::new(Command::BitmapLinearAnd(
+            offset,
+            bit_vec,
+            compression,
+        )))
     }
 
     /// Allocates a new `Command::BitmapLinearOr` instance.
     /// The passed `BitVec` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_bitmap_linear_or(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear_or(
+        offset: Offset,
+        bit_vec: *mut BitVec,
+        compression: CompressionCode,
+    ) -> *mut Command {
         let bit_vec = *Box::from_raw(bit_vec);
-        Box::into_raw(Box::new(Command::BitmapLinearOr(offset, bit_vec, compression)))
+        Box::into_raw(Box::new(Command::BitmapLinearOr(
+            offset,
+            bit_vec,
+            compression,
+        )))
     }
 
     /// Allocates a new `Command::BitmapLinearXor` instance.
     /// The passed `BitVec` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_bitmap_linear_xor(offset: Offset, bit_vec: *mut BitVec, compression: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear_xor(
+        offset: Offset,
+        bit_vec: *mut BitVec,
+        compression: CompressionCode,
+    ) -> *mut Command {
         let bit_vec = *Box::from_raw(bit_vec);
-        Box::into_raw(Box::new(Command::BitmapLinearXor(offset, bit_vec, compression)))
+        Box::into_raw(Box::new(Command::BitmapLinearXor(
+            offset,
+            bit_vec,
+            compression,
+        )))
     }
 
     /// Allocates a new `Command::Cp437Data` instance.
     /// The passed `ByteGrid` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_cp437_data(x: u16, y: u16, byte_grid: *mut ByteGrid) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_cp437_data(
+        x: u16,
+        y: u16,
+        byte_grid: *mut ByteGrid,
+    ) -> *mut Command {
         let byte_grid = *Box::from_raw(byte_grid);
         Box::into_raw(Box::new(Command::Cp437Data(Origin(x, y), byte_grid)))
     }
@@ -435,9 +502,18 @@ pub mod c_api
     /// Allocates a new `Command::BitmapLinearWin` instance.
     /// The passed `PixelGrid` gets deallocated in the process.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_command_bitmap_linear_win(x: u16, y: u16, byte_grid: *mut PixelGrid, compression_code: CompressionCode) -> *mut Command {
+    pub unsafe extern "C" fn sp2_command_bitmap_linear_win(
+        x: u16,
+        y: u16,
+        byte_grid: *mut PixelGrid,
+        compression_code: CompressionCode,
+    ) -> *mut Command {
         let byte_grid = *Box::from_raw(byte_grid);
-        Box::into_raw(Box::new(Command::BitmapLinearWin(Origin(x, y), byte_grid, compression_code)))
+        Box::into_raw(Box::new(Command::BitmapLinearWin(
+            Origin(x, y),
+            byte_grid,
+            compression_code,
+        )))
     }
 
     /// Deallocates a `Command`. Note that connection_send does this implicitly, so you only need

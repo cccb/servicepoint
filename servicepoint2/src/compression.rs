@@ -21,7 +21,11 @@ pub(crate) fn into_decompressed(
             let mut decompress = flate2::Decompress::new(true);
             let mut buffer = [0u8; 10000];
 
-            let status = match decompress.decompress(&payload, &mut buffer, FlushDecompress::Finish) {
+            let status = match decompress.decompress(
+                &payload,
+                &mut buffer,
+                FlushDecompress::Finish,
+            ) {
                 Err(_) => return None,
                 Ok(status) => status,
             };
@@ -29,7 +33,9 @@ pub(crate) fn into_decompressed(
             match status {
                 Status::Ok => None,
                 Status::BufError => None,
-                Status::StreamEnd => Some(buffer[0..(decompress.total_out() as usize)].to_owned()),
+                Status::StreamEnd => Some(
+                    buffer[0..(decompress.total_out() as usize)].to_owned(),
+                ),
             }
         }
         #[cfg(feature = "compression_bzip2")]
@@ -42,9 +48,7 @@ pub(crate) fn into_decompressed(
             }
         }
         #[cfg(feature = "compression_lzma")]
-        CompressionCode::Lzma => {
-            Some(lzma::decompress(&payload).unwrap())
-        }
+        CompressionCode::Lzma => Some(lzma::decompress(&payload).unwrap()),
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
             let mut decoder = match ZstdDecoder::new(&*payload) {
@@ -68,10 +72,14 @@ pub(crate) fn into_compressed(
         CompressionCode::Uncompressed => payload,
         #[cfg(feature = "compression_zlib")]
         CompressionCode::Zlib => {
-            let mut compress = flate2::Compress::new(flate2::Compression::fast(), true);
+            let mut compress =
+                flate2::Compress::new(flate2::Compression::fast(), true);
             let mut buffer = [0u8; 10000];
 
-            match compress.compress(&payload, &mut buffer, FlushCompress::Finish).expect("compress failed") {
+            match compress
+                .compress(&payload, &mut buffer, FlushCompress::Finish)
+                .expect("compress failed")
+            {
                 Status::Ok => panic!("buffer should be big enough"),
                 Status::BufError => panic!("BufError"),
                 Status::StreamEnd => {}
@@ -89,9 +97,7 @@ pub(crate) fn into_compressed(
             }
         }
         #[cfg(feature = "compression_lzma")]
-        CompressionCode::Lzma => {
-            lzma::compress(&payload, 6).unwrap()
-        }
+        CompressionCode::Lzma => lzma::compress(&payload, 6).unwrap(),
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
             let mut encoder =

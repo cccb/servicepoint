@@ -3,7 +3,10 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use servicepoint2::{BitVec, Command, CompressionCode, Connection, PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
+use servicepoint2::{
+    BitVec, Command, CompressionCode, Connection, PixelGrid, PIXEL_HEIGHT,
+    PIXEL_WIDTH,
+};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -34,7 +37,10 @@ fn main() {
         let bit_vec = BitVec::from(&*pixel_data);
 
         connection
-            .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma).into())
+            .send(
+                Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma)
+                    .into(),
+            )
             .unwrap();
         thread::sleep(sleep_duration);
     }

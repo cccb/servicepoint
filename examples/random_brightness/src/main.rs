@@ -3,8 +3,11 @@ use std::time::Duration;
 use clap::Parser;
 use rand::Rng;
 
+use servicepoint2::{
+    ByteGrid, CompressionCode, Connection, Origin, PixelGrid, TILE_HEIGHT,
+    TILE_WIDTH,
+};
 use servicepoint2::Command::{BitmapLinearWin, Brightness, CharBrightness};
-use servicepoint2::{ByteGrid, CompressionCode, Connection, Origin, PixelGrid, TILE_HEIGHT, TILE_WIDTH};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -27,9 +30,13 @@ fn main() {
     if cli.enable_all {
         let mut filled_grid = PixelGrid::max_sized();
         filled_grid.fill(true);
-        connection
-            .send(BitmapLinearWin(Origin::top_left(), filled_grid, CompressionCode::Lzma).into())
-            .unwrap();
+
+        let command = BitmapLinearWin(
+            Origin::top_left(),
+            filled_grid,
+            CompressionCode::Lzma,
+        );
+        connection.send(command.into()).expect("send failed");
     }
 
     // set all pixels to the same random brightness
@@ -54,7 +61,9 @@ fn main() {
             }
         }
 
-        connection.send(CharBrightness(origin, luma).into()).unwrap();
+        connection
+            .send(CharBrightness(origin, luma).into())
+            .unwrap();
         std::thread::sleep(wait_duration);
     }
 }

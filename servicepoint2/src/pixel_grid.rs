@@ -90,22 +90,29 @@ impl From<PixelGrid> for Vec<u8> {
 }
 
 #[cfg(feature = "c_api")]
-pub mod c_api
-{
+pub mod c_api {
     use crate::c_slice::CByteSlice;
     use crate::PixelGrid;
 
     /// Creates a new `PixelGrid` instance.
     /// The returned instance has to be freed with `pixel_grid_dealloc`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_new(width: usize, height: usize) -> *mut PixelGrid {
+    pub unsafe extern "C" fn sp2_pixel_grid_new(
+        width: usize,
+        height: usize,
+    ) -> *mut PixelGrid {
         Box::into_raw(Box::new(PixelGrid::new(width, height)))
     }
 
     /// Loads a `PixelGrid` with the specified dimensions from the provided data.
     /// The returned instance has to be freed with `pixel_grid_dealloc`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_load(width: usize, height: usize, data: *const u8, data_length: usize) -> *mut PixelGrid {
+    pub unsafe extern "C" fn sp2_pixel_grid_load(
+        width: usize,
+        height: usize,
+        data: *const u8,
+        data_length: usize,
+    ) -> *mut PixelGrid {
         let data = std::slice::from_raw_parts(data, data_length);
         Box::into_raw(Box::new(PixelGrid::load(width, height, data)))
     }
@@ -113,7 +120,9 @@ pub mod c_api
     /// Clones a `PixelGrid`.
     /// The returned instance has to be freed with `pixel_grid_dealloc`.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_clone(this: *const PixelGrid) -> *mut PixelGrid {
+    pub unsafe extern "C" fn sp2_pixel_grid_clone(
+        this: *const PixelGrid,
+    ) -> *mut PixelGrid {
         Box::into_raw(Box::new((*this).clone()))
     }
 
@@ -127,31 +136,47 @@ pub mod c_api
 
     /// Get the current value at the specified position
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_get(this: *const PixelGrid, x: usize, y: usize) -> bool {
+    pub unsafe extern "C" fn sp2_pixel_grid_get(
+        this: *const PixelGrid,
+        x: usize,
+        y: usize,
+    ) -> bool {
         (*this).get(x, y)
     }
 
     /// Sets the current value at the specified position
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_set(this: *mut PixelGrid, x: usize, y: usize, value: bool) {
+    pub unsafe extern "C" fn sp2_pixel_grid_set(
+        this: *mut PixelGrid,
+        x: usize,
+        y: usize,
+        value: bool,
+    ) {
         (*this).set(x, y, value);
     }
 
     /// Fills the whole `PixelGrid` with the specified value
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_fill(this: *mut PixelGrid, value: bool) {
+    pub unsafe extern "C" fn sp2_pixel_grid_fill(
+        this: *mut PixelGrid,
+        value: bool,
+    ) {
         (*this).fill(value);
     }
 
     /// Gets the width in pixels of the `PixelGrid` instance.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_width(this: *const PixelGrid) -> usize {
+    pub unsafe extern "C" fn sp2_pixel_grid_width(
+        this: *const PixelGrid,
+    ) -> usize {
         (*this).width
     }
 
     /// Gets the height in pixels of the `PixelGrid` instance.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_height(this: *const PixelGrid) -> usize {
+    pub unsafe extern "C" fn sp2_pixel_grid_height(
+        this: *const PixelGrid,
+    ) -> usize {
         (*this).height
     }
 
@@ -165,7 +190,9 @@ pub mod c_api
     /// Reading and writing concurrently to either the original instance or the returned data will
     /// result in undefined behavior.
     #[no_mangle]
-    pub unsafe extern "C" fn sp2_pixel_grid_unsafe_data_ref(this: *mut PixelGrid) -> CByteSlice {
+    pub unsafe extern "C" fn sp2_pixel_grid_unsafe_data_ref(
+        this: *mut PixelGrid,
+    ) -> CByteSlice {
         let data = (*this).mut_data_ref();
         CByteSlice {
             start: data.as_mut_ptr_range().start,
