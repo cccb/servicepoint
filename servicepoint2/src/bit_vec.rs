@@ -217,3 +217,72 @@ pub mod c_api {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::BitVec;
+
+    #[test]
+    fn fill() {
+        let mut vec = BitVec::new(8 * 3);
+        assert_eq!(vec.data, [0x00, 0x00, 0x00]);
+
+        vec.fill(true);
+        assert_eq!(vec.data, [0xFF, 0xFF, 0xFF]);
+
+        vec.fill(false);
+        assert_eq!(vec.data, [0x00, 0x00, 0x00]);
+    }
+
+    #[test]
+    fn get_set() {
+        let mut vec = BitVec::new(8 * 3);
+        assert_eq!(vec.get(1), false);
+        assert_eq!(vec.get(11), false);
+
+        vec.set(1, true);
+        vec.set(11, true);
+        assert_eq!(vec.data, [0x40, 0x10, 0x00]);
+        assert_eq!(vec.get(0), false);
+        assert_eq!(vec.get(1), true);
+        assert_eq!(vec.get(11), true);
+    }
+
+    #[test]
+    fn load() {
+        let mut vec = BitVec::new(8 * 3);
+        vec.set(6, true);
+        vec.set(7, true);
+        vec.set(8, true);
+        vec.set(9, true);
+        vec.set(10, true);
+        vec.set(vec.len() - 1, true);
+
+        assert_eq!(vec.data, [0x03, 0xE0, 0x01]);
+
+        let data: Vec<u8> = vec.into();
+
+        let vec = BitVec::from(&*data);
+        assert_eq!(vec.data, [0x03, 0xE0, 0x01]);
+    }
+
+    #[test]
+    fn mut_data_ref(){
+        let mut vec = BitVec::new(8 * 3);
+
+        let data_ref = vec.mut_data_ref();
+        data_ref.copy_from_slice(&[0x40, 0x10, 0x00]);
+
+        assert_eq!(vec.data, [0x40, 0x10, 0x00]);
+        assert_eq!(vec.get(1), true);
+    }
+
+    #[test]
+    fn is_empty() {
+        let vec = BitVec::new(8 * 3);
+        assert_eq!(vec.is_empty(), false);
+
+        let vec = BitVec::new(0);
+        assert_eq!(vec.is_empty(), true);
+    }
+}
