@@ -24,10 +24,7 @@ fn main() {
         connection.send(Command::Clear.into()).unwrap();
     }
 
-    let max_width = cli.text.iter()
-        .map(|t| t.len())
-        .max()
-        .unwrap();
+    let max_width = cli.text.iter().map(|t| t.len()).max().unwrap();
 
     let mut chars = ByteGrid::new(max_width, cli.text.len());
     for y in 0..cli.text.len() {

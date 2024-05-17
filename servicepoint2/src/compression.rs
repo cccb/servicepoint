@@ -48,12 +48,10 @@ pub(crate) fn into_decompressed(
             }
         }
         #[cfg(feature = "compression_lzma")]
-        CompressionCode::Lzma => {
-            match lzma::decompress(&payload) {
-                Err(_) => None,
-                Ok(decompressed) => Some(decompressed),
-            }
-        }
+        CompressionCode::Lzma => match lzma::decompress(&payload) {
+            Err(_) => None,
+            Ok(decompressed) => Some(decompressed),
+        },
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
             let mut decoder = match ZstdDecoder::new(&*payload) {

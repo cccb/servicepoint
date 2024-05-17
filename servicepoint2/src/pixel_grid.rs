@@ -238,16 +238,16 @@ mod tests {
     #[test]
     fn get_set() {
         let mut grid = PixelGrid::new(8, 2);
-        assert_eq!(grid.get(0, 0), false);
-        assert_eq!(grid.get(1, 1), false);
+        assert!(!grid.get(0, 0));
+        assert!(!grid.get(1, 1));
 
         grid.set(5, 0, true);
         grid.set(1, 1, true);
         assert_eq!(grid.mut_data_ref(), [0x04, 0x40]);
 
-        assert_eq!(grid.get(5, 0), true);
-        assert_eq!(grid.get(1, 1), true);
-        assert_eq!(grid.get(1, 0), false);
+        assert!(grid.get(5, 0));
+        assert!(grid.get(1, 1));
+        assert!(!grid.get(1, 0));
     }
 
     #[test]

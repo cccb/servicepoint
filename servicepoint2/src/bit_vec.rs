@@ -91,7 +91,10 @@ impl BitVec {
     /// Calculates the byte index and bitmask for a specific bit in the vector
     fn get_indexes(&self, bit_index: usize) -> (usize, u8) {
         if bit_index >= self.size {
-            panic!("bit index {bit_index} is outside of range 0..<{}", self.size)
+            panic!(
+                "bit index {bit_index} is outside of range 0..<{}",
+                self.size
+            )
         }
 
         let byte_index = bit_index / 8;
@@ -296,10 +299,10 @@ mod tests {
     #[test]
     fn get_returns_old() {
         let mut vec = BitVec::new(8);
-        assert_eq!(vec.set(1, true), false);
-        assert_eq!(vec.set(1, true), true);
-        assert_eq!(vec.set(1, false), true);
-        assert_eq!(vec.set(1, false), false);
+        assert!(!vec.set(1, true));
+        assert!(vec.set(1, true));
+        assert!(vec.set(1, false));
+        assert!(!vec.set(1, false));
     }
 
     #[test]
