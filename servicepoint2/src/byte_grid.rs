@@ -38,11 +38,13 @@ impl ByteGrid {
     ///
     /// returns: current byte value
     pub fn get(&self, x: usize, y: usize) -> u8 {
+        self.check_indexes(x, y);
         self.data[x + y * self.width]
     }
 
     /// Sets the byte value at the specified position
     pub fn set(&mut self, x: usize, y: usize, value: u8) {
+        self.check_indexes(x, y);
         self.data[x + y * self.width] = value;
     }
 
@@ -64,6 +66,15 @@ impl ByteGrid {
     /// the height in y-direction
     pub fn height(&self) -> usize {
         self.height
+    }
+
+    fn check_indexes(&self, x: usize, y: usize) {
+        if x >= self.width {
+            panic!("cannot access byte {x}-{y} because x is outside of bounds 0..{}", self.width)
+        }
+        if y >= self.height {
+            panic!("cannot access byte {x}-{y} because y is outside of bounds 0..{}", self.height)
+        }
     }
 }
 

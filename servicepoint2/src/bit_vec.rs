@@ -1,6 +1,7 @@
 /// A vector of bits
 #[derive(Clone, PartialEq)]
 pub struct BitVec {
+    size: usize,
     data: Vec<u8>,
 }
 
@@ -15,6 +16,7 @@ impl BitVec {
     pub fn new(size: usize) -> BitVec {
         assert_eq!(size % 8, 0);
         Self {
+            size,
             data: vec![0; size / 8],
         }
     }
@@ -73,7 +75,7 @@ impl BitVec {
 
     /// Gets the length in bits
     pub fn len(&self) -> usize {
-        self.data.len() * 8
+        self.size
     }
 
     /// returns true if length is 0.
@@ -87,9 +89,13 @@ impl BitVec {
     }
 
     /// Calculates the byte index and bitmask for a specific bit in the vector
-    fn get_indexes(&self, index: usize) -> (usize, u8) {
-        let byte_index = index / 8;
-        let bit_in_byte_index = 7 - index % 8;
+    fn get_indexes(&self, bit_index: usize) -> (usize, u8) {
+        if bit_index >= self.size {
+            panic!("bit index {bit_index} is outside of range 0..<{}", self.size)
+        }
+
+        let byte_index = bit_index / 8;
+        let bit_in_byte_index = 7 - bit_index % 8;
         let bit_mask: u8 = 1 << bit_in_byte_index;
         (byte_index, bit_mask)
     }
@@ -106,6 +112,7 @@ impl From<&[u8]> for BitVec {
     /// Interpret the data as a series of bits and load then into a new `BitVec` instance.
     fn from(value: &[u8]) -> Self {
         Self {
+            size: value.len() * 8,
             data: Vec::from(value),
         }
     }

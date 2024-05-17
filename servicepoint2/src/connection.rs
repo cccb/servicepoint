@@ -51,7 +51,7 @@ impl Connection {
     ///  pixels.fill(true);
     ///
     ///  // send pixels to display
-    ///  connection.send(servicepoint2::Command::BitmapLinearWin(servicepoint2::Origin::top_left(), pixels, CompressionCode::Lzma).into())
+    ///  connection.send(servicepoint2::Command::BitmapLinearWin(servicepoint2::Origin(0, 0), pixels, CompressionCode::Lzma).into())
     ///     .expect("send failed");
     /// ```
     pub fn send(&self, packet: Packet) -> Result<(), std::io::Error> {

@@ -60,6 +60,7 @@ impl PixelGrid {
 
     /// Sets the byte value at the specified position
     pub fn set(&mut self, x: usize, y: usize, value: bool) -> bool {
+        self.check_indexes(x, y);
         self.bit_vec.set(x + y * self.width, value)
     }
 
@@ -87,6 +88,15 @@ impl PixelGrid {
     /// the height in y-direction in pixels
     pub fn height(&self) -> usize {
         self.height
+    }
+
+    fn check_indexes(&self, x: usize, y: usize) {
+        if x >= self.width {
+            panic!("cannot access pixel {x}-{y} because x is outside of bounds 0..{}", self.width)
+        }
+        if y >= self.height {
+            panic!("cannot access pixel {x}-{y} because y is outside of bounds 0..{}", self.height)
+        }
     }
 }
 

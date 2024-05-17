@@ -706,7 +706,7 @@ mod tests {
     fn error_reserved_used() {
         let Packet(header, payload)
             = Command::BitmapLinear(0, BitVec::new(8), CompressionCode::Uncompressed).into();
-        let Header(command, offset, length, sub, reserved) = header;
+        let Header(command, offset, length, sub, _reserved) = header;
         let p = Packet(Header(command, offset, length, sub, 69), payload);
         assert_eq!(
             Command::try_from(p),
@@ -717,7 +717,7 @@ mod tests {
     fn error_invalid_compression() {
         let Packet(header, payload)
             = Command::BitmapLinear(0, BitVec::new(8), CompressionCode::Uncompressed).into();
-        let Header(command, offset, length, sub, reserved) = header;
+        let Header(command, offset, length, _sub, reserved) = header;
         let p = Packet(Header(command, offset, length, 42, reserved), payload);
         assert_eq!(
             Command::try_from(p),
