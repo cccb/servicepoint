@@ -285,4 +285,19 @@ mod tests {
         let vec = BitVec::new(0);
         assert!(vec.is_empty());
     }
+
+    #[test]
+    fn get_returns_old() {
+        let mut vec = BitVec::new(8);
+        assert_eq!(vec.set(1, true), false);
+        assert_eq!(vec.set(1, true), true);
+        assert_eq!(vec.set(1, false), true);
+        assert_eq!(vec.set(1, false), false);
+    }
+
+    #[test]
+    fn debug_print() {
+        let vec = BitVec::new(8 * 3);
+        format!("{vec:?}");
+    }
 }

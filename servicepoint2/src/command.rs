@@ -1,18 +1,12 @@
-use crate::command_code::CommandCode;
-use crate::compression::{into_compressed, into_decompressed};
 use crate::{
     BitVec, ByteGrid, CompressionCode, Header, Packet, PixelGrid, TILE_SIZE,
 };
+use crate::command_code::CommandCode;
+use crate::compression::{into_compressed, into_decompressed};
 
 /// An origin marks the top left position of a window sent to the display.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Origin(pub u16, pub u16);
-
-impl Origin {
-    pub fn top_left() -> Self {
-        Self(0, 0)
-    }
-}
 
 /// Size defines the width and height of a window
 #[derive(Debug, Clone, Copy)]
@@ -164,6 +158,7 @@ impl From<Command> for Packet {
 
 #[derive(Debug)]
 /// Err values for `Command::try_from`.
+#[derive(PartialEq)]
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
     InvalidCommand(u16),
@@ -526,9 +521,9 @@ pub mod c_api {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        BitVec, ByteGrid, Command, CompressionCode, Origin, Packet, PixelGrid,
-    };
+    use crate::{BitVec, ByteGrid, Command, CompressionCode, Header, Origin, Packet, PixelGrid};
+    use crate::command::TryFromPacketError;
+    use crate::command_code::CommandCode;
 
     fn round_trip(original: Command) {
         let packet: Packet = original.clone().into();
@@ -537,6 +532,16 @@ mod tests {
             Err(err) => panic!("could not reload {original:?}: {err:?}"),
         };
         assert_eq!(copy, original);
+    }
+
+    fn all_compressions() -> [CompressionCode; 5] {
+        [
+            CompressionCode::Uncompressed,
+            CompressionCode::Lzma,
+            CompressionCode::Bzip2,
+            CompressionCode::Zlib,
+            CompressionCode::Zstd,
+        ]
     }
 
     #[test]
@@ -577,14 +582,7 @@ mod tests {
 
     #[test]
     fn round_trip_bitmap_linear() {
-        let codes = [
-            CompressionCode::Uncompressed,
-            CompressionCode::Lzma,
-            CompressionCode::Bzip2,
-            CompressionCode::Zlib,
-            CompressionCode::Zstd,
-        ];
-        for compression in codes {
+        for compression in all_compressions() {
             round_trip(Command::BitmapLinear(23, BitVec::new(40), compression));
             round_trip(Command::BitmapLinearAnd(
                 23,
@@ -608,4 +606,121 @@ mod tests {
             ));
         }
     }
+
+    #[test]
+    fn error_invalid_command() {
+        let p = Packet(Header(0xFF, 0x00, 0x00, 0x00, 0x00), vec!());
+        let result = Command::try_from(p);
+        assert!(matches!(result, Err(TryFromPacketError::InvalidCommand(0xFF))))
+    }
+
+    #[test]
+    fn error_extraneous_header_values_clear() {
+        let p = Packet(Header(CommandCode::Clear.into(), 0x05, 0x00, 0x00, 0x00), vec!());
+        let result = Command::try_from(p);
+        assert!(matches!(result, Err(TryFromPacketError::ExtraneousHeaderValues)))
+    }
+
+    #[test]
+    fn error_extraneous_header_values_brightness() {
+        let p = Packet(Header(CommandCode::Brightness.into(), 0x00, 0x13, 0x37, 0x00), vec!(5));
+        let result = Command::try_from(p);
+        assert!(matches!(result, Err(TryFromPacketError::ExtraneousHeaderValues)))
+    }
+
+    #[test]
+    fn error_extraneous_header_hard_reset() {
+        let p = Packet(Header(CommandCode::HardReset.into(), 0x00, 0x00, 0x00, 0x01), vec!());
+        let result = Command::try_from(p);
+        assert!(matches!(result, Err(TryFromPacketError::ExtraneousHeaderValues)))
+    }
+
+    #[test]
+    fn error_extraneous_header_fade_out() {
+        let p = Packet(Header(CommandCode::FadeOut.into(), 0x10, 0x00, 0x00, 0x01), vec!());
+        let result = Command::try_from(p);
+        assert!(matches!(result, Err(TryFromPacketError::ExtraneousHeaderValues)))
+    }
+
+    #[test]
+    fn error_unexpected_payload() {
+        let p = Packet(Header(CommandCode::FadeOut.into(), 0x00, 0x00, 0x00, 0x00), vec!(5, 7));
+        let result = Command::try_from(p);
+        assert!(matches!(result, Err(TryFromPacketError::UnexpectedPayloadSize(0, 2))))
+    }
+
+    #[test]
+    fn error_decompression_failed_win() {
+        for compression in all_compressions() {
+            let p: Packet = Command::BitmapLinearWin(Origin(16, 8), PixelGrid::new(8, 8), compression).into();
+            let Packet(header, mut payload) = p;
+
+            // mangle it
+            for i in 0..payload.len() {
+                payload[i] -= payload[i] / 2;
+            }
+
+            let p = Packet(header, payload);
+            let result = Command::try_from(p);
+            if compression != CompressionCode::Uncompressed {
+                assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
+            } else {
+                assert!(matches!(result, Ok(_)));
+            }
+        }
+    }
+
+    #[test]
+    fn error_decompression_failed_and() {
+        for compression in all_compressions() {
+            let p: Packet = Command::BitmapLinearAnd(0, BitVec::new(8), compression).into();
+            let Packet(header, mut payload) = p;
+
+            // mangle it
+            for i in 0..payload.len() {
+                payload[i] -= payload[i] / 2;
+            }
+
+            let p = Packet(header, payload);
+            let result = Command::try_from(p);
+            if compression != CompressionCode::Uncompressed {
+                assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
+            } else {
+                assert!(matches!(result, Ok(_)));
+            }
+        }
+    }
+
+    #[test]
+    fn unexpected_payload_size_brightness() {
+        assert_eq!(
+            Command::try_from(Packet(Header(CommandCode::Brightness.into(), 0, 0, 0, 0), vec!())),
+            Err(TryFromPacketError::UnexpectedPayloadSize(1, 0)));
+
+        assert_eq!(
+            Command::try_from(Packet(Header(CommandCode::Brightness.into(), 0, 0, 0, 0), vec!(0, 0))),
+            Err(TryFromPacketError::UnexpectedPayloadSize(1, 2)));
+    }
+
+    /* TODO unexpected payload size
+
+        /// Set the brightness of tiles
+        CharBrightness(Origin, crate::byte_grid::ByteGrid),
+        /// Set pixel data starting at the offset.
+        /// The contained BitVec is always uncompressed.
+        BitmapLinear(Offset, crate::bit_vec::BitVec, crate::compression_code::CompressionCode),
+        /// Set pixel data according to an and-mask starting at the offset.
+        /// The contained BitVec is always uncompressed.
+        BitmapLinearAnd(Offset, crate::bit_vec::BitVec, crate::compression_code::CompressionCode),
+        /// Set pixel data according to an or-mask starting at the offset.
+        /// The contained BitVec is always uncompressed.
+        BitmapLinearOr(Offset, crate::bit_vec::BitVec, crate::compression_code::CompressionCode),
+        /// Set pixel data according to an xor-mask starting at the offset.
+        /// The contained BitVec is always uncompressed.
+        BitmapLinearXor(Offset, crate::bit_vec::BitVec, crate::compression_code::CompressionCode),
+        /// Show text on the screen. Note that the byte data has to be CP437 encoded.
+        Cp437Data(Origin, crate::byte_grid::ByteGrid),
+        /// Sets a window of pixels to the specified values
+        BitmapLinearWin(Origin, crate::pixel_grid::PixelGrid, crate::compression_code::CompressionCode),
+     */
 }

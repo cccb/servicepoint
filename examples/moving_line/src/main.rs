@@ -4,8 +4,8 @@ use std::time::Duration;
 use clap::Parser;
 
 use servicepoint2::{
-    Command, CompressionCode, Connection, Origin, PixelGrid, PIXEL_HEIGHT,
-    PIXEL_WIDTH,
+    Command, CompressionCode, Connection, Origin, PIXEL_HEIGHT, PIXEL_WIDTH,
+    PixelGrid,
 };
 
 #[derive(Parser, Debug)]
@@ -29,7 +29,7 @@ fn main() {
         connection
             .send(
                 Command::BitmapLinearWin(
-                    Origin::top_left(),
+                    Origin(0, 0),
                     pixels.clone(),
                     CompressionCode::Lzma,
                 )
