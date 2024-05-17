@@ -1,5 +1,5 @@
 /// A 2D grid of bytes
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ByteGrid {
     /// Size in the x-axis
     pub width: usize,

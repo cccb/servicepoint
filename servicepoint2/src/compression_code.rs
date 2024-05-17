@@ -2,7 +2,7 @@ use CompressionCode::*;
 
 /// Specifies the kind of compression to use. Availability depends on features.
 #[repr(u16)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum CompressionCode {
     Uncompressed = 0x0,
     #[cfg(feature = "compression_zlib")]

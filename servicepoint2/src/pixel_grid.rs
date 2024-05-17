@@ -1,7 +1,7 @@
 use crate::{BitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
 
 /// A grid of pixels stored in packed bytes.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PixelGrid {
     /// the width in pixels
     pub width: usize,

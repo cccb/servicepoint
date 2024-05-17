@@ -1,11 +1,11 @@
-use crate::command_code::CommandCode;
-use crate::compression::{into_compressed, into_decompressed};
 use crate::{
     BitVec, ByteGrid, CompressionCode, Header, Packet, PixelGrid, TILE_SIZE,
 };
+use crate::command_code::CommandCode;
+use crate::compression::{into_compressed, into_decompressed};
 
 /// An origin marks the top left position of a window sent to the display.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Origin(pub u16, pub u16);
 
 impl Origin {
@@ -25,7 +25,7 @@ pub type Offset = u16;
 pub type Brightness = u8;
 
 /// A command to send to the display.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Command {
     /// Set all pixels to the off state
     Clear,
@@ -290,7 +290,7 @@ fn packet_into_bitmap_win(
             pixel_h as usize,
             &payload,
         ),
-        CompressionCode::Uncompressed,
+        compression,
     ))
 }
 
@@ -521,5 +521,58 @@ pub mod c_api {
     #[no_mangle]
     pub unsafe extern "C" fn sp2_command_dealloc(ptr: *mut Command) {
         _ = Box::from_raw(ptr);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{BitVec, ByteGrid, Command, CompressionCode, Origin, Packet, PixelGrid};
+
+    fn round_trip(original: Command) {
+        let packet: Packet = original.clone().into();
+        let copy: Command = match Command::try_from(packet) {
+            Ok(command) => command,
+            Err(err) => panic!("could not reload {original:?}: {err:?}"),
+        };
+        assert_eq!(copy, original);
+    }
+
+    #[test]
+    fn round_trip_clear() { round_trip(Command::Clear); }
+
+    #[test]
+    fn round_trip_hard_reset() { round_trip(Command::HardReset); }
+
+    #[test]
+    fn round_trip_fade_out() { round_trip(Command::FadeOut); }
+
+    #[test]
+    fn round_trip_brightness() { round_trip(Command::Brightness(6)); }
+
+    #[test]
+    #[allow(deprecated)]
+    fn round_trip_bitmap_legacy() { round_trip(Command::BitmapLegacy); }
+
+    #[test]
+    fn round_trip_char_brightness() {
+        round_trip(Command::CharBrightness(Origin(5, 2), ByteGrid::new(7, 5)));
+    }
+
+    #[test]
+    fn round_trip_cp437_data() {
+        round_trip(Command::Cp437Data(Origin(5, 2), ByteGrid::new(7, 5)));
+    }
+
+    #[test]
+    fn round_trip_bitmap_linear() {
+        let codes = [CompressionCode::Uncompressed, CompressionCode::Lzma,
+            CompressionCode::Bzip2, CompressionCode::Zlib, CompressionCode::Zstd];
+        for compression in codes {
+            round_trip(Command::BitmapLinear(23, BitVec::new(40), compression));
+            round_trip(Command::BitmapLinearAnd(23, BitVec::new(40), compression));
+            round_trip(Command::BitmapLinearOr(23, BitVec::new(40), compression));
+            round_trip(Command::BitmapLinearXor(23, BitVec::new(40), compression));
+            round_trip(Command::BitmapLinearWin(Origin(0, 0), PixelGrid::max_sized(), compression));
+        }
     }
 }

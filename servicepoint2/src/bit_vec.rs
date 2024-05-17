@@ -1,5 +1,5 @@
 /// A vector of bits
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct BitVec {
     data: Vec<u8>,
 }

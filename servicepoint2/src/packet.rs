@@ -1,14 +1,14 @@
 use std::mem::size_of;
 
 /// A raw header. Should probably not be used directly.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Header(pub u16, pub u16, pub u16, pub u16, pub u16);
 
 /// The raw payload. Should probably not be used directly.
 pub type Payload = Vec<u8>;
 
 /// The raw packet. Should probably not be used directly.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Packet(pub Header, pub Payload);
 
 impl From<Packet> for Vec<u8> {
@@ -95,5 +95,18 @@ mod c_api {
     #[no_mangle]
     pub unsafe extern "C" fn sp2_packet_dealloc(this: *mut Packet) {
         _ = Box::from_raw(this)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Header, Packet};
+
+    #[test]
+    fn round_trip() {
+        let p = Packet(Header(0,1,2,3,4), vec![42u8; 23]);
+        let data: Vec<u8> = p.into();
+        let p = Packet::try_from(&*data).unwrap();
+        assert_eq!(p, Packet(Header(0,1,2,3,4), vec![42u8; 23]));
     }
 }
