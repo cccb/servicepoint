@@ -176,3 +176,61 @@ pub mod c_api {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::ByteGrid;
+
+    #[test]
+    fn fill() {
+        let mut grid = ByteGrid::new(2, 2);
+        assert_eq!(grid.data, [0x00, 0x00, 0x00, 0x00]);
+
+        grid.fill(42);
+        assert_eq!(grid.data, [42; 4]);
+    }
+
+    #[test]
+    fn get_set() {
+        let mut grid = ByteGrid::new(2, 2);
+        assert_eq!(grid.get(0, 0), 0);
+        assert_eq!(grid.get(1, 1), 0);
+
+        grid.set(0, 0, 42);
+        grid.set(1, 0, 23);
+        assert_eq!(grid.data, [42, 23, 0, 0]);
+
+        assert_eq!(grid.get(0, 0), 42);
+        assert_eq!(grid.get(1, 0), 23);
+        assert_eq!(grid.get(1, 1), 0);
+    }
+
+    #[test]
+    fn load() {
+        let mut grid = ByteGrid::new(2, 3);
+        for x in 0..grid.width {
+            for y in 0..grid.height {
+                grid.set(x, y, (x + y) as u8);
+            }
+        }
+
+
+        assert_eq!(grid.data, [0, 1, 1, 2, 2, 3]);
+
+        let data: Vec<u8> = grid.into();
+
+        let grid = ByteGrid::load(2, 3, &*data);
+        assert_eq!(grid.data, [0, 1, 1, 2, 2, 3]);
+    }
+
+    #[test]
+    fn mut_data_ref() {
+        let mut vec = ByteGrid::new(2, 2);
+
+        let data_ref = vec.mut_data_ref();
+        data_ref.copy_from_slice(&[1, 2, 3, 4]);
+
+        assert_eq!(vec.data, [1, 2, 3, 4]);
+        assert_eq!(vec.get(1, 0), 2)
+    }
+}
