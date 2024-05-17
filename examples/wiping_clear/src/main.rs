@@ -4,8 +4,8 @@ use std::time::Duration;
 use clap::Parser;
 
 use servicepoint2::{
-    BitVec, Command, CompressionCode, Connection, PixelGrid, PIXEL_HEIGHT,
-    PIXEL_WIDTH,
+    BitVec, Command, CompressionCode, Connection, PixelGrid, FRAME_PACING,
+    PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 
 #[derive(Parser, Debug)]
@@ -19,7 +19,11 @@ struct Cli {
 fn main() {
     env_logger::init();
     let cli = Cli::parse();
-    let sleep_duration = Duration::from_millis(cli.time / PIXEL_WIDTH as u64);
+
+    let sleep_duration = Duration::max(
+        FRAME_PACING,
+        Duration::from_millis(cli.time / PIXEL_WIDTH as u64),
+    );
 
     let connection = Connection::open(cli.destination).unwrap();
 

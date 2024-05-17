@@ -1,10 +1,11 @@
 use std::thread;
-use std::time::Duration;
 
 use clap::Parser;
 use rand::{distributions, Rng};
 
-use servicepoint2::{Command, CompressionCode, Connection, Origin, PixelGrid};
+use servicepoint2::{
+    Command, CompressionCode, Connection, Origin, PixelGrid, FRAME_PACING,
+};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -32,7 +33,7 @@ fn main() {
                 .into(),
             )
             .expect("could not send");
-        thread::sleep(Duration::from_millis(30));
+        thread::sleep(FRAME_PACING);
         field = iteration(field);
     }
 }

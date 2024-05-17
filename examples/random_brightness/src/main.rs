@@ -3,11 +3,11 @@ use std::time::Duration;
 use clap::Parser;
 use rand::Rng;
 
+use servicepoint2::Command::{BitmapLinearWin, Brightness, CharBrightness};
 use servicepoint2::{
     ByteGrid, CompressionCode, Connection, Origin, PixelGrid, TILE_HEIGHT,
     TILE_WIDTH,
 };
-use servicepoint2::Command::{BitmapLinearWin, Brightness, CharBrightness};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -31,11 +31,8 @@ fn main() {
         let mut filled_grid = PixelGrid::max_sized();
         filled_grid.fill(true);
 
-        let command = BitmapLinearWin(
-            Origin(0, 0),
-            filled_grid,
-            CompressionCode::Lzma,
-        );
+        let command =
+            BitmapLinearWin(Origin(0, 0), filled_grid, CompressionCode::Lzma);
         connection.send(command.into()).expect("send failed");
     }
 

@@ -1,11 +1,10 @@
 use std::thread;
-use std::time::Duration;
 
 use clap::Parser;
 
 use servicepoint2::{
-    Command, CompressionCode, Connection, Origin, PIXEL_HEIGHT, PIXEL_WIDTH,
-    PixelGrid,
+    Command, CompressionCode, Connection, Origin, PixelGrid, FRAME_PACING,
+    PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 
 #[derive(Parser, Debug)]
@@ -36,6 +35,6 @@ fn main() {
                 .into(),
             )
             .unwrap();
-        thread::sleep(Duration::from_millis(14));
+        thread::sleep(FRAME_PACING);
     }
 }

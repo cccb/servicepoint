@@ -5,6 +5,7 @@ pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
+use std::time::Duration;
 
 #[cfg(feature = "c_api")]
 pub use crate::c_slice::CByteSlice;
@@ -32,3 +33,6 @@ pub const PIXEL_WIDTH: u16 = TILE_WIDTH * TILE_SIZE;
 pub const PIXEL_HEIGHT: u16 = TILE_HEIGHT * TILE_SIZE;
 /// pixel count on whole screen
 pub const PIXEL_COUNT: usize = PIXEL_WIDTH as usize * PIXEL_HEIGHT as usize;
+
+/// Actual hardware limit is around 28-29ms/frame. Rounded up for less dropped packets.
+pub const FRAME_PACING: Duration = Duration::from_millis(30);
