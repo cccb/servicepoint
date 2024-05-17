@@ -1,10 +1,8 @@
 /// A 2D grid of bytes
 #[derive(Debug, Clone, PartialEq)]
 pub struct ByteGrid {
-    /// Size in the x-axis
-    pub width: usize,
-    /// Size in the y-axis
-    pub height: usize,
+    width: usize,
+    height: usize,
     data: Vec<u8>,
 }
 
@@ -56,6 +54,16 @@ impl ByteGrid {
     /// Get the underlying byte rows
     pub fn mut_data_ref(&mut self) -> &mut [u8] {
         self.data.as_mut_slice()
+    }
+
+    /// the size in x-direction
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    /// the height in y-direction
+    pub fn height(&self) -> usize {
+        self.height
     }
 }
 

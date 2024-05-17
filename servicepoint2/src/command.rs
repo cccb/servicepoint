@@ -74,8 +74,8 @@ impl From<Command> for Packet {
                     CommandCode::CharBrightness.into(),
                     x,
                     y,
-                    grid.width as u16,
-                    grid.height as u16,
+                    grid.width() as u16,
+                    grid.height() as u16,
                 ),
                 grid.into(),
             ),
@@ -95,11 +95,11 @@ impl From<Command> for Packet {
                 compression,
             ) => {
                 debug_assert_eq!(pixel_x % 8, 0);
-                debug_assert_eq!(pixels.width % 8, 0);
+                debug_assert_eq!(pixels.width() % 8, 0);
 
                 let tile_x = pixel_x / TILE_SIZE;
-                let tile_w = pixels.width as u16 / TILE_SIZE;
-                let pixel_h = pixels.height as u16;
+                let tile_w = pixels.width() as u16 / TILE_SIZE;
+                let pixel_h = pixels.height() as u16;
                 let payload = into_compressed(compression, pixels.into());
                 let command = match compression {
                     CompressionCode::Uncompressed => {
@@ -153,8 +153,8 @@ impl From<Command> for Packet {
                     CommandCode::Cp437Data.into(),
                     x,
                     y,
-                    grid.width as u16,
-                    grid.height as u16,
+                    grid.width() as u16,
+                    grid.height() as u16,
                 ),
                 grid.into(),
             ),

@@ -3,10 +3,8 @@ use crate::{BitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
 /// A grid of pixels stored in packed bytes.
 #[derive(Debug, Clone, PartialEq)]
 pub struct PixelGrid {
-    /// the width in pixels
-    pub width: usize,
-    /// the height in pixels
-    pub height: usize,
+    width: usize,
+    height: usize,
     bit_vec: BitVec,
 }
 
@@ -79,6 +77,16 @@ impl PixelGrid {
 
     pub fn mut_data_ref(&mut self) -> &mut [u8] {
         self.bit_vec.mut_data_ref()
+    }
+
+    /// the size in x-direction in pixels
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    /// the height in y-direction in pixels
+    pub fn height(&self) -> usize {
+        self.height
     }
 }
 

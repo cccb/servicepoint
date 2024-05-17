@@ -39,8 +39,8 @@ fn main() {
 
 fn iteration(field: PixelGrid) -> PixelGrid {
     let mut next = field.clone();
-    for x in 0..field.width {
-        for y in 0..field.height {
+    for x in 0..field.width() {
+        for y in 0..field.height() {
             let old_state = field.get(x, y);
             let neighbors = count_neighbors(&field, x as i32, y as i32);
 
@@ -64,8 +64,8 @@ fn count_neighbors(field: &PixelGrid, x: i32, y: i32) -> i32 {
 
             if nx < 0
                 || ny < 0
-                || nx >= field.width as i32
-                || ny >= field.height as i32
+                || nx >= field.width() as i32
+                || ny >= field.height() as i32
             {
                 continue; // pixels outside the grid do not count
             }
@@ -85,8 +85,8 @@ fn make_random_field(probability: f64) -> PixelGrid {
     let mut field = PixelGrid::max_sized();
     let mut rng = rand::thread_rng();
     let d = distributions::Bernoulli::new(probability).unwrap();
-    for x in 0..field.width {
-        for y in 0..field.height {
+    for x in 0..field.width() {
+        for y in 0..field.height() {
             field.set(x, y, rng.sample(d));
         }
     }
