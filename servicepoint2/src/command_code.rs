@@ -51,10 +51,18 @@ impl TryFrom<u16> for CommandCode {
             value if value == BitmapLinearAnd as u16 => Ok(BitmapLinearAnd),
             value if value == BitmapLinearOr as u16 => Ok(BitmapLinearOr),
             value if value == BitmapLinearXor as u16 => Ok(BitmapLinearXor),
-            value if value == BitmapLinearWinZstd as u16 => Ok(BitmapLinearWinZstd),
-            value if value == BitmapLinearWinLzma as u16 => Ok(BitmapLinearWinLzma),
-            value if value == BitmapLinearWinZlib as u16 => Ok(BitmapLinearWinZlib),
-            value if value == BitmapLinearWinBzip2 as u16 => Ok(BitmapLinearWinBzip2),
+            value if value == BitmapLinearWinZstd as u16 => {
+                Ok(BitmapLinearWinZstd)
+            }
+            value if value == BitmapLinearWinLzma as u16 => {
+                Ok(BitmapLinearWinLzma)
+            }
+            value if value == BitmapLinearWinZlib as u16 => {
+                Ok(BitmapLinearWinZlib)
+            }
+            value if value == BitmapLinearWinBzip2 as u16 => {
+                Ok(BitmapLinearWinBzip2)
+            }
             _ => Err(()),
         }
     }

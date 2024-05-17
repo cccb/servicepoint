@@ -1,8 +1,8 @@
+use crate::command_code::CommandCode;
+use crate::compression::{into_compressed, into_decompressed};
 use crate::{
     BitVec, ByteGrid, CompressionCode, Header, Packet, PixelGrid, TILE_SIZE,
 };
-use crate::command_code::CommandCode;
-use crate::compression::{into_compressed, into_decompressed};
 
 /// An origin marks the top left position of a window sent to the display.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -526,7 +526,9 @@ pub mod c_api {
 
 #[cfg(test)]
 mod tests {
-    use crate::{BitVec, ByteGrid, Command, CompressionCode, Origin, Packet, PixelGrid};
+    use crate::{
+        BitVec, ByteGrid, Command, CompressionCode, Origin, Packet, PixelGrid,
+    };
 
     fn round_trip(original: Command) {
         let packet: Packet = original.clone().into();
@@ -538,20 +540,30 @@ mod tests {
     }
 
     #[test]
-    fn round_trip_clear() { round_trip(Command::Clear); }
+    fn round_trip_clear() {
+        round_trip(Command::Clear);
+    }
 
     #[test]
-    fn round_trip_hard_reset() { round_trip(Command::HardReset); }
+    fn round_trip_hard_reset() {
+        round_trip(Command::HardReset);
+    }
 
     #[test]
-    fn round_trip_fade_out() { round_trip(Command::FadeOut); }
+    fn round_trip_fade_out() {
+        round_trip(Command::FadeOut);
+    }
 
     #[test]
-    fn round_trip_brightness() { round_trip(Command::Brightness(6)); }
+    fn round_trip_brightness() {
+        round_trip(Command::Brightness(6));
+    }
 
     #[test]
     #[allow(deprecated)]
-    fn round_trip_bitmap_legacy() { round_trip(Command::BitmapLegacy); }
+    fn round_trip_bitmap_legacy() {
+        round_trip(Command::BitmapLegacy);
+    }
 
     #[test]
     fn round_trip_char_brightness() {
@@ -565,14 +577,35 @@ mod tests {
 
     #[test]
     fn round_trip_bitmap_linear() {
-        let codes = [CompressionCode::Uncompressed, CompressionCode::Lzma,
-            CompressionCode::Bzip2, CompressionCode::Zlib, CompressionCode::Zstd];
+        let codes = [
+            CompressionCode::Uncompressed,
+            CompressionCode::Lzma,
+            CompressionCode::Bzip2,
+            CompressionCode::Zlib,
+            CompressionCode::Zstd,
+        ];
         for compression in codes {
             round_trip(Command::BitmapLinear(23, BitVec::new(40), compression));
-            round_trip(Command::BitmapLinearAnd(23, BitVec::new(40), compression));
-            round_trip(Command::BitmapLinearOr(23, BitVec::new(40), compression));
-            round_trip(Command::BitmapLinearXor(23, BitVec::new(40), compression));
-            round_trip(Command::BitmapLinearWin(Origin(0, 0), PixelGrid::max_sized(), compression));
+            round_trip(Command::BitmapLinearAnd(
+                23,
+                BitVec::new(40),
+                compression,
+            ));
+            round_trip(Command::BitmapLinearOr(
+                23,
+                BitVec::new(40),
+                compression,
+            ));
+            round_trip(Command::BitmapLinearXor(
+                23,
+                BitVec::new(40),
+                compression,
+            ));
+            round_trip(Command::BitmapLinearWin(
+                Origin(0, 0),
+                PixelGrid::max_sized(),
+                compression,
+            ));
         }
     }
 }

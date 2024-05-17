@@ -104,9 +104,9 @@ mod tests {
 
     #[test]
     fn round_trip() {
-        let p = Packet(Header(0,1,2,3,4), vec![42u8; 23]);
+        let p = Packet(Header(0, 1, 2, 3, 4), vec![42u8; 23]);
         let data: Vec<u8> = p.into();
         let p = Packet::try_from(&*data).unwrap();
-        assert_eq!(p, Packet(Header(0,1,2,3,4), vec![42u8; 23]));
+        assert_eq!(p, Packet(Header(0, 1, 2, 3, 4), vec![42u8; 23]));
     }
 }

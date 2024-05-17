@@ -222,12 +222,11 @@ mod tests {
             }
         }
 
-
         assert_eq!(grid.data, [0, 1, 1, 2, 2, 3]);
 
         let data: Vec<u8> = grid.into();
 
-        let grid = ByteGrid::load(2, 3, &*data);
+        let grid = ByteGrid::load(2, 3, &data);
         assert_eq!(grid.data, [0, 1, 1, 2, 2, 3]);
     }
 

@@ -237,15 +237,15 @@ mod tests {
     #[test]
     fn get_set() {
         let mut vec = BitVec::new(8 * 3);
-        assert_eq!(vec.get(1), false);
-        assert_eq!(vec.get(11), false);
+        assert!(!vec.get(1));
+        assert!(!vec.get(11));
 
         vec.set(1, true);
         vec.set(11, true);
         assert_eq!(vec.data, [0x40, 0x10, 0x00]);
-        assert_eq!(vec.get(0), false);
-        assert_eq!(vec.get(1), true);
-        assert_eq!(vec.get(11), true);
+        assert!(!vec.get(0));
+        assert!(vec.get(1));
+        assert!(vec.get(11));
     }
 
     #[test]
@@ -267,22 +267,22 @@ mod tests {
     }
 
     #[test]
-    fn mut_data_ref(){
+    fn mut_data_ref() {
         let mut vec = BitVec::new(8 * 3);
 
         let data_ref = vec.mut_data_ref();
         data_ref.copy_from_slice(&[0x40, 0x10, 0x00]);
 
         assert_eq!(vec.data, [0x40, 0x10, 0x00]);
-        assert_eq!(vec.get(1), true);
+        assert!(vec.get(1));
     }
 
     #[test]
     fn is_empty() {
         let vec = BitVec::new(8 * 3);
-        assert_eq!(vec.is_empty(), false);
+        assert!(!vec.is_empty());
 
         let vec = BitVec::new(0);
-        assert_eq!(vec.is_empty(), true);
+        assert!(vec.is_empty());
     }
 }
