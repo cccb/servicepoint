@@ -24,22 +24,18 @@ fn main() {
         connection.send(Command::Clear.into()).unwrap();
     }
 
-    let mut max_width = 0;
-    for l in cli.text.iter() {
-        if l.len() > max_width {
-            max_width = l.len()
-        }
-    }
+    let max_width = cli.text.iter()
+        .map(|t| t.len())
+        .max()
+        .unwrap();
 
-    let mut chars = ByteGrid::new(max_width, max_width * cli.text.len());
+    let mut chars = ByteGrid::new(max_width, cli.text.len());
     for y in 0..cli.text.len() {
         let row = &cli.text[y];
-        for x in 0..max_width {
-            if x >= row.len() {
-                continue;
-            }
 
-            chars.set(x, y, row.chars().nth(x).unwrap().try_into().unwrap());
+        for (x, char) in row.chars().enumerate() {
+            let char = char.try_into().expect("invalid input char");
+            chars.set(x, y, char);
         }
     }
 
