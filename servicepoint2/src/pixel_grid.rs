@@ -208,3 +208,52 @@ pub mod c_api {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::PixelGrid;
+
+    #[test]
+    fn fill() {
+        let mut grid = PixelGrid::new(8, 2);
+        assert_eq!(grid.mut_data_ref(), [0x00, 0x00]);
+
+        grid.fill(true);
+        assert_eq!(grid.mut_data_ref(), [0xFF, 0xFF]);
+
+        grid.fill(false);
+        assert_eq!(grid.mut_data_ref(), [0x00, 0x00]);
+    }
+
+    #[test]
+    fn get_set() {
+        let mut grid = PixelGrid::new(8, 2);
+        assert_eq!(grid.get(0, 0), false);
+        assert_eq!(grid.get(1, 1), false);
+
+        grid.set(5, 0, true);
+        grid.set(1, 1, true);
+        assert_eq!(grid.mut_data_ref(), [0x04, 0x40]);
+
+        assert_eq!(grid.get(5, 0), true);
+        assert_eq!(grid.get(1, 1), true);
+        assert_eq!(grid.get(1, 0), false);
+    }
+
+    #[test]
+    fn load() {
+        let mut grid = PixelGrid::new(8, 3);
+        for x in 0..grid.width {
+            for y in 0..grid.height {
+                grid.set(x, y, (x + y) % 2 == 0);
+            }
+        }
+
+        assert_eq!(grid.mut_data_ref(), [0xAA, 0x55, 0xAA]);
+
+        let data: Vec<u8> = grid.into();
+
+        let mut grid = PixelGrid::load(8, 3, &data);
+        assert_eq!(grid.mut_data_ref(), [0xAA, 0x55, 0xAA]);
+    }
+}

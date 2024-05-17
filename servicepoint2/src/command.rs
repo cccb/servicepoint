@@ -702,25 +702,36 @@ mod tests {
             Err(TryFromPacketError::UnexpectedPayloadSize(1, 2)));
     }
 
-    /* TODO unexpected payload size
+    #[test]
+    fn error_reserved_used() {
+        let Packet(header, payload)
+            = Command::BitmapLinear(0, BitVec::new(8), CompressionCode::Uncompressed).into();
+        let Header(command, offset, length, sub, reserved) = header;
+        let p = Packet(Header(command, offset, length, sub, 69), payload);
+        assert_eq!(
+            Command::try_from(p),
+            Err(TryFromPacketError::ExtraneousHeaderValues));
+    }
 
-        /// Set the brightness of tiles
-        CharBrightness(Origin, crate::byte_grid::ByteGrid),
-        /// Set pixel data starting at the offset.
-        /// The contained BitVec is always uncompressed.
-        BitmapLinear(Offset, crate::bit_vec::BitVec, crate::compression_code::CompressionCode),
-        /// Set pixel data according to an and-mask starting at the offset.
-        /// The contained BitVec is always uncompressed.
-        BitmapLinearAnd(Offset, crate::bit_vec::BitVec, crate::compression_code::CompressionCode),
-        /// Set pixel data according to an or-mask starting at the offset.
-        /// The contained BitVec is always uncompressed.
-        BitmapLinearOr(Offset, crate::bit_vec::BitVec, crate::compression_code::CompressionCode),
-        /// Set pixel data according to an xor-mask starting at the offset.
-        /// The contained BitVec is always uncompressed.
-        BitmapLinearXor(Offset, crate::bit_vec::BitVec, crate::compression_code::CompressionCode),
-        /// Show text on the screen. Note that the byte data has to be CP437 encoded.
-        Cp437Data(Origin, crate::byte_grid::ByteGrid),
-        /// Sets a window of pixels to the specified values
-        BitmapLinearWin(Origin, crate::pixel_grid::PixelGrid, crate::compression_code::CompressionCode),
-     */
+    #[test]
+    fn error_invalid_compression() {
+        let Packet(header, payload)
+            = Command::BitmapLinear(0, BitVec::new(8), CompressionCode::Uncompressed).into();
+        let Header(command, offset, length, sub, reserved) = header;
+        let p = Packet(Header(command, offset, length, 42, reserved), payload);
+        assert_eq!(
+            Command::try_from(p),
+            Err(TryFromPacketError::InvalidCompressionCode(42)));
+    }
+
+    #[test]
+    fn error_unexpected_size() {
+        let Packet(header, payload)
+            = Command::BitmapLinear(0, BitVec::new(8), CompressionCode::Uncompressed).into();
+        let Header(command, offset, length, compression, reserved) = header;
+        let p = Packet(Header(command, offset, 420, compression, reserved), payload);
+        assert_eq!(
+            Command::try_from(p),
+            Err(TryFromPacketError::UnexpectedPayloadSize(420, length as usize)));
+    }
 }
