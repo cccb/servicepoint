@@ -57,12 +57,16 @@ impl From<Command> for Packet {
     /// Move the `Command` into a `Packet` instance for sending.
     fn from(value: Command) -> Self {
         match value {
-            Command::Clear => command_code_only(CommandCode::Clear),
-            Command::FadeOut => command_code_only(CommandCode::FadeOut),
-            Command::HardReset => command_code_only(CommandCode::HardReset),
+            Command::Clear => Command::command_code_only(CommandCode::Clear),
+            Command::FadeOut => {
+                Command::command_code_only(CommandCode::FadeOut)
+            }
+            Command::HardReset => {
+                Command::command_code_only(CommandCode::HardReset)
+            }
             #[allow(deprecated)]
             Command::BitmapLegacy => {
-                command_code_only(CommandCode::BitmapLegacy)
+                Command::command_code_only(CommandCode::BitmapLegacy)
             }
             Command::CharBrightness(Origin(x, y), grid) => Packet(
                 Header(
@@ -112,7 +116,7 @@ impl From<Command> for Packet {
                 )
             }
             Command::BitmapLinear(offset, bits, compression) => {
-                bitmap_linear_into_packet(
+                Command::bitmap_linear_into_packet(
                     CommandCode::BitmapLinear,
                     offset,
                     compression,
@@ -120,7 +124,7 @@ impl From<Command> for Packet {
                 )
             }
             Command::BitmapLinearAnd(offset, bits, compression) => {
-                bitmap_linear_into_packet(
+                Command::bitmap_linear_into_packet(
                     CommandCode::BitmapLinearAnd,
                     offset,
                     compression,
@@ -128,7 +132,7 @@ impl From<Command> for Packet {
                 )
             }
             Command::BitmapLinearOr(offset, bits, compression) => {
-                bitmap_linear_into_packet(
+                Command::bitmap_linear_into_packet(
                     CommandCode::BitmapLinearOr,
                     offset,
                     compression,
@@ -136,7 +140,7 @@ impl From<Command> for Packet {
                 )
             }
             Command::BitmapLinearXor(offset, bits, compression) => {
-                bitmap_linear_into_packet(
+                Command::bitmap_linear_into_packet(
                     CommandCode::BitmapLinearXor,
                     offset,
                     compression,
@@ -189,7 +193,7 @@ impl TryFrom<Packet> for Command {
         };
 
         match command_code {
-            CommandCode::Clear => match check_command_only(packet) {
+            CommandCode::Clear => match Self::check_command_only(packet) {
                 Some(err) => Err(err),
                 None => Ok(Command::Clear),
             },
@@ -209,11 +213,11 @@ impl TryFrom<Packet> for Command {
                     Ok(Command::Brightness(payload[0]))
                 }
             }
-            CommandCode::HardReset => match check_command_only(packet) {
+            CommandCode::HardReset => match Self::check_command_only(packet) {
                 Some(err) => Err(err),
                 None => Ok(Command::HardReset),
             },
-            CommandCode::FadeOut => match check_command_only(packet) {
+            CommandCode::FadeOut => match Self::check_command_only(packet) {
                 Some(err) => Err(err),
                 None => Ok(Command::FadeOut),
             },
@@ -234,117 +238,129 @@ impl TryFrom<Packet> for Command {
             #[allow(deprecated)]
             CommandCode::BitmapLegacy => Ok(Command::BitmapLegacy),
             CommandCode::BitmapLinear => {
-                let (vec, compression) = packet_into_linear_bitmap(packet)?;
+                let (vec, compression) =
+                    Self::packet_into_linear_bitmap(packet)?;
                 Ok(Command::BitmapLinear(a, vec, compression))
             }
             CommandCode::BitmapLinearAnd => {
-                let (vec, compression) = packet_into_linear_bitmap(packet)?;
+                let (vec, compression) =
+                    Self::packet_into_linear_bitmap(packet)?;
                 Ok(Command::BitmapLinearAnd(a, vec, compression))
             }
             CommandCode::BitmapLinearOr => {
-                let (vec, compression) = packet_into_linear_bitmap(packet)?;
+                let (vec, compression) =
+                    Self::packet_into_linear_bitmap(packet)?;
                 Ok(Command::BitmapLinearOr(a, vec, compression))
             }
             CommandCode::BitmapLinearXor => {
-                let (vec, compression) = packet_into_linear_bitmap(packet)?;
+                let (vec, compression) =
+                    Self::packet_into_linear_bitmap(packet)?;
                 Ok(Command::BitmapLinearXor(a, vec, compression))
             }
             CommandCode::BitmapLinearWinUncompressed => {
-                packet_into_bitmap_win(packet, CompressionCode::Uncompressed)
+                Self::packet_into_bitmap_win(
+                    packet,
+                    CompressionCode::Uncompressed,
+                )
             }
             CommandCode::BitmapLinearWinZlib => {
-                packet_into_bitmap_win(packet, CompressionCode::Zlib)
+                Self::packet_into_bitmap_win(packet, CompressionCode::Zlib)
             }
             CommandCode::BitmapLinearWinBzip2 => {
-                packet_into_bitmap_win(packet, CompressionCode::Bzip2)
+                Self::packet_into_bitmap_win(packet, CompressionCode::Bzip2)
             }
             CommandCode::BitmapLinearWinLzma => {
-                packet_into_bitmap_win(packet, CompressionCode::Lzma)
+                Self::packet_into_bitmap_win(packet, CompressionCode::Lzma)
             }
             CommandCode::BitmapLinearWinZstd => {
-                packet_into_bitmap_win(packet, CompressionCode::Zstd)
+                Self::packet_into_bitmap_win(packet, CompressionCode::Zstd)
             }
         }
     }
 }
 
-fn packet_into_bitmap_win(
-    packet: Packet,
-    compression: CompressionCode,
-) -> Result<Command, TryFromPacketError> {
-    let Packet(Header(_, tiles_x, pixels_y, tile_w, pixel_h), payload) = packet;
+impl Command {
+    fn packet_into_bitmap_win(
+        packet: Packet,
+        compression: CompressionCode,
+    ) -> Result<Command, TryFromPacketError> {
+        let Packet(Header(_, tiles_x, pixels_y, tile_w, pixel_h), payload) =
+            packet;
 
-    let payload = match into_decompressed(compression, payload) {
-        None => return Err(TryFromPacketError::DecompressionFailed),
-        Some(decompressed) => decompressed,
-    };
+        let payload = match into_decompressed(compression, payload) {
+            None => return Err(TryFromPacketError::DecompressionFailed),
+            Some(decompressed) => decompressed,
+        };
 
-    Ok(Command::BitmapLinearWin(
-        Origin(tiles_x * TILE_SIZE, pixels_y),
-        PixelGrid::load(
-            tile_w as usize * TILE_SIZE as usize,
-            pixel_h as usize,
-            &payload,
-        ),
-        compression,
-    ))
-}
-
-/// Helper method for BitMapLinear*-Commands into Packet
-fn bitmap_linear_into_packet(
-    command: CommandCode,
-    offset: Offset,
-    compression: CompressionCode,
-    payload: Vec<u8>,
-) -> Packet {
-    let length = payload.len() as u16;
-    let payload = into_compressed(compression, payload);
-    Packet(
-        Header(command.into(), offset, length, compression.into(), 0),
-        payload,
-    )
-}
-
-/// Helper method for creating empty packets only containing the command code
-fn command_code_only(code: CommandCode) -> Packet {
-    Packet(Header(code.into(), 0x0000, 0x0000, 0x0000, 0x0000), vec![])
-}
-
-/// Helper method for checking that a packet is empty and only contains a command code
-fn check_command_only(packet: Packet) -> Option<TryFromPacketError> {
-    let Packet(Header(_, a, b, c, d), payload) = packet;
-    if !payload.is_empty() {
-        Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
-    } else if a != 0 || b != 0 || c != 0 || d != 0 {
-        Some(TryFromPacketError::ExtraneousHeaderValues)
-    } else {
-        None
+        Ok(Command::BitmapLinearWin(
+            Origin(tiles_x * TILE_SIZE, pixels_y),
+            PixelGrid::load(
+                tile_w as usize * TILE_SIZE as usize,
+                pixel_h as usize,
+                &payload,
+            ),
+            compression,
+        ))
     }
-}
 
-/// Helper method for Packets into BitMapLinear*-Commands
-fn packet_into_linear_bitmap(
-    packet: Packet,
-) -> Result<(BitVec, CompressionCode), TryFromPacketError> {
-    let Packet(Header(_, _, length, sub, reserved), payload) = packet;
-    if reserved != 0 {
-        return Err(TryFromPacketError::ExtraneousHeaderValues);
+    /// Helper method for BitMapLinear*-Commands into Packet
+    fn bitmap_linear_into_packet(
+        command: CommandCode,
+        offset: Offset,
+        compression: CompressionCode,
+        payload: Vec<u8>,
+    ) -> Packet {
+        let length = payload.len() as u16;
+        let payload = into_compressed(compression, payload);
+        Packet(
+            Header(command.into(), offset, length, compression.into(), 0),
+            payload,
+        )
     }
-    let sub = match CompressionCode::try_from(sub) {
-        Err(_) => return Err(TryFromPacketError::InvalidCompressionCode(sub)),
-        Ok(value) => value,
-    };
-    let payload = match into_decompressed(sub, payload) {
-        None => return Err(TryFromPacketError::DecompressionFailed),
-        Some(value) => value,
-    };
-    if payload.len() != length as usize {
-        return Err(TryFromPacketError::UnexpectedPayloadSize(
-            length as usize,
-            payload.len(),
-        ));
+
+    /// Helper method for creating empty packets only containing the command code
+    fn command_code_only(code: CommandCode) -> Packet {
+        Packet(Header(code.into(), 0x0000, 0x0000, 0x0000, 0x0000), vec![])
     }
-    Ok((BitVec::from(&*payload), sub))
+
+    /// Helper method for checking that a packet is empty and only contains a command code
+    fn check_command_only(packet: Packet) -> Option<TryFromPacketError> {
+        let Packet(Header(_, a, b, c, d), payload) = packet;
+        if !payload.is_empty() {
+            Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
+        } else if a != 0 || b != 0 || c != 0 || d != 0 {
+            Some(TryFromPacketError::ExtraneousHeaderValues)
+        } else {
+            None
+        }
+    }
+
+    /// Helper method for Packets into BitMapLinear*-Commands
+    fn packet_into_linear_bitmap(
+        packet: Packet,
+    ) -> Result<(BitVec, CompressionCode), TryFromPacketError> {
+        let Packet(Header(_, _, length, sub, reserved), payload) = packet;
+        if reserved != 0 {
+            return Err(TryFromPacketError::ExtraneousHeaderValues);
+        }
+        let sub = match CompressionCode::try_from(sub) {
+            Err(_) => {
+                return Err(TryFromPacketError::InvalidCompressionCode(sub));
+            }
+            Ok(value) => value,
+        };
+        let payload = match into_decompressed(sub, payload) {
+            None => return Err(TryFromPacketError::DecompressionFailed),
+            Some(value) => value,
+        };
+        if payload.len() != length as usize {
+            return Err(TryFromPacketError::UnexpectedPayloadSize(
+                length as usize,
+                payload.len(),
+            ));
+        }
+        Ok((BitVec::from(&*payload), sub))
+    }
 }
 
 #[cfg(feature = "c_api")]
@@ -740,7 +756,7 @@ mod tests {
         assert_eq!(
             Command::try_from(Packet(
                 Header(CommandCode::Brightness.into(), 0, 0, 0, 0),
-                vec!()
+                vec!(),
             )),
             Err(TryFromPacketError::UnexpectedPayloadSize(1, 0))
         );
@@ -748,7 +764,7 @@ mod tests {
         assert_eq!(
             Command::try_from(Packet(
                 Header(CommandCode::Brightness.into(), 0, 0, 0, 0),
-                vec!(0, 0)
+                vec!(0, 0),
             )),
             Err(TryFromPacketError::UnexpectedPayloadSize(1, 2))
         );
@@ -803,7 +819,7 @@ mod tests {
             Command::try_from(p),
             Err(TryFromPacketError::UnexpectedPayloadSize(
                 420,
-                length as usize
+                length as usize,
             ))
         );
     }
