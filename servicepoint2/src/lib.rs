@@ -5,6 +5,7 @@ pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
+pub use crate::grid::Grid;
 use std::time::Duration;
 
 #[cfg(feature = "c_api")]
@@ -20,17 +21,23 @@ mod compression_code;
 mod connection;
 mod packet;
 mod pixel_grid;
+mod grid;
 
 /// size of a single tile in one dimension
 pub const TILE_SIZE: u16 = 8;
+
 /// tile count in the x-direction
 pub const TILE_WIDTH: u16 = 56;
+
 /// tile count in the y-direction
 pub const TILE_HEIGHT: u16 = 20;
+
 /// screen width in pixels
 pub const PIXEL_WIDTH: u16 = TILE_WIDTH * TILE_SIZE;
+
 /// screen height in pixels
 pub const PIXEL_HEIGHT: u16 = TILE_HEIGHT * TILE_SIZE;
+
 /// pixel count on whole screen
 pub const PIXEL_COUNT: usize = PIXEL_WIDTH as usize * PIXEL_HEIGHT as usize;
 

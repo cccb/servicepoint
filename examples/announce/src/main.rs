@@ -1,6 +1,6 @@
 use clap::Parser;
 
-use servicepoint2::{ByteGrid, Command, Connection, Origin};
+use servicepoint2::{ByteGrid, Command, Connection, Grid, Origin};
 
 #[derive(Parser, Debug)]
 struct Cli {

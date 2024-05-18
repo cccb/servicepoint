@@ -3,9 +3,7 @@ use std::thread;
 use clap::Parser;
 use rand::{distributions, Rng};
 
-use servicepoint2::{
-    Command, CompressionCode, Connection, Origin, PixelGrid, FRAME_PACING,
-};
+use servicepoint2::{Command, CompressionCode, Connection, Origin, PixelGrid, FRAME_PACING, Grid};
 
 #[derive(Parser, Debug)]
 struct Cli {

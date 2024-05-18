@@ -1,4 +1,4 @@
-use crate::{BitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
+use crate::{BitVec, Grid, PIXEL_HEIGHT, PIXEL_WIDTH};
 
 /// A grid of pixels stored in packed bytes.
 #[derive(Debug, Clone, PartialEq)]
@@ -58,36 +58,8 @@ impl PixelGrid {
         }
     }
 
-    /// Sets the byte value at the specified position
-    pub fn set(&mut self, x: usize, y: usize, value: bool) -> bool {
-        self.check_indexes(x, y);
-        self.bit_vec.set(x + y * self.width, value)
-    }
-
-    /// Get the current value at the specified position
-    ///
-    /// returns: current pixel value
-    pub fn get(&self, x: usize, y: usize) -> bool {
-        self.bit_vec.get(x + y * self.width)
-    }
-
-    /// Sets all pixels in the grid to the specified value
-    pub fn fill(&mut self, value: bool) {
-        self.bit_vec.fill(value);
-    }
-
     pub fn mut_data_ref(&mut self) -> &mut [u8] {
         self.bit_vec.mut_data_ref()
-    }
-
-    /// the size in x-direction in pixels
-    pub fn width(&self) -> usize {
-        self.width
-    }
-
-    /// the height in y-direction in pixels
-    pub fn height(&self) -> usize {
-        self.height
     }
 
     fn check_indexes(&self, x: usize, y: usize) {
@@ -97,6 +69,29 @@ impl PixelGrid {
         if y >= self.height {
             panic!("cannot access pixel {x}-{y} because y is outside of bounds 0..{}", self.height)
         }
+    }
+}
+
+impl Grid<bool> for PixelGrid {
+    fn set(&mut self, x: usize, y: usize, value: bool) -> bool {
+        self.check_indexes(x, y);
+        self.bit_vec.set(x + y * self.width, value)
+    }
+
+    fn get(&self, x: usize, y: usize) -> bool {
+        self.bit_vec.get(x + y * self.width)
+    }
+
+    fn fill(&mut self, value: bool) {
+        self.bit_vec.fill(value);
+    }
+
+    fn width(&self) -> usize {
+        self.width
+    }
+
+    fn height(&self) -> usize {
+        self.height
     }
 }
 
@@ -110,7 +105,7 @@ impl From<PixelGrid> for Vec<u8> {
 #[cfg(feature = "c_api")]
 pub mod c_api {
     use crate::c_slice::CByteSlice;
-    use crate::PixelGrid;
+    use crate::{Grid, PixelGrid};
 
     /// Creates a new `PixelGrid` instance.
     /// The returned instance has to be freed with `pixel_grid_dealloc`.
@@ -221,7 +216,7 @@ pub mod c_api {
 
 #[cfg(test)]
 mod tests {
-    use crate::PixelGrid;
+    use crate::{Grid, PixelGrid};
 
     #[test]
     fn fill() {

@@ -1,3 +1,5 @@
+use crate::Grid;
+
 /// A 2D grid of bytes
 #[derive(Debug, Clone, PartialEq)]
 pub struct ByteGrid {
@@ -34,38 +36,9 @@ impl ByteGrid {
         }
     }
 
-    /// Get the current value at the specified position
-    ///
-    /// returns: current byte value
-    pub fn get(&self, x: usize, y: usize) -> u8 {
-        self.check_indexes(x, y);
-        self.data[x + y * self.width]
-    }
-
-    /// Sets the byte value at the specified position
-    pub fn set(&mut self, x: usize, y: usize, value: u8) {
-        self.check_indexes(x, y);
-        self.data[x + y * self.width] = value;
-    }
-
-    /// Sets all bytes in the grid to the specified value
-    pub fn fill(&mut self, value: u8) {
-        self.data.fill(value)
-    }
-
     /// Get the underlying byte rows
     pub fn mut_data_ref(&mut self) -> &mut [u8] {
         self.data.as_mut_slice()
-    }
-
-    /// the size in x-direction
-    pub fn width(&self) -> usize {
-        self.width
-    }
-
-    /// the height in y-direction
-    pub fn height(&self) -> usize {
-        self.height
     }
 
     fn check_indexes(&self, x: usize, y: usize) {
@@ -78,6 +51,34 @@ impl ByteGrid {
     }
 }
 
+impl Grid<u8> for ByteGrid {
+    fn set(&mut self, x: usize, y: usize, value: u8) -> u8 {
+        self.check_indexes(x, y);
+        let pos = &mut self.data[x + y * self.width];
+        let old_val = *pos;
+        *pos = value;
+        old_val
+    }
+
+    fn get(&self, x: usize, y: usize) -> u8 {
+        self.check_indexes(x, y);
+        self.data[x + y * self.width]
+    }
+
+    fn fill(&mut self, value: u8) {
+        self.data.fill(value)
+    }
+
+    fn width(&self) -> usize {
+        self.width
+    }
+
+    fn height(&self) -> usize {
+        self.height
+    }
+}
+
+
 impl From<ByteGrid> for Vec<u8> {
     /// Turn into the underlying `Vec<u8>` containing the rows of bytes.
     fn from(value: ByteGrid) -> Self {
@@ -88,6 +89,7 @@ impl From<ByteGrid> for Vec<u8> {
 #[cfg(feature = "c_api")]
 pub mod c_api {
     use crate::{ByteGrid, CByteSlice};
+    use crate::grid::Grid;
 
     /// Creates a new `ByteGrid` instance.
     /// The returned instance has to be freed with `byte_grid_dealloc`.
@@ -198,7 +200,7 @@ pub mod c_api {
 
 #[cfg(test)]
 mod tests {
-    use crate::ByteGrid;
+    use crate::{ByteGrid, Grid};
 
     #[test]
     fn fill() {
