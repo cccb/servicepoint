@@ -9,7 +9,7 @@
 /**
  * pixel count on whole screen
  */
-#define sp2_PIXEL_COUNT ((size_t)sp2_PIXEL_WIDTH * (size_t)sp2_PIXEL_HEIGHT)
+#define sp2_PIXEL_COUNT (sp2_PIXEL_WIDTH * sp2_PIXEL_HEIGHT)
 
 /**
  * screen height in pixels
@@ -111,7 +111,7 @@ typedef struct sp2_CByteSlice {
 /**
  * Type alias for documenting the meaning of the u16 in enum values
  */
-typedef uint16_t sp2_Offset;
+typedef size_t sp2_Offset;
 
 /**
  * Type alias for documenting the meaning of the u16 in enum values
@@ -282,8 +282,8 @@ struct sp2_Command *sp2_command_bitmap_linear_or(sp2_Offset offset,
  * Allocates a new `Command::BitmapLinearWin` instance.
  * The passed `PixelGrid` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_bitmap_linear_win(uint16_t x,
-                                                  uint16_t y,
+struct sp2_Command *sp2_command_bitmap_linear_win(size_t x,
+                                                  size_t y,
                                                   struct sp2_PixelGrid *byte_grid,
                                                   sp2_CompressionCode compression_code);
 
@@ -304,8 +304,8 @@ struct sp2_Command *sp2_command_brightness(sp2_Brightness brightness);
  * Allocates a new `Command::CharBrightness` instance.
  * The passed `ByteGrid` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_char_brightness(uint16_t x,
-                                                uint16_t y,
+struct sp2_Command *sp2_command_char_brightness(size_t x,
+                                                size_t y,
                                                 struct sp2_ByteGrid *byte_grid);
 
 /**
@@ -322,8 +322,8 @@ struct sp2_Command *sp2_command_clone(const struct sp2_Command *original);
  * Allocates a new `Command::Cp437Data` instance.
  * The passed `ByteGrid` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_cp437_data(uint16_t x,
-                                           uint16_t y,
+struct sp2_Command *sp2_command_cp437_data(size_t x,
+                                           size_t y,
                                            struct sp2_ByteGrid *byte_grid);
 
 /**

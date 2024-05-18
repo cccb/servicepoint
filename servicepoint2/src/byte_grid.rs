@@ -9,13 +9,14 @@ pub struct ByteGrid {
 }
 
 impl ByteGrid {
-    /// Loads a byte grid with the specified dimensions from the provided data.
+    /// Loads a `ByteGrid` with the specified dimensions from the provided data.
     ///
-    /// returns: ByteGrid that contains a copy of the provided data
+    /// returns: `ByteGrid` that contains a copy of the provided data
     ///
     /// # Panics
     ///
     /// - when the dimensions and data size do not match exactly.
+    #[must_use]
     pub fn load(width: usize, height: usize, data: &[u8]) -> Self {
         assert_eq!(width * height, data.len());
         Self {
@@ -26,19 +27,23 @@ impl ByteGrid {
     }
 
     fn check_indexes(&self, x: usize, y: usize) {
-        if x >= self.width {
-            panic!("cannot access byte {x}-{y} because x is outside of bounds 0..{}", self.width)
-        }
-        if y >= self.height {
-            panic!("cannot access byte {x}-{y} because y is outside of bounds 0..{}", self.height)
-        }
+        assert!(
+            x < self.width,
+            "cannot access byte {x}-{y} because x is outside of bounds 0..{}",
+            self.width
+        );
+        assert!(
+            y < self.height,
+            "cannot access byte {x}-{y} because y is outside of bounds 0..{}",
+            self.height
+        );
     }
 }
 
 impl Grid<u8> for ByteGrid {
-    /// Creates a new byte grid with the specified dimensions.
+    /// Creates a new `ByteGrid` with the specified dimensions.
     ///
-    /// returns: ByteGrid initialized to 0.
+    /// returns: `ByteGrid` initialized to 0.
     fn new(width: usize, height: usize) -> Self {
         Self {
             data: vec![0; width * height],
@@ -61,7 +66,7 @@ impl Grid<u8> for ByteGrid {
     }
 
     fn fill(&mut self, value: u8) {
-        self.data.fill(value)
+        self.data.fill(value);
     }
 
     fn width(&self) -> usize {

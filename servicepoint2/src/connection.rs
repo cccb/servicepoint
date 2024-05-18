@@ -15,6 +15,10 @@ impl Connection {
     ///
     /// Note that this is UDP, which means that the open call can succeed even if the display is unreachable.
     ///
+    /// # Errors
+    ///
+    /// Any errors resulting from binding the udp socket.
+    ///
     /// # Examples
     /// ```rust
     ///  let connection = servicepoint2::Connection::open("172.23.42.29:2342")
@@ -34,6 +38,10 @@ impl Connection {
     /// * `packet`: the packet-like to send
     ///
     /// returns: Ok if packet was sent, otherwise socket error
+    ///
+    /// # Errors
+    ///
+    /// Any errors produced while sending using the underlying socket.
     ///
     /// # Examples
     ///

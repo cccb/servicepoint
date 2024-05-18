@@ -7,7 +7,7 @@ use crate::{
 
 /// An origin marks the top left position of a window sent to the display.
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Origin(pub u16, pub u16);
+pub struct Origin(pub usize, pub usize);
 
 impl std::ops::Add<Origin> for Origin {
     type Output = Origin;
@@ -19,12 +19,8 @@ impl std::ops::Add<Origin> for Origin {
     }
 }
 
-/// Size defines the width and height of a window
-#[derive(Debug, Clone, Copy)]
-pub struct Size(pub u16, pub u16);
-
 /// Type alias for documenting the meaning of the u16 in enum values
-pub type Offset = u16;
+pub type Offset = usize;
 
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Brightness = u8;
@@ -46,16 +42,16 @@ pub enum Command {
     /// Legacy command code, gets ignored by the real display.
     BitmapLegacy,
     /// Set pixel data starting at the offset.
-    /// The contained BitVec is always uncompressed.
+    /// The contained `BitVec` is always uncompressed.
     BitmapLinear(Offset, BitVec, CompressionCode),
     /// Set pixel data according to an and-mask starting at the offset.
-    /// The contained BitVec is always uncompressed.
+    /// The contained `BitVec` is always uncompressed.
     BitmapLinearAnd(Offset, BitVec, CompressionCode),
     /// Set pixel data according to an or-mask starting at the offset.
-    /// The contained BitVec is always uncompressed.
+    /// The contained `BitVec` is always uncompressed.
     BitmapLinearOr(Offset, BitVec, CompressionCode),
-    /// Set pixel data according to an xor-mask starting at the offset.
-    /// The contained BitVec is always uncompressed.
+    /// Set pixel data according to a xor-mask starting at the offset.
+    /// The contained `BitVec` is always uncompressed.
     BitmapLinearXor(Offset, BitVec, CompressionCode),
     /// Show text on the screen. Note that the byte data has to be CP437 encoded.
     Cp437Data(Origin, ByteGrid),
@@ -65,6 +61,7 @@ pub enum Command {
 
 impl From<Command> for Packet {
     /// Move the `Command` into a `Packet` instance for sending.
+    #[allow(clippy::cast_possible_truncation)]
     fn from(value: Command) -> Self {
         match value {
             Command::Clear => Command::command_code_only(CommandCode::Clear),
@@ -81,8 +78,8 @@ impl From<Command> for Packet {
             Command::CharBrightness(Origin(x, y), grid) => Packet(
                 Header(
                     CommandCode::CharBrightness.into(),
-                    x,
-                    y,
+                    x as u16,
+                    y as u16,
                     grid.width() as u16,
                     grid.height() as u16,
                 ),
@@ -98,36 +95,8 @@ impl From<Command> for Packet {
                 ),
                 vec![brightness],
             ),
-            Command::BitmapLinearWin(
-                Origin(pixel_x, pixel_y),
-                pixels,
-                compression,
-            ) => {
-                debug_assert_eq!(pixel_x % 8, 0);
-                debug_assert_eq!(pixels.width() % 8, 0);
-
-                let tile_x = pixel_x / TILE_SIZE;
-                let tile_w = pixels.width() as u16 / TILE_SIZE;
-                let pixel_h = pixels.height() as u16;
-                let payload = into_compressed(compression, pixels.into());
-                let command = match compression {
-                    CompressionCode::Uncompressed => {
-                        CommandCode::BitmapLinearWinUncompressed
-                    }
-                    #[cfg(feature = "compression_zlib")]
-                    CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
-                    #[cfg(feature = "compression_bzip2")]
-                    CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
-                    #[cfg(feature = "compression_lzma")]
-                    CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
-                    #[cfg(feature = "compression_zstd")]
-                    CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
-                };
-
-                Packet(
-                    Header(command.into(), tile_x, pixel_y, tile_w, pixel_h),
-                    payload,
-                )
+            Command::BitmapLinearWin(origin, pixels, compression) => {
+                bitmap_win_into_packet(origin, pixels, compression)
             }
             Command::BitmapLinear(offset, bits, compression) => {
                 Command::bitmap_linear_into_packet(
@@ -164,8 +133,8 @@ impl From<Command> for Packet {
             Command::Cp437Data(Origin(x, y), grid) => Packet(
                 Header(
                     CommandCode::Cp437Data.into(),
-                    x,
-                    y,
+                    x as u16,
+                    y as u16,
                     grid.width() as u16,
                     grid.height() as u16,
                 ),
@@ -173,6 +142,40 @@ impl From<Command> for Packet {
             ),
         }
     }
+}
+
+#[allow(clippy::cast_possible_truncation)]
+fn bitmap_win_into_packet(
+    origin: Origin,
+    pixels: PixelGrid,
+    compression: CompressionCode,
+) -> Packet {
+    let Origin(pixel_x, pixel_y) = origin;
+    debug_assert_eq!(pixel_x % 8, 0);
+    debug_assert_eq!(pixels.width() % 8, 0);
+
+    let tile_x = (pixel_x / TILE_SIZE) as u16;
+    let tile_w = (pixels.width() / TILE_SIZE) as u16;
+    let pixel_h = pixels.height() as u16;
+    let payload = into_compressed(compression, pixels.into());
+    let command = match compression {
+        CompressionCode::Uncompressed => {
+            CommandCode::BitmapLinearWinUncompressed
+        }
+        #[cfg(feature = "compression_zlib")]
+        CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
+        #[cfg(feature = "compression_bzip2")]
+        CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
+        #[cfg(feature = "compression_lzma")]
+        CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
+        #[cfg(feature = "compression_zstd")]
+        CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
+    };
+
+    Packet(
+        Header(command.into(), tile_x, pixel_y as u16, tile_w, pixel_h),
+        payload,
+    )
 }
 
 #[derive(Debug)]
@@ -200,7 +203,7 @@ impl TryFrom<Packet> for Command {
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
         let Packet(Header(command_u16, a, b, c, d), _) = packet;
         let command_code = match CommandCode::try_from(command_u16) {
-            Err(_) => {
+            Err(()) => {
                 return Err(TryFromPacketError::InvalidCommand(command_u16));
             }
             Ok(value) => value,
@@ -238,14 +241,14 @@ impl TryFrom<Packet> for Command {
             CommandCode::Cp437Data => {
                 let Packet(_, payload) = packet;
                 Ok(Command::Cp437Data(
-                    Origin(a, b),
+                    Origin(a as usize, b as usize),
                     ByteGrid::load(c as usize, d as usize, &payload),
                 ))
             }
             CommandCode::CharBrightness => {
                 let Packet(_, payload) = packet;
                 Ok(Command::CharBrightness(
-                    Origin(a, b),
+                    Origin(a as usize, b as usize),
                     ByteGrid::load(c as usize, d as usize, &payload),
                 ))
             }
@@ -254,22 +257,22 @@ impl TryFrom<Packet> for Command {
             CommandCode::BitmapLinear => {
                 let (vec, compression) =
                     Self::packet_into_linear_bitmap(packet)?;
-                Ok(Command::BitmapLinear(a, vec, compression))
+                Ok(Command::BitmapLinear(a as Offset, vec, compression))
             }
             CommandCode::BitmapLinearAnd => {
                 let (vec, compression) =
                     Self::packet_into_linear_bitmap(packet)?;
-                Ok(Command::BitmapLinearAnd(a, vec, compression))
+                Ok(Command::BitmapLinearAnd(a as Offset, vec, compression))
             }
             CommandCode::BitmapLinearOr => {
                 let (vec, compression) =
                     Self::packet_into_linear_bitmap(packet)?;
-                Ok(Command::BitmapLinearOr(a, vec, compression))
+                Ok(Command::BitmapLinearOr(a as Offset, vec, compression))
             }
             CommandCode::BitmapLinearXor => {
                 let (vec, compression) =
                     Self::packet_into_linear_bitmap(packet)?;
-                Ok(Command::BitmapLinearXor(a, vec, compression))
+                Ok(Command::BitmapLinearXor(a as Offset, vec, compression))
             }
             CommandCode::BitmapLinearWinUncompressed => {
                 Self::packet_into_bitmap_win(
@@ -311,9 +314,9 @@ impl Command {
         };
 
         Ok(Command::BitmapLinearWin(
-            Origin(tiles_x * TILE_SIZE, pixels_y),
+            Origin(tiles_x as usize * TILE_SIZE, pixels_y as usize),
             PixelGrid::load(
-                tile_w as usize * TILE_SIZE as usize,
+                tile_w as usize * TILE_SIZE,
                 pixel_h as usize,
                 &payload,
             ),
@@ -321,7 +324,8 @@ impl Command {
         ))
     }
 
-    /// Helper method for BitMapLinear*-Commands into Packet
+    /// Helper method for `BitMapLinear*`-Commands into `Packet`
+    #[allow(clippy::cast_possible_truncation)]
     fn bitmap_linear_into_packet(
         command: CommandCode,
         offset: Offset,
@@ -331,7 +335,13 @@ impl Command {
         let length = payload.len() as u16;
         let payload = into_compressed(compression, payload);
         Packet(
-            Header(command.into(), offset, length, compression.into(), 0),
+            Header(
+                command.into(),
+                offset as u16,
+                length,
+                compression.into(),
+                0,
+            ),
             payload,
         )
     }
@@ -353,7 +363,7 @@ impl Command {
         }
     }
 
-    /// Helper method for Packets into BitMapLinear*-Commands
+    /// Helper method for Packets into `BitMapLinear*`-Commands
     fn packet_into_linear_bitmap(
         packet: Packet,
     ) -> Result<(BitVec, CompressionCode), TryFromPacketError> {
@@ -362,7 +372,7 @@ impl Command {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
         }
         let sub = match CompressionCode::try_from(sub) {
-            Err(_) => {
+            Err(()) => {
                 return Err(TryFromPacketError::InvalidCompressionCode(sub));
             }
             Ok(value) => value,
@@ -442,8 +452,8 @@ pub mod c_api {
     /// The passed `ByteGrid` gets deallocated in the process.
     #[no_mangle]
     pub unsafe extern "C" fn sp2_command_char_brightness(
-        x: u16,
-        y: u16,
+        x: usize,
+        y: usize,
         byte_grid: *mut ByteGrid,
     ) -> *mut Command {
         let byte_grid = *Box::from_raw(byte_grid);
@@ -521,8 +531,8 @@ pub mod c_api {
     /// The passed `ByteGrid` gets deallocated in the process.
     #[no_mangle]
     pub unsafe extern "C" fn sp2_command_cp437_data(
-        x: u16,
-        y: u16,
+        x: usize,
+        y: usize,
         byte_grid: *mut ByteGrid,
     ) -> *mut Command {
         let byte_grid = *Box::from_raw(byte_grid);
@@ -533,8 +543,8 @@ pub mod c_api {
     /// The passed `PixelGrid` gets deallocated in the process.
     #[no_mangle]
     pub unsafe extern "C" fn sp2_command_bitmap_linear_win(
-        x: u16,
-        y: u16,
+        x: usize,
+        y: usize,
         byte_grid: *mut PixelGrid,
         compression_code: CompressionCode,
     ) -> *mut Command {

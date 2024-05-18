@@ -10,23 +10,25 @@ pub struct PixelGrid {
 
 impl PixelGrid {
     /// Creates a new pixel grid with the size of the whole screen.
+    #[must_use]
     pub fn max_sized() -> Self {
-        Self::new(PIXEL_WIDTH as usize, PIXEL_HEIGHT as usize)
+        Self::new(PIXEL_WIDTH, PIXEL_HEIGHT)
     }
 
-    /// Loads a pixel grid with the specified dimensions from the provided data.
+    /// Loads a `PixelGrid` with the specified dimensions from the provided data.
     ///
     /// # Arguments
     ///
     /// * `width`: size in pixels in x-direction
     /// * `height`: size in pixels in y-direction
     ///
-    /// returns: PixelGrid that contains a copy of the provided data
+    /// returns: `PixelGrid` that contains a copy of the provided data
     ///
     /// # Panics
     ///
     /// - when the dimensions and data size do not match exactly.
     /// - when the width is not dividable by 8
+    #[must_use]
     pub fn load(width: usize, height: usize, data: &[u8]) -> Self {
         assert_eq!(width % 8, 0);
         assert_eq!(data.len(), height * width / 8);
@@ -38,24 +40,28 @@ impl PixelGrid {
     }
 
     fn check_indexes(&self, x: usize, y: usize) {
-        if x >= self.width {
-            panic!("cannot access pixel {x}-{y} because x is outside of bounds 0..{}", self.width)
-        }
-        if y >= self.height {
-            panic!("cannot access pixel {x}-{y} because y is outside of bounds 0..{}", self.height)
-        }
+        assert!(
+            x < self.width,
+            "cannot access pixel {x}-{y} because x is outside of bounds 0..{}",
+            self.width
+        );
+        assert!(
+            y < self.height,
+            "cannot access pixel {x}-{y} because y is outside of bounds 0..{}",
+            self.height
+        );
     }
 }
 
 impl Grid<bool> for PixelGrid {
-    /// Creates a new pixel grid with the specified dimensions.
+    /// Creates a new `PixelGrid` with the specified dimensions.
     ///
     /// # Arguments
     ///
     /// * `width`: size in pixels in x-direction
     /// * `height`: size in pixels in y-direction
     ///
-    /// returns: PixelGrid initialized to all pixels off
+    /// returns: `PixelGrid` initialized to all pixels off
     ///
     /// # Panics
     ///

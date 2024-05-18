@@ -37,39 +37,61 @@ impl TryFrom<u16> for CommandCode {
 
     /// Returns the enum value for the specified `u16` or `Error` if the code is unknown.
     fn try_from(value: u16) -> Result<Self, Self::Error> {
-        use CommandCode::*;
-
         match value {
-            value if value == Clear as u16 => Ok(Clear),
-            value if value == Cp437Data as u16 => Ok(Cp437Data),
-            value if value == CharBrightness as u16 => Ok(CharBrightness),
-            value if value == Brightness as u16 => Ok(Brightness),
-            value if value == HardReset as u16 => Ok(HardReset),
-            value if value == FadeOut as u16 => Ok(FadeOut),
-            #[allow(deprecated)]
-            value if value == BitmapLegacy as u16 => Ok(BitmapLegacy),
-            value if value == BitmapLinear as u16 => Ok(BitmapLinear),
-            value if value == BitmapLinearWinUncompressed as u16 => {
-                Ok(BitmapLinearWinUncompressed)
+            value if value == CommandCode::Clear as u16 => {
+                Ok(CommandCode::Clear)
             }
-            value if value == BitmapLinearAnd as u16 => Ok(BitmapLinearAnd),
-            value if value == BitmapLinearOr as u16 => Ok(BitmapLinearOr),
-            value if value == BitmapLinearXor as u16 => Ok(BitmapLinearXor),
+            value if value == CommandCode::Cp437Data as u16 => {
+                Ok(CommandCode::Cp437Data)
+            }
+            value if value == CommandCode::CharBrightness as u16 => {
+                Ok(CommandCode::CharBrightness)
+            }
+            value if value == CommandCode::Brightness as u16 => {
+                Ok(CommandCode::Brightness)
+            }
+            value if value == CommandCode::HardReset as u16 => {
+                Ok(CommandCode::HardReset)
+            }
+            value if value == CommandCode::FadeOut as u16 => {
+                Ok(CommandCode::FadeOut)
+            }
+            #[allow(deprecated)]
+            value if value == CommandCode::BitmapLegacy as u16 => {
+                Ok(CommandCode::BitmapLegacy)
+            }
+            value if value == CommandCode::BitmapLinear as u16 => {
+                Ok(CommandCode::BitmapLinear)
+            }
+            value
+                if value == CommandCode::BitmapLinearWinUncompressed as u16 =>
+            {
+                Ok(CommandCode::BitmapLinearWinUncompressed)
+            }
+            value if value == CommandCode::BitmapLinearAnd as u16 => {
+                Ok(CommandCode::BitmapLinearAnd)
+            }
+            value if value == CommandCode::BitmapLinearOr as u16 => {
+                Ok(CommandCode::BitmapLinearOr)
+            }
+            value if value == CommandCode::BitmapLinearXor as u16 => {
+                Ok(CommandCode::BitmapLinearXor)
+            }
             #[cfg(feature = "compression_zstd")]
-            value if value == BitmapLinearWinZstd as u16 => {
-                Ok(BitmapLinearWinZstd)
+            value if value == CommandCode::BitmapLinearWinZstd as u16 => {
+                Ok(CommandCode::BitmapLinearWinZstd)
             }
             #[cfg(feature = "compression_lzma")]
-            value if value == BitmapLinearWinLzma as u16 => {
-                Ok(BitmapLinearWinLzma)
+            value if value == CommandCode::BitmapLinearWinLzma as u16 => {
+                Ok(CommandCode::BitmapLinearWinLzma)
             }
             #[cfg(feature = "compression_zlib")]
-            value if value == BitmapLinearWinZlib as u16 => {
-                Ok(BitmapLinearWinZlib)
+            value if value == CommandCode::BitmapLinearWinZlib as u16 => {
+                Ok(CommandCode::BitmapLinearWinZlib)
             }
             #[cfg(feature = "compression_bzip2")]
-            value if value == BitmapLinearWinBzip2 as u16 => {
-                Ok(BitmapLinearWinBzip2)
+            value if value == CommandCode::BitmapLinearWinBzip2 as u16 => {
+                Ok(CommandCode::BitmapLinearWinBzip2)
             }
             _ => Err(()),
         }

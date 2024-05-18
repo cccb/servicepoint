@@ -1,4 +1,5 @@
 pub trait Grid<T> {
+    #[must_use]
     fn new(width: usize, height: usize) -> Self;
 
     /// Sets the value at the specified position
@@ -47,5 +48,6 @@ pub trait Grid<T> {
     ///
     /// let (l, r) = split(ByteGrid::new(9, 5));
     /// ```
+    #[must_use]
     fn window(&self, x: usize, y: usize, w: usize, h: usize) -> Self;
 }

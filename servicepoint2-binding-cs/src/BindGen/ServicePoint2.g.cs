@@ -125,31 +125,31 @@ namespace ServicePoint2.BindGen
 
         /// <summary>Allocates a new `Command::CharBrightness` instance. The passed `ByteGrid` gets deallocated in the process.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_char_brightness(ushort x, ushort y, ByteGrid* byte_grid);
+        public static extern Command* sp2_command_char_brightness(nuint x, nuint y, ByteGrid* byte_grid);
 
         /// <summary>Allocates a new `Command::BitmapLinear` instance. The passed `BitVec` gets deallocated in the process.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_bitmap_linear(ushort offset, BitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp2_command_bitmap_linear(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>Allocates a new `Command::BitmapLinearAnd` instance. The passed `BitVec` gets deallocated in the process.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_bitmap_linear_and", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_bitmap_linear_and(ushort offset, BitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp2_command_bitmap_linear_and(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>Allocates a new `Command::BitmapLinearOr` instance. The passed `BitVec` gets deallocated in the process.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_bitmap_linear_or", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_bitmap_linear_or(ushort offset, BitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp2_command_bitmap_linear_or(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>Allocates a new `Command::BitmapLinearXor` instance. The passed `BitVec` gets deallocated in the process.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_bitmap_linear_xor", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_bitmap_linear_xor(ushort offset, BitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp2_command_bitmap_linear_xor(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>Allocates a new `Command::Cp437Data` instance. The passed `ByteGrid` gets deallocated in the process.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_cp437_data(ushort x, ushort y, ByteGrid* byte_grid);
+        public static extern Command* sp2_command_cp437_data(nuint x, nuint y, ByteGrid* byte_grid);
 
         /// <summary>Allocates a new `Command::BitmapLinearWin` instance. The passed `PixelGrid` gets deallocated in the process.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp2_command_bitmap_linear_win(ushort x, ushort y, PixelGrid* byte_grid, CompressionCode compression_code);
+        public static extern Command* sp2_command_bitmap_linear_win(nuint x, nuint y, PixelGrid* byte_grid, CompressionCode compression_code);
 
         /// <summary>Deallocates a `Command`. Note that connection_send does this implicitly, so you only need to do this if you use the library for parsing commands.</summary>
         [DllImport(__DllName, EntryPoint = "sp2_command_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]

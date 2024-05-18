@@ -1,5 +1,3 @@
-use CompressionCode::*;
-
 /// Specifies the kind of compression to use. Availability depends on features.
 #[repr(u16)]
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -26,15 +24,25 @@ impl TryFrom<u16> for CompressionCode {
 
     fn try_from(value: u16) -> Result<Self, Self::Error> {
         match value {
-            value if value == Uncompressed as u16 => Ok(Uncompressed),
+            value if value == CompressionCode::Uncompressed as u16 => {
+                Ok(CompressionCode::Uncompressed)
+            }
             #[cfg(feature = "compression_zlib")]
-            value if value == Zlib as u16 => Ok(Zlib),
+            value if value == CompressionCode::Zlib as u16 => {
+                Ok(CompressionCode::Zlib)
+            }
             #[cfg(feature = "compression_bzip2")]
-            value if value == Bzip2 as u16 => Ok(Bzip2),
+            value if value == CompressionCode::Bzip2 as u16 => {
+                Ok(CompressionCode::Bzip2)
+            }
             #[cfg(feature = "compression_lzma")]
-            value if value == Lzma as u16 => Ok(Lzma),
+            value if value == CompressionCode::Lzma as u16 => {
+                Ok(CompressionCode::Lzma)
+            }
             #[cfg(feature = "compression_zstd")]
-            value if value == Zstd as u16 => Ok(Zstd),
+            value if value == CompressionCode::Zstd as u16 => {
+                Ok(CompressionCode::Zstd)
+            }
             _ => Err(()),
         }
     }

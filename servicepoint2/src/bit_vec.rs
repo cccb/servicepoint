@@ -1,7 +1,7 @@
 use crate::DataRef;
 
 /// A vector of bits
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct BitVec {
     size: usize,
     data: Vec<u8>,
@@ -15,6 +15,11 @@ impl BitVec {
     /// * `size`: size in bits. Must be dividable by 8.
     ///
     /// returns: bit vector with all bits set to false.
+    ///
+    /// # Panics
+    ///
+    /// When size is not a multiple of 8.
+    #[must_use]
     pub fn new(size: usize) -> BitVec {
         assert_eq!(size % 8, 0);
         Self {
@@ -53,6 +58,7 @@ impl BitVec {
     /// * `index`: the bit index to read
     ///
     /// returns: value of the bit
+    #[must_use]
     pub fn get(&self, index: usize) -> bool {
         let (byte_index, bit_mask) = self.get_indexes(index);
         self.data[byte_index] & bit_mask != 0
@@ -76,23 +82,24 @@ impl BitVec {
     }
 
     /// Gets the length in bits
+    #[must_use]
     pub fn len(&self) -> usize {
         self.size
     }
 
     /// returns true if length is 0.
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
     /// Calculates the byte index and bitmask for a specific bit in the vector
     fn get_indexes(&self, bit_index: usize) -> (usize, u8) {
-        if bit_index >= self.size {
-            panic!(
-                "bit index {bit_index} is outside of range 0..<{}",
-                self.size
-            )
-        }
+        assert!(
+            bit_index < self.size,
+            "bit index {bit_index} is outside of range 0..<{}",
+            self.size
+        );
 
         let byte_index = bit_index / 8;
         let bit_in_byte_index = 7 - bit_index % 8;
@@ -125,16 +132,6 @@ impl From<&[u8]> for BitVec {
             size: value.len() * 8,
             data: Vec::from(value),
         }
-    }
-}
-
-impl std::fmt::Debug for BitVec {
-    /// Formats a `BitVec` for debug. The manual implementation includes the length of the instance.
-    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fmt.debug_struct("BitVec")
-            .field("len", &self.len())
-            .field("data", &self.data)
-            .finish()
     }
 }
 
