@@ -26,7 +26,7 @@ fn main() {
                 Command::BitmapLinearWin(
                     Origin(0, 0),
                     field.clone(),
-                    CompressionCode::Bzip2,
+                    CompressionCode::Lzma,
                 )
                 .into(),
             )

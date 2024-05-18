@@ -15,9 +15,13 @@ pub(crate) enum CommandCode {
     BitmapLinearAnd = 0x0014,
     BitmapLinearOr = 0x0015,
     BitmapLinearXor = 0x0016,
+    #[cfg(feature = "compression_zlib")]
     BitmapLinearWinZlib = 0x0017,
+    #[cfg(feature = "compression_bzip2")]
     BitmapLinearWinBzip2 = 0x0018,
+    #[cfg(feature = "compression_lzma")]
     BitmapLinearWinLzma = 0x0019,
+    #[cfg(feature = "compression_zstd")]
     BitmapLinearWinZstd = 0x001A,
 }
 
@@ -51,15 +55,19 @@ impl TryFrom<u16> for CommandCode {
             value if value == BitmapLinearAnd as u16 => Ok(BitmapLinearAnd),
             value if value == BitmapLinearOr as u16 => Ok(BitmapLinearOr),
             value if value == BitmapLinearXor as u16 => Ok(BitmapLinearXor),
+            #[cfg(feature = "compression_zstd")]
             value if value == BitmapLinearWinZstd as u16 => {
                 Ok(BitmapLinearWinZstd)
             }
+            #[cfg(feature = "compression_lzma")]
             value if value == BitmapLinearWinLzma as u16 => {
                 Ok(BitmapLinearWinLzma)
             }
+            #[cfg(feature = "compression_zlib")]
             value if value == BitmapLinearWinZlib as u16 => {
                 Ok(BitmapLinearWinZlib)
             }
+            #[cfg(feature = "compression_bzip2")]
             value if value == BitmapLinearWinBzip2 as u16 => {
                 Ok(BitmapLinearWinBzip2)
             }

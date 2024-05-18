@@ -104,9 +104,13 @@ impl From<Command> for Packet {
                     CompressionCode::Uncompressed => {
                         CommandCode::BitmapLinearWinUncompressed
                     }
+                    #[cfg(feature = "compression_zlib")]
                     CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
+                    #[cfg(feature = "compression_bzip2")]
                     CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
+                    #[cfg(feature = "compression_lzma")]
                     CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
+                    #[cfg(feature = "compression_zstd")]
                     CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
                 };
 
@@ -263,15 +267,19 @@ impl TryFrom<Packet> for Command {
                     CompressionCode::Uncompressed,
                 )
             }
+            #[cfg(feature = "compression_zlib")]
             CommandCode::BitmapLinearWinZlib => {
                 Self::packet_into_bitmap_win(packet, CompressionCode::Zlib)
             }
+            #[cfg(feature = "compression_bzip2")]
             CommandCode::BitmapLinearWinBzip2 => {
                 Self::packet_into_bitmap_win(packet, CompressionCode::Bzip2)
             }
+            #[cfg(feature = "compression_lzma")]
             CommandCode::BitmapLinearWinLzma => {
                 Self::packet_into_bitmap_win(packet, CompressionCode::Lzma)
             }
+            #[cfg(feature = "compression_zstd")]
             CommandCode::BitmapLinearWinZstd => {
                 Self::packet_into_bitmap_win(packet, CompressionCode::Zstd)
             }
@@ -541,8 +549,8 @@ mod tests {
     use crate::command::TryFromPacketError;
     use crate::command_code::CommandCode;
     use crate::{
-        BitVec, ByteGrid, Command, CompressionCode, Header, Origin, Packet,
-        PixelGrid,
+        BitVec, ByteGrid, Command, CompressionCode, Grid, Header, Origin,
+        Packet, PixelGrid,
     };
 
     fn round_trip(original: Command) {
@@ -554,12 +562,16 @@ mod tests {
         assert_eq!(copy, original);
     }
 
-    fn all_compressions() -> [CompressionCode; 5] {
-        [
+    fn all_compressions<'t>() -> &'t [CompressionCode] {
+        &[
             CompressionCode::Uncompressed,
+            #[cfg(feature = "compression_lzma")]
             CompressionCode::Lzma,
+            #[cfg(feature = "compression_bzip2")]
             CompressionCode::Bzip2,
+            #[cfg(feature = "compression_zlib")]
             CompressionCode::Zlib,
+            #[cfg(feature = "compression_zstd")]
             CompressionCode::Zstd,
         ]
     }
@@ -602,7 +614,7 @@ mod tests {
 
     #[test]
     fn round_trip_bitmap_linear() {
-        for compression in all_compressions() {
+        for compression in all_compressions().to_owned() {
             round_trip(Command::BitmapLinear(23, BitVec::new(40), compression));
             round_trip(Command::BitmapLinearAnd(
                 23,
@@ -704,7 +716,7 @@ mod tests {
 
     #[test]
     fn error_decompression_failed_win() {
-        for compression in all_compressions() {
+        for compression in all_compressions().to_owned() {
             let p: Packet = Command::BitmapLinearWin(
                 Origin(16, 8),
                 PixelGrid::new(8, 8),
@@ -730,7 +742,7 @@ mod tests {
 
     #[test]
     fn error_decompression_failed_and() {
-        for compression in all_compressions() {
+        for compression in all_compressions().to_owned() {
             let p: Packet =
                 Command::BitmapLinearAnd(0, BitVec::new(8), compression).into();
             let Packet(header, mut payload) = p;

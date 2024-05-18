@@ -1,4 +1,4 @@
-#[cfg(feature = "compression")]
+#[allow(unused)]
 use std::io::{Read, Write};
 
 #[cfg(feature = "compression_bzip2")]
