@@ -40,17 +40,17 @@ fn main() {
     // continuously update random windows to new random brightness
     loop {
         let min_size = 1;
-        let x: u16 = rng.gen_range(0..TILE_WIDTH - min_size);
-        let y: u16 = rng.gen_range(0..TILE_HEIGHT - min_size);
+        let x = rng.gen_range(0..TILE_WIDTH - min_size);
+        let y = rng.gen_range(0..TILE_HEIGHT - min_size);
 
-        let w: u16 = rng.gen_range(min_size..=TILE_WIDTH - x);
-        let h: u16 = rng.gen_range(min_size..=TILE_HEIGHT - y);
+        let w = rng.gen_range(min_size..=TILE_WIDTH - x);
+        let h = rng.gen_range(min_size..=TILE_HEIGHT - y);
 
         let origin = Origin(x, y);
-        let mut luma = ByteGrid::new(w as usize, h as usize);
+        let mut luma = ByteGrid::new(w, h);
 
-        for y in 0..h as usize {
-            for x in 0..w as usize {
+        for y in 0..h {
+            for x in 0..w {
                 luma.set(x, y, rng.gen());
             }
         }

@@ -24,13 +24,12 @@ fn main() {
 
     let connection = Connection::open(cli.destination).unwrap();
 
-    let mut enabled_pixels =
-        PixelGrid::new(PIXEL_WIDTH as usize, PIXEL_HEIGHT as usize);
+    let mut enabled_pixels = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
     enabled_pixels.fill(true);
 
-    for x_offset in 0..PIXEL_WIDTH as usize {
-        for y in 0..PIXEL_HEIGHT as usize {
-            enabled_pixels.set(x_offset % PIXEL_WIDTH as usize, y, false);
+    for x_offset in 0..PIXEL_WIDTH {
+        for y in 0..PIXEL_HEIGHT {
+            enabled_pixels.set(x_offset % PIXEL_WIDTH, y, false);
         }
 
         // this works because the pixel grid has max size

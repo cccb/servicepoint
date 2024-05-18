@@ -19,8 +19,8 @@ fn main() {
     for x_offset in 0..usize::MAX {
         pixels.fill(false);
 
-        for y in 0..PIXEL_HEIGHT as usize {
-            pixels.set((y + x_offset) % PIXEL_WIDTH as usize, y, true);
+        for y in 0..PIXEL_HEIGHT {
+            pixels.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
         connection
             .send(
