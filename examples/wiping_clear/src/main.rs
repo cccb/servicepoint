@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use servicepoint2::{BitVec, Command, CompressionCode, Connection, PixelGrid, FRAME_PACING, PIXEL_HEIGHT, PIXEL_WIDTH, Grid};
+use servicepoint2::*;
 
 #[derive(Parser, Debug)]
 struct Cli {

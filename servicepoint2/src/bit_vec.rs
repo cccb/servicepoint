@@ -1,3 +1,5 @@
+use crate::DataRef;
+
 /// A vector of bits
 #[derive(Clone, PartialEq)]
 pub struct BitVec {
@@ -83,11 +85,6 @@ impl BitVec {
         self.data.is_empty()
     }
 
-    /// Get the underlying bits in their raw packed bytes form
-    pub fn mut_data_ref(&mut self) -> &mut [u8] {
-        self.data.as_mut_slice()
-    }
-
     /// Calculates the byte index and bitmask for a specific bit in the vector
     fn get_indexes(&self, bit_index: usize) -> (usize, u8) {
         if bit_index >= self.size {
@@ -101,6 +98,16 @@ impl BitVec {
         let bit_in_byte_index = 7 - bit_index % 8;
         let bit_mask: u8 = 1 << bit_in_byte_index;
         (byte_index, bit_mask)
+    }
+}
+
+impl DataRef for BitVec {
+    fn data_ref_mut(&mut self) -> &mut [u8] {
+        self.data.as_mut_slice()
+    }
+
+    fn data_ref(&self) -> &[u8] {
+        self.data.as_slice()
     }
 }
 
@@ -133,7 +140,7 @@ impl std::fmt::Debug for BitVec {
 
 #[cfg(feature = "c_api")]
 pub mod c_api {
-    use crate::{BitVec, CByteSlice};
+    use crate::{BitVec, CByteSlice, DataRef};
 
     /// Creates a new `BitVec` instance.
     /// The returned instance has to be freed with `bit_vec_dealloc`.
@@ -220,7 +227,7 @@ pub mod c_api {
     pub unsafe extern "C" fn sp2_bit_vec_unsafe_data_ref(
         this: *mut BitVec,
     ) -> CByteSlice {
-        let data = (*this).mut_data_ref();
+        let data = (*this).data_ref_mut();
         CByteSlice {
             start: data.as_mut_ptr_range().start,
             length: data.len(),
@@ -230,7 +237,7 @@ pub mod c_api {
 
 #[cfg(test)]
 mod tests {
-    use crate::BitVec;
+    use crate::{BitVec, DataRef};
 
     #[test]
     fn fill() {
@@ -280,7 +287,7 @@ mod tests {
     fn mut_data_ref() {
         let mut vec = BitVec::new(8 * 3);
 
-        let data_ref = vec.mut_data_ref();
+        let data_ref = vec.data_ref_mut();
         data_ref.copy_from_slice(&[0x40, 0x10, 0x00]);
 
         assert_eq!(vec.data, [0x40, 0x10, 0x00]);

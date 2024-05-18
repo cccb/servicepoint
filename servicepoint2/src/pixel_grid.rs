@@ -1,4 +1,4 @@
-use crate::{BitVec, Grid, PIXEL_HEIGHT, PIXEL_WIDTH};
+use crate::{BitVec, DataRef, Grid, PIXEL_HEIGHT, PIXEL_WIDTH};
 
 /// A grid of pixels stored in packed bytes.
 #[derive(Debug, Clone, PartialEq)]
@@ -58,10 +58,6 @@ impl PixelGrid {
         }
     }
 
-    pub fn mut_data_ref(&mut self) -> &mut [u8] {
-        self.bit_vec.mut_data_ref()
-    }
-
     fn check_indexes(&self, x: usize, y: usize) {
         if x >= self.width {
             panic!("cannot access pixel {x}-{y} because x is outside of bounds 0..{}", self.width)
@@ -95,6 +91,16 @@ impl Grid<bool> for PixelGrid {
     }
 }
 
+impl DataRef for PixelGrid {
+    fn data_ref_mut(&mut self) -> &mut [u8] {
+        self.bit_vec.data_ref_mut()
+    }
+
+    fn data_ref(&self) -> &[u8] {
+        self.bit_vec.data_ref()
+    }
+}
+
 impl From<PixelGrid> for Vec<u8> {
     /// Turns a `PixelGrid` into the underlying `Vec<u8>`.
     fn from(value: PixelGrid) -> Self {
@@ -105,7 +111,7 @@ impl From<PixelGrid> for Vec<u8> {
 #[cfg(feature = "c_api")]
 pub mod c_api {
     use crate::c_slice::CByteSlice;
-    use crate::{Grid, PixelGrid};
+    use crate::{DataRef, Grid, PixelGrid};
 
     /// Creates a new `PixelGrid` instance.
     /// The returned instance has to be freed with `pixel_grid_dealloc`.
@@ -206,7 +212,7 @@ pub mod c_api {
     pub unsafe extern "C" fn sp2_pixel_grid_unsafe_data_ref(
         this: *mut PixelGrid,
     ) -> CByteSlice {
-        let data = (*this).mut_data_ref();
+        let data = (*this).data_ref_mut();
         CByteSlice {
             start: data.as_mut_ptr_range().start,
             length: data.len(),
@@ -216,18 +222,18 @@ pub mod c_api {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Grid, PixelGrid};
+    use crate::{DataRef, Grid, PixelGrid};
 
     #[test]
     fn fill() {
         let mut grid = PixelGrid::new(8, 2);
-        assert_eq!(grid.mut_data_ref(), [0x00, 0x00]);
+        assert_eq!(grid.data_ref(), [0x00, 0x00]);
 
         grid.fill(true);
-        assert_eq!(grid.mut_data_ref(), [0xFF, 0xFF]);
+        assert_eq!(grid.data_ref(), [0xFF, 0xFF]);
 
         grid.fill(false);
-        assert_eq!(grid.mut_data_ref(), [0x00, 0x00]);
+        assert_eq!(grid.data_ref(), [0x00, 0x00]);
     }
 
     #[test]
@@ -238,7 +244,7 @@ mod tests {
 
         grid.set(5, 0, true);
         grid.set(1, 1, true);
-        assert_eq!(grid.mut_data_ref(), [0x04, 0x40]);
+        assert_eq!(grid.data_ref(), [0x04, 0x40]);
 
         assert!(grid.get(5, 0));
         assert!(grid.get(1, 1));
@@ -254,11 +260,11 @@ mod tests {
             }
         }
 
-        assert_eq!(grid.mut_data_ref(), [0xAA, 0x55, 0xAA]);
+        assert_eq!(grid.data_ref(), [0xAA, 0x55, 0xAA]);
 
         let data: Vec<u8> = grid.into();
 
-        let mut grid = PixelGrid::load(8, 3, &data);
-        assert_eq!(grid.mut_data_ref(), [0xAA, 0x55, 0xAA]);
+        let grid = PixelGrid::load(8, 3, &data);
+        assert_eq!(grid.data_ref(), [0xAA, 0x55, 0xAA]);
     }
 }

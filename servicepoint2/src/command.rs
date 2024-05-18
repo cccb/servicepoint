@@ -1,6 +1,9 @@
 use crate::command_code::CommandCode;
 use crate::compression::{into_compressed, into_decompressed};
-use crate::{BitVec, ByteGrid, CompressionCode, Grid, Header, Packet, PixelGrid, TILE_SIZE};
+use crate::{
+    BitVec, ByteGrid, CompressionCode, Grid, Header, Packet, PixelGrid,
+    TILE_SIZE,
+};
 
 /// An origin marks the top left position of a window sent to the display.
 #[derive(Debug, Clone, Copy, PartialEq)]

@@ -4,7 +4,7 @@ use clap::Parser;
 use rand::Rng;
 
 use servicepoint2::Command::{BitmapLinearWin, Brightness, CharBrightness};
-use servicepoint2::{ByteGrid, CompressionCode, Connection, Grid, Origin, PixelGrid, TILE_HEIGHT, TILE_WIDTH};
+use servicepoint2::*;
 
 #[derive(Parser, Debug)]
 struct Cli {

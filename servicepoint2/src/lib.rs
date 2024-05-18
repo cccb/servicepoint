@@ -3,9 +3,10 @@ pub use crate::byte_grid::ByteGrid;
 pub use crate::command::{Brightness, Command, Offset, Origin, Size};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
+pub use crate::data_ref::DataRef;
+pub use crate::grid::Grid;
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
-pub use crate::grid::Grid;
 use std::time::Duration;
 
 #[cfg(feature = "c_api")]
@@ -19,9 +20,10 @@ mod command_code;
 mod compression;
 mod compression_code;
 mod connection;
+mod data_ref;
+mod grid;
 mod packet;
 mod pixel_grid;
-mod grid;
 
 /// size of a single tile in one dimension
 pub const TILE_SIZE: u16 = 8;

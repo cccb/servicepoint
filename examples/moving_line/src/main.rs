@@ -2,7 +2,7 @@ use std::thread;
 
 use clap::Parser;
 
-use servicepoint2::{Command, CompressionCode, Connection, Origin, PixelGrid, FRAME_PACING, PIXEL_HEIGHT, PIXEL_WIDTH, Grid};
+use servicepoint2::*;
 
 #[derive(Parser, Debug)]
 struct Cli {

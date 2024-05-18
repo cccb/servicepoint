@@ -38,20 +38,20 @@ impl Connection {
     /// # Examples
     ///
     /// ```rust
-    ///  use servicepoint2::CompressionCode;
+    ///  use servicepoint2::{Command, CompressionCode, Grid, PixelGrid};
     /// let connection = servicepoint2::Connection::open("172.23.42.29:2342")
     ///     .expect("connection failed");
     ///
     ///  // turn off all pixels
-    ///  connection.send(servicepoint2::Command::Clear.into())
+    ///  connection.send(Command::Clear.into())
     ///     .expect("send failed");
     ///
     ///  // turn on all pixels
-    ///  let mut pixels = servicepoint2::PixelGrid::max_sized();
+    ///  let mut pixels = PixelGrid::max_sized();
     ///  pixels.fill(true);
     ///
     ///  // send pixels to display
-    ///  connection.send(servicepoint2::Command::BitmapLinearWin(servicepoint2::Origin(0, 0), pixels, CompressionCode::Lzma).into())
+    ///  connection.send(Command::BitmapLinearWin(servicepoint2::Origin(0, 0), pixels, CompressionCode::Uncompressed).into())
     ///     .expect("send failed");
     /// ```
     pub fn send(&self, packet: Packet) -> Result<(), std::io::Error> {

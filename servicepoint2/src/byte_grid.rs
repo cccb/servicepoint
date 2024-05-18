@@ -1,4 +1,4 @@
-use crate::Grid;
+use crate::{DataRef, Grid};
 
 /// A 2D grid of bytes
 #[derive(Debug, Clone, PartialEq)]
@@ -34,11 +34,6 @@ impl ByteGrid {
             width,
             height,
         }
-    }
-
-    /// Get the underlying byte rows
-    pub fn mut_data_ref(&mut self) -> &mut [u8] {
-        self.data.as_mut_slice()
     }
 
     fn check_indexes(&self, x: usize, y: usize) {
@@ -78,6 +73,17 @@ impl Grid<u8> for ByteGrid {
     }
 }
 
+impl DataRef for ByteGrid {
+    /// Get the underlying byte rows mutable
+    fn data_ref_mut(&mut self) -> &mut [u8] {
+        self.data.as_mut_slice()
+    }
+
+    /// Get the underlying byte rows read only
+    fn data_ref(&self) -> &[u8] {
+        self.data.as_slice()
+    }
+}
 
 impl From<ByteGrid> for Vec<u8> {
     /// Turn into the underlying `Vec<u8>` containing the rows of bytes.
@@ -88,8 +94,9 @@ impl From<ByteGrid> for Vec<u8> {
 
 #[cfg(feature = "c_api")]
 pub mod c_api {
-    use crate::{ByteGrid, CByteSlice};
+    use crate::data_ref::DataRef;
     use crate::grid::Grid;
+    use crate::{ByteGrid, CByteSlice};
 
     /// Creates a new `ByteGrid` instance.
     /// The returned instance has to be freed with `byte_grid_dealloc`.
@@ -190,7 +197,7 @@ pub mod c_api {
     pub unsafe extern "C" fn sp2_byte_grid_unsafe_data_ref(
         this: *mut ByteGrid,
     ) -> CByteSlice {
-        let data = (*this).mut_data_ref();
+        let data = (*this).data_ref_mut();
         CByteSlice {
             start: data.as_mut_ptr_range().start,
             length: data.len(),
@@ -200,7 +207,7 @@ pub mod c_api {
 
 #[cfg(test)]
 mod tests {
-    use crate::{ByteGrid, Grid};
+    use crate::{ByteGrid, DataRef, Grid};
 
     #[test]
     fn fill() {
@@ -247,7 +254,7 @@ mod tests {
     fn mut_data_ref() {
         let mut vec = ByteGrid::new(2, 2);
 
-        let data_ref = vec.mut_data_ref();
+        let data_ref = vec.data_ref_mut();
         data_ref.copy_from_slice(&[1, 2, 3, 4]);
 
         assert_eq!(vec.data, [1, 2, 3, 4]);
