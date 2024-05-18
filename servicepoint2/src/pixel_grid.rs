@@ -9,27 +9,6 @@ pub struct PixelGrid {
 }
 
 impl PixelGrid {
-    /// Creates a new pixel grid with the specified dimensions.
-    ///
-    /// # Arguments
-    ///
-    /// * `width`: size in pixels in x-direction
-    /// * `height`: size in pixels in y-direction
-    ///
-    /// returns: PixelGrid initialized to all pixels off
-    ///
-    /// # Panics
-    ///
-    /// - when the width is not dividable by 8
-    pub fn new(width: usize, height: usize) -> Self {
-        assert_eq!(width % 8, 0);
-        Self {
-            width,
-            height,
-            bit_vec: BitVec::new(width * height),
-        }
-    }
-
     /// Creates a new pixel grid with the size of the whole screen.
     pub fn max_sized() -> Self {
         Self::new(PIXEL_WIDTH as usize, PIXEL_HEIGHT as usize)
@@ -69,6 +48,27 @@ impl PixelGrid {
 }
 
 impl Grid<bool> for PixelGrid {
+    /// Creates a new pixel grid with the specified dimensions.
+    ///
+    /// # Arguments
+    ///
+    /// * `width`: size in pixels in x-direction
+    /// * `height`: size in pixels in y-direction
+    ///
+    /// returns: PixelGrid initialized to all pixels off
+    ///
+    /// # Panics
+    ///
+    /// - when the width is not dividable by 8
+    fn new(width: usize, height: usize) -> Self {
+        assert_eq!(width % 8, 0);
+        Self {
+            width,
+            height,
+            bit_vec: BitVec::new(width * height),
+        }
+    }
+
     fn set(&mut self, x: usize, y: usize, value: bool) -> bool {
         self.check_indexes(x, y);
         self.bit_vec.set(x + y * self.width, value)
@@ -88,6 +88,19 @@ impl Grid<bool> for PixelGrid {
 
     fn height(&self) -> usize {
         self.height
+    }
+
+    fn window(&self, x: usize, y: usize, w: usize, h: usize) -> Self {
+        // TODO: how to deduplicate?
+        // this cannot be moved into the trait because there, Self is not Sized
+        let mut win = Self::new(w, h);
+        for win_x in 0..w {
+            for win_y in 0..h {
+                let value = self.get(x + win_x, y + win_y);
+                win.set(win_x, win_y, value);
+            }
+        }
+        win
     }
 }
 

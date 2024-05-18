@@ -9,6 +9,16 @@ use crate::{
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Origin(pub u16, pub u16);
 
+impl std::ops::Add<Origin> for Origin {
+    type Output = Origin;
+
+    fn add(self, rhs: Origin) -> Self::Output {
+        let Origin(x1, y1) = self;
+        let Origin(x2, y2) = rhs;
+        Origin(x1 + x2, y1 + y2)
+    }
+}
+
 /// Size defines the width and height of a window
 #[derive(Debug, Clone, Copy)]
 pub struct Size(pub u16, pub u16);

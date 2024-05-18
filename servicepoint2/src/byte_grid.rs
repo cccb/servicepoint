@@ -9,17 +9,6 @@ pub struct ByteGrid {
 }
 
 impl ByteGrid {
-    /// Creates a new byte grid with the specified dimensions.
-    ///
-    /// returns: ByteGrid initialized to 0.
-    pub fn new(width: usize, height: usize) -> Self {
-        Self {
-            data: vec![0; width * height],
-            width,
-            height,
-        }
-    }
-
     /// Loads a byte grid with the specified dimensions from the provided data.
     ///
     /// returns: ByteGrid that contains a copy of the provided data
@@ -47,6 +36,17 @@ impl ByteGrid {
 }
 
 impl Grid<u8> for ByteGrid {
+    /// Creates a new byte grid with the specified dimensions.
+    ///
+    /// returns: ByteGrid initialized to 0.
+    fn new(width: usize, height: usize) -> Self {
+        Self {
+            data: vec![0; width * height],
+            width,
+            height,
+        }
+    }
+
     fn set(&mut self, x: usize, y: usize, value: u8) -> u8 {
         self.check_indexes(x, y);
         let pos = &mut self.data[x + y * self.width];
@@ -70,6 +70,17 @@ impl Grid<u8> for ByteGrid {
 
     fn height(&self) -> usize {
         self.height
+    }
+
+    fn window(&self, x: usize, y: usize, w: usize, h: usize) -> Self {
+        let mut win = Self::new(w, h);
+        for win_x in 0..w {
+            for win_y in 0..h {
+                let value = self.get(x + win_x, y + win_y);
+                win.set(win_x, win_y, value);
+            }
+        }
+        win
     }
 }
 
