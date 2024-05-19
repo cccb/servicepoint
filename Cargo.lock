@@ -412,7 +412,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint-binding-cs"
-version = "0.4.1"
+version = "0.4.2"
 dependencies = [
  "csbindgen",
  "servicepoint2",
@@ -420,7 +420,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint2"
-version = "0.4.1"
+version = "0.4.2"
 dependencies = [
  "bzip2",
  "flate2",
