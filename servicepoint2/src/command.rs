@@ -855,4 +855,9 @@ mod tests {
             ))
         );
     }
+
+    #[test]
+    fn origin_add() {
+        assert_eq!(Origin(4, 2), Origin(1, 0) + Origin(3, 2));
+    }
 }
