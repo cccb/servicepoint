@@ -26,19 +26,19 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
-    <Target Name="BuildLibraryRelease" Condition="'$(Configuration)'=='Release'" BeforeTargets="PrepareForBuild">
+    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
         <Exec Command="cargo build --manifest-path ../../servicepoint2/Cargo.toml --all-features --release"/>
     </Target>
 
-    <Target Name="BuildLibraryDebug" Condition="'$(Configuration)'=='Debug'" BeforeTargets="PrepareForBuild">
+    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
         <Exec Command="cargo build --manifest-path ../../servicepoint2/Cargo.toml --all-features"/>
     </Target>
 
-    <Target Name="BuildBindingsRelease" Condition="'$(Configuration)'=='Release'" BeforeTargets="PrepareForBuild">
+    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
         <Exec Command="cargo build --release"/>
     </Target>
 
-    <Target Name="BuildBindingsDebug" Condition="'$(Configuration)'=='Debug'" BeforeTargets="PrepareForBuild">
+    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
         <Exec Command="cargo build"/>
     </Target>
 
