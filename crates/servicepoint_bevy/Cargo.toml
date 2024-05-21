@@ -1,0 +1,15 @@
+[package]
+name = "servicepoint_bevy"
+edition = "2021"
+license = "Apache-2.0 OR MIT"
+version.workspace = true
+
+[dependencies]
+servicepoint = { version = "0.5.0", path = "../servicepoint" }
+
+bevy = { version = "0.13.2", default-features = false, features = ["bevy_core_pipeline", "bevy_asset", "bevy_render", "bevy_sprite"] }
+image = { version = "0.24", default-features = false }
+futures = { version = "0.3" }
+futures-lite = { version = "2.1" }
+wgpu = { version = "0.19.1" }
+bytemuck = { version = "1.13" }
