@@ -28,7 +28,6 @@ fn main() {
                     field.clone(),
                     CompressionCode::Lzma,
                 )
-                .into(),
             )
             .expect("could not send");
         thread::sleep(FRAME_PACING);

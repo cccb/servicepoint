@@ -10,6 +10,8 @@ pub struct Connection {
     socket: UdpSocket,
 }
 
+
+
 impl Connection {
     /// Open a new UDP socket and connect to the provided host.
     ///
@@ -51,7 +53,7 @@ impl Connection {
     ///     .expect("connection failed");
     ///
     ///  // turn off all pixels
-    ///  connection.send(Command::Clear.into())
+    ///  connection.send(Command::Clear)
     ///     .expect("send failed");
     ///
     ///  // turn on all pixels
@@ -59,10 +61,11 @@ impl Connection {
     ///  pixels.fill(true);
     ///
     ///  // send pixels to display
-    ///  connection.send(Command::BitmapLinearWin(servicepoint2::Origin(0, 0), pixels, CompressionCode::Uncompressed).into())
+    ///  connection.send(Command::BitmapLinearWin(servicepoint2::Origin(0, 0), pixels, CompressionCode::Uncompressed))
     ///     .expect("send failed");
     /// ```
-    pub fn send(&self, packet: Packet) -> Result<(), std::io::Error> {
+    pub fn send(&self, packet: impl Into<Packet>) -> Result<(), std::io::Error> {
+        let packet = packet.into();
         debug!("sending {packet:?}");
         let data: Vec<u8> = packet.into();
         self.socket.send(&data)?;

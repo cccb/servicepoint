@@ -30,12 +30,12 @@ fn main() {
 
         let command =
             BitmapLinearWin(Origin(0, 0), filled_grid, CompressionCode::Lzma);
-        connection.send(command.into()).expect("send failed");
+        connection.send(command).expect("send failed");
     }
 
     // set all pixels to the same random brightness
     let mut rng = rand::thread_rng();
-    connection.send(Brightness(rng.gen()).into()).unwrap();
+    connection.send(Brightness(rng.gen())).unwrap();
 
     // continuously update random windows to new random brightness
     loop {
@@ -56,7 +56,7 @@ fn main() {
         }
 
         connection
-            .send(CharBrightness(origin, luma).into())
+            .send(CharBrightness(origin, luma))
             .unwrap();
         std::thread::sleep(wait_duration);
     }

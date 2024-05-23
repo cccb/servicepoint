@@ -21,7 +21,7 @@ fn main() {
 
     let connection = Connection::open(&cli.destination).unwrap();
     if cli.clear {
-        connection.send(Command::Clear.into()).unwrap();
+        connection.send(Command::Clear).unwrap();
     }
 
     let max_width = cli.text.iter().map(|t| t.len()).max().unwrap();
@@ -37,6 +37,6 @@ fn main() {
     }
 
     connection
-        .send(Command::Cp437Data(Origin(0, 0), chars).into())
+        .send(Command::Cp437Data(Origin(0, 0), chars))
         .unwrap();
 }

@@ -39,7 +39,6 @@ fn main() {
         connection
             .send(
                 Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma)
-                    .into(),
             )
             .unwrap();
         thread::sleep(sleep_duration);

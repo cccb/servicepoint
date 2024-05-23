@@ -29,7 +29,6 @@ fn main() {
                     pixels.clone(),
                     CompressionCode::Lzma,
                 )
-                .into(),
             )
             .unwrap();
         thread::sleep(FRAME_PACING);
