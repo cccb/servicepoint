@@ -14,7 +14,7 @@ fn main() -> Result<()> {
     }
 
     // Send content to display
-    let display = Display::open("172.23.42.29:2342".into())?;
+    let display = Display::connect("172.23.42.29:2342".into())?;
 
     display.send(Command::Clear)?;
     display.send(Buffer::from(text).into())?;

@@ -10,7 +10,7 @@ pub struct Display {
 
 impl Display {
     /// Open a new UDP socket and create a display instance
-    pub fn open(addr: String) -> Result<Self> {
+    pub fn connect(addr: String) -> Result<Self> {
         let socket = UdpSocket::bind("0.0.0.0:0")?;
         Ok(Self {
             addr: addr,
