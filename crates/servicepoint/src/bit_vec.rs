@@ -72,7 +72,7 @@ impl BitVec {
     ///
     /// # Examples
     /// ```
-    ///  use servicepoint2::BitVec;
+    ///  use servicepoint::BitVec;
     ///  let mut vec = BitVec::new(8);
     ///  vec.fill(true);
     /// ```

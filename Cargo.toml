@@ -1,11 +1,13 @@
 [workspace]
 resolver = "2"
 members = [
-    "servicepoint2",
-    "servicepoint2-binding-cs",
+    "crates/servicepoint",
+    "crates/servicepoint_binding_c",
+    "crates/servicepoint_binding_cs",
     "examples/announce",
     "examples/game_of_life",
     "examples/moving_line",
     "examples/wiping_clear",
-    "examples/random_brightness"
+    "examples/random_brightness",
+    "examples/lang_c"
 ]

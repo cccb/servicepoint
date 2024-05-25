@@ -11,15 +11,15 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageId>ServicePoint2</PackageId>
+        <PackageId>ServicePoint</PackageId>
         <Version>0.3.0</Version>
         <Authors>Repository Authors</Authors>
         <Company>None</Company>
-        <Product>ServicePoint2</Product>
+        <Product>ServicePoint</Product>
         <PackageTags>CCCB</PackageTags>
         <Description>
-            C# bindings for the rust crate servicepoint2. You will need a suitable native shared library to use this.
-            For documentation, see the rust documentation: https://docs.rs/servicepoint2/latest/servicepoint2/.
+            C# bindings for the rust crate servicepoint. You will need a suitable native shared library to use this.
+            For documentation, see the rust documentation: https://docs.rs/servicepoint/latest/servicepoint/.
             Note that this library is still in early development. Breaking changes are expected before 1.0 is released.
         </Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -27,11 +27,11 @@
     </PropertyGroup>
 
     <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
-        <Exec Command="cargo build --manifest-path ../../servicepoint2/Cargo.toml --all-features --release"/>
+        <Exec Command="cargo build --manifest-path ../../servicepoint/Cargo.toml --all-features --release"/>
     </Target>
 
     <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
-        <Exec Command="cargo build --manifest-path ../../servicepoint2/Cargo.toml --all-features"/>
+        <Exec Command="cargo build --manifest-path ../../servicepoint/Cargo.toml --all-features"/>
     </Target>
 
     <Target Name="BuildBindings" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
@@ -43,14 +43,14 @@
     </Target>
 
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
-        <Content Include="../../target/debug/libservicepoint2.so" CopyToOutputDirectory="Always">
-            <Link>libservicepoint2.so</Link>
+        <Content Include="../../target/debug/libservicepoint.so" CopyToOutputDirectory="Always">
+            <Link>libservicepoint.so</Link>
         </Content>
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Release'">
-        <Content Include="../../target/release/libservicepoint2.so" CopyToOutputDirectory="Always">
-            <Link>libservicepoint2.so</Link>
+        <Content Include="../../target/release/libservicepoint.so" CopyToOutputDirectory="Always">
+            <Link>libservicepoint.so</Link>
         </Content>
     </ItemGroup>
 

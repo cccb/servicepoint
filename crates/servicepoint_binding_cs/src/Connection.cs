@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using ServicePoint2.BindGen;
+using ServicePoint.BindGen;
 
-namespace ServicePoint2;
+namespace ServicePoint;
 
-public sealed class Connection : Sp2NativeInstance<BindGen.Connection>
+public sealed class Connection : SpNativeInstance<BindGen.Connection>
 {
     public static Connection Open(string host)
     {

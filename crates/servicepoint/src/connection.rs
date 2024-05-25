@@ -23,7 +23,7 @@ impl Connection {
     ///
     /// # Examples
     /// ```rust
-    ///  let connection = servicepoint2::Connection::open("172.23.42.29:2342")
+    ///  let connection = servicepoint::Connection::open("172.23.42.29:2342")
     ///     .expect("connection failed");
     /// ```
     pub fn open(addr: impl ToSocketAddrs + Debug) -> std::io::Result<Self> {
@@ -48,8 +48,8 @@ impl Connection {
     /// # Examples
     ///
     /// ```rust
-    ///  use servicepoint2::{Command, CompressionCode, Grid, PixelGrid};
-    /// let connection = servicepoint2::Connection::open("172.23.42.29:2342")
+    /// use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+    /// let connection = servicepoint::Connection::open("172.23.42.29:2342")
     ///     .expect("connection failed");
     ///
     ///  // turn off all pixels
@@ -61,7 +61,7 @@ impl Connection {
     ///  pixels.fill(true);
     ///
     ///  // send pixels to display
-    ///  connection.send(Command::BitmapLinearWin(servicepoint2::Origin(0, 0), pixels, CompressionCode::Uncompressed))
+    ///  connection.send(Command::BitmapLinearWin(servicepoint::Origin(0, 0), pixels, CompressionCode::Uncompressed))
     ///     .expect("send failed");
     /// ```
     pub fn send(&self, packet: impl Into<Packet>) -> Result<(), std::io::Error> {

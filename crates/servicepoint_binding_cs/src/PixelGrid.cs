@@ -1,8 +1,8 @@
-using ServicePoint2.BindGen;
+using ServicePoint.BindGen;
 
-namespace ServicePoint2;
+namespace ServicePoint;
 
-public sealed class PixelGrid : Sp2NativeInstance<BindGen.PixelGrid>
+public sealed class PixelGrid : SpNativeInstance<BindGen.PixelGrid>
 {
     public static PixelGrid New(int width, int height)
     {

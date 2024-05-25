@@ -1,4 +1,4 @@
-namespace ServicePoint2;
+namespace ServicePoint;
 
 public static class Constants
 {

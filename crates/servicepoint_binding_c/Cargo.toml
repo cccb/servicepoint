@@ -1,0 +1,13 @@
+[package]
+name = "servicepoint_binding_c"
+version = "0.4.2"
+publish = false
+edition = "2021"
+license = "GPL-3.0-or-later"
+description = "C bindings for the servicepoint crate."
+homepage = "https://docs.rs/crate/servicepoint"
+repository = "https://github.com/cccb/servicepoint"
+readme = "../README.md"
+
+[build-dependencies]
+cbindgen = "0.26.0"

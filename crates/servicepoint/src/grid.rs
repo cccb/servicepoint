@@ -35,7 +35,7 @@ pub trait Grid<T> {
     /// # Examples
     /// To avoid boxing, this example is using the concrete type `ByteGrid`.
     /// ```
-    /// use servicepoint2::{ByteGrid, Grid};
+    /// use servicepoint::{ByteGrid, Grid};
     /// fn split(grid: ByteGrid) -> (ByteGrid, ByteGrid) {
     ///     assert!(grid.width() >= 2);
     ///     let split_x = grid.width() / 2;

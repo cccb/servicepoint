@@ -1,8 +1,8 @@
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 OUT_DIR := ${ROOT_DIR}/out
 
-SP2_DIR := ${ROOT_DIR}/../../servicepoint2
-SP2_INCLUDE := ${ROOT_DIR}/../../servicepoint2-binding-c
+SP2_DIR := ${ROOT_DIR}/../../servicepoint
+SP2_INCLUDE := ${ROOT_DIR}/../../servicepoint-binding-c
 SP2_TARGET_RELEASE := ${SP2_DIR}/target/release
 
 .PHONY: build run clean
@@ -19,4 +19,4 @@ clean:
 ${OUT_DIR}/lang_c: main.c
 	cd ${SP2_DIR} && cargo build --release --all-features
 	mkdir -p ${OUT_DIR}
-	gcc main.c -I ${SP2_INCLUDE} -L ${SP2_TARGET_RELEASE} -Wl,-Bstatic -lservicepoint2 -Wl,-Bdynamic -o ${OUT_DIR}/lang_c
+	gcc main.c -I ${SP2_INCLUDE} -L ${SP2_TARGET_RELEASE} -Wl,-Bstatic -lservicepoint -Wl,-Bdynamic -o ${OUT_DIR}/lang_c

@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
-using ServicePoint2.BindGen;
+using ServicePoint.BindGen;
 
-namespace ServicePoint2;
+namespace ServicePoint;
 
-public sealed class Packet : Sp2NativeInstance<BindGen.Packet>
+public sealed class Packet : SpNativeInstance<BindGen.Packet>
 {
     public static Packet FromCommand(Command command)
     {

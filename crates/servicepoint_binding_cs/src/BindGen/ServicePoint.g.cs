@@ -8,11 +8,11 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint2.BindGen
+namespace ServicePoint.BindGen
 {
     public static unsafe partial class NativeMethods
     {
-        const string __DllName = "servicepoint2";
+        const string __DllName = "servicepoint";
 
 
 

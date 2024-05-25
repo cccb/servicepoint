@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
-using ServicePoint2.BindGen;
+using ServicePoint.BindGen;
 
-namespace ServicePoint2;
+namespace ServicePoint;
 
-public sealed class Command : Sp2NativeInstance<BindGen.Command>
+public sealed class Command : SpNativeInstance<BindGen.Command>
 {
     public static bool TryFromPacket(Packet packet, [MaybeNullWhen(false)] out Command command)
     {

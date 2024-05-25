@@ -27,6 +27,9 @@ usize_is_size_t = true
 [export]
 prefix = "sp2_"
 
+[parse]
+#include = ["servicepoint"]
+
 [parse.expand]
 features = ["c-api"]
 all_features = true

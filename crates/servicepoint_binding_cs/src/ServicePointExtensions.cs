@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace ServicePoint2;
+namespace ServicePoint;
 
-public static class ServicePoint2Extensions
+public static class ServicePointExtensions
 {
     public static Packet IntoPacket(this Command command)
     {

@@ -1,8 +1,8 @@
-using ServicePoint2.BindGen;
+using ServicePoint.BindGen;
 
-namespace ServicePoint2;
+namespace ServicePoint;
 
-public sealed class BitVec : Sp2NativeInstance<BindGen.BitVec>
+public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
 {
     public static BitVec New(int size)
     {

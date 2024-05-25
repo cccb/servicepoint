@@ -1,13 +1,14 @@
 [package]
-name = "servicepoint-binding-cs"
+name = "servicepoint_binding_cs"
 version = "0.4.2"
 edition = "2021"
+publish = false
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-servicepoint2 = { path = "../servicepoint2", features = ["c_api"] }
+servicepoint = { path = "../servicepoint", features = ["c_api"] }
 
 [build-dependencies]
 csbindgen = "1.8.0"

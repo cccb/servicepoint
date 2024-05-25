@@ -1,9 +1,9 @@
 using System.Text;
-using ServicePoint2.BindGen;
+using ServicePoint.BindGen;
 
-namespace ServicePoint2;
+namespace ServicePoint;
 
-public sealed class ByteGrid : Sp2NativeInstance<BindGen.ByteGrid>
+public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
 {
     public static ByteGrid New(int width, int height)
     {

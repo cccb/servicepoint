@@ -3,8 +3,8 @@ use std::time::Duration;
 use clap::Parser;
 use rand::Rng;
 
-use servicepoint2::Command::{BitmapLinearWin, Brightness, CharBrightness};
-use servicepoint2::*;
+use servicepoint::Command::{BitmapLinearWin, Brightness, CharBrightness};
+use servicepoint::*;
 
 #[derive(Parser, Debug)]
 struct Cli {

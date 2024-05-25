@@ -2,7 +2,7 @@ use std::thread;
 
 use clap::Parser;
 
-use servicepoint2::*;
+use servicepoint::*;
 
 #[derive(Parser, Debug)]
 struct Cli {

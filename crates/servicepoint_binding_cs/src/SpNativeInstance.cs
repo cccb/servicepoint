@@ -1,6 +1,6 @@
-namespace ServicePoint2;
+namespace ServicePoint;
 
-public abstract class Sp2NativeInstance<T>
+public abstract class SpNativeInstance<T>
     : IDisposable
     where T : unmanaged
 {
@@ -16,7 +16,7 @@ public abstract class Sp2NativeInstance<T>
         }
     }
 
-    private protected unsafe Sp2NativeInstance(T* instance)
+    private protected unsafe SpNativeInstance(T* instance)
     {
         ArgumentNullException.ThrowIfNull(instance);
         _instance = instance;
@@ -44,7 +44,7 @@ public abstract class Sp2NativeInstance<T>
         GC.SuppressFinalize(this);
     }
 
-    ~Sp2NativeInstance()
+    ~SpNativeInstance()
     {
         ReleaseUnmanagedResources();
     }

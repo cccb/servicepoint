@@ -1,9 +1,9 @@
-# servicepoint2
+# servicepoint
 
-[![crates.io](https://img.shields.io/crates/v/servicepoint2.svg)](https://crates.io/crates/servicepoint2)
-[![Crates.io Total Downloads](https://img.shields.io/crates/d/servicepoint2)](https://crates.io/crates/servicepoint2)
-[![docs.rs](https://img.shields.io/docsrs/servicepoint2)](https://docs.rs/servicepoint2/latest/servicepoint2/)
-[![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint2)](./LICENSE)
+[![crates.io](https://img.shields.io/crates/v/servicepoint.svg)](https://crates.io/crates/servicepoint)
+[![Crates.io Total Downloads](https://img.shields.io/crates/d/servicepoint)](https://crates.io/crates/servicepoint)
+[![docs.rs](https://img.shields.io/docsrs/servicepoint)](https://docs.rs/servicepoint/latest/servicepoint/)
+[![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint)](./LICENSE)
 
 In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. It is called  "Service Point
 Display" or "Airport Display".
@@ -23,17 +23,17 @@ This is where the library works the best.
 Any API usage accepted by the compiler in a safe context is either safe or buggy (issues welcome)
 
 ```bash
-cargo add servicepoint2
+cargo add servicepoint
 ```
 
 ```rust
 fn main() {
     // establish connection
-    let connection = servicepoint2::Connection::open("172.23.42.29:2342")
+    let connection = servicepoint::Connection::open("172.23.42.29:2342")
         .expect("connection failed");
 
     // clear screen content
-    connection.send(servicepoint2::Command::Clear.into())
+    connection.send(servicepoint::Command::Clear.into())
         .expect("send failed");
 }
 ```
@@ -54,7 +54,7 @@ The lowest common denominator. Things to keep in mind:
 
 ```c++
 #include <stdio.h>
-#include "servicepoint2.h"
+#include "servicepoint.h"
 
 int main(void) {
     sp2_Connection *connection = sp2_connection_open("localhost:2342");
@@ -87,7 +87,7 @@ Uses C bindings internally to provide a similar API to rust. Things to keep in m
 - Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.
 
 ```csharp
-using ServicePoint2;
+using ServicePoint;
 
 // using statement calls Dispose() on scope exit, which frees unmanaged instances
 using var connection = Connection.Open("127.0.0.1:2342");
@@ -116,7 +116,7 @@ git submodule add https://github.com/kaesaecracker/servicepoint.git
 git commit -m "add servicepoint submodule"
 ```
 
-You can now reference `servicepoint2-bindings-cs/src/ServicePoint2.csproj` in your project.
+You can now reference `servicepoint-bindings-cs/src/ServicePoint.csproj` in your project.
 The rust library will automatically be built.
 
 Please provide more information in the form of an issue if you need the build to copy a different library file for your platform.
@@ -136,7 +136,7 @@ If you do not need compression/decompression support you can disable those featu
 In the likely case you only need one of them, you can include that one specifically.
 
 ```toml
-[dependencies.servicepoint2]
+[dependencies.servicepoint]
 git = "https://github.com/kaesaecracker/servicepoint.git"
 default-features = false
 features = ["compression-bz"]
@@ -154,7 +154,7 @@ To add yourself to the list, open a pull request.
 
 ## Where is servicepoint1?
 
-This library is a spiritual mix of a not-yet-working rust library called `servicepoint` and a bunch of working but also unfinished C# code. Because most of the API concept and a bunch of code is taken from the rust library, the result is called `servicepoint2`.
+This library is a spiritual mix of a not-yet-working rust library called `servicepoint` and a bunch of working but also unfinished C# code. Because most of the API concept and a bunch of code is taken from the rust library, the result is called `servicepoint`.
 
 ## Contributing
 
