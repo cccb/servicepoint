@@ -3,6 +3,7 @@ name = "servicepoint_binding_cs"
 version = "0.4.2"
 edition = "2021"
 publish = false
+readme = "../../README.md"
 
 [lib]
 crate-type = ["cdylib"]

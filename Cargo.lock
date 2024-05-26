@@ -389,7 +389,7 @@ name = "lang_c"
 version = "0.1.0"
 dependencies = [
  "cc",
- "servicepoint",
+ "servicepoint_binding_c",
 ]
 
 [[package]]

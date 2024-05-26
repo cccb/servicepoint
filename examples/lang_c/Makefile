@@ -1,22 +1,36 @@
-ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-OUT_DIR := ${ROOT_DIR}/out
+CC := gcc
 
-SP2_DIR := ${ROOT_DIR}/../../servicepoint
-SP2_INCLUDE := ${ROOT_DIR}/../../servicepoint-binding-c
-SP2_TARGET_RELEASE := ${SP2_DIR}/target/release
+THIS_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+REPO_ROOT := $(THIS_DIR)/../..
 
-.PHONY: build run clean
-
-all: ${OUT_DIR}/lang_c
-
-run: ${OUT_DIR}/lang_c
-	out/lang_c
+build: out/lang_c
 
 clean:
-	rm -r ${OUT_DIR} || true
-	rm -r ${SP2_TARGET_RELEASE} || true
+	rm -r out
+	rm include/servicepoint.h
 
-${OUT_DIR}/lang_c: main.c
-	cd ${SP2_DIR} && cargo build --release --all-features
-	mkdir -p ${OUT_DIR}
-	gcc main.c -I ${SP2_INCLUDE} -L ${SP2_TARGET_RELEASE} -Wl,-Bstatic -lservicepoint -Wl,-Bdynamic -o ${OUT_DIR}/lang_c
+run: out/lang_c
+	out/lang_c
+
+PHONY: build clean dependencies run
+
+out/lang_c: dependencies src/main.c
+	mkdir out || true
+	${CC} src/main.c \
+		-I include \
+		-L $(REPO_ROOT)/target/release \
+		-Wl,-Bstatic -lservicepoint \
+		-Wl,-Bdynamic -llzma \
+		-o out/lang_c \
+
+dependencies: FORCE
+	mkdir include || true
+	# generate servicepoint header
+	SERVICEPOINT_HEADER_OUT=$(THIS_DIR)/include cargo build \
+		--manifest-path=$(REPO_ROOT)/crates/servicepoint_binding_c/Cargo.toml
+
+	# build release binary to link against
+	cargo build --manifest-path=$(REPO_ROOT)/crates/servicepoint/Cargo.toml --release \
+		--features c_api,all_compressions
+
+FORCE: ;
