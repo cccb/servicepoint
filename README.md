@@ -1,160 +1,73 @@
-# servicepoint2
-
-[![crates.io](https://img.shields.io/crates/v/servicepoint2.svg)](https://crates.io/crates/servicepoint2)
-[![Crates.io Total Downloads](https://img.shields.io/crates/d/servicepoint2)](https://crates.io/crates/servicepoint2)
-[![docs.rs](https://img.shields.io/docsrs/servicepoint2)](https://docs.rs/servicepoint2/latest/servicepoint2/)
-[![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint2)](./LICENSE)
+# servicepoint
 
 In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. It is called  "Service Point
 Display" or "Airport Display".
-This repository contains a library for parsing, encoding and sending packets to this display via UDP.
+This repository contains a library for parsing, encoding and sending packets to this display via UDP in multiple
+programming languages.
 
-## Note on stability
+Take a look at the contained crates for language specific information:
 
-This library is still in early development.
-You can absolutely use it, and it works, but expect minor breaking changes with every version bump.
-Please specify the full version including patch in your Cargo.toml until 1.0 is released.
-
-Expect bugs and/or missing features in the language bindings for now. If you need something specific, open an issue or a pull request.
-
-## Rust
-
-This is where the library works the best.
-Any API usage accepted by the compiler in a safe context is either safe or buggy (issues welcome)
-
-```bash
-cargo add servicepoint2
-```
-
-```rust
-fn main() {
-    // establish connection
-    let connection = servicepoint2::Connection::open("172.23.42.29:2342")
-        .expect("connection failed");
-
-    // clear screen content
-    connection.send(servicepoint2::Command::Clear.into())
-        .expect("send failed");
-}
-```
-
-More examples are available in the repository folder and in the [Projects using the library]() section
-
-## C / C++
-
-The lowest common denominator. Things to keep in mind:
-
-- This is a chainsaw. You will cut your leg.
-- function names are: `sp2_` \<struct_name\> \<rust name\>.
-- Use the rust documentation.
-- Instances get consumed in the same way they do when writing rust / C# code. Do not use an instance after an (implicit!) free.
-- Option<T> or Result<T, E> turn into nullable return values - check for NULL!
-- There are no specifics for C++ here yet. You might get a nicer header when generating directly for C++, but it should be usable.
-- Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.
-
-```c++
-#include <stdio.h>
-#include "servicepoint2.h"
-
-int main(void) {
-    sp2_Connection *connection = sp2_connection_open("localhost:2342");
-    if (connection == NULL)
-        return 1;
-
-    sp2_PixelGrid *pixels = sp2_pixel_grid_new(sp2_PIXEL_WIDTH, sp2_PIXEL_HEIGHT);
-    sp2_pixel_grid_fill(pixels, true);
-
-    sp2_Command *command = sp2_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
-    sp2_Packet *packet = sp2_packet_from_command(command);
-    if (!sp2_connection_send(connection, packet))
-        return 1;
-
-    sp2_connection_dealloc(connection);
-    return 0;
-}
-```
-
-## C# / F#
-
-Uses C bindings internally to provide a similar API to rust. Things to keep in mind:
-
-- You will get a `NullPointerException` when trying to call a method where the native instance has been consumed already (e.g. when `Send`ing a command instance twice). Send a clone instead of the original if you want to keep using it.
-- Some lower-level APIs _will_ panic in native code when used improperly.
-  Example: manipulating the `Span<byte>` of an object after freeing the instance.
-- C# specifics are documented in the library. Use the rust documentation for everything else. Naming and semantics are the same apart from CamelCase instead of kebab_case.
-- You will only get rust backtraces in debug builds of the native code.
-- F# is not explicitly tested. If there are usability or functionality problems, please open an issue.
-- Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.
-
-```csharp
-using ServicePoint2;
-
-// using statement calls Dispose() on scope exit, which frees unmanaged instances
-using var connection = Connection.Open("127.0.0.1:2342");
-using var pixels = PixelGrid.New(Constants.PixelWidth, Constants.PixelHeight);
-
-while (true)
-{
-    pixels.Fill(true);
-    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone()));
-    Thread.Sleep(5000);
-
-    pixels.Fill(false);
-    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone()));
-    Thread.Sleep(5000);
-}
-```
-
-### Installation
-
-NuGet packages are not a good way to distribute native projects ([relevant issue](https://github.com/dotnet/sdk/issues/33845)).
-Because of that, there is no NuGet package you can use directly.
-Including this repository as a submodule and building from source is the recommended way of using the library.
-
-```bash
-git submodule add https://github.com/kaesaecracker/servicepoint.git
-git commit -m "add servicepoint submodule"
-```
-
-You can now reference `servicepoint2-bindings-cs/src/ServicePoint2.csproj` in your project.
-The rust library will automatically be built.
-
-Please provide more information in the form of an issue if you need the build to copy a different library file for your platform.
-
-### Installation
-
-Copy the header to your project and compile against.
-
-You have the choice of linking statically (recommended) or dynamically.
-- The C example shows how to link statically against the `staticlib` variant.
-- When linked dynamically, you have to provide the `cdylib` at runtime in the _same_ version, as there are no API/ABI guarantees yet.
-
-## Features
-
-This library has multiple compression libraries as optional dependencies.
-If you do not need compression/decompression support you can disable those features.
-In the likely case you only need one of them, you can include that one specifically.
-
-```toml
-[dependencies.servicepoint2]
-git = "https://github.com/kaesaecracker/servicepoint.git"
-default-features = false
-features = ["compression-bz"]
-```
-
-Language bindings will not know which features are available and may fail at runtime.
-It is recommended to include all features for builds used outside of rust.
+| Language | Readme                                                              |
+|----------|---------------------------------------------------------------------|
+| Rust     | [servicepoint](crates/servicepoint/README.md)                       |
+| C / C++  | [servicepoint_binding_c](crates/servicepoint_binding_c/README.md)   |
+| C# / F#  | [servicepoint_binding_cs](crates/servicepoint_binding_cs/README.md) | 
 
 ## Projects using the library
 
-- screen simulator (rust): https://github.com/kaesaecracker/pixel-receiver-rs
-- tanks game (C#): https://github.com/kaesaecracker/cccb-tanks-cs
+- screen simulator (rust): [servicepoint-simulator](https://github.com/kaesaecracker/servicepoint-simulator)
+- tanks game (C#): [servicepoint-tanks](https://github.com/kaesaecracker/cccb-tanks-cs)
+- cellular automata slideshow (rust): [servicepoint-life](https://github.com/kaesaecracker/servicepoint-life)
 
 To add yourself to the list, open a pull request.
 
-## Where is servicepoint1?
+## About the display
 
-This library is a spiritual mix of a not-yet-working rust library called `servicepoint` and a bunch of working but also unfinished C# code. Because most of the API concept and a bunch of code is taken from the rust library, the result is called `servicepoint2`.
+- Resolution: 352x160=56,320 pixels
+- Pixels are grouped into 44x20=880 tiles (8x8=64 pixels each)
+- Smallest addressable unit: row of pixels inside of a tile (8 pixels = 1 byte)
+- The brightness can only be set per tile
+- Screen content can be changed using a simple UDP protocol
+- Between each row of tiles, there is a gap of around 4 pixels size. This gap changes the aspect ratio of the display.
+
+### Binary format
+
+A UDP package sent to the display has a header size of 10 bytes.
+Each header value has a size of two bytes (unsigned 16 bit integer).
+Depending on the command, there can be a payload following the header.
+
+The commands are implemented in DisplayCommands.
+
+To change screen contents, these commands are the most relevant:
+
+1. Clear screen
+    - command: `0x0002`
+    - (rest does not matter)
+2. Send CP437 data: render specified text into rectangular region
+    - command: `0x0003`
+    - top left tile x
+    - top left tile y
+    - width in tiles
+    - height in tiles
+    - payload: (width in tiles * height in tiles) bytes
+        - 1 byte = 1 character
+        - each character is rendered into one tile (mono-spaced)
+        - characters are encoded using code page 437
+3. Send bitmap window: set pixel states for a rectangular region
+    - command: `0x0013`
+    - top left tile x
+    - top left _pixel_ y
+    - width in tiles
+    - height in _pixels_
+    - payload: (width in tiles * height in pixels) bytes
+        - network byte order
+        - 1 bit = 1 pixel
+
+There are other commands implemented as well, e.g. for changing the brightness.
+
+## What happened to servicepoint2?
+
+After `servicepoint2` has been merged into `servicepoint`, `servicepoint2` will not continue to get any updates.
 
 ## Contributing
 

@@ -1,0 +1,36 @@
+language = "C"
+include_version = true
+cpp_compat = true
+
+############################ Code Style Options ################################
+
+braces = "SameLine"
+line_length = 80
+tab_width = 4
+documentation = true
+documentation_style = "auto"
+documentation_length = "full"
+line_endings = "LF"
+
+############################# Codegen Options ##################################
+
+style = "both"
+sort_by = "Name"
+usize_is_size_t = true
+
+[defines]
+#"feature = compression_zlib" = "SP_FEATURE_compression_zlib"
+#"feature = compression_bzip2" = "SP_FEATURE_compression_bzip2"
+#"feature = compression_lzma" = "SP_FEATURE_compression_lzma"
+#"feature = compression_zstd" = "SP_FEATURE_compression_zstd"
+
+[export]
+prefix = "sp_"
+
+[parse]
+parse_deps = true
+include = ["servicepoint"]
+extra_bindings = ["servicepoint"]
+
+[parse.expand]
+#all_features = true

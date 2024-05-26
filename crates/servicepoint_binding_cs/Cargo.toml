@@ -1,0 +1,17 @@
+[package]
+name = "servicepoint_binding_cs"
+version.workspace = true
+edition = "2021"
+publish = false
+readme = "README.md"
+
+[lib]
+crate-type = ["cdylib"]
+test = false
+
+[build-dependencies]
+csbindgen = "1.8.0"
+
+[dependencies]
+servicepoint_binding_c = { version = "0.5.0", path = "../servicepoint_binding_c" }
+servicepoint = { version = "0.5.0", path = "../servicepoint" }
