@@ -17,7 +17,6 @@ struct Cli {
 }
 
 fn main() {
-    env_logger::init();
     let cli = Cli::parse();
 
     let connection = Connection::open(cli.destination).unwrap();
@@ -55,9 +54,7 @@ fn main() {
             }
         }
 
-        connection
-            .send(CharBrightness(origin, luma))
-            .unwrap();
+        connection.send(CharBrightness(origin, luma)).unwrap();
         std::thread::sleep(wait_duration);
     }
 }

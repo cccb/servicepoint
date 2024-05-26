@@ -11,8 +11,6 @@ struct Cli {
 }
 
 fn main() {
-    env_logger::init();
-
     let connection = Connection::open(Cli::parse().destination).unwrap();
 
     let mut pixels = PixelGrid::max_sized();
@@ -23,13 +21,11 @@ fn main() {
             pixels.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
         connection
-            .send(
-                Command::BitmapLinearWin(
-                    Origin(0, 0),
-                    pixels.clone(),
-                    CompressionCode::Lzma,
-                )
-            )
+            .send(Command::BitmapLinearWin(
+                Origin(0, 0),
+                pixels.clone(),
+                CompressionCode::Lzma,
+            ))
             .unwrap();
         thread::sleep(FRAME_PACING);
     }

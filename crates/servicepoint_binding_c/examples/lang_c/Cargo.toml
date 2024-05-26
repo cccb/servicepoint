@@ -11,4 +11,4 @@ test = false
 cc = "1.0"
 
 [dependencies]
-servicepoint_binding_c = { path = "../../crates/servicepoint_binding_c" }
+servicepoint_binding_c = { path = "../.." }

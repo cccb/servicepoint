@@ -14,7 +14,6 @@ struct Cli {
 }
 
 fn main() {
-    env_logger::init();
     let cli = Cli::parse();
 
     let connection = Connection::open(&cli.destination).unwrap();
@@ -22,13 +21,11 @@ fn main() {
 
     loop {
         connection
-            .send(
-                Command::BitmapLinearWin(
-                    Origin(0, 0),
-                    field.clone(),
-                    CompressionCode::Lzma,
-                )
-            )
+            .send(Command::BitmapLinearWin(
+                Origin(0, 0),
+                field.clone(),
+                CompressionCode::Lzma,
+            ))
             .expect("could not send");
         thread::sleep(FRAME_PACING);
         field = iteration(field);

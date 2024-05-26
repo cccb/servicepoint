@@ -14,7 +14,6 @@ struct Cli {
 }
 
 fn main() {
-    env_logger::init();
     let cli = Cli::parse();
 
     let sleep_duration = Duration::max(
@@ -37,9 +36,7 @@ fn main() {
         let bit_vec = BitVec::from(&*pixel_data);
 
         connection
-            .send(
-                Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma)
-            )
+            .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma))
             .unwrap();
         thread::sleep(sleep_duration);
     }

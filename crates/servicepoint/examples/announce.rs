@@ -14,10 +14,11 @@ struct Cli {
 
 /// example: `cargo run -- --text "Hallo,
 /// CCCB"`
-
 fn main() {
-    env_logger::init();
-    let cli = Cli::parse();
+    let mut cli = Cli::parse();
+    if cli.text.is_empty() {
+        cli.text.push("Hello, CCCB!".to_string());
+    }
 
     let connection = Connection::open(&cli.destination).unwrap();
     if cli.clear {

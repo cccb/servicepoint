@@ -26,3 +26,8 @@ compression_bzip2 = ["dep:bzip2"]
 compression_lzma = ["dep:rust-lzma"]
 compression_zstd = ["dep:zstd"]
 all_compressions = ["compression_zlib", "compression_bzip2", "compression_lzma", "compression_zstd"]
+
+[dev-dependencies]
+# for examples
+clap = { version = "4.5", features = ["derive"] }
+rand = "0.8"
