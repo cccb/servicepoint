@@ -7,7 +7,7 @@ license = "GPL-3.0-or-later"
 description = "C bindings for the servicepoint crate."
 homepage = "https://docs.rs/crate/servicepoint"
 repository = "https://github.com/cccb/servicepoint"
-readme = "../../README.md"
+readme = "README.md"
 links = "servicepoint"
 
 [lib]
