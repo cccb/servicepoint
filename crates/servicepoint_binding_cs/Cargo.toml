@@ -8,8 +8,8 @@ readme = "../../README.md"
 [lib]
 crate-type = ["cdylib"]
 
-[dependencies]
-servicepoint = { path = "../servicepoint", features = ["c_api"] }
-
 [build-dependencies]
 csbindgen = "1.8.0"
+
+[dependencies]
+servicepoint_binding_c = { path = "../servicepoint_binding_c" }

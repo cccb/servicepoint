@@ -15,22 +15,19 @@ run: out/lang_c
 PHONY: build clean dependencies run
 
 out/lang_c: dependencies src/main.c
-	mkdir out || true
+	mkdir -p out || true
 	${CC} src/main.c \
 		-I include \
 		-L $(REPO_ROOT)/target/release \
-		-Wl,-Bstatic -lservicepoint \
+		-Wl,-Bstatic -lservicepoint_binding_c \
 		-Wl,-Bdynamic -llzma \
-		-o out/lang_c \
+		-o out/lang_c
 
 dependencies: FORCE
-	mkdir include || true
-	# generate servicepoint header
+	mkdir -p include || true
+	# generate servicepoint header and binary to link against
 	SERVICEPOINT_HEADER_OUT=$(THIS_DIR)/include cargo build \
-		--manifest-path=$(REPO_ROOT)/crates/servicepoint_binding_c/Cargo.toml
-
-	# build release binary to link against
-	cargo build --manifest-path=$(REPO_ROOT)/crates/servicepoint/Cargo.toml --release \
-		--features c_api,all_compressions
+		--manifest-path=$(REPO_ROOT)/crates/servicepoint_binding_c/Cargo.toml \
+		--release
 
 FORCE: ;

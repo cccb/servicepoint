@@ -1,11 +1,12 @@
-fn main() {
-    println!("cargo::rerun-if-changed=src/main.c");
-    println!("cargo::rerun-if-changed=build.rs");
+const SP_INCLUDE: &str = "DEP_SERVICEPOINT_INCLUDE";
 
-    let sp_include = std::env::var_os("DEP_SERVICEPOINT_INCLUDE")
-        .unwrap()
-        .into_string()
-        .unwrap();
+fn main() {
+    println!("cargo:rerun-if-changed=src/main.c");
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-env-changed={SP_INCLUDE}");
+
+    let sp_include =
+        std::env::var_os(SP_INCLUDE).unwrap().into_string().unwrap();
 
     // this builds a lib, this is only to check that the example compiles
     let mut cc = cc::Build::new();

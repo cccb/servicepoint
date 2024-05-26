@@ -9,95 +9,87 @@
 /**
  * pixel count on whole screen
  */
-#define sp2_PIXEL_COUNT (sp2_PIXEL_WIDTH * sp2_PIXEL_HEIGHT)
+#define sp_PIXEL_COUNT (sp_PIXEL_WIDTH * sp_PIXEL_HEIGHT)
 
 /**
  * screen height in pixels
  */
-#define sp2_PIXEL_HEIGHT (sp2_TILE_HEIGHT * sp2_TILE_SIZE)
+#define sp_PIXEL_HEIGHT (sp_TILE_HEIGHT * sp_TILE_SIZE)
 
 /**
  * screen width in pixels
  */
-#define sp2_PIXEL_WIDTH (sp2_TILE_WIDTH * sp2_TILE_SIZE)
+#define sp_PIXEL_WIDTH (sp_TILE_WIDTH * sp_TILE_SIZE)
 
 /**
  * tile count in the y-direction
  */
-#define sp2_TILE_HEIGHT 20
+#define sp_TILE_HEIGHT 20
 
 /**
  * size of a single tile in one dimension
  */
-#define sp2_TILE_SIZE 8
+#define sp_TILE_SIZE 8
 
 /**
  * tile count in the x-direction
  */
-#define sp2_TILE_WIDTH 56
+#define sp_TILE_WIDTH 56
 
 /**
  * Specifies the kind of compression to use. Availability depends on features.
  */
-enum sp2_CompressionCode
+enum sp_CompressionCode
 #ifdef __cplusplus
   : uint16_t
 #endif // __cplusplus
  {
     Uncompressed = 0,
-#if defined(SP2_FEATURE_compression_zlib)
     Zlib = 26490,
-#endif
-#if defined(SP2_FEATURE_compression_bzip2)
     Bzip2 = 25210,
-#endif
-#if defined(SP2_FEATURE_compression_lzma)
     Lzma = 27770,
-#endif
-#if defined(SP2_FEATURE_compression_zstd)
     Zstd = 31347,
-#endif
 };
 #ifndef __cplusplus
-typedef uint16_t sp2_CompressionCode;
+typedef uint16_t sp_CompressionCode;
 #endif // __cplusplus
 
 /**
  * A vector of bits
  */
-typedef struct sp2_BitVec sp2_BitVec;
+typedef struct sp_BitVec sp_BitVec;
 
 /**
  * A 2D grid of bytes
  */
-typedef struct sp2_ByteGrid sp2_ByteGrid;
+typedef struct sp_ByteGrid sp_ByteGrid;
 
 /**
  * A command to send to the display.
  */
-typedef struct sp2_Command sp2_Command;
+typedef struct sp_Command sp_Command;
 
 /**
  * A connection to the display.
  */
-typedef struct sp2_Connection sp2_Connection;
+typedef struct sp_Connection sp_Connection;
 
 /**
  * The raw packet. Should probably not be used directly.
  */
-typedef struct sp2_Packet sp2_Packet;
+typedef struct sp_Packet sp_Packet;
 
 /**
  * A grid of pixels stored in packed bytes.
  */
-typedef struct sp2_PixelGrid sp2_PixelGrid;
+typedef struct sp_PixelGrid sp_PixelGrid;
 
 /**
  * Represents a span of memory (`&mut [u8]` ) as a struct usable by C code.
  *
  * Usage of this type is inherently unsafe.
  */
-typedef struct sp2_CByteSlice {
+typedef struct sp_CByteSlice {
     /**
      * The start address of the memory
      */
@@ -106,17 +98,17 @@ typedef struct sp2_CByteSlice {
      * The amount of memory in bytes
      */
     size_t length;
-} sp2_CByteSlice;
+} sp_CByteSlice;
 
 /**
  * Type alias for documenting the meaning of the u16 in enum values
  */
-typedef size_t sp2_Offset;
+typedef size_t sp_Offset;
 
 /**
  * Type alias for documenting the meaning of the u16 in enum values
  */
-typedef uint8_t sp2_Brightness;
+typedef uint8_t sp_Brightness;
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,51 +118,51 @@ extern "C" {
  * Clones a `BitVec`.
  * The returned instance has to be freed with `bit_vec_dealloc`.
  */
-struct sp2_BitVec *sp2_bit_vec_clone(const struct sp2_BitVec *this_);
+struct sp_BitVec *sp_bit_vec_clone(const struct sp_BitVec *this_);
 
 /**
  * Deallocates a `BitVec`.
  *
  * Note: do not call this if the grid has been consumed in another way, e.g. to create a command.
  */
-void sp2_bit_vec_dealloc(struct sp2_BitVec *this_);
+void sp_bit_vec_dealloc(struct sp_BitVec *this_);
 
 /**
  * Sets the value of all bits in the `BitVec`.
  */
-void sp2_bit_vec_fill(struct sp2_BitVec *this_, bool value);
+void sp_bit_vec_fill(struct sp_BitVec *this_, bool value);
 
 /**
  * Gets the value of a bit from the `BitVec`.
  */
-bool sp2_bit_vec_get(const struct sp2_BitVec *this_, size_t index);
+bool sp_bit_vec_get(const struct sp_BitVec *this_, size_t index);
 
 /**
  * Returns true if length is 0.
  */
-bool sp2_bit_vec_is_empty(const struct sp2_BitVec *this_);
+bool sp_bit_vec_is_empty(const struct sp_BitVec *this_);
 
 /**
  * Gets the length of the `BitVec` in bits.
  */
-size_t sp2_bit_vec_len(const struct sp2_BitVec *this_);
+size_t sp_bit_vec_len(const struct sp_BitVec *this_);
 
 /**
  * Loads a `BitVec` from the provided data.
  * The returned instance has to be freed with `bit_vec_dealloc`.
  */
-struct sp2_BitVec *sp2_bit_vec_load(const uint8_t *data, size_t data_length);
+struct sp_BitVec *sp_bit_vec_load(const uint8_t *data, size_t data_length);
 
 /**
  * Creates a new `BitVec` instance.
  * The returned instance has to be freed with `bit_vec_dealloc`.
  */
-struct sp2_BitVec *sp2_bit_vec_new(size_t size);
+struct sp_BitVec *sp_bit_vec_new(size_t size);
 
 /**
  * Sets the value of a bit in the `BitVec`.
  */
-bool sp2_bit_vec_set(struct sp2_BitVec *this_, size_t index, bool value);
+bool sp_bit_vec_set(struct sp_BitVec *this_, size_t index, bool value);
 
 /**
  * Gets an unsafe reference to the data of the `BitVec` instance.
@@ -183,58 +175,58 @@ bool sp2_bit_vec_set(struct sp2_BitVec *this_, size_t index, bool value);
  * Reading and writing concurrently to either the original instance or the returned data will
  * result in undefined behavior.
  */
-struct sp2_CByteSlice sp2_bit_vec_unsafe_data_ref(struct sp2_BitVec *this_);
+struct sp_CByteSlice sp_bit_vec_unsafe_data_ref(struct sp_BitVec *this_);
 
 /**
  * Clones a `ByteGrid`.
  * The returned instance has to be freed with `byte_grid_dealloc`.
  */
-struct sp2_ByteGrid *sp2_byte_grid_clone(const struct sp2_ByteGrid *this_);
+struct sp_ByteGrid *sp_byte_grid_clone(const struct sp_ByteGrid *this_);
 
 /**
  * Deallocates a `ByteGrid`.
  *
  * Note: do not call this if the grid has been consumed in another way, e.g. to create a command.
  */
-void sp2_byte_grid_dealloc(struct sp2_ByteGrid *this_);
+void sp_byte_grid_dealloc(struct sp_ByteGrid *this_);
 
 /**
  * Fills the whole `ByteGrid` with the specified value
  */
-void sp2_byte_grid_fill(struct sp2_ByteGrid *this_, uint8_t value);
+void sp_byte_grid_fill(struct sp_ByteGrid *this_, uint8_t value);
 
 /**
  * Get the current value at the specified position
  */
-uint8_t sp2_byte_grid_get(const struct sp2_ByteGrid *this_, size_t x, size_t y);
+uint8_t sp_byte_grid_get(const struct sp_ByteGrid *this_, size_t x, size_t y);
 
 /**
  * Gets the height in pixels of the `ByteGrid` instance.
  */
-size_t sp2_byte_grid_height(const struct sp2_ByteGrid *this_);
+size_t sp_byte_grid_height(const struct sp_ByteGrid *this_);
 
 /**
  * Loads a `ByteGrid` with the specified dimensions from the provided data.
  * The returned instance has to be freed with `byte_grid_dealloc`.
  */
-struct sp2_ByteGrid *sp2_byte_grid_load(size_t width,
-                                        size_t height,
-                                        const uint8_t *data,
-                                        size_t data_length);
+struct sp_ByteGrid *sp_byte_grid_load(size_t width,
+                                      size_t height,
+                                      const uint8_t *data,
+                                      size_t data_length);
 
 /**
  * Creates a new `ByteGrid` instance.
  * The returned instance has to be freed with `byte_grid_dealloc`.
  */
-struct sp2_ByteGrid *sp2_byte_grid_new(size_t width, size_t height);
+struct sp_ByteGrid *sp_byte_grid_new(size_t width, size_t height);
 
 /**
  * Sets the current value at the specified position
  */
-void sp2_byte_grid_set(struct sp2_ByteGrid *this_,
-                       size_t x,
-                       size_t y,
-                       uint8_t value);
+void sp_byte_grid_set(struct sp_ByteGrid *this_,
+                      size_t x,
+                      size_t y,
+                      uint8_t value);
 
 /**
  * Gets an unsafe reference to the data of the `ByteGrid` instance.
@@ -247,112 +239,112 @@ void sp2_byte_grid_set(struct sp2_ByteGrid *this_,
  * Reading and writing concurrently to either the original instance or the returned data will
  * result in undefined behavior.
  */
-struct sp2_CByteSlice sp2_byte_grid_unsafe_data_ref(struct sp2_ByteGrid *this_);
+struct sp_CByteSlice sp_byte_grid_unsafe_data_ref(struct sp_ByteGrid *this_);
 
 /**
  * Gets the width in pixels of the `ByteGrid` instance.
  */
-size_t sp2_byte_grid_width(const struct sp2_ByteGrid *this_);
+size_t sp_byte_grid_width(const struct sp_ByteGrid *this_);
 
 /**
  * Allocates a new `Command::BitmapLinear` instance.
  * The passed `BitVec` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_bitmap_linear(sp2_Offset offset,
-                                              struct sp2_BitVec *bit_vec,
-                                              sp2_CompressionCode compression);
+struct sp_Command *sp_command_bitmap_linear(sp_Offset offset,
+                                            struct sp_BitVec *bit_vec,
+                                            sp_CompressionCode compression);
 
 /**
  * Allocates a new `Command::BitmapLinearAnd` instance.
  * The passed `BitVec` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_bitmap_linear_and(sp2_Offset offset,
-                                                  struct sp2_BitVec *bit_vec,
-                                                  sp2_CompressionCode compression);
+struct sp_Command *sp_command_bitmap_linear_and(sp_Offset offset,
+                                                struct sp_BitVec *bit_vec,
+                                                sp_CompressionCode compression);
 
 /**
  * Allocates a new `Command::BitmapLinearOr` instance.
  * The passed `BitVec` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_bitmap_linear_or(sp2_Offset offset,
-                                                 struct sp2_BitVec *bit_vec,
-                                                 sp2_CompressionCode compression);
+struct sp_Command *sp_command_bitmap_linear_or(sp_Offset offset,
+                                               struct sp_BitVec *bit_vec,
+                                               sp_CompressionCode compression);
 
 /**
  * Allocates a new `Command::BitmapLinearWin` instance.
  * The passed `PixelGrid` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_bitmap_linear_win(size_t x,
-                                                  size_t y,
-                                                  struct sp2_PixelGrid *byte_grid,
-                                                  sp2_CompressionCode compression_code);
+struct sp_Command *sp_command_bitmap_linear_win(size_t x,
+                                                size_t y,
+                                                struct sp_PixelGrid *byte_grid,
+                                                sp_CompressionCode compression_code);
 
 /**
  * Allocates a new `Command::BitmapLinearXor` instance.
  * The passed `BitVec` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_bitmap_linear_xor(sp2_Offset offset,
-                                                  struct sp2_BitVec *bit_vec,
-                                                  sp2_CompressionCode compression);
+struct sp_Command *sp_command_bitmap_linear_xor(sp_Offset offset,
+                                                struct sp_BitVec *bit_vec,
+                                                sp_CompressionCode compression);
 
 /**
  * Allocates a new `Command::Brightness` instance
  */
-struct sp2_Command *sp2_command_brightness(sp2_Brightness brightness);
+struct sp_Command *sp_command_brightness(sp_Brightness brightness);
 
 /**
  * Allocates a new `Command::CharBrightness` instance.
  * The passed `ByteGrid` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_char_brightness(size_t x,
-                                                size_t y,
-                                                struct sp2_ByteGrid *byte_grid);
+struct sp_Command *sp_command_char_brightness(size_t x,
+                                              size_t y,
+                                              struct sp_ByteGrid *byte_grid);
 
 /**
  * Allocates a new `Command::Clear` instance
  */
-struct sp2_Command *sp2_command_clear(void);
+struct sp_Command *sp_command_clear(void);
 
 /**
  * Clones a `Command` instance
  */
-struct sp2_Command *sp2_command_clone(const struct sp2_Command *original);
+struct sp_Command *sp_command_clone(const struct sp_Command *original);
 
 /**
  * Allocates a new `Command::Cp437Data` instance.
  * The passed `ByteGrid` gets deallocated in the process.
  */
-struct sp2_Command *sp2_command_cp437_data(size_t x,
-                                           size_t y,
-                                           struct sp2_ByteGrid *byte_grid);
+struct sp_Command *sp_command_cp437_data(size_t x,
+                                         size_t y,
+                                         struct sp_ByteGrid *byte_grid);
 
 /**
  * Deallocates a `Command`. Note that connection_send does this implicitly, so you only need
  * to do this if you use the library for parsing commands.
  */
-void sp2_command_dealloc(struct sp2_Command *ptr);
+void sp_command_dealloc(struct sp_Command *ptr);
 
 /**
  * Allocates a new `Command::FadeOut` instance
  */
-struct sp2_Command *sp2_command_fade_out(void);
+struct sp_Command *sp_command_fade_out(void);
 
 /**
  * Allocates a new `Command::HardReset` instance
  */
-struct sp2_Command *sp2_command_hard_reset(void);
+struct sp_Command *sp_command_hard_reset(void);
 
 /**
  * Tries to turn a `Packet` into a `Command`. The packet is gets deallocated in the process.
  *
  * Returns: pointer to command or NULL
  */
-struct sp2_Command *sp2_command_try_from_packet(struct sp2_Packet *packet);
+struct sp_Command *sp_command_try_from_packet(struct sp_Packet *packet);
 
 /**
  * Closes and deallocates a connection instance
  */
-void sp2_connection_dealloc(struct sp2_Connection *ptr);
+void sp_connection_dealloc(struct sp_Connection *ptr);
 
 /**
  * Creates a new instance of Connection.
@@ -362,83 +354,83 @@ void sp2_connection_dealloc(struct sp2_Connection *ptr);
  *
  * Panics: bad string encoding
  */
-struct sp2_Connection *sp2_connection_open(const char *host);
+struct sp_Connection *sp_connection_open(const char *host);
 
 /**
  * Sends the command instance. The instance is consumed / destroyed and cannot be used after this call.
  */
-bool sp2_connection_send(const struct sp2_Connection *connection,
-                         struct sp2_Packet *command_ptr);
+bool sp_connection_send(const struct sp_Connection *connection,
+                        struct sp_Packet *command_ptr);
 
 /**
  * Deallocates a `Packet`.
  *
  * Note: do not call this if the instance has been consumed in another way, e.g. by sending it.
  */
-void sp2_packet_dealloc(struct sp2_Packet *this_);
+void sp_packet_dealloc(struct sp_Packet *this_);
 
 /**
  * Turns a `Command` into a `Packet`. The command gets deallocated in the process.
  */
-struct sp2_Packet *sp2_packet_from_command(struct sp2_Command *command);
+struct sp_Packet *sp_packet_from_command(struct sp_Command *command);
 
 /**
  * Tries to load a `Packet` from the passed array with the specified length.
  *
  * returns: NULL in case of an error, pointer to the allocated packet otherwise
  */
-struct sp2_Packet *sp2_packet_try_load(const uint8_t *data, size_t length);
+struct sp_Packet *sp_packet_try_load(const uint8_t *data, size_t length);
 
 /**
  * Clones a `PixelGrid`.
  * The returned instance has to be freed with `pixel_grid_dealloc`.
  */
-struct sp2_PixelGrid *sp2_pixel_grid_clone(const struct sp2_PixelGrid *this_);
+struct sp_PixelGrid *sp_pixel_grid_clone(const struct sp_PixelGrid *this_);
 
 /**
  * Deallocates a `PixelGrid`.
  *
  * Note: do not call this if the grid has been consumed in another way, e.g. to create a command.
  */
-void sp2_pixel_grid_dealloc(struct sp2_PixelGrid *this_);
+void sp_pixel_grid_dealloc(struct sp_PixelGrid *this_);
 
 /**
  * Fills the whole `PixelGrid` with the specified value
  */
-void sp2_pixel_grid_fill(struct sp2_PixelGrid *this_, bool value);
+void sp_pixel_grid_fill(struct sp_PixelGrid *this_, bool value);
 
 /**
  * Get the current value at the specified position
  */
-bool sp2_pixel_grid_get(const struct sp2_PixelGrid *this_, size_t x, size_t y);
+bool sp_pixel_grid_get(const struct sp_PixelGrid *this_, size_t x, size_t y);
 
 /**
  * Gets the height in pixels of the `PixelGrid` instance.
  */
-size_t sp2_pixel_grid_height(const struct sp2_PixelGrid *this_);
+size_t sp_pixel_grid_height(const struct sp_PixelGrid *this_);
 
 /**
  * Loads a `PixelGrid` with the specified dimensions from the provided data.
  * The returned instance has to be freed with `pixel_grid_dealloc`.
  */
-struct sp2_PixelGrid *sp2_pixel_grid_load(size_t width,
-                                          size_t height,
-                                          const uint8_t *data,
-                                          size_t data_length);
+struct sp_PixelGrid *sp_pixel_grid_load(size_t width,
+                                        size_t height,
+                                        const uint8_t *data,
+                                        size_t data_length);
 
 /**
  * Creates a new `PixelGrid` instance.
  * The returned instance has to be freed with `pixel_grid_dealloc`.
  */
-struct sp2_PixelGrid *sp2_pixel_grid_new(size_t width, size_t height);
+struct sp_PixelGrid *sp_pixel_grid_new(size_t width, size_t height);
 
 /**
  * Sets the current value at the specified position
  */
-void sp2_pixel_grid_set(struct sp2_PixelGrid *this_,
-                        size_t x,
-                        size_t y,
-                        bool value);
+void sp_pixel_grid_set(struct sp_PixelGrid *this_,
+                       size_t x,
+                       size_t y,
+                       bool value);
 
 /**
  * Gets an unsafe reference to the data of the `PixelGrid` instance.
@@ -451,12 +443,12 @@ void sp2_pixel_grid_set(struct sp2_PixelGrid *this_,
  * Reading and writing concurrently to either the original instance or the returned data will
  * result in undefined behavior.
  */
-struct sp2_CByteSlice sp2_pixel_grid_unsafe_data_ref(struct sp2_PixelGrid *this_);
+struct sp_CByteSlice sp_pixel_grid_unsafe_data_ref(struct sp_PixelGrid *this_);
 
 /**
  * Gets the width in pixels of the `PixelGrid` instance.
  */
-size_t sp2_pixel_grid_width(const struct sp2_PixelGrid *this_);
+size_t sp_pixel_grid_width(const struct sp_PixelGrid *this_);
 
 #ifdef __cplusplus
 } // extern "C"

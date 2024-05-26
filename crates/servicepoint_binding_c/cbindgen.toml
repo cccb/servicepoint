@@ -19,17 +19,18 @@ sort_by = "Name"
 usize_is_size_t = true
 
 [defines]
-"feature = compression_zlib" = "SP2_FEATURE_compression_zlib"
-"feature = compression_bzip2" = "SP2_FEATURE_compression_bzip2"
-"feature = compression_lzma" = "SP2_FEATURE_compression_lzma"
-"feature = compression_zstd" = "SP2_FEATURE_compression_zstd"
+#"feature = compression_zlib" = "SP_FEATURE_compression_zlib"
+#"feature = compression_bzip2" = "SP_FEATURE_compression_bzip2"
+#"feature = compression_lzma" = "SP_FEATURE_compression_lzma"
+#"feature = compression_zstd" = "SP_FEATURE_compression_zstd"
 
 [export]
-prefix = "sp2_"
+prefix = "sp_"
 
 [parse]
-#include = ["servicepoint"]
+parse_deps = true
+include = ["servicepoint"]
+extra_bindings = ["servicepoint"]
 
 [parse.expand]
-features = ["c-api"]
-all_features = true
+#all_features = true

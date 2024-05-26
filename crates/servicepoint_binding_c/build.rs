@@ -8,12 +8,11 @@ fn main() {
 
     let config =
         Config::from_file(crate_dir.clone() + "/cbindgen.toml").unwrap();
-    let servicepoint_dir = crate_dir.clone() + "/../servicepoint";
 
     let output_dir = env::var("OUT_DIR").unwrap();
     let header_file = output_dir.clone() + "/servicepoint.h";
 
-    generate_with_config(servicepoint_dir, config)
+    generate_with_config(crate_dir, config)
         .unwrap()
         .write_to_file(&header_file);
     println!("cargo:include={output_dir}");

@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\servicepoint-binding-cs\src\ServicePoint.csproj"/>
+        <ProjectReference Include="../../crates/servicepoint_binding_cs/ServicePoint/ServicePoint.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
     {
         unsafe
         {
-            return new ByteGrid(NativeMethods.sp2_byte_grid_new((nuint)width, (nuint)height));
+            return new ByteGrid(NativeMethods.sp_byte_grid_new((nuint)width, (nuint)height));
         }
     }
 
@@ -19,7 +19,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new ByteGrid(NativeMethods.sp2_byte_grid_load((nuint)width, (nuint)height, bytesPtr,
+                return new ByteGrid(NativeMethods.sp_byte_grid_load((nuint)width, (nuint)height, bytesPtr,
                     (nuint)bytes.Length));
             }
         }
@@ -29,7 +29,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
     {
         unsafe
         {
-            return new ByteGrid(NativeMethods.sp2_byte_grid_clone(Instance));
+            return new ByteGrid(NativeMethods.sp_byte_grid_clone(Instance));
         }
     }
 
@@ -39,14 +39,14 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             unsafe
             {
-                return NativeMethods.sp2_byte_grid_get(Instance, (nuint)x, (nuint)y);
+                return NativeMethods.sp_byte_grid_get(Instance, (nuint)x, (nuint)y);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp2_byte_grid_set(Instance, (nuint)x, (nuint)y, value);
+                NativeMethods.sp_byte_grid_set(Instance, (nuint)x, (nuint)y, value);
             }
         }
     }
@@ -85,7 +85,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
     {
         unsafe
         {
-            NativeMethods.sp2_byte_grid_fill(Instance, value);
+            NativeMethods.sp_byte_grid_fill(Instance, value);
         }
     }
 
@@ -95,7 +95,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             unsafe
             {
-                return (int)NativeMethods.sp2_byte_grid_width(Instance);
+                return (int)NativeMethods.sp_byte_grid_width(Instance);
             }
         }
     }
@@ -106,7 +106,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             unsafe
             {
-                return (int)NativeMethods.sp2_byte_grid_height(Instance);
+                return (int)NativeMethods.sp_byte_grid_height(Instance);
             }
         }
     }
@@ -117,7 +117,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             unsafe
             {
-                var slice = NativeMethods.sp2_byte_grid_unsafe_data_ref(Instance);
+                var slice = NativeMethods.sp_byte_grid_unsafe_data_ref(Instance);
                 return new Span<byte>(slice.start, (int)slice.length);
             }
         }
@@ -129,6 +129,6 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
 
     private protected override unsafe void Dealloc()
     {
-        NativeMethods.sp2_byte_grid_dealloc(Instance);
+        NativeMethods.sp_byte_grid_dealloc(Instance);
     }
 }

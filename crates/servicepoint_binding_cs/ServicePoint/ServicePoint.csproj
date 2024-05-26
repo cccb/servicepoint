@@ -26,45 +26,39 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
-    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
-        <Exec Command="cargo build --manifest-path ../../servicepoint/Cargo.toml --all-features --release"/>
-    </Target>
-
-    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
-        <Exec Command="cargo build --manifest-path ../../servicepoint/Cargo.toml --all-features"/>
-    </Target>
-
+    <!-- generate C# bindings -->
     <Target Name="BuildBindings" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
         <Exec Command="cargo build --release"/>
     </Target>
-
     <Target Name="BuildBindings" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
         <Exec Command="cargo build"/>
     </Target>
 
+    <!-- build native library to include in output -->
+    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
+        <Exec Command="cargo build --manifest-path ../../../crates/servicepoint/Cargo.toml --release"/>
+    </Target>
+    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
+        <Exec Command="cargo build --manifest-path ../../../crates/servicepoint/Cargo.toml"/>
+    </Target>
+
+    <!-- include native binary in output -->
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
-        <Content Include="../../target/debug/libservicepoint.so" CopyToOutputDirectory="Always">
-            <Link>libservicepoint.so</Link>
+        <Content Include="../../../target/debug/libservicepoint_binding_c.so" CopyToOutputDirectory="Always">
+            <Link>libservicepoint_binding_c.so</Link>
         </Content>
     </ItemGroup>
-
     <ItemGroup Condition="'$(Configuration)'=='Release'">
-        <Content Include="../../target/release/libservicepoint.so" CopyToOutputDirectory="Always">
-            <Link>libservicepoint.so</Link>
+        <Content Include="../../../target/release/libservicepoint_binding_c.so" CopyToOutputDirectory="Always">
+            <Link>libservicepoint_binding_c.so</Link>
         </Content>
     </ItemGroup>
 
     <ItemGroup>
         <!-- include link to source code at revision -->
-        <None Include="../../README.md" Pack="true" PackagePath="\"/>
+        <None Include="../../../README.md" Pack="true" PackagePath="\"/>
         <!-- add README.md to package -->
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="..\build.rs">
-        <Link>build.rs</Link>
-      </Content>
     </ItemGroup>
 
 </Project>

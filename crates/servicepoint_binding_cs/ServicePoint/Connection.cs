@@ -11,7 +11,7 @@ public sealed class Connection : SpNativeInstance<BindGen.Connection>
         {
             fixed (byte* bytePtr = Encoding.UTF8.GetBytes(host))
             {
-                return new Connection(NativeMethods.sp2_connection_open(bytePtr));
+                return new Connection(NativeMethods.sp_connection_open(bytePtr));
             }
         }
     }
@@ -20,13 +20,13 @@ public sealed class Connection : SpNativeInstance<BindGen.Connection>
     {
         unsafe
         {
-            return NativeMethods.sp2_connection_send(Instance, packet.Into());
+            return NativeMethods.sp_connection_send(Instance, packet.Into());
         }
     }
 
     private protected override unsafe void Dealloc()
     {
-        NativeMethods.sp2_connection_dealloc(Instance);
+        NativeMethods.sp_connection_dealloc(Instance);
     }
 
     private unsafe Connection(BindGen.Connection* instance) : base(instance)

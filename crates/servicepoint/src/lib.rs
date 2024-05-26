@@ -2,8 +2,6 @@ use std::time::Duration;
 
 pub use crate::bit_vec::BitVec;
 pub use crate::byte_grid::ByteGrid;
-#[cfg(feature = "c_api")]
-pub use crate::c_slice::CByteSlice;
 pub use crate::command::{Brightness, Command, Offset, Origin};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
@@ -14,7 +12,6 @@ pub use crate::pixel_grid::PixelGrid;
 
 mod bit_vec;
 mod byte_grid;
-mod c_slice;
 mod command;
 mod command_code;
 mod compression;

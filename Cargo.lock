@@ -621,6 +621,7 @@ name = "servicepoint_binding_c"
 version = "0.4.2"
 dependencies = [
  "cbindgen",
+ "servicepoint",
 ]
 
 [[package]]
@@ -628,7 +629,7 @@ name = "servicepoint_binding_cs"
 version = "0.4.2"
 dependencies = [
  "csbindgen",
- "servicepoint",
+ "servicepoint_binding_c",
 ]
 
 [[package]]
