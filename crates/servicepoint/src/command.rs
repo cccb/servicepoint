@@ -6,7 +6,7 @@ use crate::{
 };
 
 /// An origin marks the top left position of a window sent to the display.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Origin(pub usize, pub usize);
 
 impl std::ops::Add<Origin> for Origin {
