@@ -1,3 +1,17 @@
+# Archived!
+
+This fork will no longer be the repository where releases are published.
+
+Please switch to the [upstreamed version](https://github.com/cccb/servicepoint) with the following changes in your Cargo.toml:
+
+```diff
+[dependencies]
+- servicepoint2 = "0.4.2"
++ servicepoint = "0.5.0"
+```
+
+The new crate is also published on [crates.io](https://crates.io/crates/servicepoint).
+
 # servicepoint2
 
 [![crates.io](https://img.shields.io/crates/v/servicepoint2.svg)](https://crates.io/crates/servicepoint2)
