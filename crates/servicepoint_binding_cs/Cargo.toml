@@ -1,6 +1,6 @@
 [package]
 name = "servicepoint_binding_cs"
-version = "0.4.2"
+version.workspace = true
 edition = "2021"
 publish = false
 readme = "../../README.md"
@@ -13,5 +13,5 @@ test = false
 csbindgen = "1.8.0"
 
 [dependencies]
-servicepoint_binding_c = { path = "../servicepoint_binding_c" }
-servicepoint = { path = "../servicepoint" }
+servicepoint_binding_c = { version = "0.5.0", path = "../servicepoint_binding_c" }
+servicepoint = { version = "0.5.0", path = "../servicepoint" }

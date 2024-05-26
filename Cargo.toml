@@ -6,3 +6,6 @@ members = [
     "crates/servicepoint_binding_cs",
     "crates/servicepoint_binding_c/examples/lang_c"
 ]
+
+[workspace.package]
+version = "0.5.0"

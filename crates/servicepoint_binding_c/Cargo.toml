@@ -1,6 +1,6 @@
 [package]
 name = "servicepoint_binding_c"
-version = "0.4.2"
+version.workspace = true
 publish = false
 edition = "2021"
 license = "GPL-3.0-or-later"
@@ -17,6 +17,6 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 cbindgen = "0.26.0"
 
 [dependencies.servicepoint]
-version = "0.4.2"
+version = "0.5.0"
 path = "../servicepoint"
 features = ["all_compressions"]
