@@ -15,9 +15,9 @@ Take a look at the contained crates for language specific information:
 
 ## Projects using the library
 
-- screen simulator (rust): https://github.com/kaesaecracker/servicepoint-simulator
-- tanks game (C#): https://github.com/kaesaecracker/cccb-tanks-cs
-- cellular automata slideshow (rust): https://github.com/kaesaecracker/servicepoint-life
+- screen simulator (rust): [servicepoint-simulator](https://github.com/kaesaecracker/servicepoint-simulator)
+- tanks game (C#): [servicepoint-tanks](https://github.com/kaesaecracker/cccb-tanks-cs)
+- cellular automata slideshow (rust): [servicepoint-life](https://github.com/kaesaecracker/servicepoint-life)
 
 To add yourself to the list, open a pull request.
 
@@ -39,6 +39,7 @@ Depending on the command, there can be a payload following the header.
 The commands are implemented in DisplayCommands.
 
 To change screen contents, these commands are the most relevant:
+
 1. Clear screen
     - command: `0x0002`
     - (rest does not matter)
@@ -64,12 +65,9 @@ To change screen contents, these commands are the most relevant:
 
 There are other commands implemented as well, e.g. for changing the brightness.
 
+## What happened to servicepoint2?
 
-## Where is servicepoint1?
-
-This library is a spiritual mix of a not-yet-working rust library called `servicepoint` and a bunch of working but also
-unfinished C# code. Because most of the API concept and a bunch of code is taken from the rust library, the result is
-called `servicepoint`.
+After `servicepoint2` has been merged into `servicepoint`, `servicepoint2` will not continue to get any updates.
 
 ## Contributing
 
