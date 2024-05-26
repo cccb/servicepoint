@@ -42,3 +42,8 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 
 /// Actual hardware limit is around 28-29ms/frame. Rounded up for less dropped packets.
 pub const FRAME_PACING: Duration = Duration::from_millis(30);
+
+// include README.md in doctest
+#[doc = include_str!("../README.md")]
+#[cfg(doctest)]
+pub struct ReadmeDocTests;

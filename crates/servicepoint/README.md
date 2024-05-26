@@ -18,7 +18,7 @@ fn main() {
         .expect("connection failed");
 
     // clear screen content
-    connection.send(servicepoint::Command::Clear.into())
+    connection.send(servicepoint::Command::Clear)
         .expect("send failed");
 }
 ```
