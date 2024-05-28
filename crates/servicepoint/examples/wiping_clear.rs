@@ -1,3 +1,4 @@
+//! An example on how to modify the image on screen without knowing the current content.
 use std::thread;
 use std::time::Duration;
 

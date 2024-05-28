@@ -1,3 +1,6 @@
+//! A simple example for how to set brightnesses for tiles on the screen.
+//! Continuously changes the tiles in a random window to random brightnesses.
+
 use std::time::Duration;
 
 use clap::Parser;
