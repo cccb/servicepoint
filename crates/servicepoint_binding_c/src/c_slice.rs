@@ -1,7 +1,13 @@
 #[repr(C)]
 /// Represents a span of memory (`&mut [u8]` ) as a struct usable by C code.
 ///
-/// Usage of this type is inherently unsafe.
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - accesses to the memory pointed to with `start` is never accessed outside `length`
+/// - the lifetime of the `CByteSlice` does not outlive the memory it points to, as described in
+///   the function returning this type.
 pub struct CByteSlice {
     /// The start address of the memory
     pub start: *mut u8,

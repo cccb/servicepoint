@@ -1,6 +1,6 @@
 use crate::DataRef;
 
-/// A vector of bits
+/// A fixed-size vector of bits
 #[derive(Debug, Clone, PartialEq)]
 pub struct BitVec {
     size: usize,
@@ -8,17 +8,17 @@ pub struct BitVec {
 }
 
 impl BitVec {
-    /// Create a new bit vector.
+    /// Create a new `BitVec`.
     ///
     /// # Arguments
     ///
-    /// * `size`: size in bits. Must be dividable by 8.
+    /// * `size`: size in bits.
     ///
-    /// returns: bit vector with all bits set to false.
+    /// returns: `BitVec` with all bits set to false.
     ///
     /// # Panics
     ///
-    /// When size is not a multiple of 8.
+    /// When `size` is not divisible by 8.
     #[must_use]
     pub fn new(size: usize) -> BitVec {
         assert_eq!(size % 8, 0);
@@ -36,6 +36,10 @@ impl BitVec {
     /// * `value`: the value to set the bit to
     ///
     /// returns: old value of the bit
+    ///
+    /// # Panics
+    ///
+    /// When accessing `index` out of bounds.
     pub fn set(&mut self, index: usize, value: bool) -> bool {
         let (byte_index, bit_mask) = self.get_indexes(index);
 
@@ -58,6 +62,10 @@ impl BitVec {
     /// * `index`: the bit index to read
     ///
     /// returns: value of the bit
+    ///
+    /// # Panics
+    ///
+    /// When accessing `index` out of bounds.
     #[must_use]
     pub fn get(&self, index: usize) -> bool {
         let (byte_index, bit_mask) = self.get_indexes(index);

@@ -4,11 +4,20 @@ use servicepoint::DataRef;
 use crate::c_slice::CByteSlice;
 
 /// Creates a new `BitVec` instance.
-/// The returned instance has to be freed with `bit_vec_dealloc`.
+///
+/// # Arguments
+///
+/// * `size`: size in bits.
+///
+/// returns: `BitVec` with all bits set to false.
+///
+/// # Panics
+///
+/// When `size` is not divisible by 8.
 ///
 /// # Safety
 ///
-/// The caller has to make sure that:7
+/// The caller has to make sure that:
 ///
 /// - the returned instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_bit_vec_dealloc`.
@@ -17,7 +26,7 @@ pub unsafe extern "C" fn sp_bit_vec_new(size: usize) -> *mut BitVec {
     Box::into_raw(Box::new(BitVec::new(size)))
 }
 
-/// Loads a `BitVec` from the provided data.
+/// Interpret the data as a series of bits and load then into a new `BitVec` instance.
 ///
 /// # Safety
 ///
@@ -67,6 +76,17 @@ pub unsafe extern "C" fn sp_bit_vec_dealloc(this: *mut BitVec) {
 
 /// Gets the value of a bit from the `BitVec`.
 ///
+/// # Arguments
+///
+/// * `this`: instance to read from
+/// * `index`: the bit index to read
+///
+/// returns: value of the bit
+///
+/// # Panics
+///
+/// When accessing `index` out of bounds.
+///
 /// # Safety
 ///
 /// The caller has to make sure that:
@@ -82,6 +102,18 @@ pub unsafe extern "C" fn sp_bit_vec_get(
 }
 
 /// Sets the value of a bit in the `BitVec`.
+///
+/// # Arguments
+///
+/// * `this`: instance to write to
+/// * `index`: the bit index to edit
+/// * `value`: the value to set the bit to
+///
+/// returns: old value of the bit
+///
+/// # Panics
+///
+/// When accessing `index` out of bounds.
 ///
 /// # Safety
 ///
@@ -99,6 +131,10 @@ pub unsafe extern "C" fn sp_bit_vec_set(
 }
 
 /// Sets the value of all bits in the `BitVec`.
+///
+/// # Arguments
+///
+/// * `value`: the value to set all bits to
 ///
 /// # Safety
 ///

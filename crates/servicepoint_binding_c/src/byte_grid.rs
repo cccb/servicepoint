@@ -3,8 +3,16 @@ use servicepoint::{DataRef, Grid};
 
 use crate::c_slice::CByteSlice;
 
-/// Creates a new `ByteGrid` instance.
-/// The returned instance has to be freed with `byte_grid_dealloc`.
+/// Creates a new `ByteGrid` with the specified dimensions.
+///
+/// returns: `ByteGrid` initialized to 0.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_byte_grid_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_new(
     width: usize,
@@ -14,7 +22,19 @@ pub unsafe extern "C" fn sp_byte_grid_new(
 }
 
 /// Loads a `ByteGrid` with the specified dimensions from the provided data.
-/// The returned instance has to be freed with `byte_grid_dealloc`.
+///
+/// # Panics
+///
+/// When the provided `data_length` is not sufficient for the `height` and `width`
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `data` points to a valid memory location of at least `data_length`
+///   bytes in size.
+/// - the returned instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_byte_grid_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_load(
     width: usize,
@@ -27,7 +47,15 @@ pub unsafe extern "C" fn sp_byte_grid_load(
 }
 
 /// Clones a `ByteGrid`.
-/// The returned instance has to be freed with `byte_grid_dealloc`.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `ByteGrid`
+/// - `this` is not written to concurrently
+/// - the returned instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_byte_grid_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_clone(
     this: *const ByteGrid,
@@ -37,13 +65,35 @@ pub unsafe extern "C" fn sp_byte_grid_clone(
 
 /// Deallocates a `ByteGrid`.
 ///
-/// Note: do not call this if the grid has been consumed in another way, e.g. to create a command.
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `ByteGrid`
+/// - `this` is not used concurrently or after this call
+/// - `this` was not passed to another consuming function, e.g. to create a `Command`
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_dealloc(this: *mut ByteGrid) {
     _ = Box::from_raw(this);
 }
 
-/// Get the current value at the specified position
+/// Gets the current value at the specified position.
+///
+/// # Arguments
+///
+/// * `this`: instance to read from
+/// * `x` and `y`: position of the cell to read
+///
+/// # Panics
+///
+/// When accessing `x` or `y` out of bounds.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `ByteGrid`
+/// - `this` is not written to concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_get(
     this: *const ByteGrid,
@@ -53,7 +103,26 @@ pub unsafe extern "C" fn sp_byte_grid_get(
     (*this).get(x, y)
 }
 
-/// Sets the current value at the specified position
+/// Sets the value of the specified position in the `ByteGrid`.
+///
+/// # Arguments
+///
+/// * `this`: instance to write to
+/// * `x` and `y`: position of the cell
+/// * `value`: the value to write to the cell
+///
+/// returns: old value of the cell
+///
+/// # Panics
+///
+/// When accessing `x` or `y` out of bounds.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `BitVec`
+/// - `this` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_set(
     this: *mut ByteGrid,
@@ -64,19 +133,51 @@ pub unsafe extern "C" fn sp_byte_grid_set(
     (*this).set(x, y, value);
 }
 
-/// Fills the whole `ByteGrid` with the specified value
+/// Sets the value of all cells in the `ByteGrid`.
+///
+/// # Arguments
+///
+/// * `this`: instance to write to
+/// * `value`: the value to set all cells to
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `ByteGrid`
+/// - `this` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_fill(this: *mut ByteGrid, value: u8) {
     (*this).fill(value);
 }
 
 /// Gets the width in pixels of the `ByteGrid` instance.
+///
+/// # Arguments
+///
+/// * `this`: instance to read from
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `ByteGrid`
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_width(this: *const ByteGrid) -> usize {
     (*this).width()
 }
 
 /// Gets the height in pixels of the `ByteGrid` instance.
+///
+/// # Arguments
+///
+/// * `this`: instance to read from
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `ByteGrid`
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_height(this: *const ByteGrid) -> usize {
     (*this).height()
@@ -86,11 +187,11 @@ pub unsafe extern "C" fn sp_byte_grid_height(this: *const ByteGrid) -> usize {
 ///
 /// ## Safety
 ///
-/// The caller has to make sure to never access the returned memory after the `ByteGrid`
-/// instance has been consumed or manually deallocated.
+/// The caller has to make sure that:
 ///
-/// Reading and writing concurrently to either the original instance or the returned data will
-/// result in undefined behavior.
+/// - `this` points to a valid `ByteGrid`
+/// - the returned memory range is never accessed after the passed `ByteGrid` has been freed
+/// - the returned memory range is never accessed concurrently, either via the `ByteGrid` or directly
 #[no_mangle]
 pub unsafe extern "C" fn sp_byte_grid_unsafe_data_ref(
     this: *mut ByteGrid,
