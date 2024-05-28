@@ -46,7 +46,7 @@ In the likely case you only need one of them, you can include that one specifica
 
 ```toml
 [dependencies]
-servicepoint = { version = "0.5.0", default-features = false, features = ["compression-bz"] }
+servicepoint = { version = "0.5.1", default-features = false, features = ["compression-bz"] }
 ```
 
 ## Everything else

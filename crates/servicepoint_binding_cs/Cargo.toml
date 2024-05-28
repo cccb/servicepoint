@@ -13,8 +13,8 @@ test = false
 csbindgen = "1.8.0"
 
 [dependencies]
-servicepoint_binding_c = { version = "0.5.0", path = "../servicepoint_binding_c" }
-servicepoint = { version = "0.5.0", path = "../servicepoint" }
+servicepoint_binding_c = { version = "0.5.1", path = "../servicepoint_binding_c" }
+servicepoint = { version = "0.5.1", path = "../servicepoint" }
 
 [lints]
 workspace = true

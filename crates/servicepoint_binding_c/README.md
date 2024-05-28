@@ -5,8 +5,9 @@
 [![docs.rs](https://img.shields.io/docsrs/servicepoint_binding_c)](https://docs.rs/servicepoint/latest/servicepoint/)
 [![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint_binding_c)](../../LICENSE)
 
-In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. It is called  "Service Point
-Display" or "Airport Display".
+In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. 
+It is called  "Service Point Display" or "Airport Display".
+
 This crate contains C bindings for the `servicepoint` library, enabling users to parse, encode and send packets to this display via UDP.
 
 ## Examples
