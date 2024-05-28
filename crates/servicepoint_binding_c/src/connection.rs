@@ -4,12 +4,20 @@ use std::ptr::null_mut;
 pub use servicepoint::Connection;
 use servicepoint::Packet;
 
-/// Creates a new instance of Connection.
-/// The returned instance has to be deallocated with `connection_dealloc`.
+/// Creates a new instance of `Connection`.
 ///
-/// returns: NULL if connection fails or connected instance
+/// returns: NULL if connection fails, or connected instance
 ///
-/// Panics: bad string encoding
+/// # Panics
+///
+/// Bad string encoding
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_connection_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_open(
     host: *const c_char,
@@ -23,17 +31,35 @@ pub unsafe extern "C" fn sp_connection_open(
     Box::into_raw(Box::new(connection))
 }
 
-/// Sends the command instance. The instance is consumed / destroyed and cannot be used after this call.
+/// Sends a `Packet` to the display using the `Connection`.
+/// The passed `Packet` gets consumed.
+///
+/// returns: true in case of success
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `connection` points to a valid instance of `Connection`
+/// - `packet` points to a valid instance of `Packet`
+/// - `packet` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send(
     connection: *const Connection,
-    command_ptr: *mut Packet,
+    packet: *mut Packet,
 ) -> bool {
-    let packet = Box::from_raw(command_ptr);
+    let packet = Box::from_raw(packet);
     (*connection).send(*packet).is_ok()
 }
 
-/// Closes and deallocates a connection instance
+/// Closes and deallocates a `Connection`.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `Connection`
+/// - `this` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_dealloc(ptr: *mut Connection) {
     _ = Box::from_raw(ptr);

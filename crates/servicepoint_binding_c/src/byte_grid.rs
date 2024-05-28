@@ -151,7 +151,7 @@ pub unsafe extern "C" fn sp_byte_grid_fill(this: *mut ByteGrid, value: u8) {
     (*this).fill(value);
 }
 
-/// Gets the width in pixels of the `ByteGrid` instance.
+/// Gets the width of the `ByteGrid` instance.
 ///
 /// # Arguments
 ///
@@ -167,7 +167,7 @@ pub unsafe extern "C" fn sp_byte_grid_width(this: *const ByteGrid) -> usize {
     (*this).width()
 }
 
-/// Gets the height in pixels of the `ByteGrid` instance.
+/// Gets the height of the `ByteGrid` instance.
 ///
 /// # Arguments
 ///
