@@ -20,3 +20,6 @@ cbindgen = "0.26.0"
 version = "0.5.0"
 path = "../servicepoint"
 features = ["all_compressions"]
+
+[lints]
+workspace = true

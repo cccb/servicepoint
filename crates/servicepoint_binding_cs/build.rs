@@ -1,3 +1,5 @@
+//! Build script generating the C# code needed to call methods from the `servicepoint` C library.
+
 fn main() {
     println!("cargo:rerun-if-changed=../servicepoint_binding_c/src");
     println!("cargo:rerun-if-changed=build.rs");

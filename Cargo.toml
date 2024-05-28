@@ -9,3 +9,7 @@ members = [
 
 [workspace.package]
 version = "0.5.0"
+
+[workspace.lints.rust]
+missing-docs = "warn"
+missing-docs-in-crate-items = "warn"

@@ -1,5 +1,14 @@
+/// A two-dimensional grid of `T`
 pub trait Grid<T> {
     #[must_use]
+    /// Creates a new Grid with the specified dimensions.
+    ///
+    /// # Arguments
+    ///
+    /// - width: size in x-direction
+    /// - height: size in y-direction
+    ///
+    /// returns: Grid with all cells initialized to default state.
     fn new(width: usize, height: usize) -> Self;
 
     /// Sets the value at the specified position

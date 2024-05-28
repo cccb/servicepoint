@@ -2,14 +2,19 @@
 #[repr(u16)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum CompressionCode {
+    /// no compression
     Uncompressed = 0x0,
     #[cfg(feature = "compression_zlib")]
+    /// compress using flate2 with zlib header
     Zlib = 0x677a,
     #[cfg(feature = "compression_bzip2")]
+    /// compress using bzip2
     Bzip2 = 0x627a,
     #[cfg(feature = "compression_lzma")]
+    /// compress using lzma
     Lzma = 0x6c7a,
     #[cfg(feature = "compression_zstd")]
+    /// compress using Zstandard
     Zstd = 0x7a73,
 }
 

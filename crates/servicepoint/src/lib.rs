@@ -1,3 +1,5 @@
+//! Abstractions for the UDP protocol of the CCCB servicepoint display.
+
 use std::time::Duration;
 
 pub use crate::bit_vec::BitVec;
