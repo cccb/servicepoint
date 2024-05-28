@@ -1,5 +1,8 @@
-pub use servicepoint::BitVec;
-use servicepoint::DataRef;
+//! C functions for interacting with `BitVec`s
+//!
+//! prefix `sp_bit_vec_`
+
+use servicepoint::{BitVec, DataRef};
 
 use crate::c_slice::CByteSlice;
 

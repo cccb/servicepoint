@@ -1,5 +1,8 @@
-pub use servicepoint::ByteGrid;
-use servicepoint::{DataRef, Grid};
+//! C functions for interacting with `ByteGrid`s
+//!
+//! prefix `sp_byte_grid_`
+
+use servicepoint::{ByteGrid, DataRef, Grid};
 
 use crate::c_slice::CByteSlice;
 

@@ -735,7 +735,12 @@ bool sp_connection_send(const struct sp_Connection *connection,
 /**
  * Deallocates a `Packet`.
  *
- * Note: do not call this if the instance has been consumed in another way, e.g. by sending it.
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `this` points to a valid `Packet`
+ * - `this` is not used concurrently or after this call
  */
 void sp_packet_dealloc(struct sp_Packet *this_);
 

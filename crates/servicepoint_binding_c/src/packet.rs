@@ -1,7 +1,10 @@
+//! C functions for interacting with `Packet`s
+//!
+//! prefix `sp_packet_`
+
 use std::ptr::null_mut;
 
-use servicepoint::Command;
-pub use servicepoint::Packet;
+use servicepoint::{Command, Packet};
 
 /// Turns a `Command` into a `Packet`.
 /// The `Command` gets consumed.
@@ -49,7 +52,12 @@ pub unsafe extern "C" fn sp_packet_try_load(
 
 /// Deallocates a `Packet`.
 ///
-/// Note: do not call this if the instance has been consumed in another way, e.g. by sending it.
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `Packet`
+/// - `this` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_dealloc(this: *mut Packet) {
     _ = Box::from_raw(this)

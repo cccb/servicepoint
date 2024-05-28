@@ -1,8 +1,11 @@
+//! C functions for interacting with `Connection`s
+//!
+//! prefix `sp_connection_`
+
 use std::ffi::{c_char, CStr};
 use std::ptr::null_mut;
 
-pub use servicepoint::Connection;
-use servicepoint::Packet;
+use servicepoint::{Connection, Packet};
 
 /// Creates a new instance of `Connection`.
 ///

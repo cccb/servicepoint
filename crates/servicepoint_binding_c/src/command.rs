@@ -1,9 +1,13 @@
+//! C functions for interacting with `Command`s
+//!
+//! prefix `sp_command_`
+
 use std::ptr::null_mut;
 
 use servicepoint::{
-    BitVec, ByteGrid, CompressionCode, Origin, Packet, PixelGrid,
+    BitVec, Brightness, ByteGrid, Command, CompressionCode, Offset, Origin,
+    Packet, PixelGrid,
 };
-pub use servicepoint::{Brightness, Command, Offset};
 
 /// Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
 ///

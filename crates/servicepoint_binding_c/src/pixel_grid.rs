@@ -1,3 +1,7 @@
+//! C functions for interacting with `PixelGrid`s
+//!
+//! prefix `sp_pixel_grid_`
+
 use servicepoint::{DataRef, Grid, PixelGrid};
 
 use crate::c_slice::CByteSlice;

@@ -220,7 +220,7 @@ namespace ServicePoint.BindGen
         [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Packet* sp_packet_try_load(byte* data, nuint length);
 
-        /// <summary>Deallocates a `Packet`.  Note: do not call this if the instance has been consumed in another way, e.g. by sending it.</summary>
+        /// <summary>Deallocates a `Packet`.  # Safety  The caller has to make sure that:  - `this` points to a valid `Packet` - `this` is not used concurrently or after this call</summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void sp_packet_dealloc(Packet* @this);
 
