@@ -1,3 +1,5 @@
+//! An example for how to send text to the display.
+
 use clap::Parser;
 
 use servicepoint::{ByteGrid, Command, Connection, Grid, Origin};

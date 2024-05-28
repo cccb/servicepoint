@@ -75,15 +75,42 @@ impl Grid<bool> for PixelGrid {
         }
     }
 
+    /// Sets the value of the specified position in the `PixelGrid`.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell
+    /// * `value`: the value to write to the cell
+    ///
+    /// returns: old value of the cell
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
     fn set(&mut self, x: usize, y: usize, value: bool) -> bool {
         self.check_indexes(x, y);
         self.bit_vec.set(x + y * self.width, value)
     }
 
+    /// Gets the current value at the specified position.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell to read
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
     fn get(&self, x: usize, y: usize) -> bool {
         self.bit_vec.get(x + y * self.width)
     }
 
+    /// Sets the state of all pixels in the `PixelGrid`.
+    ///
+    /// # Arguments
+    ///
+    /// * `this`: instance to write to
+    /// * `value`: the value to set all pixels to
     fn fill(&mut self, value: bool) {
         self.bit_vec.fill(value);
     }

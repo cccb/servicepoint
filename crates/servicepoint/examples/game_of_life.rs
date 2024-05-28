@@ -1,3 +1,5 @@
+//! A simple game of life implementation to show how to render graphics to the display.
+
 use std::thread;
 
 use clap::Parser;

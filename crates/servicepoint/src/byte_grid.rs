@@ -52,6 +52,18 @@ impl Grid<u8> for ByteGrid {
         }
     }
 
+    /// Sets the value of the cell at the specified position in the `ByteGrid.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell
+    /// * `value`: the value to write to the cell
+    ///
+    /// returns: old value of the cell.
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
     fn set(&mut self, x: usize, y: usize, value: u8) -> u8 {
         self.check_indexes(x, y);
         let pos = &mut self.data[x + y * self.width];
@@ -60,6 +72,15 @@ impl Grid<u8> for ByteGrid {
         old_val
     }
 
+    /// Gets the current value at the specified position.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell to read
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
     fn get(&self, x: usize, y: usize) -> u8 {
         self.check_indexes(x, y);
         self.data[x + y * self.width]

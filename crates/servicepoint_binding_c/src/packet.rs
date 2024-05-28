@@ -3,7 +3,17 @@ use std::ptr::null_mut;
 use servicepoint::Command;
 pub use servicepoint::Packet;
 
-/// Turns a `Command` into a `Packet`. The command gets deallocated in the process.
+/// Turns a `Command` into a `Packet`.
+/// The `Command` gets consumed.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `command` points to a valid instance of `Command`
+/// - `command` is not used concurrently or after this call
+/// - the returned `Packet` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_packet_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_from_command(
     command: *mut Command,
@@ -16,6 +26,15 @@ pub unsafe extern "C" fn sp_packet_from_command(
 /// Tries to load a `Packet` from the passed array with the specified length.
 ///
 /// returns: NULL in case of an error, pointer to the allocated packet otherwise
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `data` points to a valid memory region of at least `length` bytes
+/// - `data` is not written to concurrently
+/// - the returned `Packet` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_packet_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_try_load(
     data: *const u8,

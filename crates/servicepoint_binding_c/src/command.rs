@@ -5,9 +5,19 @@ use servicepoint::{
 };
 pub use servicepoint::{Brightness, Command, Offset};
 
-/// Tries to turn a `Packet` into a `Command`. The packet is gets deallocated in the process.
+/// Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
 ///
-/// Returns: pointer to command or NULL
+/// Returns: pointer to new `Command` instance or NULL
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `packet` points to a valid instance of `Packet`
+/// - `packet` is not used concurrently or after this call
+/// - the result is checked for NULL
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_try_from_packet(
     packet: *mut Packet,
@@ -19,7 +29,16 @@ pub unsafe extern "C" fn sp_command_try_from_packet(
     }
 }
 
-/// Clones a `Command` instance
+/// Clones a `Command` instance.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid instance of `Command`
+/// - `this` is not written to concurrently
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_clone(
     original: *const Command,
@@ -27,25 +46,53 @@ pub unsafe extern "C" fn sp_command_clone(
     Box::into_raw(Box::new((*original).clone()))
 }
 
-/// Allocates a new `Command::Clear` instance
+/// Allocates a new `Command::Clear` instance.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_clear() -> *mut Command {
     Box::into_raw(Box::new(Command::Clear))
 }
 
-/// Allocates a new `Command::HardReset` instance
+/// Allocates a new `Command::HardReset` instance.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_hard_reset() -> *mut Command {
     Box::into_raw(Box::new(Command::HardReset))
 }
 
-/// Allocates a new `Command::FadeOut` instance
+/// Allocates a new `Command::FadeOut` instance.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_fade_out() -> *mut Command {
     Box::into_raw(Box::new(Command::FadeOut))
 }
 
-/// Allocates a new `Command::Brightness` instance
+/// Allocates a new `Command::Brightness` instance.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_brightness(
     brightness: Brightness,
@@ -54,7 +101,16 @@ pub unsafe extern "C" fn sp_command_brightness(
 }
 
 /// Allocates a new `Command::CharBrightness` instance.
-/// The passed `ByteGrid` gets deallocated in the process.
+/// The passed `ByteGrid` gets consumed.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `byte_grid` points to a valid instance of `ByteGrid`
+/// - `byte_grid` is not used concurrently or after this call
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_char_brightness(
     x: usize,
@@ -66,7 +122,17 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 }
 
 /// Allocates a new `Command::BitmapLinear` instance.
-/// The passed `BitVec` gets deallocated in the process.
+/// The passed `BitVec` gets consumed.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `bit_vec` points to a valid instance of `BitVec`
+/// - `bit_vec` is not used concurrently or after this call
+/// - `compression` matches one of the allowed enum values
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear(
     offset: Offset,
@@ -82,7 +148,17 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 }
 
 /// Allocates a new `Command::BitmapLinearAnd` instance.
-/// The passed `BitVec` gets deallocated in the process.
+/// The passed `BitVec` gets consumed.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `bit_vec` points to a valid instance of `BitVec`
+/// - `bit_vec` is not used concurrently or after this call
+/// - `compression` matches one of the allowed enum values
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_and(
     offset: Offset,
@@ -98,7 +174,17 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 }
 
 /// Allocates a new `Command::BitmapLinearOr` instance.
-/// The passed `BitVec` gets deallocated in the process.
+/// The passed `BitVec` gets consumed.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `bit_vec` points to a valid instance of `BitVec`
+/// - `bit_vec` is not used concurrently or after this call
+/// - `compression` matches one of the allowed enum values
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_or(
     offset: Offset,
@@ -114,7 +200,17 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 }
 
 /// Allocates a new `Command::BitmapLinearXor` instance.
-/// The passed `BitVec` gets deallocated in the process.
+/// The passed `BitVec` gets consumed.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `bit_vec` points to a valid instance of `BitVec`
+/// - `bit_vec` is not used concurrently or after this call
+/// - `compression` matches one of the allowed enum values
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
     offset: Offset,
@@ -130,7 +226,16 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 }
 
 /// Allocates a new `Command::Cp437Data` instance.
-/// The passed `ByteGrid` gets deallocated in the process.
+/// The passed `ByteGrid` gets consumed.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `byte_grid` points to a valid instance of `ByteGrid`
+/// - `byte_grid` is not used concurrently or after this call
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_cp437_data(
     x: usize,
@@ -142,15 +247,25 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 }
 
 /// Allocates a new `Command::BitmapLinearWin` instance.
-/// The passed `PixelGrid` gets deallocated in the process.
+/// The passed `PixelGrid` gets consumed.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `pixel_grid` points to a valid instance of `PixelGrid`
+/// - `pixel_grid` is not used concurrently or after this call
+/// - `compression` matches one of the allowed enum values
+/// - the returned `Command` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_win(
     x: usize,
     y: usize,
-    byte_grid: *mut PixelGrid,
+    pixel_grid: *mut PixelGrid,
     compression_code: CompressionCode,
 ) -> *mut Command {
-    let byte_grid = *Box::from_raw(byte_grid);
+    let byte_grid = *Box::from_raw(pixel_grid);
     Box::into_raw(Box::new(Command::BitmapLinearWin(
         Origin(x, y),
         byte_grid,
@@ -158,8 +273,15 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
     )))
 }
 
-/// Deallocates a `Command`. Note that connection_send does this implicitly, so you only need
-/// to do this if you use the library for parsing commands.
+/// Deallocates a `Command`.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `Command`
+/// - `this` is not used concurrently or after this call
+/// - `this` was not passed to another consuming function, e.g. to create a `Packet`
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_dealloc(ptr: *mut Command) {
     _ = Box::from_raw(ptr);

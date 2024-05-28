@@ -1,3 +1,9 @@
+//! Build script generating the header for the `servicepoint` C library.
+//!
+//! When the environment variable `SERVICEPOINT_HEADER_OUT` is set, the header is copied there from
+//! the out directory. This can be used to use the build script as a command line tool from other
+//! build tools.
+
 use std::{env, fs::copy};
 
 use cbindgen::{generate_with_config, Config};
