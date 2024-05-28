@@ -1,7 +1,7 @@
 CC := gcc
 
 THIS_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-REPO_ROOT := $(THIS_DIR)/../..
+REPO_ROOT := $(THIS_DIR)/../../../..
 
 build: out/lang_c
 
