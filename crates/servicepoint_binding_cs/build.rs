@@ -1,8 +1,8 @@
 //! Build script generating the C# code needed to call methods from the `servicepoint` C library.
 
 fn main() {
-    println!("cargo:rerun-if-changed=../servicepoint_binding_c/src");
-    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo::rerun-if-changed=../servicepoint_binding_c/src");
+    println!("cargo::rerun-if-changed=build.rs");
     csbindgen::Builder::default()
         .input_extern_file("../servicepoint_binding_c/src/bit_vec.rs")
         .input_extern_file("../servicepoint_binding_c/src/byte_grid.rs")
