@@ -59,11 +59,6 @@ impl ByteGrid {
             self.height
         );
     }
-
-    pub fn get_mut(&mut self, x: usize, y: usize) -> &mut u8 {
-        self.check_indexes(x, y);
-        &mut self.data[x + y * self.width]
-    }
 }
 
 impl Grid<u8> for ByteGrid {
