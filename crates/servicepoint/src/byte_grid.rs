@@ -9,6 +9,22 @@ pub struct ByteGrid {
 }
 
 impl ByteGrid {
+    /// Creates a new `ByteGrid` with the specified dimensions.
+    ///
+    /// # Arguments
+    ///
+    /// - width: size in x-direction
+    /// - height: size in y-direction
+    ///
+    /// returns: `ByteGrid` initialized to 0.
+    pub fn new(width: usize, height: usize) -> Self {
+        Self {
+            data: vec![0; width * height],
+            width,
+            height,
+        }
+    }
+
     /// Loads a `ByteGrid` with the specified dimensions from the provided data.
     ///
     /// returns: `ByteGrid` that contains a copy of the provided data
@@ -41,17 +57,6 @@ impl ByteGrid {
 }
 
 impl Grid<u8> for ByteGrid {
-    /// Creates a new `ByteGrid` with the specified dimensions.
-    ///
-    /// returns: `ByteGrid` initialized to 0.
-    fn new(width: usize, height: usize) -> Self {
-        Self {
-            data: vec![0; width * height],
-            width,
-            height,
-        }
-    }
-
     /// Sets the value of the cell at the specified position in the `ByteGrid.
     ///
     /// # Arguments
@@ -96,17 +101,6 @@ impl Grid<u8> for ByteGrid {
 
     fn height(&self) -> usize {
         self.height
-    }
-
-    fn window(&self, x: usize, y: usize, w: usize, h: usize) -> Self {
-        let mut win = Self::new(w, h);
-        for win_x in 0..w {
-            for win_y in 0..h {
-                let value = self.get(x + win_x, y + win_y);
-                win.set(win_x, win_y, value);
-            }
-        }
-        win
     }
 }
 

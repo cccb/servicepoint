@@ -1,23 +1,46 @@
 /// A two-dimensional grid of `T`
 pub trait Grid<T> {
-    #[must_use]
-    /// Creates a new Grid with the specified dimensions.
+    /// Sets the value at the specified position
     ///
     /// # Arguments
     ///
-    /// - width: size in x-direction
-    /// - height: size in y-direction
-    ///
-    /// returns: Grid with all cells initialized to default state.
-    fn new(width: usize, height: usize) -> Self;
-
-    /// Sets the value at the specified position
+    /// * `x` and `y`: position of the cell to read
     ///
     /// returns: the old value
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
     fn set(&mut self, x: usize, y: usize, value: T) -> T;
 
     /// Get the current value at the specified position
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell to read
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
     fn get(&self, x: usize, y: usize) -> T;
+
+    /// Get the current value at the specified position if the position is inside of bounds
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell to read
+    ///
+    /// returns: Value at position or None
+    fn get_optional(&self, x: isize, y: isize) -> Option<T>;
+
+    /// Sets the value at the specified position if the position is inside of bounds
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell to read
+    ///
+    /// returns: the old value or None
+    fn set_optional(&mut self, x: isize, y: isize, value: T) -> Option<T>;
 
     /// Sets all cells in the grid to the specified value
     fn fill(&mut self, value: T);
@@ -27,36 +50,4 @@ pub trait Grid<T> {
 
     /// the height in y-direction
     fn height(&self) -> usize;
-
-    /// Creates a new instance containing the specified window.
-    ///
-    /// Use concrete types to avoid boxing.
-    ///
-    /// # Arguments
-    ///
-    /// * `x`: column of the top left cell
-    /// * `y`: row of the top left cell
-    /// * `w`: size of window in x-direction
-    /// * `h`: size of window in y-direction
-    ///
-    /// returns: Self
-    ///
-    /// # Examples
-    /// To avoid boxing, this example is using the concrete type `ByteGrid`.
-    /// ```
-    /// use servicepoint::{ByteGrid, Grid};
-    /// fn split(grid: ByteGrid) -> (ByteGrid, ByteGrid) {
-    ///     assert!(grid.width() >= 2);
-    ///     let split_x = grid.width() / 2;
-    ///     let right_w = grid.width() - split_x;
-    ///
-    ///     let left = grid.window(0, 0, split_x, grid.height());
-    ///     let right = grid.window(split_x, 0, right_w, grid.height());
-    ///     (left, right)
-    /// }
-    ///
-    /// let (l, r) = split(ByteGrid::new(9, 5));
-    /// ```
-    #[must_use]
-    fn window(&self, x: usize, y: usize, w: usize, h: usize) -> Self;
 }

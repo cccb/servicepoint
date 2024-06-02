@@ -9,6 +9,27 @@ pub struct PixelGrid {
 }
 
 impl PixelGrid {
+    /// Creates a new `PixelGrid` with the specified dimensions.
+    ///
+    /// # Arguments
+    ///
+    /// * `width`: size in pixels in x-direction
+    /// * `height`: size in pixels in y-direction
+    ///
+    /// returns: `PixelGrid` initialized to all pixels off
+    ///
+    /// # Panics
+    ///
+    /// - when the width is not dividable by 8
+    pub fn new(width: usize, height: usize) -> Self {
+        assert_eq!(width % 8, 0);
+        Self {
+            width,
+            height,
+            bit_vec: BitVec::new(width * height),
+        }
+    }
+
     /// Creates a new pixel grid with the size of the whole screen.
     #[must_use]
     pub fn max_sized() -> Self {
@@ -54,27 +75,6 @@ impl PixelGrid {
 }
 
 impl Grid<bool> for PixelGrid {
-    /// Creates a new `PixelGrid` with the specified dimensions.
-    ///
-    /// # Arguments
-    ///
-    /// * `width`: size in pixels in x-direction
-    /// * `height`: size in pixels in y-direction
-    ///
-    /// returns: `PixelGrid` initialized to all pixels off
-    ///
-    /// # Panics
-    ///
-    /// - when the width is not dividable by 8
-    fn new(width: usize, height: usize) -> Self {
-        assert_eq!(width % 8, 0);
-        Self {
-            width,
-            height,
-            bit_vec: BitVec::new(width * height),
-        }
-    }
-
     /// Sets the value of the specified position in the `PixelGrid`.
     ///
     /// # Arguments
@@ -92,15 +92,6 @@ impl Grid<bool> for PixelGrid {
         self.bit_vec.set(x + y * self.width, value)
     }
 
-    /// Gets the current value at the specified position.
-    ///
-    /// # Arguments
-    ///
-    /// * `x` and `y`: position of the cell to read
-    ///
-    /// # Panics
-    ///
-    /// When accessing `x` or `y` out of bounds.
     fn get(&self, x: usize, y: usize) -> bool {
         self.bit_vec.get(x + y * self.width)
     }
@@ -121,19 +112,6 @@ impl Grid<bool> for PixelGrid {
 
     fn height(&self) -> usize {
         self.height
-    }
-
-    fn window(&self, x: usize, y: usize, w: usize, h: usize) -> Self {
-        // TODO: how to deduplicate?
-        // this cannot be moved into the trait because there, Self is not Sized
-        let mut win = Self::new(w, h);
-        for win_x in 0..w {
-            for win_y in 0..h {
-                let value = self.get(x + win_x, y + win_y);
-                win.set(win_x, win_y, value);
-            }
-        }
-        win
     }
 }
 
