@@ -106,6 +106,7 @@ impl BitVec {
         Iter {
             bit_vec: self,
             index: 0,
+            end: self.size,
         }
     }
 
@@ -152,15 +153,16 @@ impl From<&[u8]> for BitVec {
 }
 
 pub struct Iter<'t> {
-    bit_vec: &'t BitVec,
-    index: usize,
+    pub(crate) bit_vec: &'t BitVec,
+    pub(crate) index: usize,
+    pub(crate) end: usize,
 }
 
 impl<'t> Iterator for Iter<'t> {
     type Item = bool;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index >= self.bit_vec.size {
+        if self.index >= self.end {
             return None;
         }
 

@@ -54,6 +54,13 @@ pub trait Grid<T> {
         }
     }
 
+    /// Get an iterator over every cell in the grid.
+    ///
+    /// Iteration is done in memory order, rows first.
+    fn iter(&self) -> impl Iterator<Item = T>;
+
+    fn iter_rows(&self) -> impl Iterator<Item = impl Iterator<Item = T>>;
+
     /// Sets all cells in the grid to the specified value
     fn fill(&mut self, value: T);
 

@@ -43,13 +43,6 @@ impl ByteGrid {
         }
     }
 
-    pub fn iter(&self) -> Iter {
-        Iter {
-            byte_grid: self,
-            index: 0,
-        }
-    }
-
     fn check_indexes(&self, x: usize, y: usize) {
         assert!(
             x < self.width,
@@ -97,6 +90,21 @@ impl Grid<u8> for ByteGrid {
     fn get(&self, x: usize, y: usize) -> u8 {
         self.check_indexes(x, y);
         self.data[x + y * self.width]
+    }
+
+    fn iter(&self) -> impl Iterator<Item = u8> {
+        Iter {
+            byte_grid: self,
+            index: 0,
+            end: self.data.len(),
+        }
+    }
+
+    fn iter_rows(&self) -> impl Iterator<Item = impl Iterator<Item = u8>> {
+        IterRows {
+            byte_grid: self,
+            row: 0,
+        }
     }
 
     fn fill(&mut self, value: u8) {
@@ -162,19 +170,42 @@ impl RefGrid<u8> for ByteGrid {
 pub struct Iter<'t> {
     byte_grid: &'t ByteGrid,
     index: usize,
+    end: usize,
 }
 
 impl<'t> Iterator for Iter<'t> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index >= self.byte_grid.data.len() {
+        if self.index >= self.end {
             return None;
         }
 
         let result = self.byte_grid.data[self.index];
         self.index += 1;
         Some(result)
+    }
+}
+
+pub struct IterRows<'t> {
+    byte_grid: &'t ByteGrid,
+    row: usize,
+}
+
+impl<'t> Iterator for IterRows<'t> {
+    type Item = Iter<'t>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.row >= self.byte_grid.height {
+            return None;
+        }
+        let result = Some(Iter {
+            byte_grid: self.byte_grid,
+            index: self.row * self.byte_grid.width,
+            end: (self.row + 1) * self.byte_grid.width,
+        });
+        self.row += 1;
+        result
     }
 }
 

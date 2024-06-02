@@ -96,6 +96,17 @@ impl Grid<bool> for PixelGrid {
         self.bit_vec.get(x + y * self.width)
     }
 
+    fn iter(&self) -> impl Iterator<Item = bool> {
+        self.bit_vec.iter()
+    }
+
+    fn iter_rows(&self) -> impl Iterator<Item = impl Iterator<Item = bool>> {
+        IterRows {
+            pixel_grid: self,
+            row: 0,
+        }
+    }
+
     /// Sets the state of all pixels in the `PixelGrid`.
     ///
     /// # Arguments
@@ -129,6 +140,28 @@ impl From<PixelGrid> for Vec<u8> {
     /// Turns a `PixelGrid` into the underlying `Vec<u8>`.
     fn from(value: PixelGrid) -> Self {
         value.bit_vec.into()
+    }
+}
+
+pub struct IterRows<'t> {
+    pixel_grid: &'t PixelGrid,
+    row: usize,
+}
+
+impl<'t> Iterator for IterRows<'t> {
+    type Item = crate::bit_vec::Iter<'t>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.row >= self.pixel_grid.height {
+            return None;
+        }
+        let result = Some(crate::bit_vec::Iter {
+            bit_vec: &self.pixel_grid.bit_vec,
+            index: self.row * self.pixel_grid.width,
+            end: (self.row + 1) * self.pixel_grid.width,
+        });
+        self.row += 1;
+        result
     }
 }
 
