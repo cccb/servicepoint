@@ -31,7 +31,13 @@ pub trait Grid<T> {
     /// * `x` and `y`: position of the cell to read
     ///
     /// returns: Value at position or None
-    fn get_optional(&self, x: isize, y: isize) -> Option<T>;
+    fn get_optional(&self, x: isize, y: isize) -> Option<T> {
+        if self.is_in_bounds(x, y) {
+            Some(self.get(x as usize, y as usize))
+        } else {
+            None
+        }
+    }
 
     /// Sets the value at the specified position if the position is inside of bounds
     ///
@@ -40,7 +46,13 @@ pub trait Grid<T> {
     /// * `x` and `y`: position of the cell to read
     ///
     /// returns: the old value or None
-    fn set_optional(&mut self, x: isize, y: isize, value: T) -> Option<T>;
+    fn set_optional(&mut self, x: isize, y: isize, value: T) -> Option<T> {
+        if self.is_in_bounds(x, y) {
+            Some(self.set(x as usize, y as usize, value))
+        } else {
+            None
+        }
+    }
 
     /// Sets all cells in the grid to the specified value
     fn fill(&mut self, value: T);
@@ -50,6 +62,14 @@ pub trait Grid<T> {
 
     /// the height in y-direction
     fn height(&self) -> usize;
+
+    /// Checks whether the specified position is
+    fn is_in_bounds(&self, x: isize, y: isize) -> bool {
+        x > 0
+            && x < self.width() as isize
+            && y > 0
+            && y < self.height() as isize
+    }
 }
 
 /// A grid that can return cells as references.

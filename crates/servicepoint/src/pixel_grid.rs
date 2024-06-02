@@ -60,10 +60,6 @@ impl PixelGrid {
         }
     }
 
-    fn is_position_valid(&self, x: isize, y: isize) -> bool {
-        x > 0 && x < self.width as isize && y > 0 && y < self.height as isize
-    }
-
     fn check_indexes(&self, x: usize, y: usize) {
         assert!(
             x < self.width,
@@ -98,27 +94,6 @@ impl Grid<bool> for PixelGrid {
 
     fn get(&self, x: usize, y: usize) -> bool {
         self.bit_vec.get(x + y * self.width)
-    }
-
-    fn get_optional(&self, x: isize, y: isize) -> Option<bool> {
-        if self.is_position_valid(x, y) {
-            Some(self.get(x as usize, y as usize))
-        } else {
-            None
-        }
-    }
-
-    fn set_optional(
-        &mut self,
-        x: isize,
-        y: isize,
-        value: bool,
-    ) -> Option<bool> {
-        if self.is_position_valid(x, y) {
-            Some(self.set(x as usize, y as usize, value))
-        } else {
-            None
-        }
     }
 
     /// Sets the state of all pixels in the `PixelGrid`.
