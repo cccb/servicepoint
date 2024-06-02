@@ -8,7 +8,7 @@ pub use crate::command::{Brightness, Command, Offset, Origin};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
 pub use crate::data_ref::DataRef;
-pub use crate::grid::Grid;
+pub use crate::grid::{Grid, RefGrid};
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
 

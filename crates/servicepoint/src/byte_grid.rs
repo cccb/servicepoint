@@ -1,3 +1,4 @@
+use crate::grid::RefGrid;
 use crate::{DataRef, Grid};
 
 /// A 2D grid of bytes
@@ -42,6 +43,10 @@ impl ByteGrid {
         }
     }
 
+    fn is_position_valid(&self, x: isize, y: isize) -> bool {
+        x > 0 && x < self.width as isize && y > 0 && y < self.height as isize
+    }
+
     fn check_indexes(&self, x: usize, y: usize) {
         assert!(
             x < self.width,
@@ -53,6 +58,11 @@ impl ByteGrid {
             "cannot access byte {x}-{y} because y is outside of bounds 0..{}",
             self.height
         );
+    }
+
+    pub fn get_mut(&mut self, x: usize, y: usize) -> &mut u8 {
+        self.check_indexes(x, y);
+        &mut self.data[x + y * self.width]
     }
 }
 
@@ -91,6 +101,22 @@ impl Grid<u8> for ByteGrid {
         self.data[x + y * self.width]
     }
 
+    fn get_optional(&self, x: isize, y: isize) -> Option<u8> {
+        if self.is_position_valid(x, y) {
+            Some(self.get(x as usize, y as usize))
+        } else {
+            None
+        }
+    }
+
+    fn set_optional(&mut self, x: isize, y: isize, value: u8) -> Option<u8> {
+        if self.is_position_valid(x, y) {
+            Some(self.set(x as usize, y as usize, value))
+        } else {
+            None
+        }
+    }
+
     fn fill(&mut self, value: u8) {
         self.data.fill(value);
     }
@@ -120,6 +146,34 @@ impl From<ByteGrid> for Vec<u8> {
     /// Turn into the underlying `Vec<u8>` containing the rows of bytes.
     fn from(value: ByteGrid) -> Self {
         value.data
+    }
+}
+
+impl RefGrid<u8> for ByteGrid {
+    fn get_ref(&self, x: usize, y: usize) -> &u8 {
+        self.check_indexes(x, y);
+        &self.data[x + y * self.width]
+    }
+
+    fn get_ref_optional(&self, x: isize, y: isize) -> Option<&u8> {
+        if self.is_position_valid(x, y) {
+            Some(&self.data[x as usize + y as usize * self.width])
+        } else {
+            None
+        }
+    }
+
+    fn get_ref_mut(&mut self, x: usize, y: usize) -> &mut u8 {
+        self.check_indexes(x, y);
+        &mut self.data[x + y * self.width]
+    }
+
+    fn get_ref_mut_optional(&mut self, x: isize, y: isize) -> Option<&mut u8> {
+        if self.is_position_valid(x, y) {
+            Some(&mut self.data[x as usize + y as usize * self.width])
+        } else {
+            None
+        }
     }
 }
 
