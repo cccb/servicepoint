@@ -43,6 +43,13 @@ impl ByteGrid {
         }
     }
 
+    pub fn iter(&self) -> Iter {
+        Iter {
+            byte_grid: self,
+            index: 0,
+        }
+    }
+
     fn check_indexes(&self, x: usize, y: usize) {
         assert!(
             x < self.width,
@@ -149,6 +156,25 @@ impl RefGrid<u8> for ByteGrid {
         } else {
             None
         }
+    }
+}
+
+pub struct Iter<'t> {
+    byte_grid: &'t ByteGrid,
+    index: usize,
+}
+
+impl<'t> Iterator for Iter<'t> {
+    type Item = u8;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index >= self.byte_grid.data.len() {
+            return None;
+        }
+
+        let result = self.byte_grid.data[self.index];
+        self.index += 1;
+        Some(result)
     }
 }
 

@@ -101,6 +101,14 @@ impl BitVec {
         self.data.is_empty()
     }
 
+    /// Get an iterator over every bit in the vector
+    pub fn iter(&self) -> Iter {
+        Iter {
+            bit_vec: self,
+            index: 0,
+        }
+    }
+
     /// Calculates the byte index and bitmask for a specific bit in the vector
     fn get_indexes(&self, bit_index: usize) -> (usize, u8) {
         assert!(
@@ -140,6 +148,25 @@ impl From<&[u8]> for BitVec {
             size: value.len() * 8,
             data: Vec::from(value),
         }
+    }
+}
+
+pub struct Iter<'t> {
+    bit_vec: &'t BitVec,
+    index: usize,
+}
+
+impl<'t> Iterator for Iter<'t> {
+    type Item = bool;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index >= self.bit_vec.size {
+            return None;
+        }
+
+        let result = Some(self.bit_vec.get(self.index));
+        self.index += 1;
+        result
     }
 }
 
