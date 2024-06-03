@@ -1,3 +1,5 @@
+use std::slice::{Iter, IterMut};
+
 use crate::grid::RefGrid;
 use crate::{DataRef, Grid};
 
@@ -41,6 +43,24 @@ impl ByteGrid {
             width,
             height,
         }
+    }
+
+    pub fn iter(&self) -> Iter<u8> {
+        self.data.iter()
+    }
+
+    pub fn iter_rows(&self) -> IterRows {
+        IterRows {
+            byte_grid: self,
+            row: 0,
+        }
+    }
+
+    /// Returns an iterator that allows modifying each value.
+    ///
+    /// The iterator yields all cells from top left to bottom right.
+    pub fn iter_mut(&mut self) -> IterMut<u8> {
+        self.data.iter_mut()
     }
 
     fn check_indexes(&self, x: usize, y: usize) {
@@ -90,21 +110,6 @@ impl Grid<u8> for ByteGrid {
     fn get(&self, x: usize, y: usize) -> u8 {
         self.check_indexes(x, y);
         self.data[x + y * self.width]
-    }
-
-    fn iter(&self) -> impl Iterator<Item = u8> {
-        Iter {
-            byte_grid: self,
-            index: 0,
-            end: self.data.len(),
-        }
-    }
-
-    fn iter_rows(&self) -> impl Iterator<Item = impl Iterator<Item = u8>> {
-        IterRows {
-            byte_grid: self,
-            row: 0,
-        }
     }
 
     fn fill(&mut self, value: u8) {
@@ -167,45 +172,24 @@ impl RefGrid<u8> for ByteGrid {
     }
 }
 
-pub struct Iter<'t> {
-    byte_grid: &'t ByteGrid,
-    index: usize,
-    end: usize,
-}
-
-impl<'t> Iterator for Iter<'t> {
-    type Item = u8;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.index >= self.end {
-            return None;
-        }
-
-        let result = self.byte_grid.data[self.index];
-        self.index += 1;
-        Some(result)
-    }
-}
-
 pub struct IterRows<'t> {
     byte_grid: &'t ByteGrid,
     row: usize,
 }
 
 impl<'t> Iterator for IterRows<'t> {
-    type Item = Iter<'t>;
+    type Item = Iter<'t, u8>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.row >= self.byte_grid.height {
             return None;
         }
-        let result = Some(Iter {
-            byte_grid: self.byte_grid,
-            index: self.row * self.byte_grid.width,
-            end: (self.row + 1) * self.byte_grid.width,
-        });
+
+        let start = self.row * self.byte_grid.width;
+        let end = start + self.byte_grid.width;
+        let result = self.byte_grid.data[start..end].iter();
         self.row += 1;
-        result
+        Some(result)
     }
 }
 

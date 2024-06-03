@@ -60,6 +60,17 @@ impl PixelGrid {
         }
     }
 
+    pub fn iter(&self) -> crate::bit_vec::Iter {
+        self.bit_vec.iter()
+    }
+
+    pub fn iter_rows(&self) -> IterRows {
+        IterRows {
+            pixel_grid: self,
+            row: 0,
+        }
+    }
+
     fn check_indexes(&self, x: usize, y: usize) {
         assert!(
             x < self.width,
@@ -94,17 +105,6 @@ impl Grid<bool> for PixelGrid {
 
     fn get(&self, x: usize, y: usize) -> bool {
         self.bit_vec.get(x + y * self.width)
-    }
-
-    fn iter(&self) -> impl Iterator<Item = bool> {
-        self.bit_vec.iter()
-    }
-
-    fn iter_rows(&self) -> impl Iterator<Item = impl Iterator<Item = bool>> {
-        IterRows {
-            pixel_grid: self,
-            row: 0,
-        }
     }
 
     /// Sets the state of all pixels in the `PixelGrid`.
