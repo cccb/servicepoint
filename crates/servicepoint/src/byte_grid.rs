@@ -256,4 +256,50 @@ mod tests {
         assert_eq!(vec.data, [1, 2, 3, 4]);
         assert_eq!(vec.get(1, 0), 2)
     }
+
+    #[test]
+    fn iter() {
+        let mut vec = ByteGrid::new(2, 2);
+        vec.set(1, 1, 5);
+
+        let mut iter = vec.iter();
+        assert_eq!(*iter.next().unwrap(), 0);
+        assert_eq!(*iter.next().unwrap(), 0);
+        assert_eq!(*iter.next().unwrap(), 0);
+        assert_eq!(*iter.next().unwrap(), 5);
+    }
+
+    #[test]
+    fn iter_mut() {
+        let mut vec = ByteGrid::new(2, 3);
+        for (index, cell) in vec.iter_mut().enumerate() {
+            *cell = index as u8;
+        }
+
+        assert_eq!(vec.data_ref(), [0, 1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn iter_rows() {
+        let vec = ByteGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]);
+        for (y, row) in vec.iter_rows().enumerate() {
+            for (x, val) in row.enumerate() {
+                assert_eq!(*val, (x + y) as u8);
+            }
+        }
+    }
+
+    #[test]
+    #[should_panic]
+    fn out_of_bounds_x() {
+        let mut vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        vec.set(2, 1, 5);
+    }
+
+    #[test]
+    #[should_panic]
+    fn out_of_bounds_y() {
+        let vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        vec.get(1, 2);
+    }
 }

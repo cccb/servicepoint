@@ -1,7 +1,9 @@
-use crate::{BitVec, DataRef, Grid, SpBitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
 use bitvec::order::Msb0;
 use bitvec::prelude::BitSlice;
-use bitvec::slice::Iter;
+use bitvec::ptr::Mutability;
+use bitvec::slice::IterMut;
+
+use crate::{BitVec, DataRef, Grid, SpBitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
 
 /// A grid of pixels stored in packed bytes.
 #[derive(Debug, Clone, PartialEq)]
@@ -75,8 +77,35 @@ impl PixelGrid {
     ///     }
     /// }
     /// ```
-    pub fn iter(&self) -> Iter<'_, u8, Msb0> {
-        self.bit_vec.iter()
+    pub fn iter(&self) -> impl Iterator<Item = &bool> {
+        self.bit_vec.iter().by_refs()
+    }
+
+    /// Iterate over all cells in `PixelGrid` mutably.
+    ///
+    /// Order is equivalent to the following loop:
+    /// ```
+    /// # use servicepoint::{PixelGrid, Grid};
+    /// # let mut grid = PixelGrid::new(8,2);
+    /// # let value = false;
+    /// for y in 0..grid.height() {
+    ///     for x in 0..grid.width() {
+    ///         grid.set(x, y, value)
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// # Example
+    /// ```
+    /// # use servicepoint::{PixelGrid, Grid};
+    /// # let mut grid = PixelGrid::new(8,2);
+    /// # let value = false;
+    /// for (index, mut pixel) in grid.iter_mut().enumerate() {
+    ///     pixel.set(index % 2 == 0)
+    /// }
+    /// ```
+    pub fn iter_mut(&mut self) -> IterMut<u8, Msb0> {
+        self.bit_vec.iter_mut()
     }
 
     /// Iterate over all rows in `PixelGrid` top to bottom.
@@ -120,6 +149,7 @@ impl Grid<bool> for PixelGrid {
     }
 
     fn get(&self, x: usize, y: usize) -> bool {
+        self.check_indexes(x, y);
         self.bit_vec[x + y * self.width]
     }
 
@@ -225,5 +255,19 @@ mod tests {
 
         let grid = PixelGrid::load(8, 3, &data);
         assert_eq!(grid.data_ref(), [0xAA, 0x55, 0xAA]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn out_of_bounds_x() {
+        let vec = PixelGrid::new(8, 2);
+        vec.get(8, 1);
+    }
+
+    #[test]
+    #[should_panic]
+    fn out_of_bounds_y() {
+        let mut vec = PixelGrid::new(8, 2);
+        vec.set(1, 2, false);
     }
 }
