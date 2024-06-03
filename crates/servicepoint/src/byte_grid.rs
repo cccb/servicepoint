@@ -45,10 +45,23 @@ impl ByteGrid {
         }
     }
 
+    /// Iterate over all cells in `ByteGrid`.
+    ///
+    /// Order is equivalent to the following loop:
+    /// ```
+    /// # use servicepoint::{ByteGrid, Grid};
+    /// # let grid = ByteGrid::new(2,2);
+    /// for y in 0..grid.height() {
+    ///     for x in 0..grid.width() {
+    ///         grid.get(x, y)
+    ///     }
+    /// }
+    /// ```
     pub fn iter(&self) -> Iter<u8> {
         self.data.iter()
     }
 
+    /// Iterate over all rows in `ByteGrid` top to bottom.
     pub fn iter_rows(&self) -> IterRows {
         IterRows {
             byte_grid: self,

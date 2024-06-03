@@ -1,3 +1,5 @@
+//! FFI slice helper
+
 #[repr(C)]
 /// Represents a span of memory (`&mut [u8]` ) as a struct usable by C code.
 ///

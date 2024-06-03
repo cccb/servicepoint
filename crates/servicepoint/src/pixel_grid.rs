@@ -63,10 +63,23 @@ impl PixelGrid {
         }
     }
 
+    /// Iterate over all cells in `PixelGrid`.
+    ///
+    /// Order is equivalent to the following loop:
+    /// ```
+    /// # use servicepoint::{PixelGrid, Grid};
+    /// # let grid = PixelGrid::new(8,2);
+    /// for y in 0..grid.height() {
+    ///     for x in 0..grid.width() {
+    ///         grid.get(x, y)
+    ///     }
+    /// }
+    /// ```
     pub fn iter(&self) -> Iter<'_, u8, Msb0> {
         self.bit_vec.iter()
     }
 
+    /// Iterate over all rows in `PixelGrid` top to bottom.
     pub fn iter_rows(&self) -> IterRows {
         IterRows {
             pixel_grid: self,

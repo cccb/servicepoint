@@ -1,4 +1,4 @@
-use bitvec::prelude::{BitVec, Msb0};
+use bitvec::prelude::BitVec;
 
 use crate::command_code::CommandCode;
 use crate::compression::{into_compressed, into_decompressed};
@@ -27,7 +27,6 @@ pub type Offset = usize;
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Brightness = u8;
 
-// TODO: check order
 /// A command to send to the display.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
@@ -369,7 +368,7 @@ impl Command {
     /// Helper method for Packets into `BitMapLinear*`-Commands
     fn packet_into_linear_bitmap(
         packet: Packet,
-    ) -> Result<(BitVec<u8, Msb0>, CompressionCode), TryFromPacketError> {
+    ) -> Result<(SpBitVec, CompressionCode), TryFromPacketError> {
         let Packet(Header(_, _, length, sub, reserved), payload) = packet;
         if reserved != 0 {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
