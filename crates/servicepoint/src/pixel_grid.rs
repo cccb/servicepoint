@@ -1,11 +1,14 @@
-use crate::{BitVec, DataRef, Grid, PIXEL_HEIGHT, PIXEL_WIDTH};
+use crate::{BitVec, DataRef, Grid, SpBitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
+use bitvec::order::Msb0;
+use bitvec::prelude::BitSlice;
+use bitvec::slice::Iter;
 
 /// A grid of pixels stored in packed bytes.
 #[derive(Debug, Clone, PartialEq)]
 pub struct PixelGrid {
     width: usize,
     height: usize,
-    bit_vec: BitVec,
+    bit_vec: SpBitVec,
 }
 
 impl PixelGrid {
@@ -26,7 +29,7 @@ impl PixelGrid {
         Self {
             width,
             height,
-            bit_vec: BitVec::new(width * height),
+            bit_vec: BitVec::repeat(false, width * height),
         }
     }
 
@@ -56,11 +59,11 @@ impl PixelGrid {
         Self {
             width,
             height,
-            bit_vec: BitVec::from(data),
+            bit_vec: BitVec::from_slice(data),
         }
     }
 
-    pub fn iter(&self) -> crate::bit_vec::Iter {
+    pub fn iter(&self) -> Iter<'_, u8, Msb0> {
         self.bit_vec.iter()
     }
 
@@ -98,13 +101,13 @@ impl Grid<bool> for PixelGrid {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    fn set(&mut self, x: usize, y: usize, value: bool) -> bool {
+    fn set(&mut self, x: usize, y: usize, value: bool) {
         self.check_indexes(x, y);
         self.bit_vec.set(x + y * self.width, value)
     }
 
     fn get(&self, x: usize, y: usize) -> bool {
-        self.bit_vec.get(x + y * self.width)
+        self.bit_vec[x + y * self.width]
     }
 
     /// Sets the state of all pixels in the `PixelGrid`.
@@ -128,11 +131,11 @@ impl Grid<bool> for PixelGrid {
 
 impl DataRef for PixelGrid {
     fn data_ref_mut(&mut self) -> &mut [u8] {
-        self.bit_vec.data_ref_mut()
+        self.bit_vec.as_raw_mut_slice()
     }
 
     fn data_ref(&self) -> &[u8] {
-        self.bit_vec.data_ref()
+        self.bit_vec.as_raw_slice()
     }
 }
 
@@ -149,19 +152,17 @@ pub struct IterRows<'t> {
 }
 
 impl<'t> Iterator for IterRows<'t> {
-    type Item = crate::bit_vec::Iter<'t>;
+    type Item = &'t BitSlice<u8, Msb0>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.row >= self.pixel_grid.height {
             return None;
         }
-        let result = Some(crate::bit_vec::Iter {
-            bit_vec: &self.pixel_grid.bit_vec,
-            index: self.row * self.pixel_grid.width,
-            end: (self.row + 1) * self.pixel_grid.width,
-        });
+
+        let start = self.row * self.pixel_grid.width;
+        let end = start + self.pixel_grid.width;
         self.row += 1;
-        result
+        Some(&self.pixel_grid.bit_vec[start..end])
     }
 }
 

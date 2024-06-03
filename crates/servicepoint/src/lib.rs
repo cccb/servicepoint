@@ -2,7 +2,6 @@
 
 use std::time::Duration;
 
-pub use crate::bit_vec::BitVec;
 pub use crate::byte_grid::ByteGrid;
 pub use crate::command::{Brightness, Command, Offset, Origin};
 pub use crate::compression_code::CompressionCode;
@@ -11,8 +10,11 @@ pub use crate::data_ref::DataRef;
 pub use crate::grid::{Grid, RefGrid};
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
+pub use bitvec;
+use bitvec::prelude::{BitVec, Msb0};
 
-mod bit_vec;
+type SpBitVec = BitVec<u8, Msb0>;
+
 mod byte_grid;
 mod command;
 mod command_code;

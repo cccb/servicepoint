@@ -1,7 +1,9 @@
+use bitvec::prelude::{BitVec, Msb0};
+
 use crate::command_code::CommandCode;
 use crate::compression::{into_compressed, into_decompressed};
 use crate::{
-    BitVec, ByteGrid, CompressionCode, Grid, Header, Packet, PixelGrid,
+    ByteGrid, CompressionCode, Grid, Header, Packet, PixelGrid, SpBitVec,
     TILE_SIZE,
 };
 
@@ -25,6 +27,7 @@ pub type Offset = usize;
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Brightness = u8;
 
+// TODO: check order
 /// A command to send to the display.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
@@ -43,16 +46,16 @@ pub enum Command {
     BitmapLegacy,
     /// Set pixel data starting at the offset.
     /// The contained `BitVec` is always uncompressed.
-    BitmapLinear(Offset, BitVec, CompressionCode),
+    BitmapLinear(Offset, SpBitVec, CompressionCode),
     /// Set pixel data according to an and-mask starting at the offset.
     /// The contained `BitVec` is always uncompressed.
-    BitmapLinearAnd(Offset, BitVec, CompressionCode),
+    BitmapLinearAnd(Offset, SpBitVec, CompressionCode),
     /// Set pixel data according to an or-mask starting at the offset.
     /// The contained `BitVec` is always uncompressed.
-    BitmapLinearOr(Offset, BitVec, CompressionCode),
+    BitmapLinearOr(Offset, SpBitVec, CompressionCode),
     /// Set pixel data according to a xor-mask starting at the offset.
     /// The contained `BitVec` is always uncompressed.
-    BitmapLinearXor(Offset, BitVec, CompressionCode),
+    BitmapLinearXor(Offset, SpBitVec, CompressionCode),
     /// Show text on the screen. Note that the byte data has to be CP437 encoded.
     Cp437Data(Origin, ByteGrid),
     /// Sets a window of pixels to the specified values
@@ -366,7 +369,7 @@ impl Command {
     /// Helper method for Packets into `BitMapLinear*`-Commands
     fn packet_into_linear_bitmap(
         packet: Packet,
-    ) -> Result<(BitVec, CompressionCode), TryFromPacketError> {
+    ) -> Result<(BitVec<u8, Msb0>, CompressionCode), TryFromPacketError> {
         let Packet(Header(_, _, length, sub, reserved), payload) = packet;
         if reserved != 0 {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
@@ -387,17 +390,18 @@ impl Command {
                 payload.len(),
             ));
         }
-        Ok((BitVec::from(&*payload), sub))
+        Ok((BitVec::from_vec(payload), sub))
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use bitvec::prelude::BitVec;
+
     use crate::command::TryFromPacketError;
     use crate::command_code::CommandCode;
     use crate::{
-        BitVec, ByteGrid, Command, CompressionCode, Grid, Header, Origin,
-        Packet, PixelGrid,
+        ByteGrid, Command, CompressionCode, Header, Origin, Packet, PixelGrid,
     };
 
     fn round_trip(original: Command) {
@@ -462,20 +466,24 @@ mod tests {
     #[test]
     fn round_trip_bitmap_linear() {
         for compression in all_compressions().to_owned() {
-            round_trip(Command::BitmapLinear(23, BitVec::new(40), compression));
+            round_trip(Command::BitmapLinear(
+                23,
+                BitVec::repeat(false, 40),
+                compression,
+            ));
             round_trip(Command::BitmapLinearAnd(
                 23,
-                BitVec::new(40),
+                BitVec::repeat(false, 40),
                 compression,
             ));
             round_trip(Command::BitmapLinearOr(
                 23,
-                BitVec::new(40),
+                BitVec::repeat(false, 40),
                 compression,
             ));
             round_trip(Command::BitmapLinearXor(
                 23,
-                BitVec::new(40),
+                BitVec::repeat(false, 40),
                 compression,
             ));
             round_trip(Command::BitmapLinearWin(
@@ -590,8 +598,12 @@ mod tests {
     #[test]
     fn error_decompression_failed_and() {
         for compression in all_compressions().to_owned() {
-            let p: Packet =
-                Command::BitmapLinearAnd(0, BitVec::new(8), compression).into();
+            let p: Packet = Command::BitmapLinearAnd(
+                0,
+                BitVec::repeat(false, 8),
+                compression,
+            )
+            .into();
             let Packet(header, mut payload) = p;
 
             // mangle it
@@ -633,7 +645,7 @@ mod tests {
     fn error_reserved_used() {
         let Packet(header, payload) = Command::BitmapLinear(
             0,
-            BitVec::new(8),
+            BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
         .into();
@@ -649,7 +661,7 @@ mod tests {
     fn error_invalid_compression() {
         let Packet(header, payload) = Command::BitmapLinear(
             0,
-            BitVec::new(8),
+            BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
         .into();
@@ -665,7 +677,7 @@ mod tests {
     fn error_unexpected_size() {
         let Packet(header, payload) = Command::BitmapLinear(
             0,
-            BitVec::new(8),
+            BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
         .into();

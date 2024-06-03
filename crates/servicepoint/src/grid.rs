@@ -6,12 +6,10 @@ pub trait Grid<T> {
     ///
     /// * `x` and `y`: position of the cell to read
     ///
-    /// returns: the old value
-    ///
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    fn set(&mut self, x: usize, y: usize, value: T) -> T;
+    fn set(&mut self, x: usize, y: usize, value: T);
 
     /// Get the current value at the specified position
     ///
@@ -46,11 +44,12 @@ pub trait Grid<T> {
     /// * `x` and `y`: position of the cell to read
     ///
     /// returns: the old value or None
-    fn set_optional(&mut self, x: isize, y: isize, value: T) -> Option<T> {
+    fn set_optional(&mut self, x: isize, y: isize, value: T) -> bool {
         if self.is_in_bounds(x, y) {
-            Some(self.set(x as usize, y as usize, value))
+            self.set(x as usize, y as usize, value);
+            true
         } else {
-            None
+            false
         }
     }
 

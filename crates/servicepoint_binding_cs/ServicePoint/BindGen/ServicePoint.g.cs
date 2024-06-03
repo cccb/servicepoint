@@ -21,46 +21,45 @@ namespace ServicePoint.BindGen
 
         /// <summary>Creates a new `BitVec` instance.  # Arguments  * `size`: size in bits.  returns: `BitVec` with all bits set to false.  # Panics  When `size` is not divisible by 8.  # Safety  The caller has to make sure that:  - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_bit_vec_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bit_vec_new(nuint size);
+        public static extern CBitVec* sp_bit_vec_new(nuint size);
 
         /// <summary>Interpret the data as a series of bits and load then into a new `BitVec` instance.  # Safety  The caller has to make sure that:  - `data` points to a valid memory location of at least `data_length` bytes in size. - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_bit_vec_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bit_vec_load(byte* data, nuint data_length);
+        public static extern CBitVec* sp_bit_vec_load(byte* data, nuint data_length);
 
         /// <summary>Clones a `BitVec`.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to concurrently - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_bit_vec_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bit_vec_clone(BitVec* @this);
+        public static extern CBitVec* sp_bit_vec_clone(CBitVec* @this);
 
         /// <summary>Deallocates a `BitVec`.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not used concurrently or after this call - `this` was not passed to another consuming function, e.g. to create a `Command`</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_dealloc(BitVec* @this);
+        public static extern void sp_bit_vec_dealloc(CBitVec* @this);
 
         /// <summary>Gets the value of a bit from the `BitVec`.  # Arguments  * `this`: instance to read from * `index`: the bit index to read  returns: value of the bit  # Panics  When accessing `index` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to concurrently</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_get(BitVec* @this, nuint index);
+        public static extern bool sp_bit_vec_get(CBitVec* @this, nuint index);
 
         /// <summary>Sets the value of a bit in the `BitVec`.  # Arguments  * `this`: instance to write to * `index`: the bit index to edit * `value`: the value to set the bit to  returns: old value of the bit  # Panics  When accessing `index` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_set(BitVec* @this, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
+        public static extern void sp_bit_vec_set(CBitVec* @this, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>Sets the value of all bits in the `BitVec`.  # Arguments  * `value`: the value to set all bits to  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_fill(BitVec* @this, [MarshalAs(UnmanagedType.U1)] bool value);
+        public static extern void sp_bit_vec_fill(CBitVec* @this, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>Gets the length of the `BitVec` in bits.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec`</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bit_vec_len(BitVec* @this);
+        public static extern nuint sp_bit_vec_len(CBitVec* @this);
 
         /// <summary>Returns true if length is 0.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec`</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_is_empty(BitVec* @this);
+        public static extern bool sp_bit_vec_is_empty(CBitVec* @this);
 
         /// <summary>Gets an unsafe reference to the data of the `BitVec` instance.  ## Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - the returned memory range is never accessed after the passed `BitVec` has been freed - the returned memory range is never accessed concurrently, either via the `BitVec` or directly</summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_bit_vec_unsafe_data_ref(BitVec* @this);
+        public static extern CByteSlice sp_bit_vec_unsafe_data_ref(CBitVec* @this);
 
         /// <summary>Creates a new `ByteGrid` with the specified dimensions.  returns: `ByteGrid` initialized to 0.  # Safety  The caller has to make sure that:  - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_byte_grid_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -132,19 +131,19 @@ namespace ServicePoint.BindGen
 
         /// <summary>Allocates a new `Command::BitmapLinear` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear(nuint offset, BitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear(nuint offset, CBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>Allocates a new `Command::BitmapLinearAnd` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_and", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_and(nuint offset, BitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_and(nuint offset, CBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>Allocates a new `Command::BitmapLinearOr` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_or", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_or(nuint offset, BitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_or(nuint offset, CBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>Allocates a new `Command::BitmapLinearXor` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_xor", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, BitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, CBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>Allocates a new `Command::Cp437Data` instance. The passed `ByteGrid` gets consumed.  # Safety  The caller has to make sure that:  - `byte_grid` points to a valid instance of `ByteGrid` - `byte_grid` is not used concurrently or after this call - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -228,15 +227,15 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct CBitVec
+    {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct CByteSlice
     {
         public byte* start;
         public nuint length;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct BitVec
-    {
     }
 
     [StructLayout(LayoutKind.Sequential)]

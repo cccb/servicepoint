@@ -5,9 +5,11 @@
 use std::ptr::null_mut;
 
 use servicepoint::{
-    BitVec, Brightness, ByteGrid, Command, CompressionCode, Offset, Origin,
-    Packet, PixelGrid,
+    Brightness, ByteGrid, Command, CompressionCode, Offset, Origin, Packet,
+    PixelGrid,
 };
+
+use crate::bit_vec::CBitVec;
 
 /// Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
 ///
@@ -140,13 +142,13 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear(
     offset: Offset,
-    bit_vec: *mut BitVec,
+    bit_vec: *mut CBitVec,
     compression: CompressionCode,
 ) -> *mut Command {
     let bit_vec = *Box::from_raw(bit_vec);
     Box::into_raw(Box::new(Command::BitmapLinear(
         offset,
-        bit_vec,
+        bit_vec.into(),
         compression,
     )))
 }
@@ -166,13 +168,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_and(
     offset: Offset,
-    bit_vec: *mut BitVec,
+    bit_vec: *mut CBitVec,
     compression: CompressionCode,
 ) -> *mut Command {
     let bit_vec = *Box::from_raw(bit_vec);
     Box::into_raw(Box::new(Command::BitmapLinearAnd(
         offset,
-        bit_vec,
+        bit_vec.into(),
         compression,
     )))
 }
@@ -192,13 +194,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_or(
     offset: Offset,
-    bit_vec: *mut BitVec,
+    bit_vec: *mut CBitVec,
     compression: CompressionCode,
 ) -> *mut Command {
     let bit_vec = *Box::from_raw(bit_vec);
     Box::into_raw(Box::new(Command::BitmapLinearOr(
         offset,
-        bit_vec,
+        bit_vec.into(),
         compression,
     )))
 }
@@ -218,13 +220,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
     offset: Offset,
-    bit_vec: *mut BitVec,
+    bit_vec: *mut CBitVec,
     compression: CompressionCode,
 ) -> *mut Command {
     let bit_vec = *Box::from_raw(bit_vec);
     Box::into_raw(Box::new(Command::BitmapLinearXor(
         offset,
-        bit_vec,
+        bit_vec.into(),
         compression,
     )))
 }
