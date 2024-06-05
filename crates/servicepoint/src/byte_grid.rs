@@ -1,6 +1,5 @@
 use std::slice::{Iter, IterMut};
 
-use crate::grid::RefGrid;
 use crate::{DataRef, Grid};
 
 /// A 2D grid of bytes
@@ -53,7 +52,7 @@ impl ByteGrid {
     /// # let grid = ByteGrid::new(2,2);
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
-    ///         grid.get(x, y)
+    ///         grid.get(x, y);
     ///     }
     /// }
     /// ```
@@ -76,17 +75,37 @@ impl ByteGrid {
         self.data.iter_mut()
     }
 
-    fn check_indexes(&self, x: usize, y: usize) {
-        assert!(
-            x < self.width,
-            "cannot access byte {x}-{y} because x is outside of bounds 0..{}",
-            self.width
-        );
-        assert!(
-            y < self.height,
-            "cannot access byte {x}-{y} because y is outside of bounds 0..{}",
-            self.height
-        );
+    /// Get a mutable reference to the current value at the specified position.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
+    pub fn get_ref_mut(&mut self, x: usize, y: usize) -> &mut u8 {
+        self.assert_in_bounds(x, y);
+        &mut self.data[x + y * self.width]
+    }
+
+    /// Get a mutable reference to the current value at the specified position if position is in bounds.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell
+    ///
+    /// returns: Reference to cell or None
+    pub fn get_ref_mut_optional(
+        &mut self,
+        x: isize,
+        y: isize,
+    ) -> Option<&mut u8> {
+        if self.is_in_bounds(x, y) {
+            Some(&mut self.data[x as usize + y as usize * self.width])
+        } else {
+            None
+        }
     }
 }
 
@@ -102,7 +121,7 @@ impl Grid<u8> for ByteGrid {
     ///
     /// When accessing `x` or `y` out of bounds.
     fn set(&mut self, x: usize, y: usize, value: u8) {
-        self.check_indexes(x, y);
+        self.assert_in_bounds(x, y);
         self.data[x + y * self.width] = value;
     }
 
@@ -116,7 +135,7 @@ impl Grid<u8> for ByteGrid {
     ///
     /// When accessing `x` or `y` out of bounds.
     fn get(&self, x: usize, y: usize) -> u8 {
-        self.check_indexes(x, y);
+        self.assert_in_bounds(x, y);
         self.data[x + y * self.width]
     }
 
@@ -149,34 +168,6 @@ impl From<ByteGrid> for Vec<u8> {
     /// Turn into the underlying `Vec<u8>` containing the rows of bytes.
     fn from(value: ByteGrid) -> Self {
         value.data
-    }
-}
-
-impl RefGrid<u8> for ByteGrid {
-    fn get_ref(&self, x: usize, y: usize) -> &u8 {
-        self.check_indexes(x, y);
-        &self.data[x + y * self.width]
-    }
-
-    fn get_ref_optional(&self, x: isize, y: isize) -> Option<&u8> {
-        if self.is_in_bounds(x, y) {
-            Some(&self.data[x as usize + y as usize * self.width])
-        } else {
-            None
-        }
-    }
-
-    fn get_ref_mut(&mut self, x: usize, y: usize) -> &mut u8 {
-        self.check_indexes(x, y);
-        &mut self.data[x + y * self.width]
-    }
-
-    fn get_ref_mut_optional(&mut self, x: isize, y: isize) -> Option<&mut u8> {
-        if self.is_in_bounds(x, y) {
-            Some(&mut self.data[x as usize + y as usize * self.width])
-        } else {
-            None
-        }
     }
 }
 
@@ -301,5 +292,16 @@ mod tests {
     fn out_of_bounds_y() {
         let vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
         vec.get(1, 2);
+    }
+
+    #[test]
+    fn ref_mut() {
+        let mut vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+
+        let top_left = vec.get_ref_mut(0, 0);
+        *top_left += 5;
+
+        assert_eq!(None, vec.get_ref_mut_optional(2, 2));
+        assert_eq!(Some(&mut 5), vec.get_ref_mut_optional(0, 0));
     }
 }

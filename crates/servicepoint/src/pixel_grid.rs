@@ -1,6 +1,5 @@
 use bitvec::order::Msb0;
 use bitvec::prelude::BitSlice;
-use bitvec::ptr::Mutability;
 use bitvec::slice::IterMut;
 
 use crate::{BitVec, DataRef, Grid, SpBitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
@@ -73,7 +72,7 @@ impl PixelGrid {
     /// # let grid = PixelGrid::new(8,2);
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
-    ///         grid.get(x, y)
+    ///         grid.get(x, y);
     ///     }
     /// }
     /// ```
@@ -90,7 +89,7 @@ impl PixelGrid {
     /// # let value = false;
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
-    ///         grid.set(x, y, value)
+    ///         grid.set(x, y, value);
     ///     }
     /// }
     /// ```
@@ -115,19 +114,6 @@ impl PixelGrid {
             row: 0,
         }
     }
-
-    fn check_indexes(&self, x: usize, y: usize) {
-        assert!(
-            x < self.width,
-            "cannot access pixel {x}-{y} because x is outside of bounds 0..{}",
-            self.width
-        );
-        assert!(
-            y < self.height,
-            "cannot access pixel {x}-{y} because y is outside of bounds 0..{}",
-            self.height
-        );
-    }
 }
 
 impl Grid<bool> for PixelGrid {
@@ -144,12 +130,12 @@ impl Grid<bool> for PixelGrid {
     ///
     /// When accessing `x` or `y` out of bounds.
     fn set(&mut self, x: usize, y: usize, value: bool) {
-        self.check_indexes(x, y);
+        self.assert_in_bounds(x, y);
         self.bit_vec.set(x + y * self.width, value)
     }
 
     fn get(&self, x: usize, y: usize) -> bool {
-        self.check_indexes(x, y);
+        self.assert_in_bounds(x, y);
         self.bit_vec[x + y * self.width]
     }
 
@@ -269,5 +255,30 @@ mod tests {
     fn out_of_bounds_y() {
         let mut vec = PixelGrid::new(8, 2);
         vec.set(1, 2, false);
+    }
+
+    #[test]
+    fn iter() {
+        let grid = PixelGrid::new(8, 2);
+        assert_eq!(16, grid.iter().count())
+    }
+
+    #[test]
+    fn iter_rows() {
+        let grid = PixelGrid::load(8, 2, &[0x04, 0x40]);
+        let mut iter = grid.iter_rows();
+
+        assert_eq!(iter.next().unwrap().count_ones(), 1);
+        assert_eq!(iter.next().unwrap().count_ones(), 1);
+        assert_eq!(None, iter.next());
+    }
+
+    #[test]
+    fn iter_mut() {
+        let mut grid = PixelGrid::new(8, 2);
+        for (index, mut pixel) in grid.iter_mut().enumerate() {
+            pixel.set(index % 2 == 0);
+        }
+        assert_eq!(grid.data_ref(), [0xAA, 0xAA]);
     }
 }

@@ -62,54 +62,29 @@ pub trait Grid<T> {
     /// the height in y-direction
     fn height(&self) -> usize;
 
-    /// Checks whether the specified position is
+    /// Checks whether the specified signed position is in grid bounds
     fn is_in_bounds(&self, x: isize, y: isize) -> bool {
-        x > 0
+        x >= 0
             && x < self.width() as isize
-            && y > 0
+            && y >= 0
             && y < self.height() as isize
     }
-}
 
-/// A grid that can return cells as references.
-pub trait RefGrid<T> {
-    /// Get a reference to the current value at the specified position
-    ///
-    /// # Arguments
-    ///
-    /// * `x` and `y`: position of the cell
+    /// Asserts that the specified unsigned position is in grid bounds.
     ///
     /// # Panics
     ///
-    /// When accessing `x` or `y` out of bounds.
-    fn get_ref(&self, x: usize, y: usize) -> &T;
-
-    /// Get a reference to the current value at the specified position if the position is in bounds.
-    ///
-    /// # Arguments
-    ///
-    /// * `x` and `y`: position of the cell
-    ///
-    /// returns: Reference to cell or None
-    fn get_ref_optional(&self, x: isize, y: isize) -> Option<&T>;
-
-    /// Get a mutable reference to the current value at the specified position
-    ///
-    /// # Arguments
-    ///
-    /// * `x` and `y`: position of the cell
-    ///
-    /// # Panics
-    ///
-    /// When accessing `x` or `y` out of bounds.
-    fn get_ref_mut(&mut self, x: usize, y: usize) -> &mut T;
-
-    /// Get a mutable reference to the current value at the specified position if position is in bounds.
-    ///
-    /// # Arguments
-    ///
-    /// * `x` and `y`: position of the cell
-    ///
-    /// returns: Reference to cell or None
-    fn get_ref_mut_optional(&mut self, x: isize, y: isize) -> Option<&mut T>;
+    /// When the specified position is out of bounds for this grid.
+    fn assert_in_bounds(&self, x: usize, y: usize) {
+        assert!(
+            x < self.width(),
+            "cannot access index [{x}, {y}] because x is outside of bounds 0..{}",
+            self.width()
+        );
+        assert!(
+            y < self.height(),
+            "cannot access byte [{x}, {y}] because y is outside of bounds 0..{}",
+            self.height()
+        );
+    }
 }
