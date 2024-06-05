@@ -35,13 +35,7 @@
         <Exec Command="cargo build"/>
         <Exec Command="cargo build --manifest-path ../../../crates/servicepoint_binding_c/Cargo.toml"/>
     </Target>
-
-    <!-- build native library to include in output -->
-    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Release'" BeforeTargets="PrepareForBuild">
-    </Target>
-    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Debug'" BeforeTargets="PrepareForBuild">
-    </Target>
-
+    
     <!-- include native binary in output -->
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
         <Content Include="../../../target/debug/libservicepoint_binding_c.so" CopyToOutputDirectory="Always">
