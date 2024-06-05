@@ -69,4 +69,10 @@ mod tests {
         let p = Packet::try_from(&*data).unwrap();
         assert_eq!(p, Packet(Header(0, 1, 2, 3, 4), vec![42u8; 23]));
     }
+
+    #[test]
+    fn too_small() {
+        let data = vec![0u8; 4];
+        assert_eq!(Packet::try_from(data.as_slice()), Err(()))
+    }
 }

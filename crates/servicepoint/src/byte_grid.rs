@@ -304,4 +304,16 @@ mod tests {
         assert_eq!(None, vec.get_ref_mut_optional(2, 2));
         assert_eq!(Some(&mut 5), vec.get_ref_mut_optional(0, 0));
     }
+
+    #[test]
+    fn optional() {
+        let mut grid = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        grid.set_optional(0, 0, 5);
+        grid.set_optional(-1, 0, 8);
+        grid.set_optional(0, 8, 42);
+        assert_eq!(grid.data, [5, 1, 2, 3]);
+
+        assert_eq!(grid.get_optional(0, 0), Some(5));
+        assert_eq!(grid.get_optional(0, 8), None);
+    }
 }

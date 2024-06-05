@@ -281,4 +281,12 @@ mod tests {
         }
         assert_eq!(grid.data_ref(), [0xAA, 0xAA]);
     }
+
+    #[test]
+    fn data_ref_mut() {
+        let mut grid = PixelGrid::new(8, 2);
+        let data = grid.data_ref_mut();
+        data[1] = 0x0F;
+        assert!(grid.get(7, 1));
+    }
 }
