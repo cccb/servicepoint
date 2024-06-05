@@ -1,3 +1,5 @@
+use std::slice::{Iter, IterMut};
+
 use crate::{DataRef, Grid};
 
 /// A 2D grid of bytes
@@ -9,6 +11,22 @@ pub struct ByteGrid {
 }
 
 impl ByteGrid {
+    /// Creates a new `ByteGrid` with the specified dimensions.
+    ///
+    /// # Arguments
+    ///
+    /// - width: size in x-direction
+    /// - height: size in y-direction
+    ///
+    /// returns: `ByteGrid` initialized to 0.
+    pub fn new(width: usize, height: usize) -> Self {
+        Self {
+            data: vec![0; width * height],
+            width,
+            height,
+        }
+    }
+
     /// Loads a `ByteGrid` with the specified dimensions from the provided data.
     ///
     /// returns: `ByteGrid` that contains a copy of the provided data
@@ -26,32 +44,72 @@ impl ByteGrid {
         }
     }
 
-    fn check_indexes(&self, x: usize, y: usize) {
-        assert!(
-            x < self.width,
-            "cannot access byte {x}-{y} because x is outside of bounds 0..{}",
-            self.width
-        );
-        assert!(
-            y < self.height,
-            "cannot access byte {x}-{y} because y is outside of bounds 0..{}",
-            self.height
-        );
+    /// Iterate over all cells in `ByteGrid`.
+    ///
+    /// Order is equivalent to the following loop:
+    /// ```
+    /// # use servicepoint::{ByteGrid, Grid};
+    /// # let grid = ByteGrid::new(2,2);
+    /// for y in 0..grid.height() {
+    ///     for x in 0..grid.width() {
+    ///         grid.get(x, y);
+    ///     }
+    /// }
+    /// ```
+    pub fn iter(&self) -> Iter<u8> {
+        self.data.iter()
+    }
+
+    /// Iterate over all rows in `ByteGrid` top to bottom.
+    pub fn iter_rows(&self) -> IterRows {
+        IterRows {
+            byte_grid: self,
+            row: 0,
+        }
+    }
+
+    /// Returns an iterator that allows modifying each value.
+    ///
+    /// The iterator yields all cells from top left to bottom right.
+    pub fn iter_mut(&mut self) -> IterMut<u8> {
+        self.data.iter_mut()
+    }
+
+    /// Get a mutable reference to the current value at the specified position.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
+    pub fn get_ref_mut(&mut self, x: usize, y: usize) -> &mut u8 {
+        self.assert_in_bounds(x, y);
+        &mut self.data[x + y * self.width]
+    }
+
+    /// Get a mutable reference to the current value at the specified position if position is in bounds.
+    ///
+    /// # Arguments
+    ///
+    /// * `x` and `y`: position of the cell
+    ///
+    /// returns: Reference to cell or None
+    pub fn get_ref_mut_optional(
+        &mut self,
+        x: isize,
+        y: isize,
+    ) -> Option<&mut u8> {
+        if self.is_in_bounds(x, y) {
+            Some(&mut self.data[x as usize + y as usize * self.width])
+        } else {
+            None
+        }
     }
 }
 
 impl Grid<u8> for ByteGrid {
-    /// Creates a new `ByteGrid` with the specified dimensions.
-    ///
-    /// returns: `ByteGrid` initialized to 0.
-    fn new(width: usize, height: usize) -> Self {
-        Self {
-            data: vec![0; width * height],
-            width,
-            height,
-        }
-    }
-
     /// Sets the value of the cell at the specified position in the `ByteGrid.
     ///
     /// # Arguments
@@ -59,17 +117,12 @@ impl Grid<u8> for ByteGrid {
     /// * `x` and `y`: position of the cell
     /// * `value`: the value to write to the cell
     ///
-    /// returns: old value of the cell.
-    ///
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    fn set(&mut self, x: usize, y: usize, value: u8) -> u8 {
-        self.check_indexes(x, y);
-        let pos = &mut self.data[x + y * self.width];
-        let old_val = *pos;
-        *pos = value;
-        old_val
+    fn set(&mut self, x: usize, y: usize, value: u8) {
+        self.assert_in_bounds(x, y);
+        self.data[x + y * self.width] = value;
     }
 
     /// Gets the current value at the specified position.
@@ -82,7 +135,7 @@ impl Grid<u8> for ByteGrid {
     ///
     /// When accessing `x` or `y` out of bounds.
     fn get(&self, x: usize, y: usize) -> u8 {
-        self.check_indexes(x, y);
+        self.assert_in_bounds(x, y);
         self.data[x + y * self.width]
     }
 
@@ -96,17 +149,6 @@ impl Grid<u8> for ByteGrid {
 
     fn height(&self) -> usize {
         self.height
-    }
-
-    fn window(&self, x: usize, y: usize, w: usize, h: usize) -> Self {
-        let mut win = Self::new(w, h);
-        for win_x in 0..w {
-            for win_y in 0..h {
-                let value = self.get(x + win_x, y + win_y);
-                win.set(win_x, win_y, value);
-            }
-        }
-        win
     }
 }
 
@@ -126,6 +168,27 @@ impl From<ByteGrid> for Vec<u8> {
     /// Turn into the underlying `Vec<u8>` containing the rows of bytes.
     fn from(value: ByteGrid) -> Self {
         value.data
+    }
+}
+
+pub struct IterRows<'t> {
+    byte_grid: &'t ByteGrid,
+    row: usize,
+}
+
+impl<'t> Iterator for IterRows<'t> {
+    type Item = Iter<'t, u8>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.row >= self.byte_grid.height {
+            return None;
+        }
+
+        let start = self.row * self.byte_grid.width;
+        let end = start + self.byte_grid.width;
+        let result = self.byte_grid.data[start..end].iter();
+        self.row += 1;
+        Some(result)
     }
 }
 
@@ -183,5 +246,74 @@ mod tests {
 
         assert_eq!(vec.data, [1, 2, 3, 4]);
         assert_eq!(vec.get(1, 0), 2)
+    }
+
+    #[test]
+    fn iter() {
+        let mut vec = ByteGrid::new(2, 2);
+        vec.set(1, 1, 5);
+
+        let mut iter = vec.iter();
+        assert_eq!(*iter.next().unwrap(), 0);
+        assert_eq!(*iter.next().unwrap(), 0);
+        assert_eq!(*iter.next().unwrap(), 0);
+        assert_eq!(*iter.next().unwrap(), 5);
+    }
+
+    #[test]
+    fn iter_mut() {
+        let mut vec = ByteGrid::new(2, 3);
+        for (index, cell) in vec.iter_mut().enumerate() {
+            *cell = index as u8;
+        }
+
+        assert_eq!(vec.data_ref(), [0, 1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn iter_rows() {
+        let vec = ByteGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]);
+        for (y, row) in vec.iter_rows().enumerate() {
+            for (x, val) in row.enumerate() {
+                assert_eq!(*val, (x + y) as u8);
+            }
+        }
+    }
+
+    #[test]
+    #[should_panic]
+    fn out_of_bounds_x() {
+        let mut vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        vec.set(2, 1, 5);
+    }
+
+    #[test]
+    #[should_panic]
+    fn out_of_bounds_y() {
+        let vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        vec.get(1, 2);
+    }
+
+    #[test]
+    fn ref_mut() {
+        let mut vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+
+        let top_left = vec.get_ref_mut(0, 0);
+        *top_left += 5;
+
+        assert_eq!(None, vec.get_ref_mut_optional(2, 2));
+        assert_eq!(Some(&mut 5), vec.get_ref_mut_optional(0, 0));
+    }
+
+    #[test]
+    fn optional() {
+        let mut grid = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        grid.set_optional(0, 0, 5);
+        grid.set_optional(-1, 0, 8);
+        grid.set_optional(0, 8, 42);
+        assert_eq!(grid.data, [5, 1, 2, 3]);
+
+        assert_eq!(grid.get_optional(0, 0), Some(5));
+        assert_eq!(grid.get_optional(0, 8), None);
     }
 }

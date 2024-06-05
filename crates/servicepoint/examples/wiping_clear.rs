@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use servicepoint::*;
+use servicepoint::{bitvec::prelude::BitVec, *};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -34,7 +34,7 @@ fn main() {
 
         // this works because the pixel grid has max size
         let pixel_data: Vec<u8> = enabled_pixels.clone().into();
-        let bit_vec = BitVec::from(&*pixel_data);
+        let bit_vec = BitVec::from_vec(pixel_data);
 
         connection
             .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma))

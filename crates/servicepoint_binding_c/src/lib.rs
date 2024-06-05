@@ -22,4 +22,4 @@ pub mod pixel_grid;
 /// The minimum time needed for the display to refresh the screen in ms.
 pub const FRAME_PACING_MS: u32 = servicepoint::FRAME_PACING.as_millis() as u32;
 
-mod c_slice;
+pub mod c_slice;

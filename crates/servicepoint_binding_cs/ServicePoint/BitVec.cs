@@ -2,7 +2,7 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
+public sealed class BitVec : SpNativeInstance<BindGen.CBitVec>
 {
     public static BitVec New(int size)
     {
@@ -80,7 +80,7 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
         }
     }
 
-    private unsafe BitVec(BindGen.BitVec* instance) : base(instance)
+    private unsafe BitVec(BindGen.CBitVec* instance) : base(instance)
     {
     }
 

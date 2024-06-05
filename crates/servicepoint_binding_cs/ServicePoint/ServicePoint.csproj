@@ -27,21 +27,15 @@
     </PropertyGroup>
 
     <!-- generate C# bindings -->
-    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
+    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Release'" BeforeTargets="PrepareForBuild">
         <Exec Command="cargo build --release"/>
+        <Exec Command="cargo build --manifest-path ../../../crates/servicepoint_binding_c/Cargo.toml --release"/>
     </Target>
-    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
+    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Debug'" BeforeTargets="PrepareForBuild">
         <Exec Command="cargo build"/>
+        <Exec Command="cargo build --manifest-path ../../../crates/servicepoint_binding_c/Cargo.toml"/>
     </Target>
-
-    <!-- build native library to include in output -->
-    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Release'" BeforeTargets="Build">
-        <Exec Command="cargo build --manifest-path ../../../crates/servicepoint/Cargo.toml --release"/>
-    </Target>
-    <Target Name="BuildLibrary" Condition="'$(Configuration)'=='Debug'" BeforeTargets="Build">
-        <Exec Command="cargo build --manifest-path ../../../crates/servicepoint/Cargo.toml"/>
-    </Target>
-
+    
     <!-- include native binary in output -->
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
         <Content Include="../../../target/debug/libservicepoint_binding_c.so" CopyToOutputDirectory="Always">

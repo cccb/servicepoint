@@ -1,14 +1,39 @@
-use crate::{BitVec, DataRef, Grid, PIXEL_HEIGHT, PIXEL_WIDTH};
+use bitvec::order::Msb0;
+use bitvec::prelude::BitSlice;
+use bitvec::slice::IterMut;
+
+use crate::{BitVec, DataRef, Grid, SpBitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
 
 /// A grid of pixels stored in packed bytes.
 #[derive(Debug, Clone, PartialEq)]
 pub struct PixelGrid {
     width: usize,
     height: usize,
-    bit_vec: BitVec,
+    bit_vec: SpBitVec,
 }
 
 impl PixelGrid {
+    /// Creates a new `PixelGrid` with the specified dimensions.
+    ///
+    /// # Arguments
+    ///
+    /// * `width`: size in pixels in x-direction
+    /// * `height`: size in pixels in y-direction
+    ///
+    /// returns: `PixelGrid` initialized to all pixels off
+    ///
+    /// # Panics
+    ///
+    /// - when the width is not dividable by 8
+    pub fn new(width: usize, height: usize) -> Self {
+        assert_eq!(width % 8, 0);
+        Self {
+            width,
+            height,
+            bit_vec: BitVec::repeat(false, width * height),
+        }
+    }
+
     /// Creates a new pixel grid with the size of the whole screen.
     #[must_use]
     pub fn max_sized() -> Self {
@@ -35,46 +60,63 @@ impl PixelGrid {
         Self {
             width,
             height,
-            bit_vec: BitVec::from(data),
+            bit_vec: BitVec::from_slice(data),
         }
     }
 
-    fn check_indexes(&self, x: usize, y: usize) {
-        assert!(
-            x < self.width,
-            "cannot access pixel {x}-{y} because x is outside of bounds 0..{}",
-            self.width
-        );
-        assert!(
-            y < self.height,
-            "cannot access pixel {x}-{y} because y is outside of bounds 0..{}",
-            self.height
-        );
+    /// Iterate over all cells in `PixelGrid`.
+    ///
+    /// Order is equivalent to the following loop:
+    /// ```
+    /// # use servicepoint::{PixelGrid, Grid};
+    /// # let grid = PixelGrid::new(8,2);
+    /// for y in 0..grid.height() {
+    ///     for x in 0..grid.width() {
+    ///         grid.get(x, y);
+    ///     }
+    /// }
+    /// ```
+    pub fn iter(&self) -> impl Iterator<Item = &bool> {
+        self.bit_vec.iter().by_refs()
+    }
+
+    /// Iterate over all cells in `PixelGrid` mutably.
+    ///
+    /// Order is equivalent to the following loop:
+    /// ```
+    /// # use servicepoint::{PixelGrid, Grid};
+    /// # let mut grid = PixelGrid::new(8,2);
+    /// # let value = false;
+    /// for y in 0..grid.height() {
+    ///     for x in 0..grid.width() {
+    ///         grid.set(x, y, value);
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// # Example
+    /// ```
+    /// # use servicepoint::{PixelGrid, Grid};
+    /// # let mut grid = PixelGrid::new(8,2);
+    /// # let value = false;
+    /// for (index, mut pixel) in grid.iter_mut().enumerate() {
+    ///     pixel.set(index % 2 == 0)
+    /// }
+    /// ```
+    pub fn iter_mut(&mut self) -> IterMut<u8, Msb0> {
+        self.bit_vec.iter_mut()
+    }
+
+    /// Iterate over all rows in `PixelGrid` top to bottom.
+    pub fn iter_rows(&self) -> IterRows {
+        IterRows {
+            pixel_grid: self,
+            row: 0,
+        }
     }
 }
 
 impl Grid<bool> for PixelGrid {
-    /// Creates a new `PixelGrid` with the specified dimensions.
-    ///
-    /// # Arguments
-    ///
-    /// * `width`: size in pixels in x-direction
-    /// * `height`: size in pixels in y-direction
-    ///
-    /// returns: `PixelGrid` initialized to all pixels off
-    ///
-    /// # Panics
-    ///
-    /// - when the width is not dividable by 8
-    fn new(width: usize, height: usize) -> Self {
-        assert_eq!(width % 8, 0);
-        Self {
-            width,
-            height,
-            bit_vec: BitVec::new(width * height),
-        }
-    }
-
     /// Sets the value of the specified position in the `PixelGrid`.
     ///
     /// # Arguments
@@ -87,22 +129,14 @@ impl Grid<bool> for PixelGrid {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    fn set(&mut self, x: usize, y: usize, value: bool) -> bool {
-        self.check_indexes(x, y);
+    fn set(&mut self, x: usize, y: usize, value: bool) {
+        self.assert_in_bounds(x, y);
         self.bit_vec.set(x + y * self.width, value)
     }
 
-    /// Gets the current value at the specified position.
-    ///
-    /// # Arguments
-    ///
-    /// * `x` and `y`: position of the cell to read
-    ///
-    /// # Panics
-    ///
-    /// When accessing `x` or `y` out of bounds.
     fn get(&self, x: usize, y: usize) -> bool {
-        self.bit_vec.get(x + y * self.width)
+        self.assert_in_bounds(x, y);
+        self.bit_vec[x + y * self.width]
     }
 
     /// Sets the state of all pixels in the `PixelGrid`.
@@ -122,28 +156,15 @@ impl Grid<bool> for PixelGrid {
     fn height(&self) -> usize {
         self.height
     }
-
-    fn window(&self, x: usize, y: usize, w: usize, h: usize) -> Self {
-        // TODO: how to deduplicate?
-        // this cannot be moved into the trait because there, Self is not Sized
-        let mut win = Self::new(w, h);
-        for win_x in 0..w {
-            for win_y in 0..h {
-                let value = self.get(x + win_x, y + win_y);
-                win.set(win_x, win_y, value);
-            }
-        }
-        win
-    }
 }
 
 impl DataRef for PixelGrid {
     fn data_ref_mut(&mut self) -> &mut [u8] {
-        self.bit_vec.data_ref_mut()
+        self.bit_vec.as_raw_mut_slice()
     }
 
     fn data_ref(&self) -> &[u8] {
-        self.bit_vec.data_ref()
+        self.bit_vec.as_raw_slice()
     }
 }
 
@@ -151,6 +172,26 @@ impl From<PixelGrid> for Vec<u8> {
     /// Turns a `PixelGrid` into the underlying `Vec<u8>`.
     fn from(value: PixelGrid) -> Self {
         value.bit_vec.into()
+    }
+}
+
+pub struct IterRows<'t> {
+    pixel_grid: &'t PixelGrid,
+    row: usize,
+}
+
+impl<'t> Iterator for IterRows<'t> {
+    type Item = &'t BitSlice<u8, Msb0>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.row >= self.pixel_grid.height {
+            return None;
+        }
+
+        let start = self.row * self.pixel_grid.width;
+        let end = start + self.pixel_grid.width;
+        self.row += 1;
+        Some(&self.pixel_grid.bit_vec[start..end])
     }
 }
 
@@ -200,5 +241,52 @@ mod tests {
 
         let grid = PixelGrid::load(8, 3, &data);
         assert_eq!(grid.data_ref(), [0xAA, 0x55, 0xAA]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn out_of_bounds_x() {
+        let vec = PixelGrid::new(8, 2);
+        vec.get(8, 1);
+    }
+
+    #[test]
+    #[should_panic]
+    fn out_of_bounds_y() {
+        let mut vec = PixelGrid::new(8, 2);
+        vec.set(1, 2, false);
+    }
+
+    #[test]
+    fn iter() {
+        let grid = PixelGrid::new(8, 2);
+        assert_eq!(16, grid.iter().count())
+    }
+
+    #[test]
+    fn iter_rows() {
+        let grid = PixelGrid::load(8, 2, &[0x04, 0x40]);
+        let mut iter = grid.iter_rows();
+
+        assert_eq!(iter.next().unwrap().count_ones(), 1);
+        assert_eq!(iter.next().unwrap().count_ones(), 1);
+        assert_eq!(None, iter.next());
+    }
+
+    #[test]
+    fn iter_mut() {
+        let mut grid = PixelGrid::new(8, 2);
+        for (index, mut pixel) in grid.iter_mut().enumerate() {
+            pixel.set(index % 2 == 0);
+        }
+        assert_eq!(grid.data_ref(), [0xAA, 0xAA]);
+    }
+
+    #[test]
+    fn data_ref_mut() {
+        let mut grid = PixelGrid::new(8, 2);
+        let data = grid.data_ref_mut();
+        data[1] = 0x0F;
+        assert!(grid.get(7, 1));
     }
 }
