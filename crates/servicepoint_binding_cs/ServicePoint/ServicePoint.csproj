@@ -12,7 +12,7 @@
 
     <PropertyGroup>
         <PackageId>ServicePoint</PackageId>
-        <Version>0.5.1</Version>
+        <Version>0.6.0</Version>
         <Authors>Repository Authors</Authors>
         <Company>None</Company>
         <Product>ServicePoint</Product>
