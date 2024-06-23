@@ -16,9 +16,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build crates
+
+    - name: build default features
       run: cargo build --all --verbose
-    - name: Build
+    - name: build default features -- examples
       run: cargo build --examples --verbose
-    - name: Run tests
+    - name: test default features
       run: cargo test --all --verbose
+
+    - name: build all features
+      run: cargo build --all-features --verbose
+    - name: build all features -- examples
+      run: cargo build --all-features --examples --verbose
+    - name: test all features
+      run: cargo test --all --all-features --verbose
