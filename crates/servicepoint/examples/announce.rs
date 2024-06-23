@@ -22,9 +22,11 @@ fn main() {
         cli.text.push("Hello, CCCB!".to_string());
     }
 
-    let connection = Connection::open(&cli.destination).unwrap();
+    let connection = Connection::open(&cli.destination)
+        .expect("could not connect to display");
+
     if cli.clear {
-        connection.send(Command::Clear).unwrap();
+        connection.send(Command::Clear).expect("sending clear failed");
     }
 
     let max_width = cli.text.iter().map(|t| t.len()).max().unwrap();
@@ -41,5 +43,5 @@ fn main() {
 
     connection
         .send(Command::Cp437Data(Origin(0, 0), chars))
-        .unwrap();
+        .expect("sending text failed");
 }

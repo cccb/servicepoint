@@ -13,7 +13,8 @@ struct Cli {
 }
 
 fn main() {
-    let connection = Connection::open(Cli::parse().destination).unwrap();
+    let connection = Connection::open(Cli::parse().destination)
+        .expect("could not connect to display");
 
     let mut pixels = PixelGrid::max_sized();
     for x_offset in 0..usize::MAX {

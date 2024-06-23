@@ -18,7 +18,8 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = Connection::open(&cli.destination).unwrap();
+    let connection = Connection::open(&cli.destination)
+        .expect("could not connect to display");
     let mut field = make_random_field(cli.probability);
 
     loop {

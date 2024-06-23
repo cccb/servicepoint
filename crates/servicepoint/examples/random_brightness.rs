@@ -22,7 +22,8 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = Connection::open(cli.destination).unwrap();
+    let connection = Connection::open(cli.destination)
+        .expect("could not connect to display");
     let wait_duration = Duration::from_millis(cli.wait_ms);
 
     // put all pixels in on state
