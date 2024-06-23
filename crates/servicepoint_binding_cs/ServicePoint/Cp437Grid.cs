@@ -3,33 +3,33 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
+public sealed class Cp437Grid : SpNativeInstance<BindGen.CCp437Grid>
 {
-    public static ByteGrid New(int width, int height)
+    public static Cp437Grid New(int width, int height)
     {
         unsafe
         {
-            return new ByteGrid(NativeMethods.sp_byte_grid_new((nuint)width, (nuint)height));
+            return new Cp437Grid(NativeMethods.sp_cp437_grid_new((nuint)width, (nuint)height));
         }
     }
 
-    public static ByteGrid Load(int width, int height, Span<byte> bytes)
+    public static Cp437Grid Load(int width, int height, Span<byte> bytes)
     {
         unsafe
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new ByteGrid(NativeMethods.sp_byte_grid_load((nuint)width, (nuint)height, bytesPtr,
+                return new Cp437Grid(NativeMethods.sp_cp437_grid_load((nuint)width, (nuint)height, bytesPtr,
                     (nuint)bytes.Length));
             }
         }
     }
 
-    public ByteGrid Clone()
+    public Cp437Grid Clone()
     {
         unsafe
         {
-            return new ByteGrid(NativeMethods.sp_byte_grid_clone(Instance));
+            return new Cp437Grid(NativeMethods.sp_cp437_grid_clone(Instance));
         }
     }
 
@@ -39,14 +39,14 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             unsafe
             {
-                return NativeMethods.sp_byte_grid_get(Instance, (nuint)x, (nuint)y);
+                return NativeMethods.sp_cp437_grid_get(Instance, (nuint)x, (nuint)y);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp_byte_grid_set(Instance, (nuint)x, (nuint)y, value);
+                NativeMethods.sp_cp437_grid_set(Instance, (nuint)x, (nuint)y, value);
             }
         }
     }
@@ -85,7 +85,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
     {
         unsafe
         {
-            NativeMethods.sp_byte_grid_fill(Instance, value);
+            NativeMethods.sp_cp437_grid_fill(Instance, value);
         }
     }
 
@@ -95,7 +95,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             unsafe
             {
-                return (int)NativeMethods.sp_byte_grid_width(Instance);
+                return (int)NativeMethods.sp_cp437_grid_width(Instance);
             }
         }
     }
@@ -106,7 +106,7 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             unsafe
             {
-                return (int)NativeMethods.sp_byte_grid_height(Instance);
+                return (int)NativeMethods.sp_cp437_grid_height(Instance);
             }
         }
     }
@@ -117,18 +117,18 @@ public sealed class ByteGrid : SpNativeInstance<BindGen.ByteGrid>
         {
             unsafe
             {
-                var slice = NativeMethods.sp_byte_grid_unsafe_data_ref(Instance);
+                var slice = NativeMethods.sp_cp437_grid_unsafe_data_ref(Instance);
                 return new Span<byte>(slice.start, (int)slice.length);
             }
         }
     }
 
-    private unsafe ByteGrid(BindGen.ByteGrid* instance) : base(instance)
+    private unsafe Cp437Grid(BindGen.CCp437Grid* instance) : base(instance)
     {
     }
 
     private protected override unsafe void Dealloc()
     {
-        NativeMethods.sp_byte_grid_dealloc(Instance);
+        NativeMethods.sp_cp437_grid_dealloc(Instance);
     }
 }

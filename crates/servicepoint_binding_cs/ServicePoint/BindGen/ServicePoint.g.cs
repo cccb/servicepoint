@@ -167,7 +167,7 @@ namespace ServicePoint.BindGen
 
         /// <summary>Allocates a new `Command::CharBrightness` instance. The passed `ByteGrid` gets consumed.  # Safety  The caller has to make sure that:  - `byte_grid` points to a valid instance of `ByteGrid` - `byte_grid` is not used concurrently or after this call - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* byte_grid);
+        public static extern Command* sp_command_char_brightness(nuint x, nuint y, CBrightnessGrid* byte_grid);
 
         /// <summary>Allocates a new `Command::BitmapLinear` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -187,7 +187,7 @@ namespace ServicePoint.BindGen
 
         /// <summary>Allocates a new `Command::Cp437Data` instance. The passed `ByteGrid` gets consumed.  # Safety  The caller has to make sure that:  - `byte_grid` points to a valid instance of `ByteGrid` - `byte_grid` is not used concurrently or after this call - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_cp437_data(nuint x, nuint y, PrimitiveGrid* byte_grid);
+        public static extern Command* sp_command_cp437_data(nuint x, nuint y, CCp437Grid* byte_grid);
 
         /// <summary>Allocates a new `Command::BitmapLinearWin` instance. The passed `PixelGrid` gets consumed.  # Safety  The caller has to make sure that:  - `pixel_grid` points to a valid instance of `PixelGrid` - `pixel_grid` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -286,11 +286,6 @@ namespace ServicePoint.BindGen
     {
         public byte* start;
         public nuint length;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct PrimitiveGrid
-    {
     }
 
     [StructLayout(LayoutKind.Sequential)]
