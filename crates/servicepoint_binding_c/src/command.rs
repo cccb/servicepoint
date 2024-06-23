@@ -5,11 +5,13 @@
 use std::ptr::null_mut;
 
 use servicepoint::{
-    Brightness, BrightnessGrid, Command, CompressionCode, Cp473Grid, Offset,
+    Brightness, Command, CompressionCode, Offset,
     Origin, Packet, PixelGrid,
 };
 
 use crate::bit_vec::CBitVec;
+use crate::brightness_grid::CBrightnessGrid;
+use crate::cp437_grid::CCp437Grid;
 
 /// Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
 ///
@@ -126,12 +128,12 @@ pub unsafe extern "C" fn sp_command_brightness(brightness: u8) -> *mut Command {
 pub unsafe extern "C" fn sp_command_char_brightness(
     x: usize,
     y: usize,
-    byte_grid: *mut BrightnessGrid,
+    byte_grid: *mut CBrightnessGrid,
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(byte_grid);
     Box::into_raw(Box::new(Command::CharBrightness(
         Origin::new(x, y),
-        byte_grid,
+        byte_grid.0,
     )))
 }
 
@@ -254,10 +256,10 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 pub unsafe extern "C" fn sp_command_cp437_data(
     x: usize,
     y: usize,
-    byte_grid: *mut Cp473Grid,
+    byte_grid: *mut CCp437Grid,
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(byte_grid);
-    Box::into_raw(Box::new(Command::Cp437Data(Origin::new(x, y), byte_grid)))
+    Box::into_raw(Box::new(Command::Cp437Data(Origin::new(x, y), byte_grid.0)))
 }
 
 /// Allocates a new `Command::BitmapLinearWin` instance.

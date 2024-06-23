@@ -6,7 +6,7 @@ pub use bitvec;
 use bitvec::prelude::{BitVec, Msb0};
 
 pub use crate::brightness::{Brightness, BrightnessGrid};
-pub use crate::command::{Command, Cp473Grid, Offset};
+pub use crate::command::{Command, Cp437Grid, Offset};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
 pub use crate::data_ref::DataRef;

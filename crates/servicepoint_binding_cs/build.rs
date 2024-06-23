@@ -5,7 +5,8 @@ fn main() {
     println!("cargo::rerun-if-changed=build.rs");
     csbindgen::Builder::default()
         .input_extern_file("../servicepoint_binding_c/src/bit_vec.rs")
-        .input_extern_file("../servicepoint_binding_c/src/byte_grid.rs")
+        .input_extern_file("../servicepoint_binding_c/src/brightness_grid.rs")
+        .input_extern_file("../servicepoint_binding_c/src/cp437_grid.rs")
         .input_extern_file("../servicepoint_binding_c/src/command.rs")
         .input_extern_file("../servicepoint_binding_c/src/connection.rs")
         .input_extern_file("../servicepoint_binding_c/src/pixel_grid.rs")

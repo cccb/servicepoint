@@ -13,7 +13,7 @@ pub type Offset = usize;
 /// A grid containing codepage 437 characters.
 ///
 /// The encoding is currently not enforced.
-pub type Cp473Grid = PrimitiveGrid<u8>;
+pub type Cp437Grid = PrimitiveGrid<u8>;
 
 /// A command to send to the display.
 #[derive(Debug, Clone, PartialEq)]
@@ -27,7 +27,7 @@ pub enum Command {
     ///     The library does not currently convert between UTF-8 and CP-437.
     ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
     /// </div>
-    Cp437Data(Origin<Tiles>, Cp473Grid),
+    Cp437Data(Origin<Tiles>, Cp437Grid),
 
     /// Sets a window of pixels to the specified values
     BitmapLinearWin(Origin<Pixels>, PixelGrid, CompressionCode),
@@ -276,7 +276,7 @@ impl TryFrom<Packet> for Command {
                 let Packet(_, payload) = packet;
                 Ok(Command::Cp437Data(
                     Origin::new(a as usize, b as usize),
-                    Cp473Grid::load(c as usize, d as usize, &payload),
+                    Cp437Grid::load(c as usize, d as usize, &payload),
                 ))
             }
             CommandCode::CharBrightness => {
