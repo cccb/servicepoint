@@ -2,7 +2,7 @@
 
 use clap::Parser;
 
-use servicepoint::{ByteGrid, Command, Connection, Grid, Origin};
+use servicepoint::{Command, Connection, Cp473Grid, Grid, Origin};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -33,7 +33,7 @@ fn main() {
 
     let max_width = cli.text.iter().map(|t| t.len()).max().unwrap();
 
-    let mut chars = ByteGrid::new(max_width, cli.text.len());
+    let mut chars = Cp473Grid::new(max_width, cli.text.len());
     for y in 0..cli.text.len() {
         let row = &cli.text[y];
 

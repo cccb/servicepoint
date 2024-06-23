@@ -12,7 +12,7 @@ fn main() {
         .input_extern_file("../servicepoint_binding_c/src/lib.rs")
         .input_extern_file("../servicepoint_binding_c/src/c_slice.rs")
         .input_extern_file("../servicepoint_binding_c/src/packet.rs")
-        .input_extern_file("../servicepoint/src/byte_grid.rs")
+        .input_extern_file("../servicepoint/src/primitive_grid.rs")
         .input_extern_file("../servicepoint/src/command.rs")
         .input_extern_file("../servicepoint/src/connection.rs")
         .input_extern_file("../servicepoint/src/pixel_grid.rs")

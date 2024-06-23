@@ -3,12 +3,17 @@ use bitvec::prelude::BitVec;
 use crate::{
     command_code::CommandCode,
     compression::{into_compressed, into_decompressed},
-    Brightness, ByteGrid, CompressionCode, Grid, Header, Origin, Packet,
-    PixelGrid, Pixels, SpBitVec, Tiles, TILE_SIZE,
+    Brightness, BrightnessGrid, CompressionCode, Grid, Header, Origin, Packet,
+    PixelGrid, Pixels, PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
 };
 
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Offset = usize;
+
+/// A grid containing codepage 437 characters.
+///
+/// The encoding is currently not enforced.
+pub type Cp473Grid = PrimitiveGrid<u8>;
 
 /// A command to send to the display.
 #[derive(Debug, Clone, PartialEq)]
@@ -22,7 +27,7 @@ pub enum Command {
     ///     The library does not currently convert between UTF-8 and CP-437.
     ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
     /// </div>
-    Cp437Data(Origin<Tiles>, ByteGrid),
+    Cp437Data(Origin<Tiles>, Cp473Grid),
 
     /// Sets a window of pixels to the specified values
     BitmapLinearWin(Origin<Pixels>, PixelGrid, CompressionCode),
@@ -31,7 +36,7 @@ pub enum Command {
     Brightness(Brightness),
 
     /// Set the brightness of individual tiles in a rectangular area of the display.
-    CharBrightness(Origin<Tiles>, ByteGrid),
+    CharBrightness(Origin<Tiles>, BrightnessGrid),
 
     /// Set pixel data starting at the pixel offset on screen.
     ///
@@ -271,14 +276,24 @@ impl TryFrom<Packet> for Command {
                 let Packet(_, payload) = packet;
                 Ok(Command::Cp437Data(
                     Origin::new(a as usize, b as usize),
-                    ByteGrid::load(c as usize, d as usize, &payload),
+                    Cp473Grid::load(c as usize, d as usize, &payload),
                 ))
             }
             CommandCode::CharBrightness => {
                 let Packet(_, payload) = packet;
+
+                let grid =
+                    PrimitiveGrid::load(c as usize, d as usize, &payload);
+                let grid = match BrightnessGrid::try_from(grid) {
+                    Ok(grid) => grid,
+                    Err(val) => {
+                        return Err(TryFromPacketError::InvalidBrightness(val))
+                    }
+                };
+
                 Ok(Command::CharBrightness(
                     Origin::new(a as usize, b as usize),
-                    ByteGrid::load(c as usize, d as usize, &payload),
+                    grid,
                 ))
             }
             #[allow(deprecated)]
@@ -424,8 +439,8 @@ impl Command {
 mod tests {
     use crate::{
         bitvec::prelude::BitVec, command::TryFromPacketError,
-        command_code::CommandCode, origin::Pixels, Brightness, ByteGrid,
-        Command, CompressionCode, Header, Origin, Packet, PixelGrid,
+        command_code::CommandCode, origin::Pixels, Brightness, Command,
+        CompressionCode, Header, Origin, Packet, PixelGrid, PrimitiveGrid,
     };
 
     fn round_trip(original: Command) {
@@ -481,13 +496,16 @@ mod tests {
     fn round_trip_char_brightness() {
         round_trip(Command::CharBrightness(
             Origin::new(5, 2),
-            ByteGrid::new(7, 5),
+            PrimitiveGrid::new(7, 5),
         ));
     }
 
     #[test]
     fn round_trip_cp437_data() {
-        round_trip(Command::Cp437Data(Origin::new(5, 2), ByteGrid::new(7, 5)));
+        round_trip(Command::Cp437Data(
+            Origin::new(5, 2),
+            PrimitiveGrid::new(7, 5),
+        ));
     }
 
     #[test]

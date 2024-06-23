@@ -2,9 +2,11 @@
 //!
 //! prefix `sp_byte_grid_`
 
-use servicepoint::{ByteGrid, DataRef, Grid};
+use servicepoint::{DataRef, Grid, PrimitiveGrid};
 
 use crate::c_slice::CByteSlice;
+
+pub type ByteGrid = PrimitiveGrid<u8>;
 
 /// Creates a new `ByteGrid` with the specified dimensions.
 ///

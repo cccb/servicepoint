@@ -158,7 +158,7 @@ impl Grid<bool> for PixelGrid {
     }
 }
 
-impl DataRef for PixelGrid {
+impl DataRef<u8> for PixelGrid {
     fn data_ref_mut(&mut self) -> &mut [u8] {
         self.bit_vec.as_raw_mut_slice()
     }

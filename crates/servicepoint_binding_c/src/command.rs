@@ -5,8 +5,8 @@
 use std::ptr::null_mut;
 
 use servicepoint::{
-    Brightness, ByteGrid, Command, CompressionCode, Offset, Origin, Packet,
-    PixelGrid,
+    Brightness, BrightnessGrid, Command, CompressionCode, Cp473Grid, Offset,
+    Origin, Packet, PixelGrid,
 };
 
 use crate::bit_vec::CBitVec;
@@ -126,7 +126,7 @@ pub unsafe extern "C" fn sp_command_brightness(brightness: u8) -> *mut Command {
 pub unsafe extern "C" fn sp_command_char_brightness(
     x: usize,
     y: usize,
-    byte_grid: *mut ByteGrid,
+    byte_grid: *mut BrightnessGrid,
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(byte_grid);
     Box::into_raw(Box::new(Command::CharBrightness(
@@ -254,7 +254,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 pub unsafe extern "C" fn sp_command_cp437_data(
     x: usize,
     y: usize,
-    byte_grid: *mut ByteGrid,
+    byte_grid: *mut Cp473Grid,
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(byte_grid);
     Box::into_raw(Box::new(Command::Cp437Data(Origin::new(x, y), byte_grid)))

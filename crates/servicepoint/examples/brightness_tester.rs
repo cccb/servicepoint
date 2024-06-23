@@ -27,9 +27,10 @@ fn main() {
         ))
         .expect("send failed");
 
-    let mut brightnesses = ByteGrid::new(TILE_WIDTH, TILE_HEIGHT);
+    let max_brightness = usize::from(u8::from(Brightness::MAX));
+    let mut brightnesses = BrightnessGrid::new(TILE_WIDTH, TILE_HEIGHT);
     for (index, byte) in brightnesses.data_ref_mut().iter_mut().enumerate() {
-        *byte = (index % u8::MAX as usize) as u8;
+        *byte = Brightness::try_from((index % max_brightness) as u8).unwrap();
     }
 
     connection

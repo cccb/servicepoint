@@ -63,43 +63,43 @@ namespace ServicePoint.BindGen
 
         /// <summary>Creates a new `ByteGrid` with the specified dimensions.  returns: `ByteGrid` initialized to 0.  # Safety  The caller has to make sure that:  - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_byte_grid_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteGrid* sp_byte_grid_new(nuint width, nuint height);
+        public static extern PrimitiveGrid* sp_byte_grid_new(nuint width, nuint height);
 
         /// <summary>Loads a `ByteGrid` with the specified dimensions from the provided data.  # Panics  When the provided `data_length` is not sufficient for the `height` and `width`  # Safety  The caller has to make sure that:  - `data` points to a valid memory location of at least `data_length` bytes in size. - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_byte_grid_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteGrid* sp_byte_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        public static extern PrimitiveGrid* sp_byte_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>Clones a `ByteGrid`.  # Safety  The caller has to make sure that:  - `this` points to a valid `ByteGrid` - `this` is not written to concurrently - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_byte_grid_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteGrid* sp_byte_grid_clone(ByteGrid* @this);
+        public static extern PrimitiveGrid* sp_byte_grid_clone(PrimitiveGrid* @this);
 
         /// <summary>Deallocates a `ByteGrid`.  # Safety  The caller has to make sure that:  - `this` points to a valid `ByteGrid` - `this` is not used concurrently or after this call - `this` was not passed to another consuming function, e.g. to create a `Command`</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_byte_grid_dealloc(ByteGrid* @this);
+        public static extern void sp_byte_grid_dealloc(PrimitiveGrid* @this);
 
         /// <summary>Gets the current value at the specified position.  # Arguments  * `this`: instance to read from * `x` and `y`: position of the cell to read  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `ByteGrid` - `this` is not written to concurrently</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_byte_grid_get(ByteGrid* @this, nuint x, nuint y);
+        public static extern byte sp_byte_grid_get(PrimitiveGrid* @this, nuint x, nuint y);
 
         /// <summary>Sets the value of the specified position in the `ByteGrid`.  # Arguments  * `this`: instance to write to * `x` and `y`: position of the cell * `value`: the value to write to the cell  returns: old value of the cell  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_byte_grid_set(ByteGrid* @this, nuint x, nuint y, byte value);
+        public static extern void sp_byte_grid_set(PrimitiveGrid* @this, nuint x, nuint y, byte value);
 
         /// <summary>Sets the value of all cells in the `ByteGrid`.  # Arguments  * `this`: instance to write to * `value`: the value to set all cells to  # Safety  The caller has to make sure that:  - `this` points to a valid `ByteGrid` - `this` is not written to or read from concurrently</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_byte_grid_fill(ByteGrid* @this, byte value);
+        public static extern void sp_byte_grid_fill(PrimitiveGrid* @this, byte value);
 
         /// <summary>Gets the width of the `ByteGrid` instance.  # Arguments  * `this`: instance to read from  # Safety  The caller has to make sure that:  - `this` points to a valid `ByteGrid`</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_byte_grid_width(ByteGrid* @this);
+        public static extern nuint sp_byte_grid_width(PrimitiveGrid* @this);
 
         /// <summary>Gets the height of the `ByteGrid` instance.  # Arguments  * `this`: instance to read from  # Safety  The caller has to make sure that:  - `this` points to a valid `ByteGrid`</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_byte_grid_height(ByteGrid* @this);
+        public static extern nuint sp_byte_grid_height(PrimitiveGrid* @this);
 
         /// <summary>Gets an unsafe reference to the data of the `ByteGrid` instance.  ## Safety  The caller has to make sure that:  - `this` points to a valid `ByteGrid` - the returned memory range is never accessed after the passed `ByteGrid` has been freed - the returned memory range is never accessed concurrently, either via the `ByteGrid` or directly</summary>
         [DllImport(__DllName, EntryPoint = "sp_byte_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_byte_grid_unsafe_data_ref(ByteGrid* @this);
+        public static extern CByteSlice sp_byte_grid_unsafe_data_ref(PrimitiveGrid* @this);
 
         /// <summary>Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.  Returns: pointer to new `Command` instance or NULL  # Safety  The caller has to make sure that:  - `packet` points to a valid instance of `Packet` - `packet` is not used concurrently or after this call - the result is checked for NULL - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -127,7 +127,7 @@ namespace ServicePoint.BindGen
 
         /// <summary>Allocates a new `Command::CharBrightness` instance. The passed `ByteGrid` gets consumed.  # Safety  The caller has to make sure that:  - `byte_grid` points to a valid instance of `ByteGrid` - `byte_grid` is not used concurrently or after this call - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_char_brightness(nuint x, nuint y, ByteGrid* byte_grid);
+        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* byte_grid);
 
         /// <summary>Allocates a new `Command::BitmapLinear` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -147,7 +147,7 @@ namespace ServicePoint.BindGen
 
         /// <summary>Allocates a new `Command::Cp437Data` instance. The passed `ByteGrid` gets consumed.  # Safety  The caller has to make sure that:  - `byte_grid` points to a valid instance of `ByteGrid` - `byte_grid` is not used concurrently or after this call - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_cp437_data(nuint x, nuint y, ByteGrid* byte_grid);
+        public static extern Command* sp_command_cp437_data(nuint x, nuint y, PrimitiveGrid* byte_grid);
 
         /// <summary>Allocates a new `Command::BitmapLinearWin` instance. The passed `PixelGrid` gets consumed.  # Safety  The caller has to make sure that:  - `pixel_grid` points to a valid instance of `PixelGrid` - `pixel_grid` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -239,7 +239,7 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct ByteGrid
+    public unsafe partial struct PrimitiveGrid
     {
     }
 

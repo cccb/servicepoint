@@ -2,26 +2,29 @@ use std::slice::{Iter, IterMut};
 
 use crate::{DataRef, Grid};
 
+pub trait PrimitiveGridType: Sized + Default + Copy + Clone {}
+impl<T: Sized + Default + Copy + Clone> PrimitiveGridType for T {}
+
 /// A 2D grid of bytes
 #[derive(Debug, Clone, PartialEq)]
-pub struct ByteGrid {
+pub struct PrimitiveGrid<T: PrimitiveGridType> {
     width: usize,
     height: usize,
-    data: Vec<u8>,
+    data: Vec<T>,
 }
 
-impl ByteGrid {
-    /// Creates a new `ByteGrid` with the specified dimensions.
+impl<T: PrimitiveGridType> PrimitiveGrid<T> {
+    /// Creates a new `PrimitiveGrid` with the specified dimensions.
     ///
     /// # Arguments
     ///
     /// - width: size in x-direction
     /// - height: size in y-direction
     ///
-    /// returns: `ByteGrid` initialized to 0.
+    /// returns: `ByteGrid` initialized to default value.
     pub fn new(width: usize, height: usize) -> Self {
         Self {
-            data: vec![0; width * height],
+            data: vec![Default::default(); width * height],
             width,
             height,
         }
@@ -35,7 +38,7 @@ impl ByteGrid {
     ///
     /// - when the dimensions and data size do not match exactly.
     #[must_use]
-    pub fn load(width: usize, height: usize, data: &[u8]) -> Self {
+    pub fn load(width: usize, height: usize, data: &[T]) -> Self {
         assert_eq!(width * height, data.len());
         Self {
             data: Vec::from(data),
@@ -48,20 +51,20 @@ impl ByteGrid {
     ///
     /// Order is equivalent to the following loop:
     /// ```
-    /// # use servicepoint::{ByteGrid, Grid};
-    /// # let grid = ByteGrid::new(2,2);
+    /// # use servicepoint::{PrimitiveGrid, Grid};
+    /// # let grid = PrimitiveGrid::<u8>::new(2,2);
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
     ///         grid.get(x, y);
     ///     }
     /// }
     /// ```
-    pub fn iter(&self) -> Iter<u8> {
+    pub fn iter(&self) -> Iter<T> {
         self.data.iter()
     }
 
     /// Iterate over all rows in `ByteGrid` top to bottom.
-    pub fn iter_rows(&self) -> IterRows {
+    pub fn iter_rows(&self) -> IterRows<T> {
         IterRows {
             byte_grid: self,
             row: 0,
@@ -71,7 +74,7 @@ impl ByteGrid {
     /// Returns an iterator that allows modifying each value.
     ///
     /// The iterator yields all cells from top left to bottom right.
-    pub fn iter_mut(&mut self) -> IterMut<u8> {
+    pub fn iter_mut(&mut self) -> IterMut<T> {
         self.data.iter_mut()
     }
 
@@ -84,7 +87,7 @@ impl ByteGrid {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    pub fn get_ref_mut(&mut self, x: usize, y: usize) -> &mut u8 {
+    pub fn get_ref_mut(&mut self, x: usize, y: usize) -> &mut T {
         self.assert_in_bounds(x, y);
         &mut self.data[x + y * self.width]
     }
@@ -100,7 +103,7 @@ impl ByteGrid {
         &mut self,
         x: isize,
         y: isize,
-    ) -> Option<&mut u8> {
+    ) -> Option<&mut T> {
         if self.is_in_bounds(x, y) {
             Some(&mut self.data[x as usize + y as usize * self.width])
         } else {
@@ -109,7 +112,7 @@ impl ByteGrid {
     }
 }
 
-impl Grid<u8> for ByteGrid {
+impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {
     /// Sets the value of the cell at the specified position in the `ByteGrid.
     ///
     /// # Arguments
@@ -120,7 +123,7 @@ impl Grid<u8> for ByteGrid {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    fn set(&mut self, x: usize, y: usize, value: u8) {
+    fn set(&mut self, x: usize, y: usize, value: T) {
         self.assert_in_bounds(x, y);
         self.data[x + y * self.width] = value;
     }
@@ -134,12 +137,12 @@ impl Grid<u8> for ByteGrid {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    fn get(&self, x: usize, y: usize) -> u8 {
+    fn get(&self, x: usize, y: usize) -> T {
         self.assert_in_bounds(x, y);
         self.data[x + y * self.width]
     }
 
-    fn fill(&mut self, value: u8) {
+    fn fill(&mut self, value: T) {
         self.data.fill(value);
     }
 
@@ -152,32 +155,32 @@ impl Grid<u8> for ByteGrid {
     }
 }
 
-impl DataRef for ByteGrid {
+impl<T: PrimitiveGridType> DataRef<T> for PrimitiveGrid<T> {
     /// Get the underlying byte rows mutable
-    fn data_ref_mut(&mut self) -> &mut [u8] {
+    fn data_ref_mut(&mut self) -> &mut [T] {
         self.data.as_mut_slice()
     }
 
     /// Get the underlying byte rows read only
-    fn data_ref(&self) -> &[u8] {
+    fn data_ref(&self) -> &[T] {
         self.data.as_slice()
     }
 }
 
-impl From<ByteGrid> for Vec<u8> {
+impl<T: PrimitiveGridType> From<PrimitiveGrid<T>> for Vec<T> {
     /// Turn into the underlying `Vec<u8>` containing the rows of bytes.
-    fn from(value: ByteGrid) -> Self {
+    fn from(value: PrimitiveGrid<T>) -> Self {
         value.data
     }
 }
 
-pub struct IterRows<'t> {
-    byte_grid: &'t ByteGrid,
+pub struct IterRows<'t, T: PrimitiveGridType> {
+    byte_grid: &'t PrimitiveGrid<T>,
     row: usize,
 }
 
-impl<'t> Iterator for IterRows<'t> {
-    type Item = Iter<'t, u8>;
+impl<'t, T: PrimitiveGridType> Iterator for IterRows<'t, T> {
+    type Item = Iter<'t, T>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.row >= self.byte_grid.height {
@@ -194,11 +197,11 @@ impl<'t> Iterator for IterRows<'t> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{ByteGrid, DataRef, Grid};
+    use crate::{DataRef, Grid, PrimitiveGrid};
 
     #[test]
     fn fill() {
-        let mut grid = ByteGrid::new(2, 2);
+        let mut grid = PrimitiveGrid::<usize>::new(2, 2);
         assert_eq!(grid.data, [0x00, 0x00, 0x00, 0x00]);
 
         grid.fill(42);
@@ -207,7 +210,7 @@ mod tests {
 
     #[test]
     fn get_set() {
-        let mut grid = ByteGrid::new(2, 2);
+        let mut grid = PrimitiveGrid::new(2, 2);
         assert_eq!(grid.get(0, 0), 0);
         assert_eq!(grid.get(1, 1), 0);
 
@@ -222,7 +225,7 @@ mod tests {
 
     #[test]
     fn load() {
-        let mut grid = ByteGrid::new(2, 3);
+        let mut grid = PrimitiveGrid::new(2, 3);
         for x in 0..grid.width {
             for y in 0..grid.height {
                 grid.set(x, y, (x + y) as u8);
@@ -233,13 +236,13 @@ mod tests {
 
         let data: Vec<u8> = grid.into();
 
-        let grid = ByteGrid::load(2, 3, &data);
+        let grid = PrimitiveGrid::load(2, 3, &data);
         assert_eq!(grid.data, [0, 1, 1, 2, 2, 3]);
     }
 
     #[test]
     fn mut_data_ref() {
-        let mut vec = ByteGrid::new(2, 2);
+        let mut vec = PrimitiveGrid::new(2, 2);
 
         let data_ref = vec.data_ref_mut();
         data_ref.copy_from_slice(&[1, 2, 3, 4]);
@@ -250,7 +253,7 @@ mod tests {
 
     #[test]
     fn iter() {
-        let mut vec = ByteGrid::new(2, 2);
+        let mut vec = PrimitiveGrid::new(2, 2);
         vec.set(1, 1, 5);
 
         let mut iter = vec.iter();
@@ -262,7 +265,7 @@ mod tests {
 
     #[test]
     fn iter_mut() {
-        let mut vec = ByteGrid::new(2, 3);
+        let mut vec = PrimitiveGrid::new(2, 3);
         for (index, cell) in vec.iter_mut().enumerate() {
             *cell = index as u8;
         }
@@ -272,7 +275,7 @@ mod tests {
 
     #[test]
     fn iter_rows() {
-        let vec = ByteGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]);
+        let vec = PrimitiveGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]);
         for (y, row) in vec.iter_rows().enumerate() {
             for (x, val) in row.enumerate() {
                 assert_eq!(*val, (x + y) as u8);
@@ -283,20 +286,20 @@ mod tests {
     #[test]
     #[should_panic]
     fn out_of_bounds_x() {
-        let mut vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut vec = PrimitiveGrid::load(2, 2, &[0, 1, 2, 3]);
         vec.set(2, 1, 5);
     }
 
     #[test]
     #[should_panic]
     fn out_of_bounds_y() {
-        let vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        let vec = PrimitiveGrid::load(2, 2, &[0, 1, 2, 3]);
         vec.get(1, 2);
     }
 
     #[test]
     fn ref_mut() {
-        let mut vec = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut vec = PrimitiveGrid::load(2, 2, &[0, 1, 2, 3]);
 
         let top_left = vec.get_ref_mut(0, 0);
         *top_left += 5;
@@ -307,7 +310,7 @@ mod tests {
 
     #[test]
     fn optional() {
-        let mut grid = ByteGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut grid = PrimitiveGrid::load(2, 2, &[0, 1, 2, 3]);
         grid.set_optional(0, 0, 5);
         grid.set_optional(-1, 0, 8);
         grid.set_optional(0, 8, 42);
