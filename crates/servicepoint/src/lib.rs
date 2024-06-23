@@ -1,4 +1,32 @@
 //! Abstractions for the UDP protocol of the CCCB servicepoint display.
+//!
+//! # Examples
+//!
+//! ```rust
+//! use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+//!
+//! let connection = servicepoint::Connection::open("172.23.42.29:2342")
+//!     .expect("connection failed");
+//!
+//!  // turn off all pixels on display
+//!  connection.send(Command::Clear)
+//!     .expect("send failed");
+//!
+//!  // turn on all pixels in a grid
+//!  let mut pixels = PixelGrid::max_sized();
+//!  pixels.fill(true);
+//!
+//!  // create command to send pixels
+//!  let command = Command::BitmapLinearWin(
+//!     servicepoint::Origin::new(0, 0),
+//!     pixels,
+//!     CompressionCode::Uncompressed
+//!  );
+//!
+//!  // send command to display
+//!  connection.send(command)
+//!     .expect("send failed");
+//! ```
 
 use std::time::Duration;
 
@@ -34,22 +62,76 @@ mod primitive_grid;
 /// size of a single tile in one dimension
 pub const TILE_SIZE: usize = 8;
 
-/// tile count in the x-direction
+/// Display tile count in the x-direction
+///
+/// # Examples
+///
+/// ```rust
+/// # use servicepoint::{Cp437Grid, TILE_HEIGHT, TILE_WIDTH};
+/// let grid = Cp437Grid::new(TILE_WIDTH, TILE_HEIGHT);
+/// ```
 pub const TILE_WIDTH: usize = 56;
 
-/// tile count in the y-direction
+/// Display tile count in the y-direction
+/// 
+/// # Examples
+///
+/// ```rust
+/// # use servicepoint::{Cp437Grid, TILE_HEIGHT, TILE_WIDTH};
+/// let grid = Cp437Grid::new(TILE_WIDTH, TILE_HEIGHT);
+/// ```
 pub const TILE_HEIGHT: usize = 20;
 
-/// screen width in pixels
+/// Display width in pixels
+/// 
+/// # Examples
+///
+/// ```rust
+/// # use servicepoint::{PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
+/// let grid = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
+/// ```
 pub const PIXEL_WIDTH: usize = TILE_WIDTH * TILE_SIZE;
 
-/// screen height in pixels
+/// Display height in pixels
+///
+/// # Examples
+///
+/// ```rust
+/// # use servicepoint::{PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
+/// let grid = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
+/// ```
 pub const PIXEL_HEIGHT: usize = TILE_HEIGHT * TILE_SIZE;
 
 /// pixel count on whole screen
 pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 
 /// Actual hardware limit is around 28-29ms/frame. Rounded up for less dropped packets.
+///
+/// # Examples
+///
+/// ```rust
+/// # use std::time::Instant;
+/// # use servicepoint::{Command, CompressionCode, FRAME_PACING, Origin, PixelGrid};
+/// # let connection = servicepoint::Connection::open("172.23.42.29:2342")
+/// #     .expect("connection failed");
+/// # let pixels = PixelGrid::max_sized();
+/// loop {
+///    let start = Instant::now();
+///
+///    // Change pixels here
+///
+///    connection.send(Command::BitmapLinearWin(
+///            Origin::new(0,0), 
+///            pixels, 
+///            CompressionCode::Lzma
+///        ))
+///        .expect("send failed");
+///
+///    // warning: will crash if resulting duration is negative, e.g. when resuming from standby
+///    std::thread::sleep(FRAME_PACING - start.elapsed());
+///    # break; // prevent doctest from hanging
+/// }
+/// ```
 pub const FRAME_PACING: Duration = Duration::from_millis(30);
 
 // include README.md in doctest

@@ -2,8 +2,8 @@
 //!
 //! prefix `sp_brightness_grid_`
 
+use servicepoint::{Brightness, BrightnessGrid, DataRef, Grid, PrimitiveGrid};
 use std::intrinsics::transmute;
-use servicepoint::{BrightnessGrid, DataRef, Grid, PrimitiveGrid, Brightness};
 
 use crate::c_slice::CByteSlice;
 
@@ -26,7 +26,9 @@ pub unsafe extern "C" fn sp_brightness_grid_new(
     width: usize,
     height: usize,
 ) -> *mut CBrightnessGrid {
-    Box::into_raw(Box::new(CBrightnessGrid(BrightnessGrid::new(width, height))))
+    Box::into_raw(Box::new(CBrightnessGrid(BrightnessGrid::new(
+        width, height,
+    ))))
 }
 
 /// Loads a `BrightnessGrid` with the specified dimensions from the provided data.
@@ -52,8 +54,8 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
 ) -> *mut CBrightnessGrid {
     let data = std::slice::from_raw_parts(data, data_length);
     let grid = PrimitiveGrid::load(width, height, data);
-    let grid = BrightnessGrid::try_from(grid)
-        .expect("invalid brightness value");
+    let grid =
+        BrightnessGrid::try_from(grid).expect("invalid brightness value");
     Box::into_raw(Box::new(CBrightnessGrid(grid)))
 }
 
@@ -84,7 +86,9 @@ pub unsafe extern "C" fn sp_brightness_grid_clone(
 /// - `this` is not used concurrently or after this call
 /// - `this` was not passed to another consuming function, e.g. to create a `Command`
 #[no_mangle]
-pub unsafe extern "C" fn sp_brightness_grid_dealloc(this: *mut CBrightnessGrid) {
+pub unsafe extern "C" fn sp_brightness_grid_dealloc(
+    this: *mut CBrightnessGrid,
+) {
     _ = Box::from_raw(this);
 }
 
@@ -141,8 +145,8 @@ pub unsafe extern "C" fn sp_brightness_grid_set(
     y: usize,
     value: u8,
 ) {
-    let brightness = Brightness::try_from(value)
-        .expect("invalid brightness value");
+    let brightness =
+        Brightness::try_from(value).expect("invalid brightness value");
     (*this).0.set(x, y, brightness);
 }
 
@@ -160,9 +164,12 @@ pub unsafe extern "C" fn sp_brightness_grid_set(
 /// - `this` points to a valid `BrightnessGrid`
 /// - `this` is not written to or read from concurrently
 #[no_mangle]
-pub unsafe extern "C" fn sp_brightness_grid_fill(this: *mut CBrightnessGrid, value: u8) {
-    let brightness = Brightness::try_from(value)
-        .expect("invalid brightness value");
+pub unsafe extern "C" fn sp_brightness_grid_fill(
+    this: *mut CBrightnessGrid,
+    value: u8,
+) {
+    let brightness =
+        Brightness::try_from(value).expect("invalid brightness value");
     (*this).0.fill(brightness);
 }
 
@@ -178,7 +185,9 @@ pub unsafe extern "C" fn sp_brightness_grid_fill(this: *mut CBrightnessGrid, val
 ///
 /// - `this` points to a valid `BrightnessGrid`
 #[no_mangle]
-pub unsafe extern "C" fn sp_brightness_grid_width(this: *const CBrightnessGrid) -> usize {
+pub unsafe extern "C" fn sp_brightness_grid_width(
+    this: *const CBrightnessGrid,
+) -> usize {
     (*this).0.width()
 }
 
@@ -194,7 +203,9 @@ pub unsafe extern "C" fn sp_brightness_grid_width(this: *const CBrightnessGrid) 
 ///
 /// - `this` points to a valid `BrightnessGrid`
 #[no_mangle]
-pub unsafe extern "C" fn sp_brightness_grid_height(this: *const CBrightnessGrid) -> usize {
+pub unsafe extern "C" fn sp_brightness_grid_height(
+    this: *const CBrightnessGrid,
+) -> usize {
     (*this).0.height()
 }
 

@@ -188,7 +188,9 @@ pub unsafe extern "C" fn sp_cp437_grid_width(this: *const CCp437Grid) -> usize {
 ///
 /// - `this` points to a valid `Cp437Grid`
 #[no_mangle]
-pub unsafe extern "C" fn sp_cp437_grid_height(this: *const CCp437Grid) -> usize {
+pub unsafe extern "C" fn sp_cp437_grid_height(
+    this: *const CCp437Grid,
+) -> usize {
     (*this).0.height()
 }
 
