@@ -3,8 +3,8 @@ use bitvec::prelude::BitVec;
 use crate::command_code::CommandCode;
 use crate::compression::{into_compressed, into_decompressed};
 use crate::{
-    ByteGrid, CompressionCode, Grid, Header, Packet, PixelGrid, SpBitVec,
-    TILE_SIZE,
+    Brightness, ByteGrid, CompressionCode, Grid, Header, Packet, PixelGrid,
+    SpBitVec, TILE_SIZE,
 };
 
 /// An origin marks the top left position of a window sent to the display.
@@ -23,9 +23,6 @@ impl std::ops::Add<Origin> for Origin {
 
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Offset = usize;
-
-/// Type alias for documenting the meaning of the u16 in enum values
-pub type Brightness = u8;
 
 /// A command to send to the display.
 #[derive(Debug, Clone, PartialEq)]
@@ -95,7 +92,7 @@ impl From<Command> for Packet {
                     0x0000,
                     0x0000,
                 ),
-                vec![brightness],
+                vec![brightness.into()],
             ),
             Command::BitmapLinearWin(origin, pixels, compression) => {
                 bitmap_win_into_packet(origin, pixels, compression)
@@ -196,6 +193,8 @@ pub enum TryFromPacketError {
     InvalidCompressionCode(u16),
     /// Decompression of the payload failed. This can be caused by corrupted packets.
     DecompressionFailed,
+    /// The given brightness value is out of bounds
+    InvalidBrightness(u8),
 }
 
 impl TryFrom<Packet> for Command {
@@ -227,9 +226,12 @@ impl TryFrom<Packet> for Command {
 
                 let Header(_, a, b, c, d) = header;
                 if a != 0 || b != 0 || c != 0 || d != 0 {
-                    Err(TryFromPacketError::ExtraneousHeaderValues)
-                } else {
-                    Ok(Command::Brightness(payload[0]))
+                    return Err(TryFromPacketError::ExtraneousHeaderValues)
+                }
+
+                match Brightness::try_from(payload[0]) {
+                    Ok(b) => Ok(Command::Brightness(b)),
+                    Err(_) => Err(TryFromPacketError::InvalidBrightness(payload[0]))
                 }
             }
             CommandCode::HardReset => match Self::check_command_only(packet) {
@@ -399,9 +401,7 @@ mod tests {
 
     use crate::command::TryFromPacketError;
     use crate::command_code::CommandCode;
-    use crate::{
-        ByteGrid, Command, CompressionCode, Header, Origin, Packet, PixelGrid,
-    };
+    use crate::{Brightness, ByteGrid, Command, CompressionCode, Header, Origin, Packet, PixelGrid};
 
     fn round_trip(original: Command) {
         let packet: Packet = original.clone().into();
@@ -443,7 +443,7 @@ mod tests {
 
     #[test]
     fn round_trip_brightness() {
-        round_trip(Command::Brightness(6));
+        round_trip(Command::Brightness(Brightness::try_from(6).unwrap()));
     }
 
     #[test]

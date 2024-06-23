@@ -32,7 +32,7 @@ fn main() {
         filled_grid.fill(true);
 
         let command =
-            BitmapLinearWin(Origin(0, 0), filled_grid, CompressionCode::Lzma);
+            BitmapLinearWin(Origin::new(0, 0), filled_grid, CompressionCode::Lzma);
         connection.send(command).expect("send failed");
     }
 
@@ -49,7 +49,7 @@ fn main() {
         let w = rng.gen_range(min_size..=TILE_WIDTH - x);
         let h = rng.gen_range(min_size..=TILE_HEIGHT - y);
 
-        let origin = Origin(x, y);
+        let origin = Origin::new(x, y);
         let mut luma = ByteGrid::new(w, h);
 
         for y in 0..h {
