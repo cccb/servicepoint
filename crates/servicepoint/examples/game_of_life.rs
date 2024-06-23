@@ -25,7 +25,7 @@ fn main() {
     loop {
         connection
             .send(Command::BitmapLinearWin(
-                Origin(0, 0),
+                Origin::new(0, 0),
                 field.clone(),
                 CompressionCode::Lzma,
             ))

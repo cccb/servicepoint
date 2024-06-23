@@ -105,9 +105,9 @@ pub unsafe extern "C" fn sp_command_fade_out() -> *mut Command {
 /// - the returned `Command` instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_brightness(
-    brightness: Brightness,
-) -> *mut Command {
+pub unsafe extern "C" fn sp_command_brightness(brightness: u8) -> *mut Command {
+    let brightness =
+        Brightness::try_from(brightness).expect("invalid brightness");
     Box::into_raw(Box::new(Command::Brightness(brightness)))
 }
 
@@ -129,7 +129,10 @@ pub unsafe extern "C" fn sp_command_char_brightness(
     byte_grid: *mut ByteGrid,
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(byte_grid);
-    Box::into_raw(Box::new(Command::CharBrightness(Origin(x, y), byte_grid)))
+    Box::into_raw(Box::new(Command::CharBrightness(
+        Origin::new(x, y),
+        byte_grid,
+    )))
 }
 
 /// Allocates a new `Command::BitmapLinear` instance.
@@ -254,7 +257,7 @@ pub unsafe extern "C" fn sp_command_cp437_data(
     byte_grid: *mut ByteGrid,
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(byte_grid);
-    Box::into_raw(Box::new(Command::Cp437Data(Origin(x, y), byte_grid)))
+    Box::into_raw(Box::new(Command::Cp437Data(Origin::new(x, y), byte_grid)))
 }
 
 /// Allocates a new `Command::BitmapLinearWin` instance.
@@ -278,7 +281,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(pixel_grid);
     Box::into_raw(Box::new(Command::BitmapLinearWin(
-        Origin(x, y),
+        Origin::new(x, y),
         byte_grid,
         compression_code,
     )))

@@ -21,7 +21,7 @@ fn main() {
 
     connection
         .send(BitmapLinearWin(
-            Origin(0, 0),
+            Origin::new(0, 0),
             pixels,
             CompressionCode::Uncompressed,
         ))
@@ -33,6 +33,6 @@ fn main() {
     }
 
     connection
-        .send(Command::CharBrightness(Origin(0, 0), brightnesses))
+        .send(Command::CharBrightness(Origin::new(0, 0), brightnesses))
         .expect("send failed");
 }

@@ -44,6 +44,6 @@ fn main() {
     }
 
     connection
-        .send(Command::Cp437Data(Origin(0, 0), chars))
+        .send(Command::Cp437Data(Origin::new(0, 0), chars))
         .expect("sending text failed");
 }

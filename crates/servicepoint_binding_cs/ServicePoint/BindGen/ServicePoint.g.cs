@@ -121,7 +121,7 @@ namespace ServicePoint.BindGen
         [DllImport(__DllName, EntryPoint = "sp_command_fade_out", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_fade_out();
 
-        /// <summary>Allocates a new `Command::Brightness` instance.  # Safety  The caller has to make sure that:  - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the same value.  # Panics  - When the provided brightness value is out of range (0-11).  # Safety  The caller has to make sure that:  - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
         [DllImport(__DllName, EntryPoint = "sp_command_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_brightness(byte brightness);
 
@@ -262,17 +262,17 @@ namespace ServicePoint.BindGen
     public enum Command
     {
         Clear,
-        HardReset,
-        FadeOut,
-        CharBrightness,
+        Cp437Data,
+        BitmapLinearWin,
         Brightness,
-        BitmapLegacy,
+        CharBrightness,
         BitmapLinear,
         BitmapLinearAnd,
         BitmapLinearOr,
         BitmapLinearXor,
-        Cp437Data,
-        BitmapLinearWin,
+        HardReset,
+        FadeOut,
+        BitmapLegacy,
     }
 
     public enum CompressionCode : ushort

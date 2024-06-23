@@ -1,25 +1,11 @@
 use bitvec::prelude::BitVec;
 
-use crate::command_code::CommandCode;
-use crate::compression::{into_compressed, into_decompressed};
 use crate::{
-    Brightness, ByteGrid, CompressionCode, Grid, Header, Packet, PixelGrid,
-    SpBitVec, TILE_SIZE,
+    command_code::CommandCode,
+    compression::{into_compressed, into_decompressed},
+    Brightness, ByteGrid, CompressionCode, Grid, Header, Origin, Packet,
+    PixelGrid, Pixels, SpBitVec, Tiles, TILE_SIZE,
 };
-
-/// An origin marks the top left position of a window sent to the display.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Origin(pub usize, pub usize);
-
-impl std::ops::Add<Origin> for Origin {
-    type Output = Origin;
-
-    fn add(self, rhs: Origin) -> Self::Output {
-        let Origin(x1, y1) = self;
-        let Origin(x2, y2) = rhs;
-        Origin(x1 + x2, y1 + y2)
-    }
-}
 
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Offset = usize;
@@ -32,24 +18,20 @@ pub enum Command {
 
     /// Show text on the screen.
     ///
-    /// The origin is in tiles.
-    ///
     /// <div class="warning">
     ///     The library does not currently convert between UTF-8 and CP-437.
     ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
     /// </div>
-    Cp437Data(Origin, ByteGrid),
+    Cp437Data(Origin<Tiles>, ByteGrid),
 
     /// Sets a window of pixels to the specified values
-    BitmapLinearWin(Origin, PixelGrid, CompressionCode),
+    BitmapLinearWin(Origin<Pixels>, PixelGrid, CompressionCode),
 
     /// Set the brightness of all tiles to the same value.
     Brightness(Brightness),
 
     /// Set the brightness of individual tiles in a rectangular area of the display.
-    ///
-    /// The origin is in tiles.
-    CharBrightness(Origin, ByteGrid),
+    CharBrightness(Origin<Tiles>, ByteGrid),
 
     /// Set pixel data starting at the pixel offset on screen.
     ///
@@ -116,11 +98,11 @@ impl From<Command> for Packet {
             Command::BitmapLegacy => {
                 Command::command_code_only(CommandCode::BitmapLegacy)
             }
-            Command::CharBrightness(Origin(x, y), grid) => Packet(
+            Command::CharBrightness(origin, grid) => Packet(
                 Header(
                     CommandCode::CharBrightness.into(),
-                    x as u16,
-                    y as u16,
+                    origin.x as u16,
+                    origin.y as u16,
                     grid.width() as u16,
                     grid.height() as u16,
                 ),
@@ -171,11 +153,11 @@ impl From<Command> for Packet {
                     bits.into(),
                 )
             }
-            Command::Cp437Data(Origin(x, y), grid) => Packet(
+            Command::Cp437Data(origin, grid) => Packet(
                 Header(
                     CommandCode::Cp437Data.into(),
-                    x as u16,
-                    y as u16,
+                    origin.x as u16,
+                    origin.y as u16,
                     grid.width() as u16,
                     grid.height() as u16,
                 ),
@@ -187,15 +169,14 @@ impl From<Command> for Packet {
 
 #[allow(clippy::cast_possible_truncation)]
 fn bitmap_win_into_packet(
-    origin: Origin,
+    origin: Origin<Pixels>,
     pixels: PixelGrid,
     compression: CompressionCode,
 ) -> Packet {
-    let Origin(pixel_x, pixel_y) = origin;
-    debug_assert_eq!(pixel_x % 8, 0);
+    debug_assert_eq!(origin.x % 8, 0);
     debug_assert_eq!(pixels.width() % 8, 0);
 
-    let tile_x = (pixel_x / TILE_SIZE) as u16;
+    let tile_x = (origin.x / TILE_SIZE) as u16;
     let tile_w = (pixels.width() / TILE_SIZE) as u16;
     let pixel_h = pixels.height() as u16;
     let payload = into_compressed(compression, pixels.into());
@@ -214,7 +195,7 @@ fn bitmap_win_into_packet(
     };
 
     Packet(
-        Header(command.into(), tile_x, pixel_y as u16, tile_w, pixel_h),
+        Header(command.into(), tile_x, origin.y as u16, tile_w, pixel_h),
         payload,
     )
 }
@@ -289,14 +270,14 @@ impl TryFrom<Packet> for Command {
             CommandCode::Cp437Data => {
                 let Packet(_, payload) = packet;
                 Ok(Command::Cp437Data(
-                    Origin(a as usize, b as usize),
+                    Origin::new(a as usize, b as usize),
                     ByteGrid::load(c as usize, d as usize, &payload),
                 ))
             }
             CommandCode::CharBrightness => {
                 let Packet(_, payload) = packet;
                 Ok(Command::CharBrightness(
-                    Origin(a as usize, b as usize),
+                    Origin::new(a as usize, b as usize),
                     ByteGrid::load(c as usize, d as usize, &payload),
                 ))
             }
@@ -362,7 +343,7 @@ impl Command {
         };
 
         Ok(Command::BitmapLinearWin(
-            Origin(tiles_x as usize * TILE_SIZE, pixels_y as usize),
+            Origin::new(tiles_x as usize * TILE_SIZE, pixels_y as usize),
             PixelGrid::load(
                 tile_w as usize * TILE_SIZE,
                 pixel_h as usize,
@@ -441,13 +422,10 @@ impl Command {
 
 #[cfg(test)]
 mod tests {
-    use bitvec::prelude::BitVec;
-
-    use crate::command::TryFromPacketError;
-    use crate::command_code::CommandCode;
     use crate::{
-        Brightness, ByteGrid, Command, CompressionCode, Header, Origin, Packet,
-        PixelGrid,
+        bitvec::prelude::BitVec, command::TryFromPacketError,
+        command_code::CommandCode, origin::Pixels, Brightness, ByteGrid,
+        Command, CompressionCode, Header, Origin, Packet, PixelGrid,
     };
 
     fn round_trip(original: Command) {
@@ -501,12 +479,15 @@ mod tests {
 
     #[test]
     fn round_trip_char_brightness() {
-        round_trip(Command::CharBrightness(Origin(5, 2), ByteGrid::new(7, 5)));
+        round_trip(Command::CharBrightness(
+            Origin::new(5, 2),
+            ByteGrid::new(7, 5),
+        ));
     }
 
     #[test]
     fn round_trip_cp437_data() {
-        round_trip(Command::Cp437Data(Origin(5, 2), ByteGrid::new(7, 5)));
+        round_trip(Command::Cp437Data(Origin::new(5, 2), ByteGrid::new(7, 5)));
     }
 
     #[test]
@@ -533,7 +514,7 @@ mod tests {
                 compression,
             ));
             round_trip(Command::BitmapLinearWin(
-                Origin(0, 0),
+                Origin::new(0, 0),
                 PixelGrid::max_sized(),
                 compression,
             ));
@@ -619,7 +600,7 @@ mod tests {
     fn error_decompression_failed_win() {
         for compression in all_compressions().to_owned() {
             let p: Packet = Command::BitmapLinearWin(
-                Origin(16, 8),
+                Origin::new(16, 8),
                 PixelGrid::new(8, 8),
                 compression,
             )
@@ -743,6 +724,9 @@ mod tests {
 
     #[test]
     fn origin_add() {
-        assert_eq!(Origin(4, 2), Origin(1, 0) + Origin(3, 2));
+        assert_eq!(
+            Origin::<Pixels>::new(4, 2),
+            Origin::new(1, 0) + Origin::new(3, 2)
+        );
     }
 }

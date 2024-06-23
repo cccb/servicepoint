@@ -46,20 +46,27 @@ impl Connection {
     /// # Examples
     ///
     /// ```rust
-    /// use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
-    /// let connection = servicepoint::Connection::open("172.23.42.29:2342")
-    ///     .expect("connection failed");
+    /// # use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+    /// # let connection = servicepoint::Connection::open("172.23.42.29:2342")
+    /// #     .expect("connection failed");
     ///
-    ///  // turn off all pixels
+    ///  // turn off all pixels on display
     ///  connection.send(Command::Clear)
     ///     .expect("send failed");
     ///
-    ///  // turn on all pixels
+    ///  // turn on all pixels in a grid
     ///  let mut pixels = PixelGrid::max_sized();
     ///  pixels.fill(true);
     ///
-    ///  // send pixels to display
-    ///  connection.send(Command::BitmapLinearWin(servicepoint::Origin(0, 0), pixels, CompressionCode::Uncompressed))
+    ///  // create command to send pixels
+    ///  let command = Command::BitmapLinearWin(
+    ///     servicepoint::Origin::new(0, 0),
+    ///     pixels,
+    ///     CompressionCode::Uncompressed
+    ///  );
+    ///
+    ///  // send command to display
+    ///  connection.send(command)
     ///     .expect("send failed");
     /// ```
     pub fn send(

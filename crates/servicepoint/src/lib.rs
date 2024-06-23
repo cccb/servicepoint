@@ -7,11 +7,12 @@ use bitvec::prelude::{BitVec, Msb0};
 
 pub use crate::brightness::Brightness;
 pub use crate::byte_grid::ByteGrid;
-pub use crate::command::{Command, Offset, Origin};
+pub use crate::command::{Command, Offset};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
+pub use crate::origin::{Origin, Pixels, Tiles};
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
 
@@ -26,6 +27,7 @@ mod compression_code;
 mod connection;
 mod data_ref;
 mod grid;
+mod origin;
 mod packet;
 mod pixel_grid;
 
