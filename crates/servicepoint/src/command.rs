@@ -27,35 +27,77 @@ pub type Offset = usize;
 /// A command to send to the display.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
-    /// Set all pixels to the off state
+    /// Set all pixels to the off state. Does not affect brightness.
     Clear,
-    /// Kills the udp daemon, usually results in a reboot of the display.
-    HardReset,
-    /// Slowly decrease brightness until off? Untested.
-    FadeOut,
-    /// Set the brightness of tiles
-    CharBrightness(Origin, ByteGrid),
-    /// Set the brightness of all tiles
-    Brightness(Brightness),
-    #[deprecated]
-    /// Legacy command code, gets ignored by the real display.
-    BitmapLegacy,
-    /// Set pixel data starting at the offset.
-    /// The contained `BitVec` is always uncompressed.
-    BitmapLinear(Offset, SpBitVec, CompressionCode),
-    /// Set pixel data according to an and-mask starting at the offset.
-    /// The contained `BitVec` is always uncompressed.
-    BitmapLinearAnd(Offset, SpBitVec, CompressionCode),
-    /// Set pixel data according to an or-mask starting at the offset.
-    /// The contained `BitVec` is always uncompressed.
-    BitmapLinearOr(Offset, SpBitVec, CompressionCode),
-    /// Set pixel data according to a xor-mask starting at the offset.
-    /// The contained `BitVec` is always uncompressed.
-    BitmapLinearXor(Offset, SpBitVec, CompressionCode),
-    /// Show text on the screen. Note that the byte data has to be CP437 encoded.
+
+    /// Show text on the screen.
+    ///
+    /// The origin is in tiles.
+    ///
+    /// <div class="warning">
+    ///     The library does not currently convert between UTF-8 and CP-437.
+    ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
+    /// </div>
     Cp437Data(Origin, ByteGrid),
+
     /// Sets a window of pixels to the specified values
     BitmapLinearWin(Origin, PixelGrid, CompressionCode),
+
+    /// Set the brightness of all tiles to the same value.
+    Brightness(Brightness),
+
+    /// Set the brightness of individual tiles in a rectangular area of the display.
+    ///
+    /// The origin is in tiles.
+    CharBrightness(Origin, ByteGrid),
+
+    /// Set pixel data starting at the pixel offset on screen.
+    ///
+    /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
+    /// once the starting row is full, overwriting will continue on column 0.
+    ///
+    /// The contained `BitVec` is always uncompressed.
+    BitmapLinear(Offset, SpBitVec, CompressionCode),
+
+    /// Set pixel data according to an and-mask starting at the offset.
+    ///
+    /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
+    /// once the starting row is full, overwriting will continue on column 0.
+    ///
+    /// The contained `BitVec` is always uncompressed.
+    BitmapLinearAnd(Offset, SpBitVec, CompressionCode),
+
+    /// Set pixel data according to an or-mask starting at the offset.
+    ///
+    /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
+    /// once the starting row is full, overwriting will continue on column 0.
+    ///
+    /// The contained `BitVec` is always uncompressed.
+    BitmapLinearOr(Offset, SpBitVec, CompressionCode),
+
+    /// Set pixel data according to a xor-mask starting at the offset.
+    ///
+    /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
+    /// once the starting row is full, overwriting will continue on column 0.
+    ///
+    /// The contained `BitVec` is always uncompressed.
+    BitmapLinearXor(Offset, SpBitVec, CompressionCode),
+
+    /// Kills the udp daemon on the display, which usually results in a restart.
+    ///
+    /// Please do not send this in your normal program flow.
+    HardReset,
+
+    /// <div class="warning">Untested</div>
+    ///
+    /// Slowly decrease brightness until off or something like that?
+    FadeOut,
+
+    #[deprecated]
+    /// Legacy command code, gets ignored by the real display.
+    ///
+    /// Might be useful as a noop package.
+    BitmapLegacy,
 }
 
 impl From<Command> for Packet {
@@ -226,12 +268,14 @@ impl TryFrom<Packet> for Command {
 
                 let Header(_, a, b, c, d) = header;
                 if a != 0 || b != 0 || c != 0 || d != 0 {
-                    return Err(TryFromPacketError::ExtraneousHeaderValues)
+                    return Err(TryFromPacketError::ExtraneousHeaderValues);
                 }
 
                 match Brightness::try_from(payload[0]) {
                     Ok(b) => Ok(Command::Brightness(b)),
-                    Err(_) => Err(TryFromPacketError::InvalidBrightness(payload[0]))
+                    Err(_) => {
+                        Err(TryFromPacketError::InvalidBrightness(payload[0]))
+                    }
                 }
             }
             CommandCode::HardReset => match Self::check_command_only(packet) {
@@ -401,7 +445,10 @@ mod tests {
 
     use crate::command::TryFromPacketError;
     use crate::command_code::CommandCode;
-    use crate::{Brightness, ByteGrid, Command, CompressionCode, Header, Origin, Packet, PixelGrid};
+    use crate::{
+        Brightness, ByteGrid, Command, CompressionCode, Header, Origin, Packet,
+        PixelGrid,
+    };
 
     fn round_trip(original: Command) {
         let packet: Packet = original.clone().into();

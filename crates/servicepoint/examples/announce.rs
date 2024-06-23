@@ -26,7 +26,9 @@ fn main() {
         .expect("could not connect to display");
 
     if cli.clear {
-        connection.send(Command::Clear).expect("sending clear failed");
+        connection
+            .send(Command::Clear)
+            .expect("sending clear failed");
     }
 
     let max_width = cli.text.iter().map(|t| t.len()).max().unwrap();

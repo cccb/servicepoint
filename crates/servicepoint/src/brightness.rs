@@ -1,8 +1,8 @@
-use rand::distributions::Standard;
 #[cfg(feature = "rand")]
-use rand::prelude::Distribution;
-#[cfg(feature = "rand")]
-use rand::Rng;
+use rand::{
+    distributions::{Distribution, Standard},
+    Rng,
+};
 
 /// A display brightness value, checked for correct value range
 #[derive(Debug, Copy, Clone, PartialEq)]

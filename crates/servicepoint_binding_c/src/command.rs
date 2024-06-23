@@ -91,7 +91,12 @@ pub unsafe extern "C" fn sp_command_fade_out() -> *mut Command {
     Box::into_raw(Box::new(Command::FadeOut))
 }
 
-/// Allocates a new `Command::Brightness` instance.
+/// Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
+/// same value.
+///
+/// # Panics
+///
+/// - When the provided brightness value is out of range (0-11).
 ///
 /// # Safety
 ///
