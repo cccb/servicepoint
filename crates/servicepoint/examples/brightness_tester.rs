@@ -2,8 +2,8 @@
 
 use clap::Parser;
 
-use servicepoint::Command::BitmapLinearWin;
 use servicepoint::*;
+use servicepoint::Command::BitmapLinearWin;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -19,13 +19,12 @@ fn main() {
     let mut pixels = PixelGrid::max_sized();
     pixels.fill(true);
 
-    connection
-        .send(BitmapLinearWin(
-            Origin::new(0, 0),
-            pixels,
-            CompressionCode::Uncompressed,
-        ))
-        .expect("send failed");
+    let command = BitmapLinearWin(
+        Origin::new(0, 0),
+        pixels,
+        CompressionCode::Uncompressed,
+    );
+    connection.send(command).expect("send failed");
 
     let max_brightness = usize::from(u8::from(Brightness::MAX));
     let mut brightnesses = BrightnessGrid::new(TILE_WIDTH, TILE_HEIGHT);

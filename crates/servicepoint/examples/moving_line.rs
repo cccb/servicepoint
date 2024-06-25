@@ -23,13 +23,13 @@ fn main() {
         for y in 0..PIXEL_HEIGHT {
             pixels.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
-        connection
-            .send(Command::BitmapLinearWin(
-                Origin::new(0, 0),
-                pixels.clone(),
-                CompressionCode::Lzma,
-            ))
-            .unwrap();
+
+        let command = Command::BitmapLinearWin(
+            Origin::new(0, 0),
+            pixels.clone(),
+            CompressionCode::Lzma,
+        );
+        connection.send(command).expect("send failed");
         thread::sleep(FRAME_PACING);
     }
 }

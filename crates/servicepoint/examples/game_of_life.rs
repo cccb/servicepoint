@@ -23,13 +23,12 @@ fn main() {
     let mut field = make_random_field(cli.probability);
 
     loop {
-        connection
-            .send(Command::BitmapLinearWin(
-                Origin::new(0, 0),
-                field.clone(),
-                CompressionCode::Lzma,
-            ))
-            .expect("could not send");
+        let command = Command::BitmapLinearWin(
+            Origin::new(0, 0),
+            field.clone(),
+            CompressionCode::Lzma,
+        );
+        connection.send(command).expect("could not send");
         thread::sleep(FRAME_PACING);
         field = iteration(field);
     }
