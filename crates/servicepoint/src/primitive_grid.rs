@@ -21,7 +21,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// - width: size in x-direction
     /// - height: size in y-direction
     ///
-    /// returns: `ByteGrid` initialized to default value.
+    /// returns: `PrimitiveGrid` initialized to default value.
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             data: vec![Default::default(); width * height],
@@ -30,9 +30,9 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         }
     }
 
-    /// Loads a `ByteGrid` with the specified dimensions from the provided data.
+    /// Loads a `PrimitiveGrid` with the specified dimensions from the provided data.
     ///
-    /// returns: `ByteGrid` that contains a copy of the provided data
+    /// returns: `PrimitiveGrid` that contains a copy of the provided data
     ///
     /// # Panics
     ///
@@ -47,7 +47,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         }
     }
 
-    /// Iterate over all cells in `ByteGrid`.
+    /// Iterate over all cells in `PrimitiveGrid`.
     ///
     /// Order is equivalent to the following loop:
     /// ```
@@ -63,7 +63,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         self.data.iter()
     }
 
-    /// Iterate over all rows in `ByteGrid` top to bottom.
+    /// Iterate over all rows in `PrimitiveGrid` top to bottom.
     pub fn iter_rows(&self) -> IterRows<T> {
         IterRows {
             byte_grid: self,
@@ -113,7 +113,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
 }
 
 impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {
-    /// Sets the value of the cell at the specified position in the `ByteGrid.
+    /// Sets the value of the cell at the specified position in the `PrimitiveGrid.
     ///
     /// # Arguments
     ///

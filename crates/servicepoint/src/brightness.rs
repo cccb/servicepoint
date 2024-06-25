@@ -1,4 +1,5 @@
 use crate::{Grid, PrimitiveGrid};
+
 #[cfg(feature = "rand")]
 use rand::{
     distributions::{Distribution, Standard},
@@ -6,10 +7,34 @@ use rand::{
 };
 
 /// A display brightness value, checked for correct value range
+///
+/// # Examples
+///
+/// ```
+/// # use servicepoint::{Brightness, Command, Connection};
+/// let b = Brightness::MAX;
+/// let val: u8 = b.into();
+///
+/// let b = Brightness::try_from(7).unwrap();
+/// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+/// let result = connection.send(Command::Brightness(b));
+/// ```
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Brightness(u8);
 
 /// A grid containing brightness values.
+///
+/// # Examples
+///
+/// ```rust
+/// # use servicepoint::{Brightness, BrightnessGrid, Command, Connection, Grid, Origin};
+/// let mut grid = BrightnessGrid::new(2,2);
+/// grid.set(0, 0, Brightness::MIN);
+/// grid.set(1, 1, Brightness::MIN);
+///
+/// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+/// connection.send(Command::CharBrightness(Origin::new(3, 7), grid)).unwrap()
+/// ```
 pub type BrightnessGrid = PrimitiveGrid<Brightness>;
 
 impl From<Brightness> for u8 {
