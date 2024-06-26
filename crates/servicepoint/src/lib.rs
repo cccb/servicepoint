@@ -5,13 +5,17 @@
 //! ```rust
 //! use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
 //!
-//! let connection = servicepoint::Connection::open("172.23.42.29:2342")
+//! let connection = servicepoint::Connection::open("127.0.0.1:2342")
 //!     .expect("connection failed");
 //!
 //!  // turn off all pixels on display
 //!  connection.send(Command::Clear)
 //!     .expect("send failed");
+//! ```
 //!
+//! ```rust
+//! # use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+//! # let connection = servicepoint::Connection::open("127.0.0.1:2342").expect("connection failed");
 //!  // turn on all pixels in a grid
 //!  let mut pixels = PixelGrid::max_sized();
 //!  pixels.fill(true);
@@ -24,8 +28,7 @@
 //!  );
 //!
 //!  // send command to display
-//!  connection.send(command)
-//!     .expect("send failed");
+//!  connection.send(command).expect("send failed");
 //! ```
 
 use std::time::Duration;
@@ -73,7 +76,7 @@ pub const TILE_SIZE: usize = 8;
 pub const TILE_WIDTH: usize = 56;
 
 /// Display tile count in the y-direction
-/// 
+///
 /// # Examples
 ///
 /// ```rust
@@ -83,7 +86,7 @@ pub const TILE_WIDTH: usize = 56;
 pub const TILE_HEIGHT: usize = 20;
 
 /// Display width in pixels
-/// 
+///
 /// # Examples
 ///
 /// ```rust
@@ -121,8 +124,8 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 ///    // Change pixels here
 ///
 ///    connection.send(Command::BitmapLinearWin(
-///            Origin::new(0,0), 
-///            pixels, 
+///            Origin::new(0,0),
+///            pixels,
 ///            CompressionCode::Lzma
 ///        ))
 ///        .expect("send failed");

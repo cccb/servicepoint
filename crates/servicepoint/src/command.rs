@@ -15,10 +15,44 @@ pub type Offset = usize;
 /// The encoding is currently not enforced.
 pub type Cp437Grid = PrimitiveGrid<u8>;
 
-/// A command to send to the display.
+/// A low-level display command.
+///
+/// This struct and associated functions implement the UDP protocol for the display.
+///
+/// To send a `Command`, use a `Connection`.
+///
+/// # Examples
+///
+/// ```rust
+/// # use servicepoint::{Brightness, Command, Connection, Packet};
+///
+/// // create command
+/// let command = Command::Brightness(Brightness::MAX);
+///
+/// // turn command into Packet
+/// let packet: Packet = command.clone().into();
+///
+/// // read command from packet
+/// let round_tripped = Command::try_from(packet).unwrap();
+///
+/// // round tripping produces exact copy
+/// assert_eq!(command, round_tripped);
+///
+/// // send command
+/// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+/// connection.send(command).unwrap();
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
     /// Set all pixels to the off state. Does not affect brightness.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{Command, Connection};
+    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// connection.send(Command::Clear).unwrap();
+    /// ```
     Clear,
 
     /// Show text on the screen.
@@ -27,12 +61,31 @@ pub enum Command {
     ///     The library does not currently convert between UTF-8 and CP-437.
     ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
     /// </div>
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{Command, Connection, Cp437Grid, Origin};
+    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// let chars = ['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd'].map(move |c| c as u8);
+    /// let grid = Cp437Grid::load(5, 2, &chars);
+    /// connection.send(Command::Cp437Data(Origin::new(2, 2), grid)).unwrap();
+    /// ```
     Cp437Data(Origin<Tiles>, Cp437Grid),
 
     /// Sets a window of pixels to the specified values
     BitmapLinearWin(Origin<Pixels>, PixelGrid, CompressionCode),
 
     /// Set the brightness of all tiles to the same value.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{Brightness, Command, Connection};
+    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// let command = Command::Brightness(Brightness::MAX);
+    /// connection.send(command).unwrap();
+    /// ```
     Brightness(Brightness),
 
     /// Set the brightness of individual tiles in a rectangular area of the display.
@@ -73,17 +126,43 @@ pub enum Command {
     /// Kills the udp daemon on the display, which usually results in a restart.
     ///
     /// Please do not send this in your normal program flow.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{Command, Connection};
+    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// connection.send(Command::HardReset).unwrap();
+    /// ```
     HardReset,
 
     /// <div class="warning">Untested</div>
     ///
     /// Slowly decrease brightness until off or something like that?
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{Command, Connection};
+    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// connection.send(Command::FadeOut).unwrap();
+    /// ```
     FadeOut,
 
-    #[deprecated]
     /// Legacy command code, gets ignored by the real display.
     ///
     /// Might be useful as a noop package.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{Command, Connection};
+    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// // this sends a packet that does nothing
+    /// # #[allow(deprecated)]
+    /// connection.send(Command::BitmapLegacy).unwrap();
+    /// ```
+    #[deprecated]
     BitmapLegacy,
 }
 

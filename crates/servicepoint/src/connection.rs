@@ -6,6 +6,15 @@ use log::{debug, info};
 use crate::Packet;
 
 /// A connection to the display.
+///
+/// # Examples
+/// ```rust
+/// # use servicepoint::Command;
+/// let connection = servicepoint::Connection::open("172.23.42.29:2342")
+///     .expect("connection failed");
+///  connection.send(Command::Clear)
+///     .expect("send failed");
+/// ```
 pub struct Connection {
     socket: UdpSocket,
 }
