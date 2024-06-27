@@ -5,8 +5,7 @@
 use std::ptr::null_mut;
 
 use servicepoint::{
-    Brightness, Command, CompressionCode, Offset,
-    Origin, Packet, PixelGrid,
+    Brightness, Command, CompressionCode, Offset, Origin, Packet, PixelGrid,
 };
 
 use crate::bit_vec::CBitVec;

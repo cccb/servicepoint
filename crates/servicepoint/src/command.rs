@@ -1,10 +1,9 @@
 use bitvec::prelude::BitVec;
 
 use crate::{
-    command_code::CommandCode,
-    compression::{into_compressed, into_decompressed},
-    Brightness, BrightnessGrid, CompressionCode, Grid, Header, Origin, Packet,
-    PixelGrid, Pixels, PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
+    command_code::CommandCode, compression::into_decompressed, Brightness,
+    BrightnessGrid, CompressionCode, Header, Origin, Packet, PixelGrid, Pixels,
+    PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
 };
 
 /// Type alias for documenting the meaning of the u16 in enum values
@@ -166,124 +165,6 @@ pub enum Command {
     BitmapLegacy,
 }
 
-impl From<Command> for Packet {
-    /// Move the `Command` into a `Packet` instance for sending.
-    #[allow(clippy::cast_possible_truncation)]
-    fn from(value: Command) -> Self {
-        match value {
-            Command::Clear => Command::command_code_only(CommandCode::Clear),
-            Command::FadeOut => {
-                Command::command_code_only(CommandCode::FadeOut)
-            }
-            Command::HardReset => {
-                Command::command_code_only(CommandCode::HardReset)
-            }
-            #[allow(deprecated)]
-            Command::BitmapLegacy => {
-                Command::command_code_only(CommandCode::BitmapLegacy)
-            }
-            Command::CharBrightness(origin, grid) => Packet(
-                Header(
-                    CommandCode::CharBrightness.into(),
-                    origin.x as u16,
-                    origin.y as u16,
-                    grid.width() as u16,
-                    grid.height() as u16,
-                ),
-                grid.into(),
-            ),
-            Command::Brightness(brightness) => Packet(
-                Header(
-                    CommandCode::Brightness.into(),
-                    0x00000,
-                    0x0000,
-                    0x0000,
-                    0x0000,
-                ),
-                vec![brightness.into()],
-            ),
-            Command::BitmapLinearWin(origin, pixels, compression) => {
-                bitmap_win_into_packet(origin, pixels, compression)
-            }
-            Command::BitmapLinear(offset, bits, compression) => {
-                Command::bitmap_linear_into_packet(
-                    CommandCode::BitmapLinear,
-                    offset,
-                    compression,
-                    bits.into(),
-                )
-            }
-            Command::BitmapLinearAnd(offset, bits, compression) => {
-                Command::bitmap_linear_into_packet(
-                    CommandCode::BitmapLinearAnd,
-                    offset,
-                    compression,
-                    bits.into(),
-                )
-            }
-            Command::BitmapLinearOr(offset, bits, compression) => {
-                Command::bitmap_linear_into_packet(
-                    CommandCode::BitmapLinearOr,
-                    offset,
-                    compression,
-                    bits.into(),
-                )
-            }
-            Command::BitmapLinearXor(offset, bits, compression) => {
-                Command::bitmap_linear_into_packet(
-                    CommandCode::BitmapLinearXor,
-                    offset,
-                    compression,
-                    bits.into(),
-                )
-            }
-            Command::Cp437Data(origin, grid) => Packet(
-                Header(
-                    CommandCode::Cp437Data.into(),
-                    origin.x as u16,
-                    origin.y as u16,
-                    grid.width() as u16,
-                    grid.height() as u16,
-                ),
-                grid.into(),
-            ),
-        }
-    }
-}
-
-#[allow(clippy::cast_possible_truncation)]
-fn bitmap_win_into_packet(
-    origin: Origin<Pixels>,
-    pixels: PixelGrid,
-    compression: CompressionCode,
-) -> Packet {
-    debug_assert_eq!(origin.x % 8, 0);
-    debug_assert_eq!(pixels.width() % 8, 0);
-
-    let tile_x = (origin.x / TILE_SIZE) as u16;
-    let tile_w = (pixels.width() / TILE_SIZE) as u16;
-    let pixel_h = pixels.height() as u16;
-    let payload = into_compressed(compression, pixels.into());
-    let command = match compression {
-        CompressionCode::Uncompressed => {
-            CommandCode::BitmapLinearWinUncompressed
-        }
-        #[cfg(feature = "compression_zlib")]
-        CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
-        #[cfg(feature = "compression_bzip2")]
-        CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
-        #[cfg(feature = "compression_lzma")]
-        CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
-        #[cfg(feature = "compression_zstd")]
-        CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
-    };
-
-    Packet(
-        Header(command.into(), tile_x, origin.y as u16, tile_w, pixel_h),
-        payload,
-    )
-}
-
 #[derive(Debug)]
 /// Err values for `Command::try_from`.
 #[derive(PartialEq)]
@@ -309,7 +190,7 @@ impl TryFrom<Packet> for Command {
 
     /// Try to interpret the `Packet` as one containing a `Command`
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
-        let Packet(Header(command_u16, a, b, c, d), _) = packet;
+        let Packet(Header(command_u16, a, _, _, _), _) = packet;
         let command_code = match CommandCode::try_from(command_u16) {
             Err(()) => {
                 return Err(TryFromPacketError::InvalidCommand(command_u16));
@@ -318,62 +199,19 @@ impl TryFrom<Packet> for Command {
         };
 
         match command_code {
-            CommandCode::Clear => match Self::check_command_only(packet) {
-                Some(err) => Err(err),
-                None => Ok(Command::Clear),
-            },
-            CommandCode::Brightness => {
-                let Packet(header, payload) = packet;
-                if payload.len() != 1 {
-                    return Err(TryFromPacketError::UnexpectedPayloadSize(
-                        1,
-                        payload.len(),
-                    ));
-                }
-
-                let Header(_, a, b, c, d) = header;
-                if a != 0 || b != 0 || c != 0 || d != 0 {
-                    return Err(TryFromPacketError::ExtraneousHeaderValues);
-                }
-
-                match Brightness::try_from(payload[0]) {
-                    Ok(b) => Ok(Command::Brightness(b)),
-                    Err(_) => {
-                        Err(TryFromPacketError::InvalidBrightness(payload[0]))
-                    }
-                }
+            CommandCode::Clear => {
+                Self::packet_into_command_only(packet, Command::Clear)
             }
-            CommandCode::HardReset => match Self::check_command_only(packet) {
-                Some(err) => Err(err),
-                None => Ok(Command::HardReset),
-            },
-            CommandCode::FadeOut => match Self::check_command_only(packet) {
-                Some(err) => Err(err),
-                None => Ok(Command::FadeOut),
-            },
-            CommandCode::Cp437Data => {
-                let Packet(_, payload) = packet;
-                Ok(Command::Cp437Data(
-                    Origin::new(a as usize, b as usize),
-                    Cp437Grid::load(c as usize, d as usize, &payload),
-                ))
+            CommandCode::Brightness => Self::packet_into_brightness(&packet),
+            CommandCode::HardReset => {
+                Self::packet_into_command_only(packet, Command::HardReset)
             }
+            CommandCode::FadeOut => {
+                Self::packet_into_command_only(packet, Command::FadeOut)
+            }
+            CommandCode::Cp437Data => Self::packet_into_cp437(&packet),
             CommandCode::CharBrightness => {
-                let Packet(_, payload) = packet;
-
-                let grid =
-                    PrimitiveGrid::load(c as usize, d as usize, &payload);
-                let grid = match BrightnessGrid::try_from(grid) {
-                    Ok(grid) => grid,
-                    Err(val) => {
-                        return Err(TryFromPacketError::InvalidBrightness(val))
-                    }
-                };
-
-                Ok(Command::CharBrightness(
-                    Origin::new(a as usize, b as usize),
-                    grid,
-                ))
+                Self::packet_into_char_brightness(&packet)
             }
             #[allow(deprecated)]
             CommandCode::BitmapLegacy => Ok(Command::BitmapLegacy),
@@ -447,42 +285,18 @@ impl Command {
         ))
     }
 
-    /// Helper method for `BitMapLinear*`-Commands into `Packet`
-    #[allow(clippy::cast_possible_truncation)]
-    fn bitmap_linear_into_packet(
-        command: CommandCode,
-        offset: Offset,
-        compression: CompressionCode,
-        payload: Vec<u8>,
-    ) -> Packet {
-        let length = payload.len() as u16;
-        let payload = into_compressed(compression, payload);
-        Packet(
-            Header(
-                command.into(),
-                offset as u16,
-                length,
-                compression.into(),
-                0,
-            ),
-            payload,
-        )
-    }
-
-    /// Helper method for creating empty packets only containing the command code
-    fn command_code_only(code: CommandCode) -> Packet {
-        Packet(Header(code.into(), 0x0000, 0x0000, 0x0000, 0x0000), vec![])
-    }
-
     /// Helper method for checking that a packet is empty and only contains a command code
-    fn check_command_only(packet: Packet) -> Option<TryFromPacketError> {
+    fn packet_into_command_only(
+        packet: Packet,
+        command: Command,
+    ) -> Result<Command, TryFromPacketError> {
         let Packet(Header(_, a, b, c, d), payload) = packet;
         if !payload.is_empty() {
-            Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
+            Err(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
         } else if a != 0 || b != 0 || c != 0 || d != 0 {
-            Some(TryFromPacketError::ExtraneousHeaderValues)
+            Err(TryFromPacketError::ExtraneousHeaderValues)
         } else {
-            None
+            Ok(command)
         }
     }
 
@@ -511,6 +325,55 @@ impl Command {
             ));
         }
         Ok((BitVec::from_vec(payload), sub))
+    }
+
+    fn packet_into_char_brightness(
+        packet: &Packet,
+    ) -> Result<Command, TryFromPacketError> {
+        let Packet(Header(_, x, y, width, height), payload) = packet;
+
+        let grid =
+            PrimitiveGrid::load(*width as usize, *height as usize, payload);
+        let grid = match BrightnessGrid::try_from(grid) {
+            Ok(grid) => grid,
+            Err(val) => return Err(TryFromPacketError::InvalidBrightness(val)),
+        };
+
+        Ok(Command::CharBrightness(
+            Origin::new(*x as usize, *y as usize),
+            grid,
+        ))
+    }
+
+    fn packet_into_brightness(
+        packet: &Packet,
+    ) -> Result<Command, TryFromPacketError> {
+        let Packet(Header(_, a, b, c, d), payload) = packet;
+        if payload.len() != 1 {
+            return Err(TryFromPacketError::UnexpectedPayloadSize(
+                1,
+                payload.len(),
+            ));
+        }
+
+        if *a != 0 || *b != 0 || *c != 0 || *d != 0 {
+            return Err(TryFromPacketError::ExtraneousHeaderValues);
+        }
+
+        match Brightness::try_from(payload[0]) {
+            Ok(b) => Ok(Command::Brightness(b)),
+            Err(_) => Err(TryFromPacketError::InvalidBrightness(payload[0])),
+        }
+    }
+
+    fn packet_into_cp437(
+        packet: &Packet,
+    ) -> Result<Command, TryFromPacketError> {
+        let Packet(Header(_, a, b, c, d), payload) = packet;
+        Ok(Command::Cp437Data(
+            Origin::new(*a as usize, *b as usize),
+            Cp437Grid::load(*c as usize, *d as usize, payload),
+        ))
     }
 }
 

@@ -3,7 +3,6 @@
 use clap::Parser;
 
 use servicepoint::*;
-use servicepoint::Command::BitmapLinearWin;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -19,7 +18,7 @@ fn main() {
     let mut pixels = PixelGrid::max_sized();
     pixels.fill(true);
 
-    let command = BitmapLinearWin(
+    let command = Command::BitmapLinearWin(
         Origin::new(0, 0),
         pixels,
         CompressionCode::Uncompressed,

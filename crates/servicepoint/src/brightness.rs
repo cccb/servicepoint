@@ -94,11 +94,7 @@ impl TryFrom<PrimitiveGrid<u8>> for BrightnessGrid {
         let brightnesses = value
             .iter()
             .map(|b| Brightness::try_from(*b))
-            .collect::<Result<Vec<Brightness>, _>>();
-        let brightnesses = match brightnesses {
-            Ok(vec) => vec,
-            Err(u8) => return Err(u8),
-        };
+            .collect::<Result<Vec<Brightness>, _>>()?;
         Ok(BrightnessGrid::load(
             value.width(),
             value.height(),
@@ -110,6 +106,6 @@ impl TryFrom<PrimitiveGrid<u8>> for BrightnessGrid {
 #[cfg(feature = "rand")]
 impl Distribution<Brightness> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Brightness {
-        Brightness(rng.gen_range(Brightness::MIN.0..(Brightness::MAX.0 + 1)))
+        Brightness(rng.gen_range(Brightness::MIN.0..=Brightness::MAX.0))
     }
 }

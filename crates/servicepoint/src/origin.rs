@@ -16,7 +16,7 @@ impl<Unit: DisplayUnit> Origin<Unit> {
         Self {
             x,
             y,
-            phantom_data: PhantomData::default(),
+            phantom_data: PhantomData,
         }
     }
 }
@@ -28,7 +28,7 @@ impl<T: DisplayUnit> std::ops::Add<Origin<T>> for Origin<T> {
         Origin {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
-            phantom_data: PhantomData::default(),
+            phantom_data: PhantomData,
         }
     }
 }

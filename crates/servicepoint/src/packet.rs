@@ -1,5 +1,12 @@
 use std::mem::size_of;
 
+use crate::command_code::CommandCode;
+use crate::compression::into_compressed;
+use crate::{
+    Command, CompressionCode, Grid, Offset, Origin, PixelGrid, Pixels,
+    TILE_SIZE,
+};
+
 /// A raw header. Should probably not be used directly.
 #[derive(Debug, PartialEq)]
 pub struct Header(pub u16, pub u16, pub u16, pub u16, pub u16);
@@ -55,6 +62,151 @@ impl TryFrom<&[u8]> for Packet {
         let payload = value[10..].to_vec();
 
         Ok(Packet(Header(mode, a, b, c, d), payload))
+    }
+}
+
+impl From<Command> for Packet {
+    /// Move the `Command` into a `Packet` instance for sending.
+    #[allow(clippy::cast_possible_truncation)]
+    fn from(value: Command) -> Self {
+        match value {
+            Command::Clear => Self::command_code_only(CommandCode::Clear),
+            Command::FadeOut => Self::command_code_only(CommandCode::FadeOut),
+            Command::HardReset => {
+                Self::command_code_only(CommandCode::HardReset)
+            }
+            #[allow(deprecated)]
+            Command::BitmapLegacy => {
+                Self::command_code_only(CommandCode::BitmapLegacy)
+            }
+            Command::CharBrightness(origin, grid) => Packet(
+                Header(
+                    CommandCode::CharBrightness.into(),
+                    origin.x as u16,
+                    origin.y as u16,
+                    grid.width() as u16,
+                    grid.height() as u16,
+                ),
+                grid.into(),
+            ),
+            Command::Brightness(brightness) => Packet(
+                Header(
+                    CommandCode::Brightness.into(),
+                    0x00000,
+                    0x0000,
+                    0x0000,
+                    0x0000,
+                ),
+                vec![brightness.into()],
+            ),
+            Command::BitmapLinearWin(origin, pixels, compression) => {
+                Self::bitmap_win_into_packet(origin, pixels, compression)
+            }
+            Command::BitmapLinear(offset, bits, compression) => {
+                Self::bitmap_linear_into_packet(
+                    CommandCode::BitmapLinear,
+                    offset,
+                    compression,
+                    bits.into(),
+                )
+            }
+            Command::BitmapLinearAnd(offset, bits, compression) => {
+                Self::bitmap_linear_into_packet(
+                    CommandCode::BitmapLinearAnd,
+                    offset,
+                    compression,
+                    bits.into(),
+                )
+            }
+            Command::BitmapLinearOr(offset, bits, compression) => {
+                Self::bitmap_linear_into_packet(
+                    CommandCode::BitmapLinearOr,
+                    offset,
+                    compression,
+                    bits.into(),
+                )
+            }
+            Command::BitmapLinearXor(offset, bits, compression) => {
+                Self::bitmap_linear_into_packet(
+                    CommandCode::BitmapLinearXor,
+                    offset,
+                    compression,
+                    bits.into(),
+                )
+            }
+            Command::Cp437Data(origin, grid) => Packet(
+                Header(
+                    CommandCode::Cp437Data.into(),
+                    origin.x as u16,
+                    origin.y as u16,
+                    grid.width() as u16,
+                    grid.height() as u16,
+                ),
+                grid.into(),
+            ),
+        }
+    }
+}
+
+impl Packet {
+    /// Helper method for `BitMapLinear*`-Commands into `Packet`
+    #[allow(clippy::cast_possible_truncation)]
+    fn bitmap_linear_into_packet(
+        command: CommandCode,
+        offset: Offset,
+        compression: CompressionCode,
+        payload: Vec<u8>,
+    ) -> Packet {
+        let length = payload.len() as u16;
+        let payload = into_compressed(compression, payload);
+        Packet(
+            Header(
+                command.into(),
+                offset as u16,
+                length,
+                compression.into(),
+                0,
+            ),
+            payload,
+        )
+    }
+
+    #[allow(clippy::cast_possible_truncation)]
+    fn bitmap_win_into_packet(
+        origin: Origin<Pixels>,
+        pixels: PixelGrid,
+        compression: CompressionCode,
+    ) -> Packet {
+        debug_assert_eq!(origin.x % 8, 0);
+        debug_assert_eq!(pixels.width() % 8, 0);
+
+        let tile_x = (origin.x / TILE_SIZE) as u16;
+        let tile_w = (pixels.width() / TILE_SIZE) as u16;
+        let pixel_h = pixels.height() as u16;
+        let payload = into_compressed(compression, pixels.into());
+        let command = match compression {
+            CompressionCode::Uncompressed => {
+                CommandCode::BitmapLinearWinUncompressed
+            }
+            #[cfg(feature = "compression_zlib")]
+            CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
+            #[cfg(feature = "compression_bzip2")]
+            CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
+            #[cfg(feature = "compression_lzma")]
+            CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
+            #[cfg(feature = "compression_zstd")]
+            CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
+        };
+
+        Packet(
+            Header(command.into(), tile_x, origin.y as u16, tile_w, pixel_h),
+            payload,
+        )
+    }
+
+    /// Helper method for creating empty packets only containing the command code
+    fn command_code_only(code: CommandCode) -> Packet {
+        Packet(Header(code.into(), 0x0000, 0x0000, 0x0000, 0x0000), vec![])
     }
 }
 
