@@ -2,7 +2,7 @@
 
 use clap::Parser;
 
-use servicepoint::{ByteGrid, Command, Connection, Grid, Origin};
+use servicepoint::{Command, Connection, Cp437Grid, Grid, Origin};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -22,14 +22,18 @@ fn main() {
         cli.text.push("Hello, CCCB!".to_string());
     }
 
-    let connection = Connection::open(&cli.destination).unwrap();
+    let connection = Connection::open(&cli.destination)
+        .expect("could not connect to display");
+
     if cli.clear {
-        connection.send(Command::Clear).unwrap();
+        connection
+            .send(Command::Clear)
+            .expect("sending clear failed");
     }
 
     let max_width = cli.text.iter().map(|t| t.len()).max().unwrap();
 
-    let mut chars = ByteGrid::new(max_width, cli.text.len());
+    let mut chars = Cp437Grid::new(max_width, cli.text.len());
     for y in 0..cli.text.len() {
         let row = &cli.text[y];
 
@@ -40,6 +44,6 @@ fn main() {
     }
 
     connection
-        .send(Command::Cp437Data(Origin(0, 0), chars))
-        .unwrap();
+        .send(Command::Cp437Data(Origin::new(0, 0), chars))
+        .expect("sending text failed");
 }

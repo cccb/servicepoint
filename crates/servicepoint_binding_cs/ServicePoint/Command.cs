@@ -61,7 +61,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
         }
     }
 
-    public static Command CharBrightness(int x, int y, ByteGrid grid)
+    public static Command CharBrightness(int x, int y, BrightnessGrid grid)
     {
         unsafe
         {
@@ -113,7 +113,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
         }
     }
 
-    public static Command Cp437Data(int x, int y, ByteGrid byteGrid)
+    public static Command Cp437Data(int x, int y, Cp437Grid byteGrid)
     {
         unsafe
         {

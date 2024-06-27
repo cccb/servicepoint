@@ -22,7 +22,8 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = Connection::open(cli.destination).unwrap();
+    let connection = Connection::open(cli.destination)
+        .expect("could not connect to display");
     let wait_duration = Duration::from_millis(cli.wait_ms);
 
     // put all pixels in on state
@@ -30,8 +31,11 @@ fn main() {
         let mut filled_grid = PixelGrid::max_sized();
         filled_grid.fill(true);
 
-        let command =
-            BitmapLinearWin(Origin(0, 0), filled_grid, CompressionCode::Lzma);
+        let command = BitmapLinearWin(
+            Origin::new(0, 0),
+            filled_grid,
+            CompressionCode::Lzma,
+        );
         connection.send(command).expect("send failed");
     }
 
@@ -48,8 +52,8 @@ fn main() {
         let w = rng.gen_range(min_size..=TILE_WIDTH - x);
         let h = rng.gen_range(min_size..=TILE_HEIGHT - y);
 
-        let origin = Origin(x, y);
-        let mut luma = ByteGrid::new(w, h);
+        let origin = Origin::new(x, y);
+        let mut luma = BrightnessGrid::new(w, h);
 
         for y in 0..h {
             for x in 0..w {

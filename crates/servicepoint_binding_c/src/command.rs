@@ -5,11 +5,12 @@
 use std::ptr::null_mut;
 
 use servicepoint::{
-    Brightness, ByteGrid, Command, CompressionCode, Offset, Origin, Packet,
-    PixelGrid,
+    Brightness, Command, CompressionCode, Offset, Origin, Packet, PixelGrid,
 };
 
 use crate::bit_vec::CBitVec;
+use crate::brightness_grid::CBrightnessGrid;
+use crate::cp437_grid::CCp437Grid;
 
 /// Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
 ///
@@ -91,7 +92,12 @@ pub unsafe extern "C" fn sp_command_fade_out() -> *mut Command {
     Box::into_raw(Box::new(Command::FadeOut))
 }
 
-/// Allocates a new `Command::Brightness` instance.
+/// Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
+/// same value.
+///
+/// # Panics
+///
+/// - When the provided brightness value is out of range (0-11).
 ///
 /// # Safety
 ///
@@ -100,9 +106,9 @@ pub unsafe extern "C" fn sp_command_fade_out() -> *mut Command {
 /// - the returned `Command` instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_brightness(
-    brightness: Brightness,
-) -> *mut Command {
+pub unsafe extern "C" fn sp_command_brightness(brightness: u8) -> *mut Command {
+    let brightness =
+        Brightness::try_from(brightness).expect("invalid brightness");
     Box::into_raw(Box::new(Command::Brightness(brightness)))
 }
 
@@ -121,10 +127,13 @@ pub unsafe extern "C" fn sp_command_brightness(
 pub unsafe extern "C" fn sp_command_char_brightness(
     x: usize,
     y: usize,
-    byte_grid: *mut ByteGrid,
+    byte_grid: *mut CBrightnessGrid,
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(byte_grid);
-    Box::into_raw(Box::new(Command::CharBrightness(Origin(x, y), byte_grid)))
+    Box::into_raw(Box::new(Command::CharBrightness(
+        Origin::new(x, y),
+        byte_grid.0,
+    )))
 }
 
 /// Allocates a new `Command::BitmapLinear` instance.
@@ -246,10 +255,10 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 pub unsafe extern "C" fn sp_command_cp437_data(
     x: usize,
     y: usize,
-    byte_grid: *mut ByteGrid,
+    byte_grid: *mut CCp437Grid,
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(byte_grid);
-    Box::into_raw(Box::new(Command::Cp437Data(Origin(x, y), byte_grid)))
+    Box::into_raw(Box::new(Command::Cp437Data(Origin::new(x, y), byte_grid.0)))
 }
 
 /// Allocates a new `Command::BitmapLinearWin` instance.
@@ -273,7 +282,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 ) -> *mut Command {
     let byte_grid = *Box::from_raw(pixel_grid);
     Box::into_raw(Box::new(Command::BitmapLinearWin(
-        Origin(x, y),
+        Origin::new(x, y),
         byte_grid,
         compression_code,
     )))

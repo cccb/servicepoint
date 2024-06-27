@@ -7,12 +7,11 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
         <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <PropertyGroup>
         <PackageId>ServicePoint</PackageId>
-        <Version>0.6.0</Version>
+        <Version>0.7.0</Version>
         <Authors>Repository Authors</Authors>
         <Company>None</Company>
         <Product>ServicePoint</Product>
@@ -35,7 +34,7 @@
         <Exec Command="cargo build"/>
         <Exec Command="cargo build --manifest-path ../../../crates/servicepoint_binding_c/Cargo.toml"/>
     </Target>
-    
+
     <!-- include native binary in output -->
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
         <Content Include="../../../target/debug/libservicepoint_binding_c.so" CopyToOutputDirectory="Always">

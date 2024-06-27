@@ -33,4 +33,4 @@ include = ["servicepoint"]
 extra_bindings = ["servicepoint"]
 
 [parse.expand]
-#all_features = true
+all_features = true

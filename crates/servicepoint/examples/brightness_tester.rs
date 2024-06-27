@@ -2,7 +2,6 @@
 
 use clap::Parser;
 
-use servicepoint::Command::BitmapLinearWin;
 use servicepoint::*;
 
 #[derive(Parser, Debug)]
@@ -13,25 +12,26 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
-    let connection = Connection::open(cli.destination).unwrap();
+    let connection = Connection::open(cli.destination)
+        .expect("could not connect to display");
 
     let mut pixels = PixelGrid::max_sized();
     pixels.fill(true);
 
-    connection
-        .send(BitmapLinearWin(
-            Origin(0, 0),
-            pixels,
-            CompressionCode::Uncompressed,
-        ))
-        .expect("send failed");
+    let command = Command::BitmapLinearWin(
+        Origin::new(0, 0),
+        pixels,
+        CompressionCode::Uncompressed,
+    );
+    connection.send(command).expect("send failed");
 
-    let mut brightnesses = ByteGrid::new(TILE_WIDTH, TILE_HEIGHT);
+    let max_brightness = usize::from(u8::from(Brightness::MAX));
+    let mut brightnesses = BrightnessGrid::new(TILE_WIDTH, TILE_HEIGHT);
     for (index, byte) in brightnesses.data_ref_mut().iter_mut().enumerate() {
-        *byte = (index % u8::MAX as usize) as u8;
+        *byte = Brightness::try_from((index % max_brightness) as u8).unwrap();
     }
 
     connection
-        .send(Command::CharBrightness(Origin(0, 0), brightnesses))
+        .send(Command::CharBrightness(Origin::new(0, 0), brightnesses))
         .expect("send failed");
 }

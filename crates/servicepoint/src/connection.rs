@@ -6,6 +6,15 @@ use log::{debug, info};
 use crate::Packet;
 
 /// A connection to the display.
+///
+/// # Examples
+/// ```rust
+/// # use servicepoint::Command;
+/// let connection = servicepoint::Connection::open("172.23.42.29:2342")
+///     .expect("connection failed");
+///  connection.send(Command::Clear)
+///     .expect("send failed");
+/// ```
 pub struct Connection {
     socket: UdpSocket,
 }
@@ -46,20 +55,11 @@ impl Connection {
     /// # Examples
     ///
     /// ```rust
-    /// use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
-    /// let connection = servicepoint::Connection::open("172.23.42.29:2342")
-    ///     .expect("connection failed");
-    ///
-    ///  // turn off all pixels
+    /// # use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+    /// # let connection = servicepoint::Connection::open("172.23.42.29:2342")
+    /// #     .expect("connection failed");
+    ///  // turn off all pixels on display
     ///  connection.send(Command::Clear)
-    ///     .expect("send failed");
-    ///
-    ///  // turn on all pixels
-    ///  let mut pixels = PixelGrid::max_sized();
-    ///  pixels.fill(true);
-    ///
-    ///  // send pixels to display
-    ///  connection.send(Command::BitmapLinearWin(servicepoint::Origin(0, 0), pixels, CompressionCode::Uncompressed))
     ///     .expect("send failed");
     /// ```
     pub fn send(

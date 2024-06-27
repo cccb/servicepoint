@@ -13,7 +13,8 @@ struct Cli {
 }
 
 fn main() {
-    let connection = Connection::open(Cli::parse().destination).unwrap();
+    let connection = Connection::open(Cli::parse().destination)
+        .expect("could not connect to display");
 
     let mut pixels = PixelGrid::max_sized();
     for x_offset in 0..usize::MAX {
@@ -22,13 +23,13 @@ fn main() {
         for y in 0..PIXEL_HEIGHT {
             pixels.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
-        connection
-            .send(Command::BitmapLinearWin(
-                Origin(0, 0),
-                pixels.clone(),
-                CompressionCode::Lzma,
-            ))
-            .unwrap();
+
+        let command = Command::BitmapLinearWin(
+            Origin::new(0, 0),
+            pixels.clone(),
+            CompressionCode::Lzma,
+        );
+        connection.send(command).expect("send failed");
         thread::sleep(FRAME_PACING);
     }
 }

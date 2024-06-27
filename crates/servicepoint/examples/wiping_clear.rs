@@ -22,7 +22,8 @@ fn main() {
         Duration::from_millis(cli.time / PIXEL_WIDTH as u64),
     );
 
-    let connection = Connection::open(cli.destination).unwrap();
+    let connection = Connection::open(cli.destination)
+        .expect("could not connect to display");
 
     let mut enabled_pixels = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
     enabled_pixels.fill(true);
@@ -38,7 +39,7 @@ fn main() {
 
         connection
             .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma))
-            .unwrap();
+            .expect("could not send command to display");
         thread::sleep(sleep_duration);
     }
 }
