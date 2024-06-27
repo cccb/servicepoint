@@ -17,6 +17,9 @@ in
       gcc
       gnumake
 
+    # required for python bindings
+    iconv
+
       # dotnet-sdk_8
     ];
 
