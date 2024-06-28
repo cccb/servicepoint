@@ -9,6 +9,9 @@ pkgs.mkShell {
     cargo-tarpaulin
     gnumake
 
+    # required for python bindings
+    iconv
+
     # dotnet-sdk_8
   ];
 
