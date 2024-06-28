@@ -10,4 +10,8 @@ Python bindings for the rust servicepoint library.
 
 ## TODO
 
-* Automate shit
+* expose rust functions to python
+* rename `src` -> `rust`
+* encapsulete python module in `py` folder
+* unit tests for python bindings
+* example fnord sign
