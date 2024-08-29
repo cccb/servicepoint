@@ -128,7 +128,7 @@ typedef uint16_t sp_CompressionCode;
 typedef struct sp_Brightness sp_Brightness;
 
 /**
- * Opaque struct needed for correct code generation.
+ * A vector of bits
  */
 typedef struct sp_CBitVec sp_CBitVec;
 
@@ -138,7 +138,11 @@ typedef struct sp_CBitVec sp_CBitVec;
 typedef struct sp_CBrightnessGrid sp_CBrightnessGrid;
 
 /**
- * Opaque struct needed for correct code generation.
+ * A low-level display command.
+ *
+ * This struct and associated functions implement the UDP protocol for the display.
+ *
+ * To send a `CCommand`, use a `Connection`.
  */
 typedef struct sp_CCommand sp_CCommand;
 
@@ -148,37 +152,6 @@ typedef struct sp_CCommand sp_CCommand;
  * The encoding is currently not enforced.
  */
 typedef struct sp_CCp437Grid sp_CCp437Grid;
-
-/**
- * A low-level display command.
- *
- * This struct and associated functions implement the UDP protocol for the display.
- *
- * To send a `Command`, use a `Connection`.
- *
- * # Examples
- *
- * ```rust
- * # use servicepoint::{Brightness, Command, Connection, Packet};
- *
- * // create command
- * let command = Command::Brightness(Brightness::MAX);
- *
- * // turn command into Packet
- * let packet: Packet = command.clone().into();
- *
- * // read command from packet
- * let round_tripped = Command::try_from(packet).unwrap();
- *
- * // round tripping produces exact copy
- * assert_eq!(command, round_tripped);
- *
- * // send command
- * # let connection = Connection::open("127.0.0.1:2342").unwrap();
- * connection.send(command).unwrap();
- * ```
- */
-typedef struct sp_Command sp_Command;
 
 /**
  * A connection to the display.
@@ -1046,7 +1019,7 @@ void sp_packet_dealloc(struct sp_Packet *this_);
  * - the returned `Packet` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_packet_dealloc`.
  */
-struct sp_Packet *sp_packet_from_command(struct sp_Command *command);
+struct sp_Packet *sp_packet_from_command(struct sp_CCommand *command);
 
 /**
  * Tries to load a `Packet` from the passed array with the specified length.

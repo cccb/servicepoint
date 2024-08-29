@@ -8,7 +8,7 @@ use servicepoint::bitvec::prelude::{BitVec, Msb0};
 /// cbindgen:no-export
 type SpBitVec = BitVec<u8, Msb0>;
 
-/// Opaque struct needed for correct code generation.
+/// A vector of bits
 #[derive(Clone)]
 pub struct CBitVec {
     actual: SpBitVec,

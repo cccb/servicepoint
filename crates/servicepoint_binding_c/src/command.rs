@@ -12,7 +12,11 @@ use crate::bit_vec::CBitVec;
 use crate::brightness_grid::CBrightnessGrid;
 use crate::cp437_grid::CCp437Grid;
 
-/// Opaque struct needed for correct code generation.
+/// A low-level display command.
+///
+/// This struct and associated functions implement the UDP protocol for the display.
+///
+/// To send a `CCommand`, use a `Connection`.
 pub struct CCommand(pub(crate) Command);
 
 impl Clone for CCommand {
