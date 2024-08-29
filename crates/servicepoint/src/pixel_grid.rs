@@ -17,8 +17,8 @@ impl PixelGrid {
     ///
     /// # Arguments
     ///
-    /// * `width`: size in pixels in x-direction
-    /// * `height`: size in pixels in y-direction
+    /// - `width`: size in pixels in x-direction
+    /// - `height`: size in pixels in y-direction
     ///
     /// returns: `PixelGrid` initialized to all pixels off
     ///
@@ -44,8 +44,8 @@ impl PixelGrid {
     ///
     /// # Arguments
     ///
-    /// * `width`: size in pixels in x-direction
-    /// * `height`: size in pixels in y-direction
+    /// - `width`: size in pixels in x-direction
+    /// - `height`: size in pixels in y-direction
     ///
     /// returns: `PixelGrid` that contains a copy of the provided data
     ///
@@ -121,8 +121,8 @@ impl Grid<bool> for PixelGrid {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell
-    /// * `value`: the value to write to the cell
+    /// - `x` and `y`: position of the cell
+    /// - `value`: the value to write to the cell
     ///
     /// returns: old value of the cell
     ///
@@ -143,8 +143,8 @@ impl Grid<bool> for PixelGrid {
     ///
     /// # Arguments
     ///
-    /// * `this`: instance to write to
-    /// * `value`: the value to set all pixels to
+    /// - `this`: instance to write to
+    /// - `value`: the value to set all pixels to
     fn fill(&mut self, value: bool) {
         self.bit_vec.fill(value);
     }

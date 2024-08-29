@@ -44,7 +44,7 @@ impl Connection {
     ///
     /// # Arguments
     ///
-    /// * `packet`: the packet-like to send
+    /// - `packet`: the packet-like to send
     ///
     /// returns: Ok if packet was sent, otherwise socket error
     ///

@@ -90,8 +90,8 @@ pub unsafe extern "C" fn sp_cp437_grid_dealloc(this: *mut CCp437Grid) {
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
-/// * `x` and `y`: position of the cell to read
+/// - `this`: instance to read from
+/// - `x` and `y`: position of the cell to read
 ///
 /// # Panics
 ///
@@ -116,9 +116,9 @@ pub unsafe extern "C" fn sp_cp437_grid_get(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `x` and `y`: position of the cell
-/// * `value`: the value to write to the cell
+/// - `this`: instance to write to
+/// - `x` and `y`: position of the cell
+/// - `value`: the value to write to the cell
 ///
 /// returns: old value of the cell
 ///
@@ -146,8 +146,8 @@ pub unsafe extern "C" fn sp_cp437_grid_set(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `value`: the value to set all cells to
+/// - `this`: instance to write to
+/// - `value`: the value to set all cells to
 ///
 /// # Safety
 ///
@@ -164,7 +164,7 @@ pub unsafe extern "C" fn sp_cp437_grid_fill(this: *mut CCp437Grid, value: u8) {
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
+/// - `this`: instance to read from
 ///
 /// # Safety
 ///
@@ -180,7 +180,7 @@ pub unsafe extern "C" fn sp_cp437_grid_width(this: *const CCp437Grid) -> usize {
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
+/// - `this`: instance to read from
 ///
 /// # Safety
 ///

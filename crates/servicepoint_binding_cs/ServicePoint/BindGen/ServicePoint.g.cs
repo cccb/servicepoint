@@ -81,11 +81,11 @@ namespace ServicePoint.BindGen
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern byte sp_brightness_grid_get(CBrightnessGrid* @this, nuint x, nuint y);
 
-        /// <summary>Sets the value of the specified position in the `BrightnessGrid`.  # Arguments  * `this`: instance to write to * `x` and `y`: position of the cell * `value`: the value to write to the cell  returns: old value of the cell  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
+        /// <summary>Sets the value of the specified position in the `BrightnessGrid`.  # Arguments  - `this`: instance to write to - `x` and `y`: position of the cell - `value`: the value to write to the cell  returns: old value of the cell  # Panics  - When accessing `x` or `y` out of bounds. - When providing an invalid brightness value  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void sp_brightness_grid_set(CBrightnessGrid* @this, nuint x, nuint y, byte value);
 
-        /// <summary>Sets the value of all cells in the `BrightnessGrid`.  # Arguments  * `this`: instance to write to * `value`: the value to set all cells to  # Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid` - `this` is not written to or read from concurrently</summary>
+        /// <summary>Sets the value of all cells in the `BrightnessGrid`.  # Arguments  * `this`: instance to write to * `value`: the value to set all cells to  # Panics  - When providing an invalid brightness value  # Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid` - `this` is not written to or read from concurrently</summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void sp_brightness_grid_fill(CBrightnessGrid* @this, byte value);
 

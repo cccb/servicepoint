@@ -10,8 +10,8 @@ use crate::c_slice::CByteSlice;
 ///
 /// # Arguments
 ///
-/// * `width`: size in pixels in x-direction
-/// * `height`: size in pixels in y-direction
+/// - `width`: size in pixels in x-direction
+/// - `height`: size in pixels in y-direction
 ///
 /// returns: `PixelGrid` initialized to all pixels off
 ///
@@ -37,8 +37,8 @@ pub unsafe extern "C" fn sp_pixel_grid_new(
 ///
 /// # Arguments
 ///
-/// * `width`: size in pixels in x-direction
-/// * `height`: size in pixels in y-direction
+/// - `width`: size in pixels in x-direction
+/// - `height`: size in pixels in y-direction
 ///
 /// returns: `PixelGrid` that contains a copy of the provided data
 ///
@@ -100,8 +100,8 @@ pub unsafe extern "C" fn sp_pixel_grid_dealloc(this: *mut PixelGrid) {
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
-/// * `x` and `y`: position of the cell to read
+/// - `this`: instance to read from
+/// - `x` and `y`: position of the cell to read
 ///
 /// # Panics
 ///
@@ -126,9 +126,9 @@ pub unsafe extern "C" fn sp_pixel_grid_get(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `x` and `y`: position of the cell
-/// * `value`: the value to write to the cell
+/// - `this`: instance to write to
+/// - `x` and `y`: position of the cell
+/// - `value`: the value to write to the cell
 ///
 /// returns: old value of the cell
 ///
@@ -156,8 +156,8 @@ pub unsafe extern "C" fn sp_pixel_grid_set(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `value`: the value to set all pixels to
+/// - `this`: instance to write to
+/// - `value`: the value to set all pixels to
 ///
 /// # Safety
 ///
@@ -174,7 +174,7 @@ pub unsafe extern "C" fn sp_pixel_grid_fill(this: *mut PixelGrid, value: bool) {
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
+/// - `this`: instance to read from
 ///
 /// # Safety
 ///
@@ -190,7 +190,7 @@ pub unsafe extern "C" fn sp_pixel_grid_width(this: *const PixelGrid) -> usize {
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
+/// - `this`: instance to read from
 ///
 /// # Safety
 ///

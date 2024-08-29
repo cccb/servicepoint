@@ -12,17 +12,38 @@
 #define sp_PIXEL_COUNT (sp_PIXEL_WIDTH * sp_PIXEL_HEIGHT)
 
 /**
- * screen height in pixels
+ * Display height in pixels
+ *
+ * # Examples
+ *
+ * ```rust
+ * # use servicepoint::{PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
+ * let grid = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
+ * ```
  */
 #define sp_PIXEL_HEIGHT (sp_TILE_HEIGHT * sp_TILE_SIZE)
 
 /**
- * screen width in pixels
+ * Display width in pixels
+ *
+ * # Examples
+ *
+ * ```rust
+ * # use servicepoint::{PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
+ * let grid = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
+ * ```
  */
 #define sp_PIXEL_WIDTH (sp_TILE_WIDTH * sp_TILE_SIZE)
 
 /**
- * tile count in the y-direction
+ * Display tile count in the y-direction
+ *
+ * # Examples
+ *
+ * ```rust
+ * # use servicepoint::{Cp437Grid, TILE_HEIGHT, TILE_WIDTH};
+ * let grid = Cp437Grid::new(TILE_WIDTH, TILE_HEIGHT);
+ * ```
  */
 #define sp_TILE_HEIGHT 20
 
@@ -32,12 +53,32 @@
 #define sp_TILE_SIZE 8
 
 /**
- * tile count in the x-direction
+ * Display tile count in the x-direction
+ *
+ * # Examples
+ *
+ * ```rust
+ * # use servicepoint::{Cp437Grid, TILE_HEIGHT, TILE_WIDTH};
+ * let grid = Cp437Grid::new(TILE_WIDTH, TILE_HEIGHT);
+ * ```
  */
 #define sp_TILE_WIDTH 56
 
 /**
  * Specifies the kind of compression to use. Availability depends on features.
+ *
+ * # Examples
+ *
+ * ```rust
+ * # use servicepoint::{Command, CompressionCode, Origin, PixelGrid};
+ * // create command without payload compression
+ * # let pixels = PixelGrid::max_sized();
+ * _ = Command::BitmapLinearWin(Origin::new(0, 0), pixels, CompressionCode::Uncompressed);
+ *
+ * // create command with payload compressed with lzma and appropriate header flags
+ * # let pixels = PixelGrid::max_sized();
+ * _ = Command::BitmapLinearWin(Origin::new(0, 0), pixels, CompressionCode::Lzma);
+ * ```
  */
 enum sp_CompressionCode
 #ifdef __cplusplus
@@ -71,6 +112,18 @@ typedef uint16_t sp_CompressionCode;
 
 /**
  * A display brightness value, checked for correct value range
+ *
+ * # Examples
+ *
+ * ```
+ * # use servicepoint::{Brightness, Command, Connection};
+ * let b = Brightness::MAX;
+ * let val: u8 = b.into();
+ *
+ * let b = Brightness::try_from(7).unwrap();
+ * # let connection = Connection::open("127.0.0.1:2342").unwrap();
+ * let result = connection.send(Command::Brightness(b));
+ * ```
  */
 typedef struct sp_Brightness sp_Brightness;
 
@@ -79,17 +132,60 @@ typedef struct sp_Brightness sp_Brightness;
  */
 typedef struct sp_CBitVec sp_CBitVec;
 
+/**
+ * C-wrapper for grid containing brightness values.
+ */
 typedef struct sp_CBrightnessGrid sp_CBrightnessGrid;
 
+/**
+ * A C-wrapper for grid containing codepage 437 characters.
+ *
+ * The encoding is currently not enforced.
+ */
 typedef struct sp_CCp437Grid sp_CCp437Grid;
 
 /**
- * A command to send to the display.
+ * A low-level display command.
+ *
+ * This struct and associated functions implement the UDP protocol for the display.
+ *
+ * To send a `Command`, use a `Connection`.
+ *
+ * # Examples
+ *
+ * ```rust
+ * # use servicepoint::{Brightness, Command, Connection, Packet};
+ *
+ * // create command
+ * let command = Command::Brightness(Brightness::MAX);
+ *
+ * // turn command into Packet
+ * let packet: Packet = command.clone().into();
+ *
+ * // read command from packet
+ * let round_tripped = Command::try_from(packet).unwrap();
+ *
+ * // round tripping produces exact copy
+ * assert_eq!(command, round_tripped);
+ *
+ * // send command
+ * # let connection = Connection::open("127.0.0.1:2342").unwrap();
+ * connection.send(command).unwrap();
+ * ```
  */
 typedef struct sp_Command sp_Command;
 
 /**
  * A connection to the display.
+ *
+ * # Examples
+ * ```rust
+ * # use servicepoint::Command;
+ * let connection = servicepoint::Connection::open("172.23.42.29:2342")
+ *     .expect("connection failed");
+ *  connection.send(Command::Clear)
+ *     .expect("send failed");
+ * ```
  */
 typedef struct sp_Connection sp_Connection;
 
@@ -102,16 +198,6 @@ typedef struct sp_Packet sp_Packet;
  * A grid of pixels stored in packed bytes.
  */
 typedef struct sp_PixelGrid sp_PixelGrid;
-
-/**
- * A 2D grid of bytes
- */
-typedef struct sp_PrimitiveGrid_Brightness sp_PrimitiveGrid_Brightness;
-
-/**
- * A 2D grid of bytes
- */
-typedef struct sp_PrimitiveGrid_u8 sp_PrimitiveGrid_u8;
 
 /**
  * Represents a span of memory (`&mut [u8]` ) as a struct usable by C code.
@@ -139,18 +225,6 @@ typedef struct sp_CByteSlice {
  * Type alias for documenting the meaning of the u16 in enum values
  */
 typedef size_t sp_Offset;
-
-/**
- * A grid containing brightness values.
- */
-typedef struct sp_PrimitiveGrid_Brightness sp_BrightnessGrid;
-
-/**
- * A grid containing codepage 437 characters.
- *
- * The encoding is currently not enforced.
- */
-typedef struct sp_PrimitiveGrid_u8 sp_Cp437Grid;
 
 
 
@@ -192,7 +266,7 @@ void sp_bit_vec_dealloc(struct sp_CBitVec *this_);
  *
  * # Arguments
  *
- * * `value`: the value to set all bits to
+ * - `value`: the value to set all bits to
  *
  * # Safety
  *
@@ -208,8 +282,8 @@ void sp_bit_vec_fill(struct sp_CBitVec *this_, bool value);
  *
  * # Arguments
  *
- * * `this`: instance to read from
- * * `index`: the bit index to read
+ * - `this`: instance to read from
+ * - `index`: the bit index to read
  *
  * returns: value of the bit
  *
@@ -268,7 +342,7 @@ struct sp_CBitVec *sp_bit_vec_load(const uint8_t *data,
  *
  * # Arguments
  *
- * * `size`: size in bits.
+ * - `size`: size in bits.
  *
  * returns: `BitVec` with all bits set to false.
  *
@@ -290,9 +364,9 @@ struct sp_CBitVec *sp_bit_vec_new(size_t size);
  *
  * # Arguments
  *
- * * `this`: instance to write to
- * * `index`: the bit index to edit
- * * `value`: the value to set the bit to
+ * - `this`: instance to write to
+ * - `index`: the bit index to edit
+ * - `value`: the value to set the bit to
  *
  * returns: old value of the bit
  *
@@ -354,8 +428,12 @@ void sp_brightness_grid_dealloc(struct sp_CBrightnessGrid *this_);
  *
  * # Arguments
  *
- * * `this`: instance to write to
- * * `value`: the value to set all cells to
+ * - `this`: instance to write to
+ * - `value`: the value to set all cells to
+ *
+ * # Panics
+ *
+ * - When providing an invalid brightness value
  *
  * # Safety
  *
@@ -371,8 +449,8 @@ void sp_brightness_grid_fill(struct sp_CBrightnessGrid *this_, uint8_t value);
  *
  * # Arguments
  *
- * * `this`: instance to read from
- * * `x` and `y`: position of the cell to read
+ * - `this`: instance to read from
+ * - `x` and `y`: position of the cell to read
  *
  * # Panics
  *
@@ -394,7 +472,7 @@ uint8_t sp_brightness_grid_get(const struct sp_CBrightnessGrid *this_,
  *
  * # Arguments
  *
- * * `this`: instance to read from
+ * - `this`: instance to read from
  *
  * # Safety
  *
@@ -445,15 +523,16 @@ struct sp_CBrightnessGrid *sp_brightness_grid_new(size_t width,
  *
  * # Arguments
  *
- * * `this`: instance to write to
- * * `x` and `y`: position of the cell
- * * `value`: the value to write to the cell
+ * - `this`: instance to write to
+ * - `x` and `y`: position of the cell
+ * - `value`: the value to write to the cell
  *
  * returns: old value of the cell
  *
  * # Panics
  *
- * When accessing `x` or `y` out of bounds.
+ * - When accessing `x` or `y` out of bounds.
+ * - When providing an invalid brightness value
  *
  * # Safety
  *
@@ -485,7 +564,7 @@ struct sp_CByteSlice sp_brightness_grid_unsafe_data_ref(struct sp_CBrightnessGri
  *
  * # Arguments
  *
- * * `this`: instance to read from
+ * - `this`: instance to read from
  *
  * # Safety
  *
@@ -618,7 +697,7 @@ struct sp_Command *sp_command_brightness(uint8_t brightness);
  */
 struct sp_Command *sp_command_char_brightness(size_t x,
                                               size_t y,
-                                              sp_BrightnessGrid *byte_grid);
+                                              struct sp_CBrightnessGrid *byte_grid);
 
 /**
  * Allocates a new `Command::Clear` instance.
@@ -661,7 +740,7 @@ struct sp_Command *sp_command_clone(const struct sp_Command *original);
  */
 struct sp_Command *sp_command_cp437_data(size_t x,
                                          size_t y,
-                                         sp_Cp437Grid *byte_grid);
+                                         struct sp_CCp437Grid *byte_grid);
 
 /**
  * Deallocates a `Command`.
@@ -796,8 +875,8 @@ void sp_cp437_grid_dealloc(struct sp_CCp437Grid *this_);
  *
  * # Arguments
  *
- * * `this`: instance to write to
- * * `value`: the value to set all cells to
+ * - `this`: instance to write to
+ * - `value`: the value to set all cells to
  *
  * # Safety
  *
@@ -813,8 +892,8 @@ void sp_cp437_grid_fill(struct sp_CCp437Grid *this_, uint8_t value);
  *
  * # Arguments
  *
- * * `this`: instance to read from
- * * `x` and `y`: position of the cell to read
+ * - `this`: instance to read from
+ * - `x` and `y`: position of the cell to read
  *
  * # Panics
  *
@@ -836,7 +915,7 @@ uint8_t sp_cp437_grid_get(const struct sp_CCp437Grid *this_,
  *
  * # Arguments
  *
- * * `this`: instance to read from
+ * - `this`: instance to read from
  *
  * # Safety
  *
@@ -887,9 +966,9 @@ struct sp_CCp437Grid *sp_cp437_grid_new(size_t width,
  *
  * # Arguments
  *
- * * `this`: instance to write to
- * * `x` and `y`: position of the cell
- * * `value`: the value to write to the cell
+ * - `this`: instance to write to
+ * - `x` and `y`: position of the cell
+ * - `value`: the value to write to the cell
  *
  * returns: old value of the cell
  *
@@ -927,7 +1006,7 @@ struct sp_CByteSlice sp_cp437_grid_unsafe_data_ref(struct sp_CCp437Grid *this_);
  *
  * # Arguments
  *
- * * `this`: instance to read from
+ * - `this`: instance to read from
  *
  * # Safety
  *
@@ -1013,8 +1092,8 @@ void sp_pixel_grid_dealloc(struct sp_PixelGrid *this_);
  *
  * # Arguments
  *
- * * `this`: instance to write to
- * * `value`: the value to set all pixels to
+ * - `this`: instance to write to
+ * - `value`: the value to set all pixels to
  *
  * # Safety
  *
@@ -1030,8 +1109,8 @@ void sp_pixel_grid_fill(struct sp_PixelGrid *this_, bool value);
  *
  * # Arguments
  *
- * * `this`: instance to read from
- * * `x` and `y`: position of the cell to read
+ * - `this`: instance to read from
+ * - `x` and `y`: position of the cell to read
  *
  * # Panics
  *
@@ -1051,7 +1130,7 @@ bool sp_pixel_grid_get(const struct sp_PixelGrid *this_, size_t x, size_t y);
  *
  * # Arguments
  *
- * * `this`: instance to read from
+ * - `this`: instance to read from
  *
  * # Safety
  *
@@ -1066,8 +1145,8 @@ size_t sp_pixel_grid_height(const struct sp_PixelGrid *this_);
  *
  * # Arguments
  *
- * * `width`: size in pixels in x-direction
- * * `height`: size in pixels in y-direction
+ * - `width`: size in pixels in x-direction
+ * - `height`: size in pixels in y-direction
  *
  * returns: `PixelGrid` that contains a copy of the provided data
  *
@@ -1094,8 +1173,8 @@ struct sp_PixelGrid *sp_pixel_grid_load(size_t width,
  *
  * # Arguments
  *
- * * `width`: size in pixels in x-direction
- * * `height`: size in pixels in y-direction
+ * - `width`: size in pixels in x-direction
+ * - `height`: size in pixels in y-direction
  *
  * returns: `PixelGrid` initialized to all pixels off
  *
@@ -1118,9 +1197,9 @@ struct sp_PixelGrid *sp_pixel_grid_new(size_t width,
  *
  * # Arguments
  *
- * * `this`: instance to write to
- * * `x` and `y`: position of the cell
- * * `value`: the value to write to the cell
+ * - `this`: instance to write to
+ * - `x` and `y`: position of the cell
+ * - `value`: the value to write to the cell
  *
  * returns: old value of the cell
  *
@@ -1158,7 +1237,7 @@ struct sp_CByteSlice sp_pixel_grid_unsafe_data_ref(struct sp_PixelGrid *this_);
  *
  * # Arguments
  *
- * * `this`: instance to read from
+ * - `this`: instance to read from
  *
  * # Safety
  *

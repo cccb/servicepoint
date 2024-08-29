@@ -30,7 +30,7 @@ impl From<CBitVec> for SpBitVec {
 ///
 /// # Arguments
 ///
-/// * `size`: size in bits.
+/// - `size`: size in bits.
 ///
 /// returns: `BitVec` with all bits set to false.
 ///
@@ -107,8 +107,8 @@ pub unsafe extern "C" fn sp_bit_vec_dealloc(this: *mut CBitVec) {
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
-/// * `index`: the bit index to read
+/// - `this`: instance to read from
+/// - `index`: the bit index to read
 ///
 /// returns: value of the bit
 ///
@@ -134,9 +134,9 @@ pub unsafe extern "C" fn sp_bit_vec_get(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `index`: the bit index to edit
-/// * `value`: the value to set the bit to
+/// - `this`: instance to write to
+/// - `index`: the bit index to edit
+/// - `value`: the value to set the bit to
 ///
 /// returns: old value of the bit
 ///
@@ -163,7 +163,7 @@ pub unsafe extern "C" fn sp_bit_vec_set(
 ///
 /// # Arguments
 ///
-/// * `value`: the value to set all bits to
+/// - `value`: the value to set all bits to
 ///
 /// # Safety
 ///

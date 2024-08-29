@@ -4,7 +4,7 @@ pub trait Grid<T> {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell to read
+    /// - `x` and `y`: position of the cell to read
     ///
     /// # Panics
     ///
@@ -15,7 +15,7 @@ pub trait Grid<T> {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell to read
+    /// - `x` and `y`: position of the cell to read
     ///
     /// # Panics
     ///
@@ -26,7 +26,7 @@ pub trait Grid<T> {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell to read
+    /// - `x` and `y`: position of the cell to read
     ///
     /// returns: Value at position or None
     fn get_optional(&self, x: isize, y: isize) -> Option<T> {
@@ -41,7 +41,7 @@ pub trait Grid<T> {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell to read
+    /// - `x` and `y`: position of the cell to read
     ///
     /// returns: the old value or None
     fn set_optional(&mut self, x: isize, y: isize, value: T) -> bool {

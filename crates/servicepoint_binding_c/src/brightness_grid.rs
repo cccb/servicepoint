@@ -96,8 +96,8 @@ pub unsafe extern "C" fn sp_brightness_grid_dealloc(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
-/// * `x` and `y`: position of the cell to read
+/// - `this`: instance to read from
+/// - `x` and `y`: position of the cell to read
 ///
 /// # Panics
 ///
@@ -122,15 +122,16 @@ pub unsafe extern "C" fn sp_brightness_grid_get(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `x` and `y`: position of the cell
-/// * `value`: the value to write to the cell
+/// - `this`: instance to write to
+/// - `x` and `y`: position of the cell
+/// - `value`: the value to write to the cell
 ///
 /// returns: old value of the cell
 ///
 /// # Panics
 ///
-/// When accessing `x` or `y` out of bounds.
+/// - When accessing `x` or `y` out of bounds.
+/// - When providing an invalid brightness value
 ///
 /// # Safety
 ///
@@ -154,8 +155,12 @@ pub unsafe extern "C" fn sp_brightness_grid_set(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `value`: the value to set all cells to
+/// - `this`: instance to write to
+/// - `value`: the value to set all cells to
+///
+/// # Panics
+///
+/// - When providing an invalid brightness value
 ///
 /// # Safety
 ///
@@ -177,7 +182,7 @@ pub unsafe extern "C" fn sp_brightness_grid_fill(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
+/// - `this`: instance to read from
 ///
 /// # Safety
 ///
@@ -195,7 +200,7 @@ pub unsafe extern "C" fn sp_brightness_grid_width(
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
+/// - `this`: instance to read from
 ///
 /// # Safety
 ///
