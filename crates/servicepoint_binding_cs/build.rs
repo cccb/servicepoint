@@ -24,6 +24,16 @@ fn main() {
         .csharp_use_nint_types(true)
         .csharp_class_accessibility("public")
         .csharp_generate_const_filter(|_| true)
+        .csharp_type_rename(move |name| {
+            if name.len() > 1
+                && name.starts_with("C")
+                && name.chars().nth(1).unwrap().is_uppercase()
+            {
+                name[1..].to_string()
+            } else {
+                name
+            }
+        })
         .generate_csharp_file("ServicePoint/BindGen/ServicePoint.g.cs")
         .unwrap();
 }

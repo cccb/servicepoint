@@ -40,7 +40,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_bit_vec_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBitVec* sp_bit_vec_new(nuint size);
+        public static extern BitVec* sp_bit_vec_new(nuint size);
 
         /// <summary>
         ///  Interpret the data as a series of bits and load then into a new `BitVec` instance.
@@ -55,7 +55,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_bit_vec_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBitVec* sp_bit_vec_load(byte* data, nuint data_length);
+        public static extern BitVec* sp_bit_vec_load(byte* data, nuint data_length);
 
         /// <summary>
         ///  Clones a `BitVec`.
@@ -70,7 +70,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_bit_vec_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBitVec* sp_bit_vec_clone(CBitVec* @this);
+        public static extern BitVec* sp_bit_vec_clone(BitVec* @this);
 
         /// <summary>
         ///  Deallocates a `BitVec`.
@@ -84,7 +84,7 @@ namespace ServicePoint.BindGen
         ///  - `this` was not passed to another consuming function, e.g. to create a `Command`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_dealloc(CBitVec* @this);
+        public static extern void sp_bit_vec_dealloc(BitVec* @this);
 
         /// <summary>
         ///  Gets the value of a bit from the `BitVec`.
@@ -109,7 +109,7 @@ namespace ServicePoint.BindGen
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_get(CBitVec* @this, nuint index);
+        public static extern bool sp_bit_vec_get(BitVec* @this, nuint index);
 
         /// <summary>
         ///  Sets the value of a bit in the `BitVec`.
@@ -134,7 +134,7 @@ namespace ServicePoint.BindGen
         ///  - `this` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_set(CBitVec* @this, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
+        public static extern void sp_bit_vec_set(BitVec* @this, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
         ///  Sets the value of all bits in the `BitVec`.
@@ -151,7 +151,7 @@ namespace ServicePoint.BindGen
         ///  - `this` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_fill(CBitVec* @this, [MarshalAs(UnmanagedType.U1)] bool value);
+        public static extern void sp_bit_vec_fill(BitVec* @this, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
         ///  Gets the length of the `BitVec` in bits.
@@ -163,7 +163,7 @@ namespace ServicePoint.BindGen
         ///  - `this` points to a valid `BitVec`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bit_vec_len(CBitVec* @this);
+        public static extern nuint sp_bit_vec_len(BitVec* @this);
 
         /// <summary>
         ///  Returns true if length is 0.
@@ -176,7 +176,7 @@ namespace ServicePoint.BindGen
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_is_empty(CBitVec* @this);
+        public static extern bool sp_bit_vec_is_empty(BitVec* @this);
 
         /// <summary>
         ///  Gets an unsafe reference to the data of the `BitVec` instance.
@@ -190,7 +190,7 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed concurrently, either via the `BitVec` or directly
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_bit_vec_unsafe_data_ref(CBitVec* @this);
+        public static extern ByteSlice sp_bit_vec_unsafe_data_ref(BitVec* @this);
 
         /// <summary>
         ///  Creates a new `BrightnessGrid` with the specified dimensions.
@@ -205,7 +205,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_brightness_grid_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBrightnessGrid* sp_brightness_grid_new(nuint width, nuint height);
+        public static extern BrightnessGrid* sp_brightness_grid_new(nuint width, nuint height);
 
         /// <summary>
         ///  Loads a `BrightnessGrid` with the specified dimensions from the provided data.
@@ -224,7 +224,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_brightness_grid_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBrightnessGrid* sp_brightness_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        public static extern BrightnessGrid* sp_brightness_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
         ///  Clones a `BrightnessGrid`.
@@ -239,7 +239,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_brightness_grid_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBrightnessGrid* sp_brightness_grid_clone(CBrightnessGrid* @this);
+        public static extern BrightnessGrid* sp_brightness_grid_clone(BrightnessGrid* @this);
 
         /// <summary>
         ///  Deallocates a `BrightnessGrid`.
@@ -253,7 +253,7 @@ namespace ServicePoint.BindGen
         ///  - `this` was not passed to another consuming function, e.g. to create a `Command`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_dealloc(CBrightnessGrid* @this);
+        public static extern void sp_brightness_grid_dealloc(BrightnessGrid* @this);
 
         /// <summary>
         ///  Gets the current value at the specified position.
@@ -275,7 +275,7 @@ namespace ServicePoint.BindGen
         ///  - `this` is not written to concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_brightness_grid_get(CBrightnessGrid* @this, nuint x, nuint y);
+        public static extern byte sp_brightness_grid_get(BrightnessGrid* @this, nuint x, nuint y);
 
         /// <summary>
         ///  Sets the value of the specified position in the `BrightnessGrid`.
@@ -301,7 +301,7 @@ namespace ServicePoint.BindGen
         ///  - `this` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_set(CBrightnessGrid* @this, nuint x, nuint y, byte value);
+        public static extern void sp_brightness_grid_set(BrightnessGrid* @this, nuint x, nuint y, byte value);
 
         /// <summary>
         ///  Sets the value of all cells in the `BrightnessGrid`.
@@ -323,7 +323,7 @@ namespace ServicePoint.BindGen
         ///  - `this` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_fill(CBrightnessGrid* @this, byte value);
+        public static extern void sp_brightness_grid_fill(BrightnessGrid* @this, byte value);
 
         /// <summary>
         ///  Gets the width of the `BrightnessGrid` instance.
@@ -339,7 +339,7 @@ namespace ServicePoint.BindGen
         ///  - `this` points to a valid `BrightnessGrid`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_brightness_grid_width(CBrightnessGrid* @this);
+        public static extern nuint sp_brightness_grid_width(BrightnessGrid* @this);
 
         /// <summary>
         ///  Gets the height of the `BrightnessGrid` instance.
@@ -355,7 +355,7 @@ namespace ServicePoint.BindGen
         ///  - `this` points to a valid `BrightnessGrid`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_brightness_grid_height(CBrightnessGrid* @this);
+        public static extern nuint sp_brightness_grid_height(BrightnessGrid* @this);
 
         /// <summary>
         ///  Gets an unsafe reference to the data of the `BrightnessGrid` instance.
@@ -369,7 +369,7 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed concurrently, either via the `BrightnessGrid` or directly
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_brightness_grid_unsafe_data_ref(CBrightnessGrid* @this);
+        public static extern ByteSlice sp_brightness_grid_unsafe_data_ref(BrightnessGrid* @this);
 
         /// <summary>
         ///  Creates a new `Cp437Grid` with the specified dimensions.
@@ -384,7 +384,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCp437Grid* sp_cp437_grid_new(nuint width, nuint height);
+        public static extern Cp437Grid* sp_cp437_grid_new(nuint width, nuint height);
 
         /// <summary>
         ///  Loads a `Cp437Grid` with the specified dimensions from the provided data.
@@ -403,7 +403,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        public static extern Cp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
         ///  Clones a `Cp437Grid`.
@@ -418,7 +418,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCp437Grid* sp_cp437_grid_clone(CCp437Grid* @this);
+        public static extern Cp437Grid* sp_cp437_grid_clone(Cp437Grid* @this);
 
         /// <summary>
         ///  Deallocates a `Cp437Grid`.
@@ -432,7 +432,7 @@ namespace ServicePoint.BindGen
         ///  - `this` was not passed to another consuming function, e.g. to create a `Command`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_dealloc(CCp437Grid* @this);
+        public static extern void sp_cp437_grid_dealloc(Cp437Grid* @this);
 
         /// <summary>
         ///  Gets the current value at the specified position.
@@ -454,7 +454,7 @@ namespace ServicePoint.BindGen
         ///  - `this` is not written to concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_cp437_grid_get(CCp437Grid* @this, nuint x, nuint y);
+        public static extern byte sp_cp437_grid_get(Cp437Grid* @this, nuint x, nuint y);
 
         /// <summary>
         ///  Sets the value of the specified position in the `Cp437Grid`.
@@ -479,7 +479,7 @@ namespace ServicePoint.BindGen
         ///  - `this` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_set(CCp437Grid* @this, nuint x, nuint y, byte value);
+        public static extern void sp_cp437_grid_set(Cp437Grid* @this, nuint x, nuint y, byte value);
 
         /// <summary>
         ///  Sets the value of all cells in the `Cp437Grid`.
@@ -497,7 +497,7 @@ namespace ServicePoint.BindGen
         ///  - `this` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_fill(CCp437Grid* @this, byte value);
+        public static extern void sp_cp437_grid_fill(Cp437Grid* @this, byte value);
 
         /// <summary>
         ///  Gets the width of the `Cp437Grid` instance.
@@ -513,7 +513,7 @@ namespace ServicePoint.BindGen
         ///  - `this` points to a valid `Cp437Grid`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_width(CCp437Grid* @this);
+        public static extern nuint sp_cp437_grid_width(Cp437Grid* @this);
 
         /// <summary>
         ///  Gets the height of the `Cp437Grid` instance.
@@ -529,7 +529,7 @@ namespace ServicePoint.BindGen
         ///  - `this` points to a valid `Cp437Grid`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_height(CCp437Grid* @this);
+        public static extern nuint sp_cp437_grid_height(Cp437Grid* @this);
 
         /// <summary>
         ///  Gets an unsafe reference to the data of the `Cp437Grid` instance.
@@ -543,7 +543,7 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed concurrently, either via the `Cp437Grid` or directly
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_cp437_grid_unsafe_data_ref(CCp437Grid* @this);
+        public static extern ByteSlice sp_cp437_grid_unsafe_data_ref(Cp437Grid* @this);
 
         /// <summary>
         ///  Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
@@ -561,7 +561,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_try_from_packet(Packet* packet);
+        public static extern Command* sp_command_try_from_packet(Packet* packet);
 
         /// <summary>
         ///  Clones a `Command` instance.
@@ -576,7 +576,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_clone(CCommand* original);
+        public static extern Command* sp_command_clone(Command* original);
 
         /// <summary>
         ///  Allocates a new `Command::Clear` instance.
@@ -589,7 +589,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_clear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_clear();
+        public static extern Command* sp_command_clear();
 
         /// <summary>
         ///  Allocates a new `Command::HardReset` instance.
@@ -602,7 +602,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_hard_reset", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_hard_reset();
+        public static extern Command* sp_command_hard_reset();
 
         /// <summary>
         ///  Allocates a new `Command::FadeOut` instance.
@@ -615,7 +615,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_fade_out", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_fade_out();
+        public static extern Command* sp_command_fade_out();
 
         /// <summary>
         ///  Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
@@ -633,7 +633,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_brightness(byte brightness);
+        public static extern Command* sp_command_brightness(byte brightness);
 
         /// <summary>
         ///  Allocates a new `Command::CharBrightness` instance.
@@ -649,7 +649,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_char_brightness(nuint x, nuint y, CBrightnessGrid* byte_grid);
+        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* byte_grid);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinear` instance.
@@ -666,7 +666,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_bitmap_linear(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearAnd` instance.
@@ -683,7 +683,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_and", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_bitmap_linear_and(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_and(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearOr` instance.
@@ -700,7 +700,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_or", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_bitmap_linear_or(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_or(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearXor` instance.
@@ -717,7 +717,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_xor", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_bitmap_linear_xor(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Allocates a new `Command::Cp437Data` instance.
@@ -733,7 +733,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_cp437_data(nuint x, nuint y, CCp437Grid* byte_grid);
+        public static extern Command* sp_command_cp437_data(nuint x, nuint y, Cp437Grid* byte_grid);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearWin` instance.
@@ -750,7 +750,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCommand* sp_command_bitmap_linear_win(nuint x, nuint y, PixelGrid* pixel_grid, CompressionCode compression_code);
+        public static extern Command* sp_command_bitmap_linear_win(nuint x, nuint y, PixelGrid* pixel_grid, CompressionCode compression_code);
 
         /// <summary>
         ///  Deallocates a `Command`.
@@ -764,7 +764,7 @@ namespace ServicePoint.BindGen
         ///  - `this` was not passed to another consuming function, e.g. to create a `Packet`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_command_dealloc(CCommand* ptr);
+        public static extern void sp_command_dealloc(Command* ptr);
 
         /// <summary>
         ///  Creates a new instance of `Connection`.
@@ -1005,7 +1005,7 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed concurrently, either via the `PixelGrid` or directly
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_pixel_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_pixel_grid_unsafe_data_ref(PixelGrid* @this);
+        public static extern ByteSlice sp_pixel_grid_unsafe_data_ref(PixelGrid* @this);
 
         /// <summary>
         ///  Turns a `Command` into a `Packet`.
@@ -1057,27 +1057,27 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CBitVec
+    public unsafe partial struct BitVec
     {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CBrightnessGrid
+    public unsafe partial struct BrightnessGrid
     {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CCp437Grid
+    public unsafe partial struct Cp437Grid
     {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CCommand
+    public unsafe partial struct Command
     {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CByteSlice
+    public unsafe partial struct ByteSlice
     {
         public byte* start;
         public nuint length;
