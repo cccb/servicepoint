@@ -39,7 +39,7 @@ use bitvec::prelude::{BitVec, Msb0};
 pub use crate::brightness::{Brightness, BrightnessGrid};
 pub use crate::command::{Command, Cp437Grid, Offset};
 pub use crate::compression_code::CompressionCode;
-pub use crate::connection::Connection;
+pub use crate::connection::{Connection, UdpConnection};
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
