@@ -245,12 +245,12 @@ dependencies = [
 
 [[package]]
 name = "csbindgen"
-version = "1.9.1"
+version = "1.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf70eb656f35e0e6956cbde31c66431c53d8a546823489719099c71525767a9c"
+checksum = "c26b9831049b947d154bba920e4124053def72447be6fb106a96f483874b482a"
 dependencies = [
  "regex",
- "syn 1.0.109",
+ "syn 2.0.68",
 ]
 
 [[package]]

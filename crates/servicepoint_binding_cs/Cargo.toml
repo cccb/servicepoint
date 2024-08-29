@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 test = false
 
 [build-dependencies]
-csbindgen = "1.8.0"
+csbindgen = "1.9.3"
 
 [dependencies]
 servicepoint_binding_c = { version = "0.7.0", path = "../servicepoint_binding_c" }
