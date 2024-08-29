@@ -4,7 +4,8 @@
 
 use std::ptr::null_mut;
 
-use servicepoint::{Command, Packet};
+use crate::command::CCommand;
+use servicepoint::Packet;
 
 /// Turns a `Command` into a `Packet`.
 /// The `Command` gets consumed.
@@ -19,10 +20,10 @@ use servicepoint::{Command, Packet};
 ///   by explicitly calling `sp_packet_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_from_command(
-    command: *mut Command,
+    command: *mut CCommand,
 ) -> *mut Packet {
     let command = *Box::from_raw(command);
-    let packet = command.into();
+    let packet = command.0.into();
     Box::into_raw(Box::new(packet))
 }
 

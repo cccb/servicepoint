@@ -12,6 +12,15 @@ use crate::bit_vec::CBitVec;
 use crate::brightness_grid::CBrightnessGrid;
 use crate::cp437_grid::CCp437Grid;
 
+/// Opaque struct needed for correct code generation.
+pub struct CCommand(pub(crate) Command);
+
+impl Clone for CCommand {
+    fn clone(&self) -> Self {
+        CCommand(self.0.clone())
+    }
+}
+
 /// Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
 ///
 /// Returns: pointer to new `Command` instance or NULL
@@ -28,11 +37,11 @@ use crate::cp437_grid::CCp437Grid;
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_try_from_packet(
     packet: *mut Packet,
-) -> *mut Command {
+) -> *mut CCommand {
     let packet = *Box::from_raw(packet);
     match Command::try_from(packet) {
         Err(_) => null_mut(),
-        Ok(command) => Box::into_raw(Box::new(command)),
+        Ok(command) => Box::into_raw(Box::new(CCommand(command))),
     }
 }
 
@@ -48,8 +57,8 @@ pub unsafe extern "C" fn sp_command_try_from_packet(
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_clone(
-    original: *const Command,
-) -> *mut Command {
+    original: *const CCommand,
+) -> *mut CCommand {
     Box::into_raw(Box::new((*original).clone()))
 }
 
@@ -62,8 +71,8 @@ pub unsafe extern "C" fn sp_command_clone(
 /// - the returned `Command` instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_clear() -> *mut Command {
-    Box::into_raw(Box::new(Command::Clear))
+pub unsafe extern "C" fn sp_command_clear() -> *mut CCommand {
+    Box::into_raw(Box::new(CCommand(Command::Clear)))
 }
 
 /// Allocates a new `Command::HardReset` instance.
@@ -75,8 +84,8 @@ pub unsafe extern "C" fn sp_command_clear() -> *mut Command {
 /// - the returned `Command` instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_hard_reset() -> *mut Command {
-    Box::into_raw(Box::new(Command::HardReset))
+pub unsafe extern "C" fn sp_command_hard_reset() -> *mut CCommand {
+    Box::into_raw(Box::new(CCommand(Command::HardReset)))
 }
 
 /// Allocates a new `Command::FadeOut` instance.
@@ -88,8 +97,8 @@ pub unsafe extern "C" fn sp_command_hard_reset() -> *mut Command {
 /// - the returned `Command` instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_fade_out() -> *mut Command {
-    Box::into_raw(Box::new(Command::FadeOut))
+pub unsafe extern "C" fn sp_command_fade_out() -> *mut CCommand {
+    Box::into_raw(Box::new(CCommand(Command::FadeOut)))
 }
 
 /// Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
@@ -106,10 +115,12 @@ pub unsafe extern "C" fn sp_command_fade_out() -> *mut Command {
 /// - the returned `Command` instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_brightness(brightness: u8) -> *mut Command {
+pub unsafe extern "C" fn sp_command_brightness(
+    brightness: u8,
+) -> *mut CCommand {
     let brightness =
         Brightness::try_from(brightness).expect("invalid brightness");
-    Box::into_raw(Box::new(Command::Brightness(brightness)))
+    Box::into_raw(Box::new(CCommand(Command::Brightness(brightness))))
 }
 
 /// Allocates a new `Command::CharBrightness` instance.
@@ -128,12 +139,12 @@ pub unsafe extern "C" fn sp_command_char_brightness(
     x: usize,
     y: usize,
     byte_grid: *mut CBrightnessGrid,
-) -> *mut Command {
+) -> *mut CCommand {
     let byte_grid = *Box::from_raw(byte_grid);
-    Box::into_raw(Box::new(Command::CharBrightness(
+    Box::into_raw(Box::new(CCommand(Command::CharBrightness(
         Origin::new(x, y),
         byte_grid.0,
-    )))
+    ))))
 }
 
 /// Allocates a new `Command::BitmapLinear` instance.
@@ -153,13 +164,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
     offset: Offset,
     bit_vec: *mut CBitVec,
     compression: CompressionCode,
-) -> *mut Command {
+) -> *mut CCommand {
     let bit_vec = *Box::from_raw(bit_vec);
-    Box::into_raw(Box::new(Command::BitmapLinear(
+    Box::into_raw(Box::new(CCommand(Command::BitmapLinear(
         offset,
         bit_vec.into(),
         compression,
-    )))
+    ))))
 }
 
 /// Allocates a new `Command::BitmapLinearAnd` instance.
@@ -179,13 +190,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
     offset: Offset,
     bit_vec: *mut CBitVec,
     compression: CompressionCode,
-) -> *mut Command {
+) -> *mut CCommand {
     let bit_vec = *Box::from_raw(bit_vec);
-    Box::into_raw(Box::new(Command::BitmapLinearAnd(
+    Box::into_raw(Box::new(CCommand(Command::BitmapLinearAnd(
         offset,
         bit_vec.into(),
         compression,
-    )))
+    ))))
 }
 
 /// Allocates a new `Command::BitmapLinearOr` instance.
@@ -205,13 +216,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
     offset: Offset,
     bit_vec: *mut CBitVec,
     compression: CompressionCode,
-) -> *mut Command {
+) -> *mut CCommand {
     let bit_vec = *Box::from_raw(bit_vec);
-    Box::into_raw(Box::new(Command::BitmapLinearOr(
+    Box::into_raw(Box::new(CCommand(Command::BitmapLinearOr(
         offset,
         bit_vec.into(),
         compression,
-    )))
+    ))))
 }
 
 /// Allocates a new `Command::BitmapLinearXor` instance.
@@ -231,13 +242,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
     offset: Offset,
     bit_vec: *mut CBitVec,
     compression: CompressionCode,
-) -> *mut Command {
+) -> *mut CCommand {
     let bit_vec = *Box::from_raw(bit_vec);
-    Box::into_raw(Box::new(Command::BitmapLinearXor(
+    Box::into_raw(Box::new(CCommand(Command::BitmapLinearXor(
         offset,
         bit_vec.into(),
         compression,
-    )))
+    ))))
 }
 
 /// Allocates a new `Command::Cp437Data` instance.
@@ -256,9 +267,12 @@ pub unsafe extern "C" fn sp_command_cp437_data(
     x: usize,
     y: usize,
     byte_grid: *mut CCp437Grid,
-) -> *mut Command {
+) -> *mut CCommand {
     let byte_grid = *Box::from_raw(byte_grid);
-    Box::into_raw(Box::new(Command::Cp437Data(Origin::new(x, y), byte_grid.0)))
+    Box::into_raw(Box::new(CCommand(Command::Cp437Data(
+        Origin::new(x, y),
+        byte_grid.0,
+    ))))
 }
 
 /// Allocates a new `Command::BitmapLinearWin` instance.
@@ -279,13 +293,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
     y: usize,
     pixel_grid: *mut PixelGrid,
     compression_code: CompressionCode,
-) -> *mut Command {
+) -> *mut CCommand {
     let byte_grid = *Box::from_raw(pixel_grid);
-    Box::into_raw(Box::new(Command::BitmapLinearWin(
+    Box::into_raw(Box::new(CCommand(Command::BitmapLinearWin(
         Origin::new(x, y),
         byte_grid,
         compression_code,
-    )))
+    ))))
 }
 
 /// Deallocates a `Command`.
@@ -298,6 +312,6 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 /// - `this` is not used concurrently or after this call
 /// - `this` was not passed to another consuming function, e.g. to create a `Packet`
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_dealloc(ptr: *mut Command) {
+pub unsafe extern "C" fn sp_command_dealloc(ptr: *mut CCommand) {
     _ = Box::from_raw(ptr);
 }

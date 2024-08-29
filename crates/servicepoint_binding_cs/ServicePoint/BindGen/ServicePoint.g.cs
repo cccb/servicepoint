@@ -561,7 +561,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_try_from_packet(Packet* packet);
+        public static extern CCommand* sp_command_try_from_packet(Packet* packet);
 
         /// <summary>
         ///  Clones a `Command` instance.
@@ -576,7 +576,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_clone(Command* original);
+        public static extern CCommand* sp_command_clone(CCommand* original);
 
         /// <summary>
         ///  Allocates a new `Command::Clear` instance.
@@ -589,7 +589,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_clear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_clear();
+        public static extern CCommand* sp_command_clear();
 
         /// <summary>
         ///  Allocates a new `Command::HardReset` instance.
@@ -602,7 +602,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_hard_reset", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_hard_reset();
+        public static extern CCommand* sp_command_hard_reset();
 
         /// <summary>
         ///  Allocates a new `Command::FadeOut` instance.
@@ -615,7 +615,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_fade_out", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_fade_out();
+        public static extern CCommand* sp_command_fade_out();
 
         /// <summary>
         ///  Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
@@ -633,7 +633,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_brightness(byte brightness);
+        public static extern CCommand* sp_command_brightness(byte brightness);
 
         /// <summary>
         ///  Allocates a new `Command::CharBrightness` instance.
@@ -649,7 +649,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_char_brightness(nuint x, nuint y, CBrightnessGrid* byte_grid);
+        public static extern CCommand* sp_command_char_brightness(nuint x, nuint y, CBrightnessGrid* byte_grid);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinear` instance.
@@ -666,7 +666,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern CCommand* sp_command_bitmap_linear(nuint offset, CBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearAnd` instance.
@@ -683,7 +683,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_and", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_and(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern CCommand* sp_command_bitmap_linear_and(nuint offset, CBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearOr` instance.
@@ -700,7 +700,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_or", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_or(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern CCommand* sp_command_bitmap_linear_or(nuint offset, CBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearXor` instance.
@@ -717,7 +717,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_xor", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern CCommand* sp_command_bitmap_linear_xor(nuint offset, CBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Allocates a new `Command::Cp437Data` instance.
@@ -733,7 +733,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_cp437_data(nuint x, nuint y, CCp437Grid* byte_grid);
+        public static extern CCommand* sp_command_cp437_data(nuint x, nuint y, CCp437Grid* byte_grid);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearWin` instance.
@@ -750,7 +750,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_win(nuint x, nuint y, PixelGrid* pixel_grid, CompressionCode compression_code);
+        public static extern CCommand* sp_command_bitmap_linear_win(nuint x, nuint y, PixelGrid* pixel_grid, CompressionCode compression_code);
 
         /// <summary>
         ///  Deallocates a `Command`.
@@ -764,7 +764,7 @@ namespace ServicePoint.BindGen
         ///  - `this` was not passed to another consuming function, e.g. to create a `Packet`
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_command_dealloc(Command* ptr);
+        public static extern void sp_command_dealloc(CCommand* ptr);
 
         /// <summary>
         ///  Creates a new instance of `Connection`.
@@ -1068,6 +1068,11 @@ namespace ServicePoint.BindGen
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct CCp437Grid
+    {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct CCommand
     {
     }
 

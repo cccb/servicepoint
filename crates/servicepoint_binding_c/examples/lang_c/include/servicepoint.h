@@ -138,6 +138,11 @@ typedef struct sp_CBitVec sp_CBitVec;
 typedef struct sp_CBrightnessGrid sp_CBrightnessGrid;
 
 /**
+ * Opaque struct needed for correct code generation.
+ */
+typedef struct sp_CCommand sp_CCommand;
+
+/**
  * A C-wrapper for grid containing codepage 437 characters.
  *
  * The encoding is currently not enforced.
@@ -588,9 +593,9 @@ size_t sp_brightness_grid_width(const struct sp_CBrightnessGrid *this_);
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_bitmap_linear(sp_Offset offset,
-                                            struct sp_CBitVec *bit_vec,
-                                            sp_CompressionCode compression);
+struct sp_CCommand *sp_command_bitmap_linear(sp_Offset offset,
+                                             struct sp_CBitVec *bit_vec,
+                                             sp_CompressionCode compression);
 
 /**
  * Allocates a new `Command::BitmapLinearAnd` instance.
@@ -606,9 +611,9 @@ struct sp_Command *sp_command_bitmap_linear(sp_Offset offset,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_bitmap_linear_and(sp_Offset offset,
-                                                struct sp_CBitVec *bit_vec,
-                                                sp_CompressionCode compression);
+struct sp_CCommand *sp_command_bitmap_linear_and(sp_Offset offset,
+                                                 struct sp_CBitVec *bit_vec,
+                                                 sp_CompressionCode compression);
 
 /**
  * Allocates a new `Command::BitmapLinearOr` instance.
@@ -624,9 +629,9 @@ struct sp_Command *sp_command_bitmap_linear_and(sp_Offset offset,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_bitmap_linear_or(sp_Offset offset,
-                                               struct sp_CBitVec *bit_vec,
-                                               sp_CompressionCode compression);
+struct sp_CCommand *sp_command_bitmap_linear_or(sp_Offset offset,
+                                                struct sp_CBitVec *bit_vec,
+                                                sp_CompressionCode compression);
 
 /**
  * Allocates a new `Command::BitmapLinearWin` instance.
@@ -642,10 +647,10 @@ struct sp_Command *sp_command_bitmap_linear_or(sp_Offset offset,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_bitmap_linear_win(size_t x,
-                                                size_t y,
-                                                struct sp_PixelGrid *pixel_grid,
-                                                sp_CompressionCode compression_code);
+struct sp_CCommand *sp_command_bitmap_linear_win(size_t x,
+                                                 size_t y,
+                                                 struct sp_PixelGrid *pixel_grid,
+                                                 sp_CompressionCode compression_code);
 
 /**
  * Allocates a new `Command::BitmapLinearXor` instance.
@@ -661,9 +666,9 @@ struct sp_Command *sp_command_bitmap_linear_win(size_t x,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_bitmap_linear_xor(sp_Offset offset,
-                                                struct sp_CBitVec *bit_vec,
-                                                sp_CompressionCode compression);
+struct sp_CCommand *sp_command_bitmap_linear_xor(sp_Offset offset,
+                                                 struct sp_CBitVec *bit_vec,
+                                                 sp_CompressionCode compression);
 
 /**
  * Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
@@ -680,7 +685,7 @@ struct sp_Command *sp_command_bitmap_linear_xor(sp_Offset offset,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_brightness(uint8_t brightness);
+struct sp_CCommand *sp_command_brightness(uint8_t brightness);
 
 /**
  * Allocates a new `Command::CharBrightness` instance.
@@ -695,9 +700,9 @@ struct sp_Command *sp_command_brightness(uint8_t brightness);
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_char_brightness(size_t x,
-                                              size_t y,
-                                              struct sp_CBrightnessGrid *byte_grid);
+struct sp_CCommand *sp_command_char_brightness(size_t x,
+                                               size_t y,
+                                               struct sp_CBrightnessGrid *byte_grid);
 
 /**
  * Allocates a new `Command::Clear` instance.
@@ -709,7 +714,7 @@ struct sp_Command *sp_command_char_brightness(size_t x,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_clear(void);
+struct sp_CCommand *sp_command_clear(void);
 
 /**
  * Clones a `Command` instance.
@@ -723,7 +728,7 @@ struct sp_Command *sp_command_clear(void);
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_clone(const struct sp_Command *original);
+struct sp_CCommand *sp_command_clone(const struct sp_CCommand *original);
 
 /**
  * Allocates a new `Command::Cp437Data` instance.
@@ -738,9 +743,9 @@ struct sp_Command *sp_command_clone(const struct sp_Command *original);
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_cp437_data(size_t x,
-                                         size_t y,
-                                         struct sp_CCp437Grid *byte_grid);
+struct sp_CCommand *sp_command_cp437_data(size_t x,
+                                          size_t y,
+                                          struct sp_CCp437Grid *byte_grid);
 
 /**
  * Deallocates a `Command`.
@@ -753,7 +758,7 @@ struct sp_Command *sp_command_cp437_data(size_t x,
  * - `this` is not used concurrently or after this call
  * - `this` was not passed to another consuming function, e.g. to create a `Packet`
  */
-void sp_command_dealloc(struct sp_Command *ptr);
+void sp_command_dealloc(struct sp_CCommand *ptr);
 
 /**
  * Allocates a new `Command::FadeOut` instance.
@@ -765,7 +770,7 @@ void sp_command_dealloc(struct sp_Command *ptr);
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_fade_out(void);
+struct sp_CCommand *sp_command_fade_out(void);
 
 /**
  * Allocates a new `Command::HardReset` instance.
@@ -777,7 +782,7 @@ struct sp_Command *sp_command_fade_out(void);
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_hard_reset(void);
+struct sp_CCommand *sp_command_hard_reset(void);
 
 /**
  * Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
@@ -794,7 +799,7 @@ struct sp_Command *sp_command_hard_reset(void);
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct sp_Command *sp_command_try_from_packet(struct sp_Packet *packet);
+struct sp_CCommand *sp_command_try_from_packet(struct sp_Packet *packet);
 
 /**
  * Closes and deallocates a `Connection`.
