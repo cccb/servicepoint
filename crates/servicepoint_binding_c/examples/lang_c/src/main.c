@@ -2,7 +2,7 @@
 #include "servicepoint.h"
 
 int main(void) {
-    sp_Connection *connection = sp_connection_open("localhost:2342");
+    sp_Connection *connection = sp_connection_open("172.23.42.29:2342");
     if (connection == NULL)
         return 1;
 
@@ -11,9 +11,9 @@ int main(void) {
 
     sp_CCommand *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
     sp_Packet *packet = sp_packet_from_command(command);
-    if (!sp_connection_send(connection, packet))
-        return 1;
+    while (sp_connection_send(connection, sp_packet_clone(packet)));
 
+    sp_packet_dealloc(packet);
     sp_connection_dealloc(connection);
     return 0;
 }
