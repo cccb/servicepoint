@@ -2,14 +2,22 @@
 //!
 //! prefix `sp_brightness_grid_`
 
+use crate::c_slice::CByteSlice;
 use servicepoint::{Brightness, BrightnessGrid, DataRef, Grid, PrimitiveGrid};
 use std::intrinsics::transmute;
 
-use crate::c_slice::CByteSlice;
-
 /// C-wrapper for grid containing brightness values.
-#[derive(Clone)]
-pub struct CBrightnessGrid(pub(crate) BrightnessGrid);
+pub struct CBrightnessGrid {
+    pub(crate) actual: BrightnessGrid,
+}
+
+impl Clone for CBrightnessGrid {
+    fn clone(&self) -> Self {
+        CBrightnessGrid {
+            actual: self.actual.clone(),
+        }
+    }
+}
 
 /// Creates a new `BrightnessGrid` with the specified dimensions.
 ///
@@ -26,9 +34,9 @@ pub unsafe extern "C" fn sp_brightness_grid_new(
     width: usize,
     height: usize,
 ) -> *mut CBrightnessGrid {
-    Box::into_raw(Box::new(CBrightnessGrid(BrightnessGrid::new(
-        width, height,
-    ))))
+    Box::into_raw(Box::new(CBrightnessGrid {
+        actual: BrightnessGrid::new(width, height),
+    }))
 }
 
 /// Loads a `BrightnessGrid` with the specified dimensions from the provided data.
@@ -56,7 +64,7 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
     let grid = PrimitiveGrid::load(width, height, data);
     let grid =
         BrightnessGrid::try_from(grid).expect("invalid brightness value");
-    Box::into_raw(Box::new(CBrightnessGrid(grid)))
+    Box::into_raw(Box::new(CBrightnessGrid { actual: grid }))
 }
 
 /// Clones a `BrightnessGrid`.
@@ -115,7 +123,7 @@ pub unsafe extern "C" fn sp_brightness_grid_get(
     x: usize,
     y: usize,
 ) -> u8 {
-    (*this).0.get(x, y).into()
+    (*this).actual.get(x, y).into()
 }
 
 /// Sets the value of the specified position in the `BrightnessGrid`.
@@ -148,7 +156,7 @@ pub unsafe extern "C" fn sp_brightness_grid_set(
 ) {
     let brightness =
         Brightness::try_from(value).expect("invalid brightness value");
-    (*this).0.set(x, y, brightness);
+    (*this).actual.set(x, y, brightness);
 }
 
 /// Sets the value of all cells in the `BrightnessGrid`.
@@ -175,7 +183,7 @@ pub unsafe extern "C" fn sp_brightness_grid_fill(
 ) {
     let brightness =
         Brightness::try_from(value).expect("invalid brightness value");
-    (*this).0.fill(brightness);
+    (*this).actual.fill(brightness);
 }
 
 /// Gets the width of the `BrightnessGrid` instance.
@@ -193,7 +201,7 @@ pub unsafe extern "C" fn sp_brightness_grid_fill(
 pub unsafe extern "C" fn sp_brightness_grid_width(
     this: *const CBrightnessGrid,
 ) -> usize {
-    (*this).0.width()
+    (*this).actual.width()
 }
 
 /// Gets the height of the `BrightnessGrid` instance.
@@ -211,7 +219,7 @@ pub unsafe extern "C" fn sp_brightness_grid_width(
 pub unsafe extern "C" fn sp_brightness_grid_height(
     this: *const CBrightnessGrid,
 ) -> usize {
-    (*this).0.height()
+    (*this).actual.height()
 }
 
 /// Gets an unsafe reference to the data of the `BrightnessGrid` instance.
@@ -229,7 +237,7 @@ pub unsafe extern "C" fn sp_brightness_grid_unsafe_data_ref(
 ) -> CByteSlice {
     assert_eq!(std::mem::size_of::<Brightness>(), 1);
 
-    let data = (*this).0.data_ref_mut();
+    let data = (*this).actual.data_ref_mut();
     let data: &mut [u8] = transmute(data);
     CByteSlice {
         start: data.as_mut_ptr_range().start,

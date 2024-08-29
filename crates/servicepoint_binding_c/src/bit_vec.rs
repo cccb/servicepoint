@@ -9,7 +9,6 @@ use servicepoint::bitvec::prelude::{BitVec, Msb0};
 type SpBitVec = BitVec<u8, Msb0>;
 
 /// A vector of bits
-#[derive(Clone)]
 pub struct CBitVec {
     actual: SpBitVec,
 }
@@ -23,6 +22,14 @@ impl From<SpBitVec> for CBitVec {
 impl From<CBitVec> for SpBitVec {
     fn from(value: CBitVec) -> Self {
         value.actual
+    }
+}
+
+impl Clone for CBitVec {
+    fn clone(&self) -> Self {
+        CBitVec {
+            actual: self.actual.clone(),
+        }
     }
 }
 

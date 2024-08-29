@@ -147,7 +147,7 @@ pub unsafe extern "C" fn sp_command_char_brightness(
     let byte_grid = *Box::from_raw(byte_grid);
     Box::into_raw(Box::new(CCommand(Command::CharBrightness(
         Origin::new(x, y),
-        byte_grid.0,
+        byte_grid.actual,
     ))))
 }
 
@@ -275,7 +275,7 @@ pub unsafe extern "C" fn sp_command_cp437_data(
     let byte_grid = *Box::from_raw(byte_grid);
     Box::into_raw(Box::new(CCommand(Command::Cp437Data(
         Origin::new(x, y),
-        byte_grid.0,
+        byte_grid.actual,
     ))))
 }
 

@@ -995,6 +995,20 @@ struct sp_CByteSlice sp_cp437_grid_unsafe_data_ref(struct sp_CCp437Grid *this_);
 size_t sp_cp437_grid_width(const struct sp_CCp437Grid *this_);
 
 /**
+ * Clones a `Packet`.
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `this` points to a valid `Packet`
+ * - `this` is not written to concurrently
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_packet_dealloc`.
+ */
+struct sp_Packet *sp_packet_clone(const struct sp_Packet *this_);
+
+/**
  * Deallocates a `Packet`.
  *
  * # Safety

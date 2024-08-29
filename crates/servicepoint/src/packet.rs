@@ -8,14 +8,14 @@ use crate::{
 };
 
 /// A raw header. Should probably not be used directly.
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Header(pub u16, pub u16, pub u16, pub u16, pub u16);
 
 /// The raw payload. Should probably not be used directly.
 pub type Payload = Vec<u8>;
 
 /// The raw packet. Should probably not be used directly.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Packet(pub Header, pub Payload);
 
 impl From<Packet> for Vec<u8> {

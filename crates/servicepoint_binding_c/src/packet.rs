@@ -51,6 +51,21 @@ pub unsafe extern "C" fn sp_packet_try_load(
     }
 }
 
+/// Clones a `Packet`.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `this` points to a valid `Packet`
+/// - `this` is not written to concurrently
+/// - the returned instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_packet_dealloc`.
+#[no_mangle]
+pub unsafe extern "C" fn sp_packet_clone(this: *const Packet) -> *mut Packet {
+    Box::into_raw(Box::new((*this).clone()))
+}
+
 /// Deallocates a `Packet`.
 ///
 /// # Safety

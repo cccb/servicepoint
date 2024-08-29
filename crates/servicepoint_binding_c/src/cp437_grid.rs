@@ -2,15 +2,23 @@
 //!
 //! prefix `sp_cp437_grid_`
 
-use servicepoint::{Cp437Grid, DataRef, Grid};
-
 use crate::c_slice::CByteSlice;
+use servicepoint::{Cp437Grid, DataRef, Grid};
 
 /// A C-wrapper for grid containing codepage 437 characters.
 ///
 /// The encoding is currently not enforced.
-#[derive(Clone)]
-pub struct CCp437Grid(pub(crate) Cp437Grid);
+pub struct CCp437Grid {
+    pub(crate) actual: Cp437Grid,
+}
+
+impl Clone for CCp437Grid {
+    fn clone(&self) -> Self {
+        CCp437Grid {
+            actual: self.actual.clone(),
+        }
+    }
+}
 
 /// Creates a new `Cp437Grid` with the specified dimensions.
 ///
@@ -27,7 +35,9 @@ pub unsafe extern "C" fn sp_cp437_grid_new(
     width: usize,
     height: usize,
 ) -> *mut CCp437Grid {
-    Box::into_raw(Box::new(CCp437Grid(Cp437Grid::new(width, height))))
+    Box::into_raw(Box::new(CCp437Grid {
+        actual: Cp437Grid::new(width, height),
+    }))
 }
 
 /// Loads a `Cp437Grid` with the specified dimensions from the provided data.
@@ -52,7 +62,9 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
     data_length: usize,
 ) -> *mut CCp437Grid {
     let data = std::slice::from_raw_parts(data, data_length);
-    Box::into_raw(Box::new(CCp437Grid(Cp437Grid::load(width, height, data))))
+    Box::into_raw(Box::new(CCp437Grid {
+        actual: Cp437Grid::load(width, height, data),
+    }))
 }
 
 /// Clones a `Cp437Grid`.
@@ -109,7 +121,7 @@ pub unsafe extern "C" fn sp_cp437_grid_get(
     x: usize,
     y: usize,
 ) -> u8 {
-    (*this).0.get(x, y)
+    (*this).actual.get(x, y)
 }
 
 /// Sets the value of the specified position in the `Cp437Grid`.
@@ -139,7 +151,7 @@ pub unsafe extern "C" fn sp_cp437_grid_set(
     y: usize,
     value: u8,
 ) {
-    (*this).0.set(x, y, value);
+    (*this).actual.set(x, y, value);
 }
 
 /// Sets the value of all cells in the `Cp437Grid`.
@@ -157,7 +169,7 @@ pub unsafe extern "C" fn sp_cp437_grid_set(
 /// - `this` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_cp437_grid_fill(this: *mut CCp437Grid, value: u8) {
-    (*this).0.fill(value);
+    (*this).actual.fill(value);
 }
 
 /// Gets the width of the `Cp437Grid` instance.
@@ -173,7 +185,7 @@ pub unsafe extern "C" fn sp_cp437_grid_fill(this: *mut CCp437Grid, value: u8) {
 /// - `this` points to a valid `Cp437Grid`
 #[no_mangle]
 pub unsafe extern "C" fn sp_cp437_grid_width(this: *const CCp437Grid) -> usize {
-    (*this).0.width()
+    (*this).actual.width()
 }
 
 /// Gets the height of the `Cp437Grid` instance.
@@ -191,7 +203,7 @@ pub unsafe extern "C" fn sp_cp437_grid_width(this: *const CCp437Grid) -> usize {
 pub unsafe extern "C" fn sp_cp437_grid_height(
     this: *const CCp437Grid,
 ) -> usize {
-    (*this).0.height()
+    (*this).actual.height()
 }
 
 /// Gets an unsafe reference to the data of the `Cp437Grid` instance.
@@ -207,7 +219,7 @@ pub unsafe extern "C" fn sp_cp437_grid_height(
 pub unsafe extern "C" fn sp_cp437_grid_unsafe_data_ref(
     this: *mut CCp437Grid,
 ) -> CByteSlice {
-    let data = (*this).0.data_ref_mut();
+    let data = (*this).actual.data_ref_mut();
     CByteSlice {
         start: data.as_mut_ptr_range().start,
         length: data.len(),
