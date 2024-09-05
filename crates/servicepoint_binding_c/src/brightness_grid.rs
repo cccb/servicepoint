@@ -2,18 +2,32 @@
 //!
 //! prefix `sp_brightness_grid_`
 
-use crate::c_slice::CByteSlice;
-use servicepoint::{Brightness, BrightnessGrid, DataRef, Grid, PrimitiveGrid};
+use crate::c_slice::SPByteSlice;
+use servicepoint::{Brightness, DataRef, Grid, PrimitiveGrid};
 use std::intrinsics::transmute;
 
-/// C-wrapper for grid containing brightness values.
-pub struct CBrightnessGrid {
-    pub(crate) actual: BrightnessGrid,
+/// A grid containing brightness values.
+///
+/// # Examples
+/// ```C
+/// SPConnection connection = sp_connection_open("127.0.0.1:2342");
+/// if (connection == NULL)
+///     return 1;
+///
+/// SPBrightnessGrid grid = sp_brightness_grid_new(2, 2);
+/// sp_brightness_grid_set(grid, 0, 0, 0);
+/// sp_brightness_grid_set(grid, 1, 1, 10);
+///
+/// SPCommand command = sp_command_char_brightness(grid);
+/// sp_connection_dealloc(connection);
+/// ```
+pub struct SPBrightnessGrid {
+    pub(crate) actual: servicepoint::BrightnessGrid,
 }
 
-impl Clone for CBrightnessGrid {
+impl Clone for SPBrightnessGrid {
     fn clone(&self) -> Self {
-        CBrightnessGrid {
+        SPBrightnessGrid {
             actual: self.actual.clone(),
         }
     }
@@ -33,9 +47,9 @@ impl Clone for CBrightnessGrid {
 pub unsafe extern "C" fn sp_brightness_grid_new(
     width: usize,
     height: usize,
-) -> *mut CBrightnessGrid {
-    Box::into_raw(Box::new(CBrightnessGrid {
-        actual: BrightnessGrid::new(width, height),
+) -> *mut SPBrightnessGrid {
+    Box::into_raw(Box::new(SPBrightnessGrid {
+        actual: servicepoint::BrightnessGrid::new(width, height),
     }))
 }
 
@@ -59,12 +73,12 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
     height: usize,
     data: *const u8,
     data_length: usize,
-) -> *mut CBrightnessGrid {
+) -> *mut SPBrightnessGrid {
     let data = std::slice::from_raw_parts(data, data_length);
     let grid = PrimitiveGrid::load(width, height, data);
-    let grid =
-        BrightnessGrid::try_from(grid).expect("invalid brightness value");
-    Box::into_raw(Box::new(CBrightnessGrid { actual: grid }))
+    let grid = servicepoint::BrightnessGrid::try_from(grid)
+        .expect("invalid brightness value");
+    Box::into_raw(Box::new(SPBrightnessGrid { actual: grid }))
 }
 
 /// Clones a `BrightnessGrid`.
@@ -79,8 +93,8 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
 ///   by explicitly calling `sp_brightness_grid_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_clone(
-    this: *const CBrightnessGrid,
-) -> *mut CBrightnessGrid {
+    this: *const SPBrightnessGrid,
+) -> *mut SPBrightnessGrid {
     Box::into_raw(Box::new((*this).clone()))
 }
 
@@ -95,7 +109,7 @@ pub unsafe extern "C" fn sp_brightness_grid_clone(
 /// - `this` was not passed to another consuming function, e.g. to create a `Command`
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_dealloc(
-    this: *mut CBrightnessGrid,
+    this: *mut SPBrightnessGrid,
 ) {
     _ = Box::from_raw(this);
 }
@@ -119,7 +133,7 @@ pub unsafe extern "C" fn sp_brightness_grid_dealloc(
 /// - `this` is not written to concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_get(
-    this: *const CBrightnessGrid,
+    this: *const SPBrightnessGrid,
     x: usize,
     y: usize,
 ) -> u8 {
@@ -149,7 +163,7 @@ pub unsafe extern "C" fn sp_brightness_grid_get(
 /// - `this` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_set(
-    this: *mut CBrightnessGrid,
+    this: *mut SPBrightnessGrid,
     x: usize,
     y: usize,
     value: u8,
@@ -178,7 +192,7 @@ pub unsafe extern "C" fn sp_brightness_grid_set(
 /// - `this` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_fill(
-    this: *mut CBrightnessGrid,
+    this: *mut SPBrightnessGrid,
     value: u8,
 ) {
     let brightness =
@@ -199,7 +213,7 @@ pub unsafe extern "C" fn sp_brightness_grid_fill(
 /// - `this` points to a valid `BrightnessGrid`
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_width(
-    this: *const CBrightnessGrid,
+    this: *const SPBrightnessGrid,
 ) -> usize {
     (*this).actual.width()
 }
@@ -217,7 +231,7 @@ pub unsafe extern "C" fn sp_brightness_grid_width(
 /// - `this` points to a valid `BrightnessGrid`
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_height(
-    this: *const CBrightnessGrid,
+    this: *const SPBrightnessGrid,
 ) -> usize {
     (*this).actual.height()
 }
@@ -233,13 +247,13 @@ pub unsafe extern "C" fn sp_brightness_grid_height(
 /// - the returned memory range is never accessed concurrently, either via the `BrightnessGrid` or directly
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_unsafe_data_ref(
-    this: *mut CBrightnessGrid,
-) -> CByteSlice {
+    this: *mut SPBrightnessGrid,
+) -> SPByteSlice {
     assert_eq!(std::mem::size_of::<Brightness>(), 1);
 
     let data = (*this).actual.data_ref_mut();
     let data: &mut [u8] = transmute(data);
-    CByteSlice {
+    SPByteSlice {
         start: data.as_mut_ptr_range().start,
         length: data.len(),
     }

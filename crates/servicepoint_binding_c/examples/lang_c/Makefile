@@ -6,8 +6,9 @@ REPO_ROOT := $(THIS_DIR)/../../../..
 build: out/lang_c
 
 clean:
-	rm -r out
-	rm include/servicepoint.h
+	rm -r out || true
+	rm include/servicepoint.h || true
+	cargo clean
 
 run: out/lang_c
 	out/lang_c

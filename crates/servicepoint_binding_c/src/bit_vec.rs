@@ -2,34 +2,34 @@
 //!
 //! prefix `sp_bit_vec_`
 
-use crate::c_slice::CByteSlice;
+use crate::c_slice::SPByteSlice;
 use servicepoint::bitvec::prelude::{BitVec, Msb0};
 
-/// cbindgen:no-export
-type SpBitVec = BitVec<u8, Msb0>;
-
 /// A vector of bits
-pub struct CBitVec {
-    actual: SpBitVec,
-}
+///
+/// # Examples
+/// ```C
+/// SPBitVec vec = sp_bit_vec_new(8);
+/// sp_bit_vec_set(vec, 5, true);
+/// sp_bit_vec_dealloc(vec);
+/// ```
+pub struct SPBitVec(BitVec<u8, Msb0>);
 
-impl From<SpBitVec> for CBitVec {
-    fn from(actual: SpBitVec) -> Self {
-        Self { actual }
+impl From<BitVec<u8, Msb0>> for SPBitVec {
+    fn from(actual: BitVec<u8, Msb0>) -> Self {
+        Self(actual)
     }
 }
 
-impl From<CBitVec> for SpBitVec {
-    fn from(value: CBitVec) -> Self {
-        value.actual
+impl From<SPBitVec> for BitVec<u8, Msb0> {
+    fn from(value: SPBitVec) -> Self {
+        value.0
     }
 }
 
-impl Clone for CBitVec {
+impl Clone for SPBitVec {
     fn clone(&self) -> Self {
-        CBitVec {
-            actual: self.actual.clone(),
-        }
+        SPBitVec(self.0.clone())
     }
 }
 
@@ -52,10 +52,8 @@ impl Clone for CBitVec {
 /// - the returned instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_bit_vec_dealloc`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_new(size: usize) -> *mut CBitVec {
-    Box::into_raw(Box::new(CBitVec {
-        actual: SpBitVec::repeat(false, size),
-    }))
+pub unsafe extern "C" fn sp_bit_vec_new(size: usize) -> *mut SPBitVec {
+    Box::into_raw(Box::new(SPBitVec(BitVec::repeat(false, size))))
 }
 
 /// Interpret the data as a series of bits and load then into a new `BitVec` instance.
@@ -72,11 +70,9 @@ pub unsafe extern "C" fn sp_bit_vec_new(size: usize) -> *mut CBitVec {
 pub unsafe extern "C" fn sp_bit_vec_load(
     data: *const u8,
     data_length: usize,
-) -> *mut CBitVec {
+) -> *mut SPBitVec {
     let data = std::slice::from_raw_parts(data, data_length);
-    Box::into_raw(Box::new(CBitVec {
-        actual: SpBitVec::from_slice(data),
-    }))
+    Box::into_raw(Box::new(SPBitVec(BitVec::from_slice(data))))
 }
 
 /// Clones a `BitVec`.
@@ -91,8 +87,8 @@ pub unsafe extern "C" fn sp_bit_vec_load(
 ///   by explicitly calling `sp_bit_vec_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_bit_vec_clone(
-    this: *const CBitVec,
-) -> *mut CBitVec {
+    this: *const SPBitVec,
+) -> *mut SPBitVec {
     Box::into_raw(Box::new((*this).clone()))
 }
 
@@ -106,7 +102,7 @@ pub unsafe extern "C" fn sp_bit_vec_clone(
 /// - `this` is not used concurrently or after this call
 /// - `this` was not passed to another consuming function, e.g. to create a `Command`
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_dealloc(this: *mut CBitVec) {
+pub unsafe extern "C" fn sp_bit_vec_dealloc(this: *mut SPBitVec) {
     _ = Box::from_raw(this);
 }
 
@@ -131,10 +127,10 @@ pub unsafe extern "C" fn sp_bit_vec_dealloc(this: *mut CBitVec) {
 /// - `this` is not written to concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_bit_vec_get(
-    this: *const CBitVec,
+    this: *const SPBitVec,
     index: usize,
 ) -> bool {
-    *(*this).actual.get(index).unwrap()
+    *(*this).0.get(index).unwrap()
 }
 
 /// Sets the value of a bit in the `BitVec`.
@@ -159,11 +155,11 @@ pub unsafe extern "C" fn sp_bit_vec_get(
 /// - `this` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_bit_vec_set(
-    this: *mut CBitVec,
+    this: *mut SPBitVec,
     index: usize,
     value: bool,
 ) {
-    (*this).actual.set(index, value)
+    (*this).0.set(index, value)
 }
 
 /// Sets the value of all bits in the `BitVec`.
@@ -179,8 +175,8 @@ pub unsafe extern "C" fn sp_bit_vec_set(
 /// - `this` points to a valid `BitVec`
 /// - `this` is not written to or read from concurrently
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_fill(this: *mut CBitVec, value: bool) {
-    (*this).actual.fill(value)
+pub unsafe extern "C" fn sp_bit_vec_fill(this: *mut SPBitVec, value: bool) {
+    (*this).0.fill(value)
 }
 
 /// Gets the length of the `BitVec` in bits.
@@ -191,8 +187,8 @@ pub unsafe extern "C" fn sp_bit_vec_fill(this: *mut CBitVec, value: bool) {
 ///
 /// - `this` points to a valid `BitVec`
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_len(this: *const CBitVec) -> usize {
-    (*this).actual.len()
+pub unsafe extern "C" fn sp_bit_vec_len(this: *const SPBitVec) -> usize {
+    (*this).0.len()
 }
 
 /// Returns true if length is 0.
@@ -203,8 +199,8 @@ pub unsafe extern "C" fn sp_bit_vec_len(this: *const CBitVec) -> usize {
 ///
 /// - `this` points to a valid `BitVec`
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_is_empty(this: *const CBitVec) -> bool {
-    (*this).actual.is_empty()
+pub unsafe extern "C" fn sp_bit_vec_is_empty(this: *const SPBitVec) -> bool {
+    (*this).0.is_empty()
 }
 
 /// Gets an unsafe reference to the data of the `BitVec` instance.
@@ -218,10 +214,10 @@ pub unsafe extern "C" fn sp_bit_vec_is_empty(this: *const CBitVec) -> bool {
 /// - the returned memory range is never accessed concurrently, either via the `BitVec` or directly
 #[no_mangle]
 pub unsafe extern "C" fn sp_bit_vec_unsafe_data_ref(
-    this: *mut CBitVec,
-) -> CByteSlice {
-    let data = (*this).actual.as_raw_mut_slice();
-    CByteSlice {
+    this: *mut SPBitVec,
+) -> SPByteSlice {
+    let data = (*this).0.as_raw_mut_slice();
+    SPByteSlice {
         start: data.as_mut_ptr_range().start,
         length: data.len(),
     }

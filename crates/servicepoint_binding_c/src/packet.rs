@@ -4,8 +4,10 @@
 
 use std::ptr::null_mut;
 
-use crate::command::CCommand;
-use servicepoint::Packet;
+use crate::command::SPCommand;
+
+/// The raw packet
+pub struct SPPacket(pub(crate) servicepoint::Packet);
 
 /// Turns a `Command` into a `Packet`.
 /// The `Command` gets consumed.
@@ -20,10 +22,10 @@ use servicepoint::Packet;
 ///   by explicitly calling `sp_packet_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_from_command(
-    command: *mut CCommand,
-) -> *mut Packet {
+    command: *mut SPCommand,
+) -> *mut SPPacket {
     let command = *Box::from_raw(command);
-    let packet = command.0.into();
+    let packet = SPPacket(command.0.into());
     Box::into_raw(Box::new(packet))
 }
 
@@ -43,11 +45,11 @@ pub unsafe extern "C" fn sp_packet_from_command(
 pub unsafe extern "C" fn sp_packet_try_load(
     data: *const u8,
     length: usize,
-) -> *mut Packet {
+) -> *mut SPPacket {
     let data = std::slice::from_raw_parts(data, length);
-    match Packet::try_from(data) {
+    match servicepoint::Packet::try_from(data) {
         Err(_) => null_mut(),
-        Ok(packet) => Box::into_raw(Box::new(packet)),
+        Ok(packet) => Box::into_raw(Box::new(SPPacket(packet))),
     }
 }
 
@@ -62,8 +64,10 @@ pub unsafe extern "C" fn sp_packet_try_load(
 /// - the returned instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_packet_dealloc`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_packet_clone(this: *const Packet) -> *mut Packet {
-    Box::into_raw(Box::new((*this).clone()))
+pub unsafe extern "C" fn sp_packet_clone(
+    this: *const SPPacket,
+) -> *mut SPPacket {
+    Box::into_raw(Box::new(SPPacket((*this).0.clone())))
 }
 
 /// Deallocates a `Packet`.
@@ -75,6 +79,6 @@ pub unsafe extern "C" fn sp_packet_clone(this: *const Packet) -> *mut Packet {
 /// - `this` points to a valid `Packet`
 /// - `this` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_packet_dealloc(this: *mut Packet) {
+pub unsafe extern "C" fn sp_packet_dealloc(this: *mut SPPacket) {
     _ = Box::from_raw(this)
 }

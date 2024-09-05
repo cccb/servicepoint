@@ -5,7 +5,18 @@
 use std::ffi::{c_char, CStr};
 use std::ptr::null_mut;
 
-use servicepoint::{Connection, Packet};
+use crate::packet::SPPacket;
+
+/// A connection to the display.
+///
+/// # Examples
+///
+/// ```C
+/// CConnection connection = sp_connection_open("172.23.42.29:2342");
+/// if (connection != NULL)
+///     sp_connection_send(connection, sp_command_clear());
+/// ```
+pub struct SPConnection(pub(crate) servicepoint::Connection);
 
 /// Creates a new instance of `Connection`.
 ///
@@ -24,14 +35,14 @@ use servicepoint::{Connection, Packet};
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_open(
     host: *const c_char,
-) -> *mut Connection {
+) -> *mut SPConnection {
     let host = CStr::from_ptr(host).to_str().expect("Bad encoding");
-    let connection = match Connection::open(host) {
+    let connection = match servicepoint::Connection::open(host) {
         Err(_) => return null_mut(),
         Ok(value) => value,
     };
 
-    Box::into_raw(Box::new(connection))
+    Box::into_raw(Box::new(SPConnection(connection)))
 }
 
 /// Sends a `Packet` to the display using the `Connection`.
@@ -48,11 +59,11 @@ pub unsafe extern "C" fn sp_connection_open(
 /// - `packet` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send(
-    connection: *const Connection,
-    packet: *mut Packet,
+    connection: *const SPConnection,
+    packet: *mut SPPacket,
 ) -> bool {
     let packet = Box::from_raw(packet);
-    (*connection).send(*packet).is_ok()
+    (*connection).0.send((*packet).0).is_ok()
 }
 
 /// Closes and deallocates a `Connection`.
@@ -64,6 +75,6 @@ pub unsafe extern "C" fn sp_connection_send(
 /// - `this` points to a valid `Connection`
 /// - `this` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_connection_dealloc(ptr: *mut Connection) {
+pub unsafe extern "C" fn sp_connection_dealloc(ptr: *mut SPConnection) {
     _ = Box::from_raw(ptr);
 }

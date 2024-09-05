@@ -13,23 +13,18 @@ fn main() {
         .input_extern_file("../servicepoint_binding_c/src/lib.rs")
         .input_extern_file("../servicepoint_binding_c/src/c_slice.rs")
         .input_extern_file("../servicepoint_binding_c/src/packet.rs")
-        .input_extern_file("../servicepoint/src/command.rs")
-        .input_extern_file("../servicepoint/src/connection.rs")
-        .input_extern_file("../servicepoint/src/pixel_grid.rs")
-        .input_extern_file("../servicepoint/src/lib.rs")
-        .input_extern_file("../servicepoint/src/packet.rs")
-        .input_extern_file("../servicepoint/src/compression_code.rs")
+        .input_extern_file("../servicepoint_binding_c/src/constants.rs")
         .csharp_dll_name("servicepoint_binding_c")
         .csharp_namespace("ServicePoint.BindGen")
         .csharp_use_nint_types(true)
         .csharp_class_accessibility("public")
         .csharp_generate_const_filter(|_| true)
         .csharp_type_rename(move |name| {
-            if name.len() > 1
-                && name.starts_with("C")
-                && name.chars().nth(1).unwrap().is_uppercase()
+            if name.len() > 2
+                && name.starts_with("SP")
+                && name.chars().nth(2).unwrap().is_uppercase()
             {
-                name[1..].to_string()
+                name[2..].to_string()
             } else {
                 name
             }

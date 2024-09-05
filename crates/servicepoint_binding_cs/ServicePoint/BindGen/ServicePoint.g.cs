@@ -14,9 +14,9 @@ namespace ServicePoint.BindGen
     {
         const string __DllName = "servicepoint_binding_c";
 
-        public const nuint TILE_SIZE = 8;
-        public const nuint TILE_WIDTH = 56;
-        public const nuint TILE_HEIGHT = 20;
+        public const nuint SP_TILE_SIZE = 8;
+        public const nuint SP_TILE_WIDTH = 56;
+        public const nuint SP_TILE_HEIGHT = 20;
 
 
         /// <summary>
@@ -629,7 +629,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - the returned `Command` instance is freed in some way, either by using a consuming function or
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -637,19 +637,19 @@ namespace ServicePoint.BindGen
 
         /// <summary>
         ///  Allocates a new `Command::CharBrightness` instance.
-        ///  The passed `ByteGrid` gets consumed.
+        ///  The passed `SPBrightnessGrid` gets consumed.
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `byte_grid` points to a valid instance of `ByteGrid`
-        ///  - `byte_grid` is not used concurrently or after this call
+        ///  - `grid` points to a valid instance of `SPBrightnessGrid`
+        ///  - `grid` is not used concurrently or after this call
         ///  - the returned `Command` instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* byte_grid);
+        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* grid);
 
         /// <summary>
         ///  Allocates a new `Command::BitmapLinear` instance.
@@ -1041,6 +1041,21 @@ namespace ServicePoint.BindGen
         public static extern Packet* sp_packet_try_load(byte* data, nuint length);
 
         /// <summary>
+        ///  Clones a `Packet`.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `this` points to a valid `Packet`
+        ///  - `this` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_dealloc`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_packet_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp_packet_clone(Packet* @this);
+
+        /// <summary>
         ///  Deallocates a `Packet`.
         ///
         ///  # Safety
@@ -1077,13 +1092,6 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct ByteSlice
-    {
-        public byte* start;
-        public nuint length;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct Connection
     {
     }
@@ -1091,6 +1099,13 @@ namespace ServicePoint.BindGen
     [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct PixelGrid
     {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct ByteSlice
+    {
+        public byte* start;
+        public nuint length;
     }
 
     [StructLayout(LayoutKind.Sequential)]
