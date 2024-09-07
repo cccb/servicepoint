@@ -17,8 +17,10 @@ line_endings = "LF"
 ############################# Codegen Options ##################################
 
 style = "both"
-sort_by = "None"
 usize_is_size_t = true
+
+# this is needed because otherwise the order in the C# bindings is different on different machines
+sort_by = "Name"
 
 [parse]
 parse_deps = false
