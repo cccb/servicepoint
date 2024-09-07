@@ -345,7 +345,7 @@ pub unsafe extern "C" fn sp_command_cp437_data(
     let grid = *Box::from_raw(grid);
     Box::into_raw(Box::new(SPCommand(servicepoint::Command::Cp437Data(
         Origin::new(x, y),
-        grid.actual,
+        grid.0,
     ))))
 }
 
