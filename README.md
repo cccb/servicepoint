@@ -7,11 +7,11 @@ programming languages.
 
 Take a look at the contained crates for language specific information:
 
-| Language | Readme                                                              |
-|----------|---------------------------------------------------------------------|
-| Rust     | [servicepoint](crates/servicepoint/README.md)                       |
-| C / C++  | [servicepoint_binding_c](crates/servicepoint_binding_c/README.md)   |
-| C# / F#  | [servicepoint_binding_cs](crates/servicepoint_binding_cs/README.md) | 
+| Language  | Readme                                                              |
+|-----------|---------------------------------------------------------------------|
+| Rust      | [servicepoint](crates/servicepoint/README.md)                       |
+| C / C++   | [servicepoint_binding_c](crates/servicepoint_binding_c/README.md)   |
+| .NET (C#) | [servicepoint_binding_cs](crates/servicepoint_binding_cs/README.md) | 
 
 ## Projects using the library
 
@@ -26,12 +26,10 @@ Take a look at the contained crates for language specific information:
 
 To add yourself to the list, open a pull request.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## What happened to servicepoint2?
 
 After `servicepoint2` has been merged into `servicepoint`, `servicepoint2` will not continue to get any updates.
-
-## Contributing
-
-Contributions are accepted in any form (issues, documentation, feature requests, code, review, ...).
-
-All creatures welcome.
