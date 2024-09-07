@@ -20,8 +20,8 @@ use crate::{
 /// # Examples
 ///
 /// ```C
-/// sp_connection_send(connection, sp_command_clear());
-/// sp_connection_send(connection, sp_command_brightness(5));
+/// sp_connection_send_command(connection, sp_command_clear());
+/// sp_connection_send_command(connection, sp_command_brightness(5));
 /// ```
 pub struct SPCommand(pub(crate) servicepoint::Command);
 
@@ -31,7 +31,9 @@ impl Clone for SPCommand {
     }
 }
 
-/// Tries to turn a `SPPacket` into a `SPCommand`. The packet is deallocated in the process.
+/// Tries to turn a `SPPacket` into a `SPCommand`.
+///
+/// The packet is deallocated in the process.
 ///
 /// Returns: pointer to new `SPCommand` instance or NULL
 ///
@@ -72,14 +74,16 @@ pub unsafe extern "C" fn sp_command_clone(
     Box::into_raw(Box::new((*original).clone()))
 }
 
-/// Allocates a new `Command::Clear` instance.
+/// Set all pixels to the off state.
 ///
-/// Set all pixels to the off state. Does not affect brightness.
+/// Does not affect brightness.
+///
+/// Returns: a new `Command::Clear` instance. Will never return NULL.
 ///
 /// # Examples
 ///
 /// ```C
-/// sp_connection_send(connection, sp_command_clear());
+/// sp_connection_send_command(connection, sp_command_clear());
 /// ```
 ///
 /// # Safety
@@ -93,10 +97,11 @@ pub unsafe extern "C" fn sp_command_clear() -> *mut SPCommand {
     Box::into_raw(Box::new(SPCommand(servicepoint::Command::Clear)))
 }
 
-/// Allocates a new `Command::HardReset` instance.
-///
 /// Kills the udp daemon on the display, which usually results in a restart.
+///
 /// Please do not send this in your normal program flow.
+///
+/// Returns: a new `Command::HardReset` instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -109,7 +114,9 @@ pub unsafe extern "C" fn sp_command_hard_reset() -> *mut SPCommand {
     Box::into_raw(Box::new(SPCommand(servicepoint::Command::HardReset)))
 }
 
-/// Allocates a new `Command::FadeOut` instance.
+/// A yet-to-be-tested command.
+///
+/// Returns: a new `Command::FadeOut` instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -122,8 +129,9 @@ pub unsafe extern "C" fn sp_command_fade_out() -> *mut SPCommand {
     Box::into_raw(Box::new(SPCommand(servicepoint::Command::FadeOut)))
 }
 
-/// Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
-/// same value.
+/// Set the brightness of all tiles to the same value.
+///
+/// Returns: a new `Command::Brightness` instance. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -146,10 +154,11 @@ pub unsafe extern "C" fn sp_command_brightness(
     ))))
 }
 
-/// Allocates a new `Command::CharBrightness` instance.
+/// Set the brightness of individual tiles in a rectangular area of the display.
+///
 /// The passed `SPBrightnessGrid` gets consumed.
 ///
-/// Set the brightness of individual tiles in a rectangular area of the display.
+/// Returns: a new `Command::CharBrightness` instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -172,15 +181,16 @@ pub unsafe extern "C" fn sp_command_char_brightness(
     ))))
 }
 
-/// Allocates a new `Command::BitmapLinear` instance.
-/// The passed `SPBitVec` gets consumed.
-///
 /// Set pixel data starting at the pixel offset on screen.
 ///
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
 /// The contained `SPBitVec` is always uncompressed.
+///
+/// The passed `SPBitVec` gets consumed.
+///
+/// Returns: a new `Command::BitmapLinear` instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -205,15 +215,16 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
     ))))
 }
 
-/// Allocates a new `Command::BitmapLinearAnd` instance.
-/// The passed `SPBitVec` gets consumed.
-///
 /// Set pixel data according to an and-mask starting at the offset.
 ///
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
 /// The contained `SPBitVec` is always uncompressed.
+///
+/// The passed `SPBitVec` gets consumed.
+///
+/// Returns: a new `Command::BitmapLinearAnd` instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -238,15 +249,16 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
     ))))
 }
 
-/// Allocates a new `Command::BitmapLinearOr` instance.
-/// The passed `SPBitVec` gets consumed.
-///
 /// Set pixel data according to an or-mask starting at the offset.
 ///
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
 /// The contained `SPBitVec` is always uncompressed.
+///
+/// The passed `SPBitVec` gets consumed.
+///
+/// Returns: a new `Command::BitmapLinearOr` instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -271,15 +283,16 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
     ))))
 }
 
-/// Allocates a new `Command::BitmapLinearXor` instance.
-/// The passed `SPBitVec` gets consumed.
-///
 /// Set pixel data according to a xor-mask starting at the offset.
 ///
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
 /// The contained `SPBitVec` is always uncompressed.
+///
+/// The passed `SPBitVec` gets consumed.
+///
+/// Returns: a new `Command::BitmapLinearXor` instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -304,9 +317,6 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
     ))))
 }
 
-/// Allocates a new `Command::Cp437Data` instance.
-/// The passed `SPCp437Grid` gets consumed.
-///
 /// Show text on the screen.
 ///
 /// <div class="warning">
@@ -314,7 +324,9 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
 /// </div>
 ///
-/// Will never return NULL.
+/// The passed `SPCp437Grid` gets consumed.///
+///
+/// Returns: a new `Command::Cp437Data` instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -337,12 +349,11 @@ pub unsafe extern "C" fn sp_command_cp437_data(
     ))))
 }
 
-/// Allocates a new `Command::BitmapLinearWin` instance.
-/// The passed `SPPixelGrid` gets consumed.
-///
 /// Sets a window of pixels to the specified values.
 ///
-/// Will never return NULL.
+/// The passed `SPPixelGrid` gets consumed.
+///
+/// Returns: a new `Command::BitmapLinearWin` instance. Will never return NULL.
 ///
 /// # Safety
 ///

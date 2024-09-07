@@ -112,8 +112,8 @@ typedef struct SPBrightnessGrid SPBrightnessGrid;
  * # Examples
  *
  * ```C
- * sp_connection_send(connection, sp_command_clear());
- * sp_connection_send(connection, sp_command_brightness(5));
+ * sp_connection_send_command(connection, sp_command_clear());
+ * sp_connection_send_command(connection, sp_command_brightness(5));
  * ```
  */
 typedef struct SPCommand SPCommand;
@@ -126,7 +126,7 @@ typedef struct SPCommand SPCommand;
  * ```C
  * CConnection connection = sp_connection_open("172.23.42.29:2342");
  * if (connection != NULL)
- *     sp_connection_send(connection, sp_command_clear());
+ *     sp_connection_send_command(connection, sp_command_clear());
  * ```
  */
 typedef struct SPConnection SPConnection;
@@ -537,15 +537,16 @@ struct SPByteSlice sp_brightness_grid_unsafe_data_ref(struct SPBrightnessGrid *t
 size_t sp_brightness_grid_width(const struct SPBrightnessGrid *this_);
 
 /**
- * Allocates a new `Command::BitmapLinear` instance.
- * The passed `SPBitVec` gets consumed.
- *
  * Set pixel data starting at the pixel offset on screen.
  *
  * The screen will continuously overwrite more pixel data without regarding the offset, meaning
  * once the starting row is full, overwriting will continue on column 0.
  *
  * The contained `SPBitVec` is always uncompressed.
+ *
+ * The passed `SPBitVec` gets consumed.
+ *
+ * Returns: a new `Command::BitmapLinear` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -562,15 +563,16 @@ struct SPCommand *sp_command_bitmap_linear(size_t offset,
                                            SPCompressionCode compression);
 
 /**
- * Allocates a new `Command::BitmapLinearAnd` instance.
- * The passed `SPBitVec` gets consumed.
- *
  * Set pixel data according to an and-mask starting at the offset.
  *
  * The screen will continuously overwrite more pixel data without regarding the offset, meaning
  * once the starting row is full, overwriting will continue on column 0.
  *
  * The contained `SPBitVec` is always uncompressed.
+ *
+ * The passed `SPBitVec` gets consumed.
+ *
+ * Returns: a new `Command::BitmapLinearAnd` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -587,15 +589,16 @@ struct SPCommand *sp_command_bitmap_linear_and(size_t offset,
                                                SPCompressionCode compression);
 
 /**
- * Allocates a new `Command::BitmapLinearOr` instance.
- * The passed `SPBitVec` gets consumed.
- *
  * Set pixel data according to an or-mask starting at the offset.
  *
  * The screen will continuously overwrite more pixel data without regarding the offset, meaning
  * once the starting row is full, overwriting will continue on column 0.
  *
  * The contained `SPBitVec` is always uncompressed.
+ *
+ * The passed `SPBitVec` gets consumed.
+ *
+ * Returns: a new `Command::BitmapLinearOr` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -612,12 +615,11 @@ struct SPCommand *sp_command_bitmap_linear_or(size_t offset,
                                               SPCompressionCode compression);
 
 /**
- * Allocates a new `Command::BitmapLinearWin` instance.
- * The passed `SPPixelGrid` gets consumed.
- *
  * Sets a window of pixels to the specified values.
  *
- * Will never return NULL.
+ * The passed `SPPixelGrid` gets consumed.
+ *
+ * Returns: a new `Command::BitmapLinearWin` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -635,15 +637,16 @@ struct SPCommand *sp_command_bitmap_linear_win(size_t x,
                                                SPCompressionCode compression_code);
 
 /**
- * Allocates a new `Command::BitmapLinearXor` instance.
- * The passed `SPBitVec` gets consumed.
- *
  * Set pixel data according to a xor-mask starting at the offset.
  *
  * The screen will continuously overwrite more pixel data without regarding the offset, meaning
  * once the starting row is full, overwriting will continue on column 0.
  *
  * The contained `SPBitVec` is always uncompressed.
+ *
+ * The passed `SPBitVec` gets consumed.
+ *
+ * Returns: a new `Command::BitmapLinearXor` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -660,8 +663,9 @@ struct SPCommand *sp_command_bitmap_linear_xor(size_t offset,
                                                SPCompressionCode compression);
 
 /**
- * Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
- * same value.
+ * Set the brightness of all tiles to the same value.
+ *
+ * Returns: a new `Command::Brightness` instance. Will never return NULL.
  *
  * # Panics
  *
@@ -677,10 +681,11 @@ struct SPCommand *sp_command_bitmap_linear_xor(size_t offset,
 struct SPCommand *sp_command_brightness(uint8_t brightness);
 
 /**
- * Allocates a new `Command::CharBrightness` instance.
+ * Set the brightness of individual tiles in a rectangular area of the display.
+ *
  * The passed `SPBrightnessGrid` gets consumed.
  *
- * Set the brightness of individual tiles in a rectangular area of the display.
+ * Returns: a new `Command::CharBrightness` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -696,14 +701,16 @@ struct SPCommand *sp_command_char_brightness(size_t x,
                                              struct SPBrightnessGrid *grid);
 
 /**
- * Allocates a new `Command::Clear` instance.
+ * Set all pixels to the off state.
  *
- * Set all pixels to the off state. Does not affect brightness.
+ * Does not affect brightness.
+ *
+ * Returns: a new `Command::Clear` instance. Will never return NULL.
  *
  * # Examples
  *
  * ```C
- * sp_connection_send(connection, sp_command_clear());
+ * sp_connection_send_command(connection, sp_command_clear());
  * ```
  *
  * # Safety
@@ -730,9 +737,6 @@ struct SPCommand *sp_command_clear(void);
 struct SPCommand *sp_command_clone(const struct SPCommand *original);
 
 /**
- * Allocates a new `Command::Cp437Data` instance.
- * The passed `SPCp437Grid` gets consumed.
- *
  * Show text on the screen.
  *
  * <div class="warning">
@@ -740,7 +744,9 @@ struct SPCommand *sp_command_clone(const struct SPCommand *original);
  *     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
  * </div>
  *
- * Will never return NULL.
+ * The passed `SPCp437Grid` gets consumed.///
+ *
+ * Returns: a new `Command::Cp437Data` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -756,7 +762,9 @@ struct SPCommand *sp_command_cp437_data(size_t x,
                                         struct SPCp437Grid *grid);
 
 /**
- * Allocates a new `Command::FadeOut` instance.
+ * A yet-to-be-tested command.
+ *
+ * Returns: a new `Command::FadeOut` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -788,10 +796,11 @@ struct SPCommand *sp_command_fade_out(void);
 void sp_command_free(struct SPCommand *ptr);
 
 /**
- * Allocates a new `Command::HardReset` instance.
- *
  * Kills the udp daemon on the display, which usually results in a restart.
+ *
  * Please do not send this in your normal program flow.
+ *
+ * Returns: a new `Command::HardReset` instance. Will never return NULL.
  *
  * # Safety
  *
@@ -803,7 +812,9 @@ void sp_command_free(struct SPCommand *ptr);
 struct SPCommand *sp_command_hard_reset(void);
 
 /**
- * Tries to turn a `SPPacket` into a `SPCommand`. The packet is deallocated in the process.
+ * Tries to turn a `SPPacket` into a `SPCommand`.
+ *
+ * The packet is deallocated in the process.
  *
  * Returns: pointer to new `SPCommand` instance or NULL
  *
@@ -851,6 +862,7 @@ struct SPConnection *sp_connection_open(const char *host);
 
 /**
  * Sends a `SPCommand` to the display using the `SPConnection`.
+ *
  * The passed `SPCommand` gets consumed.
  *
  * returns: true in case of success
@@ -868,6 +880,7 @@ bool sp_connection_send_command(const struct SPConnection *connection,
 
 /**
  * Sends a `SPPacket` to the display using the `SPConnection`.
+ *
  * The passed `SPPacket` gets consumed.
  *
  * returns: true in case of success

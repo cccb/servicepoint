@@ -14,7 +14,7 @@ use crate::{SPCommand, SPPacket};
 /// ```C
 /// CConnection connection = sp_connection_open("172.23.42.29:2342");
 /// if (connection != NULL)
-///     sp_connection_send(connection, sp_command_clear());
+///     sp_connection_send_command(connection, sp_command_clear());
 /// ```
 pub struct SPConnection(pub(crate) servicepoint::Connection);
 
@@ -46,6 +46,7 @@ pub unsafe extern "C" fn sp_connection_open(
 }
 
 /// Sends a `SPPacket` to the display using the `SPConnection`.
+///
 /// The passed `SPPacket` gets consumed.
 ///
 /// returns: true in case of success
@@ -67,6 +68,7 @@ pub unsafe extern "C" fn sp_connection_send_packet(
 }
 
 /// Sends a `SPCommand` to the display using the `SPConnection`.
+///
 /// The passed `SPCommand` gets consumed.
 ///
 /// returns: true in case of success

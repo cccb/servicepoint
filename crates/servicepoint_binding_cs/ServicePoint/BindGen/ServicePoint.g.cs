@@ -372,7 +372,9 @@ namespace ServicePoint.BindGen
         public static extern ByteSlice sp_brightness_grid_unsafe_data_ref(BrightnessGrid* @this);
 
         /// <summary>
-        ///  Tries to turn a `SPPacket` into a `SPCommand`. The packet is deallocated in the process.
+        ///  Tries to turn a `SPPacket` into a `SPCommand`.
+        ///
+        ///  The packet is deallocated in the process.
         ///
         ///  Returns: pointer to new `SPCommand` instance or NULL
         ///
@@ -405,14 +407,16 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_clone(Command* original);
 
         /// <summary>
-        ///  Allocates a new `Command::Clear` instance.
+        ///  Set all pixels to the off state.
         ///
-        ///  Set all pixels to the off state. Does not affect brightness.
+        ///  Does not affect brightness.
+        ///
+        ///  Returns: a new `Command::Clear` instance. Will never return NULL.
         ///
         ///  # Examples
         ///
         ///  ```C
-        ///  sp_connection_send(connection, sp_command_clear());
+        ///  sp_connection_send_command(connection, sp_command_clear());
         ///  ```
         ///
         ///  # Safety
@@ -426,10 +430,11 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_clear();
 
         /// <summary>
-        ///  Allocates a new `Command::HardReset` instance.
-        ///
         ///  Kills the udp daemon on the display, which usually results in a restart.
+        ///
         ///  Please do not send this in your normal program flow.
+        ///
+        ///  Returns: a new `Command::HardReset` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -442,7 +447,9 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_hard_reset();
 
         /// <summary>
-        ///  Allocates a new `Command::FadeOut` instance.
+        ///  A yet-to-be-tested command.
+        ///
+        ///  Returns: a new `Command::FadeOut` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -455,8 +462,9 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_fade_out();
 
         /// <summary>
-        ///  Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the
-        ///  same value.
+        ///  Set the brightness of all tiles to the same value.
+        ///
+        ///  Returns: a new `Command::Brightness` instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -473,10 +481,11 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_brightness(byte brightness);
 
         /// <summary>
-        ///  Allocates a new `Command::CharBrightness` instance.
+        ///  Set the brightness of individual tiles in a rectangular area of the display.
+        ///
         ///  The passed `SPBrightnessGrid` gets consumed.
         ///
-        ///  Set the brightness of individual tiles in a rectangular area of the display.
+        ///  Returns: a new `Command::CharBrightness` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -491,15 +500,16 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* grid);
 
         /// <summary>
-        ///  Allocates a new `Command::BitmapLinear` instance.
-        ///  The passed `SPBitVec` gets consumed.
-        ///
         ///  Set pixel data starting at the pixel offset on screen.
         ///
         ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
         ///  once the starting row is full, overwriting will continue on column 0.
         ///
         ///  The contained `SPBitVec` is always uncompressed.
+        ///
+        ///  The passed `SPBitVec` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinear` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -515,15 +525,16 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_bitmap_linear(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
-        ///  Allocates a new `Command::BitmapLinearAnd` instance.
-        ///  The passed `SPBitVec` gets consumed.
-        ///
         ///  Set pixel data according to an and-mask starting at the offset.
         ///
         ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
         ///  once the starting row is full, overwriting will continue on column 0.
         ///
         ///  The contained `SPBitVec` is always uncompressed.
+        ///
+        ///  The passed `SPBitVec` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinearAnd` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -539,15 +550,16 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_bitmap_linear_and(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
-        ///  Allocates a new `Command::BitmapLinearOr` instance.
-        ///  The passed `SPBitVec` gets consumed.
-        ///
         ///  Set pixel data according to an or-mask starting at the offset.
         ///
         ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
         ///  once the starting row is full, overwriting will continue on column 0.
         ///
         ///  The contained `SPBitVec` is always uncompressed.
+        ///
+        ///  The passed `SPBitVec` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinearOr` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -563,15 +575,16 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_bitmap_linear_or(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
-        ///  Allocates a new `Command::BitmapLinearXor` instance.
-        ///  The passed `SPBitVec` gets consumed.
-        ///
         ///  Set pixel data according to a xor-mask starting at the offset.
         ///
         ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
         ///  once the starting row is full, overwriting will continue on column 0.
         ///
         ///  The contained `SPBitVec` is always uncompressed.
+        ///
+        ///  The passed `SPBitVec` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinearXor` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -587,9 +600,6 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_bitmap_linear_xor(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
-        ///  Allocates a new `Command::Cp437Data` instance.
-        ///  The passed `SPCp437Grid` gets consumed.
-        ///
         ///  Show text on the screen.
         ///
         ///  &lt;div class="warning"&gt;
@@ -597,7 +607,9 @@ namespace ServicePoint.BindGen
         ///      Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
         ///  &lt;/div&gt;
         ///
-        ///  Will never return NULL.
+        ///  The passed `SPCp437Grid` gets consumed.///
+        ///
+        ///  Returns: a new `Command::Cp437Data` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -612,12 +624,11 @@ namespace ServicePoint.BindGen
         public static extern Command* sp_command_cp437_data(nuint x, nuint y, Cp437Grid* grid);
 
         /// <summary>
-        ///  Allocates a new `Command::BitmapLinearWin` instance.
-        ///  The passed `SPPixelGrid` gets consumed.
-        ///
         ///  Sets a window of pixels to the specified values.
         ///
-        ///  Will never return NULL.
+        ///  The passed `SPPixelGrid` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinearWin` instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -674,6 +685,7 @@ namespace ServicePoint.BindGen
 
         /// <summary>
         ///  Sends a `SPPacket` to the display using the `SPConnection`.
+        ///
         ///  The passed `SPPacket` gets consumed.
         ///
         ///  returns: true in case of success
@@ -692,6 +704,7 @@ namespace ServicePoint.BindGen
 
         /// <summary>
         ///  Sends a `SPCommand` to the display using the `SPConnection`.
+        ///
         ///  The passed `SPCommand` gets consumed.
         ///
         ///  returns: true in case of success
