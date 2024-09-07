@@ -19,7 +19,7 @@
 //!     SPCommand *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
 //!     while (sp_connection_send_command(connection, sp_command_clone(command)));
 //!
-//!     sp_packet_free(packet);
+//!     sp_command_free(command);
 //!     sp_connection_free(connection);
 //!     return 0;
 //! }
