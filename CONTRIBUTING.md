@@ -13,6 +13,8 @@ Mark your PR as a draft as long as you do not want it to be merged.
 The main branch is supposed to be a working version, including language bindings,
 which means sometimes your PR may be merged into a temporary development branch.
 
+Unit tests and documentation are required for the core library.
+
 ## Language bindings
 
 Pull requests for your preferred language will be accepted.
