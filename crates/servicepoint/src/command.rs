@@ -192,9 +192,7 @@ impl TryFrom<Packet> for Command {
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
         let Packet {
             header: Header {
-                command_code,
-                a,
-                ..
+                command_code, a, ..
             },
             ..
         } = packet;
@@ -274,13 +272,14 @@ impl Command {
         compression: CompressionCode,
     ) -> Result<Command, TryFromPacketError> {
         let Packet {
-            header: Header {
-                command_code: _,
-                a: tiles_x,
-                b: pixels_y,
-                c: tile_w,
-                d: pixel_h,
-            },
+            header:
+                Header {
+                    command_code: _,
+                    a: tiles_x,
+                    b: pixels_y,
+                    c: tile_w,
+                    d: pixel_h,
+                },
             payload,
         } = packet;
 
@@ -306,13 +305,14 @@ impl Command {
         command: Command,
     ) -> Result<Command, TryFromPacketError> {
         let Packet {
-            header: Header {
-                command_code: _,
-                a,
-                b,
-                c,
-                d,
-            },
+            header:
+                Header {
+                    command_code: _,
+                    a,
+                    b,
+                    c,
+                    d,
+                },
             payload,
         } = packet;
         if !payload.is_empty() {
@@ -329,12 +329,13 @@ impl Command {
         packet: Packet,
     ) -> Result<(SpBitVec, CompressionCode), TryFromPacketError> {
         let Packet {
-            header: Header {
-                b: length,
-                c: sub,
-                d: reserved,
-                ..
-            },
+            header:
+                Header {
+                    b: length,
+                    c: sub,
+                    d: reserved,
+                    ..
+                },
             payload,
         } = packet;
         if reserved != 0 {
@@ -363,13 +364,14 @@ impl Command {
         packet: &Packet,
     ) -> Result<Command, TryFromPacketError> {
         let Packet {
-            header: Header {
-                command_code: _,
-                a: x,
-                b: y,
-                c: width,
-                d: height,
-            },
+            header:
+                Header {
+                    command_code: _,
+                    a: x,
+                    b: y,
+                    c: width,
+                    d: height,
+                },
             payload,
         } = packet;
 
@@ -390,13 +392,14 @@ impl Command {
         packet: &Packet,
     ) -> Result<Command, TryFromPacketError> {
         let Packet {
-            header: Header {
-                command_code: _,
-                a,
-                b,
-                c,
-                d,
-            },
+            header:
+                Header {
+                    command_code: _,
+                    a,
+                    b,
+                    c,
+                    d,
+                },
             payload,
         } = packet;
         if payload.len() != 1 {
@@ -420,13 +423,14 @@ impl Command {
         packet: &Packet,
     ) -> Result<Command, TryFromPacketError> {
         let Packet {
-            header: Header {
-                command_code: _,
-                a,
-                b,
-                c,
-                d,
-            },
+            header:
+                Header {
+                    command_code: _,
+                    a,
+                    b,
+                    c,
+                    d,
+                },
             payload,
         } = packet;
         Ok(Command::Cp437Data(
@@ -662,7 +666,7 @@ mod tests {
                 PixelGrid::new(8, 8),
                 compression,
             )
-                .into();
+            .into();
 
             let Packet {
                 header,
@@ -692,7 +696,7 @@ mod tests {
                 BitVec::repeat(false, 8),
                 compression,
             )
-                .into();
+            .into();
             let Packet {
                 header,
                 mut payload,
@@ -752,7 +756,7 @@ mod tests {
             BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
-            .into();
+        .into();
         let Header {
             command_code: command,
             a: offset,
@@ -783,7 +787,7 @@ mod tests {
             BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
-            .into();
+        .into();
         let Header {
             command_code: command,
             a: offset,
@@ -814,7 +818,7 @@ mod tests {
             BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
-            .into();
+        .into();
         let Header {
             command_code: command,
             a: offset,
