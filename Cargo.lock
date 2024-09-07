@@ -574,7 +574,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "bitvec",
  "bzip2",
@@ -588,7 +588,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint_binding_c"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "cbindgen",
  "servicepoint",
@@ -596,7 +596,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint_binding_cs"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "csbindgen",
  "servicepoint",
