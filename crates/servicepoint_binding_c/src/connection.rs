@@ -1,4 +1,4 @@
-//! C functions for interacting with `Connection`s
+//! C functions for interacting with `SPConnection`s
 //!
 //! prefix `sp_connection_`
 
@@ -18,7 +18,7 @@ use crate::SPPacket;
 /// ```
 pub struct SPConnection(pub(crate) servicepoint::Connection);
 
-/// Creates a new instance of `Connection`.
+/// Creates a new instance of `SPConnection`.
 ///
 /// returns: NULL if connection fails, or connected instance
 ///
@@ -31,7 +31,7 @@ pub struct SPConnection(pub(crate) servicepoint::Connection);
 /// The caller has to make sure that:
 ///
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_connection_dealloc`.
+///   by explicitly calling `sp_connection_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_open(
     host: *const c_char,
@@ -45,8 +45,8 @@ pub unsafe extern "C" fn sp_connection_open(
     Box::into_raw(Box::new(SPConnection(connection)))
 }
 
-/// Sends a `Packet` to the display using the `Connection`.
-/// The passed `Packet` gets consumed.
+/// Sends a `SPPacket` to the display using the `SPConnection`.
+/// The passed `SPPacket` gets consumed.
 ///
 /// returns: true in case of success
 ///
@@ -54,9 +54,9 @@ pub unsafe extern "C" fn sp_connection_open(
 ///
 /// The caller has to make sure that:
 ///
-/// - `connection` points to a valid instance of `Connection`
-/// - `packet` points to a valid instance of `Packet`
-/// - `packet` is not used concurrently or after this call
+/// - `SPConnection` points to a valid instance of `SPConnection`
+/// - `SPPacket` points to a valid instance of `SPPacket`
+/// - `SPPacket` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send(
     connection: *const SPConnection,
@@ -66,15 +66,15 @@ pub unsafe extern "C" fn sp_connection_send(
     (*connection).0.send((*packet).0).is_ok()
 }
 
-/// Closes and deallocates a `Connection`.
+/// Closes and deallocates a `SPConnection`.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `Connection`
+/// - `this` points to a valid `SPConnection`
 /// - `this` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_connection_dealloc(ptr: *mut SPConnection) {
+pub unsafe extern "C" fn sp_connection_free(ptr: *mut SPConnection) {
     _ = Box::from_raw(ptr);
 }

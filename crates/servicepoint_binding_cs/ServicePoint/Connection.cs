@@ -24,10 +24,7 @@ public sealed class Connection : SpNativeInstance<BindGen.Connection>
         }
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_connection_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_connection_free(Instance);
 
     private unsafe Connection(BindGen.Connection* instance) : base(instance)
     {

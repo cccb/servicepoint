@@ -84,8 +84,5 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
     {
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_bit_vec_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_bit_vec_free(Instance);
 }

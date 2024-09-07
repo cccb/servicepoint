@@ -13,7 +13,7 @@ int main(void) {
     SPPacket *packet = sp_packet_from_command(command);
     while (sp_connection_send(connection, sp_packet_clone(packet)));
 
-    sp_packet_dealloc(packet);
-    sp_connection_dealloc(connection);
+    sp_packet_free(packet);
+    sp_connection_free(connection);
     return 0;
 }

@@ -127,8 +127,5 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
     {
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_cp437_grid_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_cp437_grid_free(Instance);
 }

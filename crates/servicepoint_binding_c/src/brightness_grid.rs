@@ -1,4 +1,4 @@
-//! C functions for interacting with `BrightnessGrid`s
+//! C functions for interacting with `SPBrightnessGrid`s
 //!
 //! prefix `sp_brightness_grid_`
 
@@ -19,7 +19,7 @@ use std::intrinsics::transmute;
 /// sp_brightness_grid_set(grid, 1, 1, 10);
 ///
 /// SPCommand command = sp_command_char_brightness(grid);
-/// sp_connection_dealloc(connection);
+/// sp_connection_free(connection);
 /// ```
 pub struct SPBrightnessGrid {
     pub(crate) actual: servicepoint::BrightnessGrid,
@@ -33,16 +33,16 @@ impl Clone for SPBrightnessGrid {
     }
 }
 
-/// Creates a new `BrightnessGrid` with the specified dimensions.
+/// Creates a new `SPBrightnessGrid` with the specified dimensions.
 ///
-/// returns: `BrightnessGrid` initialized to 0.
+/// returns: `SPBrightnessGrid` initialized to 0.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_brightness_grid_dealloc`.
+///   by explicitly calling `sp_brightness_grid_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_new(
     width: usize,
@@ -53,7 +53,7 @@ pub unsafe extern "C" fn sp_brightness_grid_new(
     }))
 }
 
-/// Loads a `BrightnessGrid` with the specified dimensions from the provided data.
+/// Loads a `SPBrightnessGrid` with the specified dimensions from the provided data.
 ///
 /// # Panics
 ///
@@ -66,7 +66,7 @@ pub unsafe extern "C" fn sp_brightness_grid_new(
 /// - `data` points to a valid memory location of at least `data_length`
 ///   bytes in size.
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_brightness_grid_dealloc`.
+///   by explicitly calling `sp_brightness_grid_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_load(
     width: usize,
@@ -81,16 +81,16 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
     Box::into_raw(Box::new(SPBrightnessGrid { actual: grid }))
 }
 
-/// Clones a `BrightnessGrid`.
+/// Clones a `SPBrightnessGrid`.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `BrightnessGrid`
+/// - `this` points to a valid `SPBrightnessGrid`
 /// - `this` is not written to concurrently
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_brightness_grid_dealloc`.
+///   by explicitly calling `sp_brightness_grid_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_clone(
     this: *const SPBrightnessGrid,
@@ -98,17 +98,17 @@ pub unsafe extern "C" fn sp_brightness_grid_clone(
     Box::into_raw(Box::new((*this).clone()))
 }
 
-/// Deallocates a `BrightnessGrid`.
+/// Deallocates a `SPBrightnessGrid`.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `BrightnessGrid`
+/// - `this` points to a valid `SPBrightnessGrid`
 /// - `this` is not used concurrently or after this call
-/// - `this` was not passed to another consuming function, e.g. to create a `Command`
+/// - `this` was not passed to another consuming function, e.g. to create a `SPCommand`
 #[no_mangle]
-pub unsafe extern "C" fn sp_brightness_grid_dealloc(
+pub unsafe extern "C" fn sp_brightness_grid_free(
     this: *mut SPBrightnessGrid,
 ) {
     _ = Box::from_raw(this);
@@ -129,7 +129,7 @@ pub unsafe extern "C" fn sp_brightness_grid_dealloc(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `BrightnessGrid`
+/// - `this` points to a valid `SPBrightnessGrid`
 /// - `this` is not written to concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_get(
@@ -140,7 +140,7 @@ pub unsafe extern "C" fn sp_brightness_grid_get(
     (*this).actual.get(x, y).into()
 }
 
-/// Sets the value of the specified position in the `BrightnessGrid`.
+/// Sets the value of the specified position in the `SPBrightnessGrid`.
 ///
 /// # Arguments
 ///
@@ -159,7 +159,7 @@ pub unsafe extern "C" fn sp_brightness_grid_get(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `BitVec`
+/// - `this` points to a valid `SPBitVec`
 /// - `this` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_set(
@@ -173,7 +173,7 @@ pub unsafe extern "C" fn sp_brightness_grid_set(
     (*this).actual.set(x, y, brightness);
 }
 
-/// Sets the value of all cells in the `BrightnessGrid`.
+/// Sets the value of all cells in the `SPBrightnessGrid`.
 ///
 /// # Arguments
 ///
@@ -188,7 +188,7 @@ pub unsafe extern "C" fn sp_brightness_grid_set(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `BrightnessGrid`
+/// - `this` points to a valid `SPBrightnessGrid`
 /// - `this` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_fill(
@@ -200,7 +200,7 @@ pub unsafe extern "C" fn sp_brightness_grid_fill(
     (*this).actual.fill(brightness);
 }
 
-/// Gets the width of the `BrightnessGrid` instance.
+/// Gets the width of the `SPBrightnessGrid` instance.
 ///
 /// # Arguments
 ///
@@ -210,7 +210,7 @@ pub unsafe extern "C" fn sp_brightness_grid_fill(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `BrightnessGrid`
+/// - `this` points to a valid `SPBrightnessGrid`
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_width(
     this: *const SPBrightnessGrid,
@@ -218,7 +218,7 @@ pub unsafe extern "C" fn sp_brightness_grid_width(
     (*this).actual.width()
 }
 
-/// Gets the height of the `BrightnessGrid` instance.
+/// Gets the height of the `SPBrightnessGrid` instance.
 ///
 /// # Arguments
 ///
@@ -228,7 +228,7 @@ pub unsafe extern "C" fn sp_brightness_grid_width(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `BrightnessGrid`
+/// - `this` points to a valid `SPBrightnessGrid`
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_height(
     this: *const SPBrightnessGrid,
@@ -236,15 +236,15 @@ pub unsafe extern "C" fn sp_brightness_grid_height(
     (*this).actual.height()
 }
 
-/// Gets an unsafe reference to the data of the `BrightnessGrid` instance.
+/// Gets an unsafe reference to the data of the `SPBrightnessGrid` instance.
 ///
 /// ## Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `BrightnessGrid`
-/// - the returned memory range is never accessed after the passed `BrightnessGrid` has been freed
-/// - the returned memory range is never accessed concurrently, either via the `BrightnessGrid` or directly
+/// - `this` points to a valid `SPBrightnessGrid`
+/// - the returned memory range is never accessed after the passed `SPBrightnessGrid` has been freed
+/// - the returned memory range is never accessed concurrently, either via the `SPBrightnessGrid` or directly
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_unsafe_data_ref(
     this: *mut SPBrightnessGrid,

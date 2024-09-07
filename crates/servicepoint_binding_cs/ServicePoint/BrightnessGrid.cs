@@ -96,8 +96,5 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
     {
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_brightness_grid_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_brightness_grid_free(Instance);
 }

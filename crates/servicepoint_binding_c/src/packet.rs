@@ -1,4 +1,4 @@
-//! C functions for interacting with `Packet`s
+//! C functions for interacting with `SPPacket`s
 //!
 //! prefix `sp_packet_`
 
@@ -9,17 +9,17 @@ use crate::SPCommand;
 /// The raw packet
 pub struct SPPacket(pub(crate) servicepoint::Packet);
 
-/// Turns a `Command` into a `Packet`.
-/// The `Command` gets consumed.
+/// Turns a `SPCommand` into a `SPPacket`.
+/// The `SPCommand` gets consumed.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `command` points to a valid instance of `Command`
-/// - `command` is not used concurrently or after this call
-/// - the returned `Packet` instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_packet_dealloc`.
+/// - `SPCommand` points to a valid instance of `SPCommand`
+/// - `SPCommand` is not used concurrently or after this call
+/// - the returned `SPPacket` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_packet_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_from_command(
     command: *mut SPCommand,
@@ -29,7 +29,7 @@ pub unsafe extern "C" fn sp_packet_from_command(
     Box::into_raw(Box::new(packet))
 }
 
-/// Tries to load a `Packet` from the passed array with the specified length.
+/// Tries to load a `SPPacket` from the passed array with the specified length.
 ///
 /// returns: NULL in case of an error, pointer to the allocated packet otherwise
 ///
@@ -39,8 +39,8 @@ pub unsafe extern "C" fn sp_packet_from_command(
 ///
 /// - `data` points to a valid memory region of at least `length` bytes
 /// - `data` is not written to concurrently
-/// - the returned `Packet` instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_packet_dealloc`.
+/// - the returned `SPPacket` instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_packet_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_try_load(
     data: *const u8,
@@ -53,16 +53,16 @@ pub unsafe extern "C" fn sp_packet_try_load(
     }
 }
 
-/// Clones a `Packet`.
+/// Clones a `SPPacket`.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `Packet`
+/// - `this` points to a valid `SPPacket`
 /// - `this` is not written to concurrently
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_packet_dealloc`.
+///   by explicitly calling `sp_packet_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_clone(
     this: *const SPPacket,
@@ -70,15 +70,15 @@ pub unsafe extern "C" fn sp_packet_clone(
     Box::into_raw(Box::new(SPPacket((*this).0.clone())))
 }
 
-/// Deallocates a `Packet`.
+/// Deallocates a `SPPacket`.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `Packet`
+/// - `this` points to a valid `SPPacket`
 /// - `this` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_packet_dealloc(this: *mut SPPacket) {
+pub unsafe extern "C" fn sp_packet_free(this: *mut SPPacket) {
     _ = Box::from_raw(this)
 }

@@ -125,8 +125,5 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_command_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_command_free(Instance);
 }
