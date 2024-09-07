@@ -16,6 +16,11 @@ Take a look at the contained crates for language specific information:
 ## Projects using the library
 
 - screen simulator (rust): [servicepoint-simulator](https://github.com/kaesaecracker/servicepoint-simulator)
+- A bunch of projects (C): [arfst23/ServicePoint](https://github.com/arfst23/ServicePoint), including
+  - a CLI tool to display image files on the display or use the display as a TTY
+  - a BSD games robots clone
+  - a split-flap-display simulator
+  - animations that play on the display
 - tanks game (C#): [servicepoint-tanks](https://github.com/kaesaecracker/cccb-tanks-cs)
 - cellular automata slideshow (rust): [servicepoint-life](https://github.com/kaesaecracker/servicepoint-life)
 
