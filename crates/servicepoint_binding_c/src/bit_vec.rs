@@ -81,15 +81,15 @@ pub unsafe extern "C" fn sp_bit_vec_load(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPBitVec`
-/// - `this` is not written to concurrently
+/// - `bit_vec` points to a valid `SPBitVec`
+/// - `bit_vec` is not written to concurrently
 /// - the returned instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_bit_vec_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_bit_vec_clone(
-    this: *const SPBitVec,
+    bit_vec: *const SPBitVec,
 ) -> *mut SPBitVec {
-    Box::into_raw(Box::new((*this).clone()))
+    Box::into_raw(Box::new((*bit_vec).clone()))
 }
 
 /// Deallocates a `SPBitVec`.
@@ -98,19 +98,19 @@ pub unsafe extern "C" fn sp_bit_vec_clone(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPBitVec`
-/// - `this` is not used concurrently or after this call
-/// - `this` was not passed to another consuming function, e.g. to create a `SPCommand`
+/// - `bit_vec` points to a valid `SPBitVec`
+/// - `bit_vec` is not used concurrently or after this call
+/// - `bit_vec` was not passed to another consuming function, e.g. to create a `SPCommand`
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_free(this: *mut SPBitVec) {
-    _ = Box::from_raw(this);
+pub unsafe extern "C" fn sp_bit_vec_free(bit_vec: *mut SPBitVec) {
+    _ = Box::from_raw(bit_vec);
 }
 
 /// Gets the value of a bit from the `SPBitVec`.
 ///
 /// # Arguments
 ///
-/// - `this`: instance to read from
+/// - `bit_vec`: instance to read from
 /// - `index`: the bit index to read
 ///
 /// returns: value of the bit
@@ -123,21 +123,21 @@ pub unsafe extern "C" fn sp_bit_vec_free(this: *mut SPBitVec) {
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPBitVec`
-/// - `this` is not written to concurrently
+/// - `bit_vec` points to a valid `SPBitVec`
+/// - `bit_vec` is not written to concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_bit_vec_get(
-    this: *const SPBitVec,
+    bit_vec: *const SPBitVec,
     index: usize,
 ) -> bool {
-    *(*this).0.get(index).unwrap()
+    *(*bit_vec).0.get(index).unwrap()
 }
 
 /// Sets the value of a bit in the `SPBitVec`.
 ///
 /// # Arguments
 ///
-/// - `this`: instance to write to
+/// - `bit_vec`: instance to write to
 /// - `index`: the bit index to edit
 /// - `value`: the value to set the bit to
 ///
@@ -151,72 +151,85 @@ pub unsafe extern "C" fn sp_bit_vec_get(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPBitVec`
-/// - `this` is not written to or read from concurrently
+/// - `bit_vec` points to a valid `SPBitVec`
+/// - `bit_vec` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_bit_vec_set(
-    this: *mut SPBitVec,
+    bit_vec: *mut SPBitVec,
     index: usize,
     value: bool,
 ) {
-    (*this).0.set(index, value)
+    (*bit_vec).0.set(index, value)
 }
 
 /// Sets the value of all bits in the `SPBitVec`.
 ///
 /// # Arguments
 ///
+/// - `bit_vec`: instance to write to
 /// - `value`: the value to set all bits to
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPBitVec`
-/// - `this` is not written to or read from concurrently
+/// - `bit_vec` points to a valid `SPBitVec`
+/// - `bit_vec` is not written to or read from concurrently
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_fill(this: *mut SPBitVec, value: bool) {
-    (*this).0.fill(value)
+pub unsafe extern "C" fn sp_bit_vec_fill(bit_vec: *mut SPBitVec, value: bool) {
+    (*bit_vec).0.fill(value)
 }
 
 /// Gets the length of the `SPBitVec` in bits.
 ///
+/// # Arguments
+///
+/// - `bit_vec`: instance to write to
+///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPBitVec`
+/// - `bit_vec` points to a valid `SPBitVec`
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_len(this: *const SPBitVec) -> usize {
-    (*this).0.len()
+pub unsafe extern "C" fn sp_bit_vec_len(bit_vec: *const SPBitVec) -> usize {
+    (*bit_vec).0.len()
 }
 
 /// Returns true if length is 0.
 ///
+/// # Arguments
+///
+/// - `bit_vec`: instance to write to
+///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPBitVec`
+/// - `bit_vec` points to a valid `SPBitVec`
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_is_empty(this: *const SPBitVec) -> bool {
-    (*this).0.is_empty()
+pub unsafe extern "C" fn sp_bit_vec_is_empty(bit_vec: *const SPBitVec) -> bool {
+    (*bit_vec).0.is_empty()
 }
 
 /// Gets an unsafe reference to the data of the `SPBitVec` instance.
+///
+/// # Arguments
+///
+/// - `bit_vec`: instance to write to
 ///
 /// ## Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPBitVec`
+/// - `bit_vec` points to a valid `SPBitVec`
 /// - the returned memory range is never accessed after the passed `SPBitVec` has been freed
 /// - the returned memory range is never accessed concurrently, either via the `SPBitVec` or directly
 #[no_mangle]
 pub unsafe extern "C" fn sp_bit_vec_unsafe_data_ref(
-    this: *mut SPBitVec,
+    bit_vec: *mut SPBitVec,
 ) -> SPByteSlice {
-    let data = (*this).0.as_raw_mut_slice();
+    let data = (*bit_vec).0.as_raw_mut_slice();
     SPByteSlice {
         start: data.as_mut_ptr_range().start,
         length: data.len(),

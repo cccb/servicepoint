@@ -203,28 +203,29 @@ extern "C" {
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
- * - `this` is not written to concurrently
+ * - `bit_vec` points to a valid `SPBitVec`
+ * - `bit_vec` is not written to concurrently
  * - the returned instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_bit_vec_free`.
  */
-struct SPBitVec *sp_bit_vec_clone(const struct SPBitVec *this_);
+struct SPBitVec *sp_bit_vec_clone(const struct SPBitVec *bit_vec);
 
 /**
  * Sets the value of all bits in the `SPBitVec`.
  *
  * # Arguments
  *
+ * - `bit_vec`: instance to write to
  * - `value`: the value to set all bits to
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
- * - `this` is not written to or read from concurrently
+ * - `bit_vec` points to a valid `SPBitVec`
+ * - `bit_vec` is not written to or read from concurrently
  */
-void sp_bit_vec_fill(struct SPBitVec *this_, bool value);
+void sp_bit_vec_fill(struct SPBitVec *bit_vec, bool value);
 
 /**
  * Deallocates a `SPBitVec`.
@@ -233,18 +234,18 @@ void sp_bit_vec_fill(struct SPBitVec *this_, bool value);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
- * - `this` is not used concurrently or after this call
- * - `this` was not passed to another consuming function, e.g. to create a `SPCommand`
+ * - `bit_vec` points to a valid `SPBitVec`
+ * - `bit_vec` is not used concurrently or after this call
+ * - `bit_vec` was not passed to another consuming function, e.g. to create a `SPCommand`
  */
-void sp_bit_vec_free(struct SPBitVec *this_);
+void sp_bit_vec_free(struct SPBitVec *bit_vec);
 
 /**
  * Gets the value of a bit from the `SPBitVec`.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `bit_vec`: instance to read from
  * - `index`: the bit index to read
  *
  * returns: value of the bit
@@ -257,32 +258,40 @@ void sp_bit_vec_free(struct SPBitVec *this_);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
- * - `this` is not written to concurrently
+ * - `bit_vec` points to a valid `SPBitVec`
+ * - `bit_vec` is not written to concurrently
  */
-bool sp_bit_vec_get(const struct SPBitVec *this_, size_t index);
+bool sp_bit_vec_get(const struct SPBitVec *bit_vec, size_t index);
 
 /**
  * Returns true if length is 0.
  *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to write to
+ *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
+ * - `bit_vec` points to a valid `SPBitVec`
  */
-bool sp_bit_vec_is_empty(const struct SPBitVec *this_);
+bool sp_bit_vec_is_empty(const struct SPBitVec *bit_vec);
 
 /**
  * Gets the length of the `SPBitVec` in bits.
  *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to write to
+ *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
+ * - `bit_vec` points to a valid `SPBitVec`
  */
-size_t sp_bit_vec_len(const struct SPBitVec *this_);
+size_t sp_bit_vec_len(const struct SPBitVec *bit_vec);
 
 /**
  * Interpret the data as a series of bits and load then into a new `SPBitVec` instance.
@@ -326,7 +335,7 @@ struct SPBitVec *sp_bit_vec_new(size_t size);
  *
  * # Arguments
  *
- * - `this`: instance to write to
+ * - `bit_vec`: instance to write to
  * - `index`: the bit index to edit
  * - `value`: the value to set the bit to
  *
@@ -340,44 +349,52 @@ struct SPBitVec *sp_bit_vec_new(size_t size);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
- * - `this` is not written to or read from concurrently
+ * - `bit_vec` points to a valid `SPBitVec`
+ * - `bit_vec` is not written to or read from concurrently
  */
-void sp_bit_vec_set(struct SPBitVec *this_, size_t index, bool value);
+void sp_bit_vec_set(struct SPBitVec *bit_vec, size_t index, bool value);
 
 /**
  * Gets an unsafe reference to the data of the `SPBitVec` instance.
+ *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to write to
  *
  * ## Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
+ * - `bit_vec` points to a valid `SPBitVec`
  * - the returned memory range is never accessed after the passed `SPBitVec` has been freed
  * - the returned memory range is never accessed concurrently, either via the `SPBitVec` or directly
  */
-struct SPByteSlice sp_bit_vec_unsafe_data_ref(struct SPBitVec *this_);
+struct SPByteSlice sp_bit_vec_unsafe_data_ref(struct SPBitVec *bit_vec);
 
 /**
  * Clones a `SPBrightnessGrid`.
+ *
+ * # Arguments
+ *
+ * - `brightness_grid`: instance to read from
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBrightnessGrid`
- * - `this` is not written to concurrently
+ * - `brightness_grid` points to a valid `SPBrightnessGrid`
+ * - `brightness_grid` is not written to concurrently
  * - the returned instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_brightness_grid_free`.
  */
-struct SPBrightnessGrid *sp_brightness_grid_clone(const struct SPBrightnessGrid *this_);
+struct SPBrightnessGrid *sp_brightness_grid_clone(const struct SPBrightnessGrid *brightness_grid);
 
 /**
  * Sets the value of all cells in the `SPBrightnessGrid`.
  *
  * # Arguments
  *
- * - `this`: instance to write to
+ * - `brightness_grid`: instance to write to
  * - `value`: the value to set all cells to
  *
  * # Panics
@@ -388,30 +405,35 @@ struct SPBrightnessGrid *sp_brightness_grid_clone(const struct SPBrightnessGrid 
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBrightnessGrid`
- * - `this` is not written to or read from concurrently
+ * - `brightness_grid` points to a valid `SPBrightnessGrid`
+ * - `brightness_grid` is not written to or read from concurrently
  */
-void sp_brightness_grid_fill(struct SPBrightnessGrid *this_, uint8_t value);
+void sp_brightness_grid_fill(struct SPBrightnessGrid *brightness_grid,
+                             uint8_t value);
 
 /**
  * Deallocates a `SPBrightnessGrid`.
+ *
+ * # Arguments
+ *
+ * - `brightness_grid`: instance to read from
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBrightnessGrid`
- * - `this` is not used concurrently or after this call
- * - `this` was not passed to another consuming function, e.g. to create a `SPCommand`
+ * - `brightness_grid` points to a valid `SPBrightnessGrid`
+ * - `brightness_grid` is not used concurrently or after this call
+ * - `brightness_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
  */
-void sp_brightness_grid_free(struct SPBrightnessGrid *this_);
+void sp_brightness_grid_free(struct SPBrightnessGrid *brightness_grid);
 
 /**
  * Gets the current value at the specified position.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `brightness_grid`: instance to read from
  * - `x` and `y`: position of the cell to read
  *
  * # Panics
@@ -422,10 +444,10 @@ void sp_brightness_grid_free(struct SPBrightnessGrid *this_);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBrightnessGrid`
- * - `this` is not written to concurrently
+ * - `brightness_grid` points to a valid `SPBrightnessGrid`
+ * - `brightness_grid` is not written to concurrently
  */
-uint8_t sp_brightness_grid_get(const struct SPBrightnessGrid *this_,
+uint8_t sp_brightness_grid_get(const struct SPBrightnessGrid *brightness_grid,
                                size_t x,
                                size_t y);
 
@@ -434,15 +456,15 @@ uint8_t sp_brightness_grid_get(const struct SPBrightnessGrid *this_,
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `brightness_grid`: instance to read from
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBrightnessGrid`
+ * - `brightness_grid` points to a valid `SPBrightnessGrid`
  */
-size_t sp_brightness_grid_height(const struct SPBrightnessGrid *this_);
+size_t sp_brightness_grid_height(const struct SPBrightnessGrid *brightness_grid);
 
 /**
  * Loads a `SPBrightnessGrid` with the specified dimensions from the provided data.
@@ -485,7 +507,7 @@ struct SPBrightnessGrid *sp_brightness_grid_new(size_t width,
  *
  * # Arguments
  *
- * - `this`: instance to write to
+ * - `brightness_grid`: instance to write to
  * - `x` and `y`: position of the cell
  * - `value`: the value to write to the cell
  *
@@ -500,10 +522,10 @@ struct SPBrightnessGrid *sp_brightness_grid_new(size_t width,
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
- * - `this` is not written to or read from concurrently
+ * - `brightness_grid` points to a valid `SPBitVec`
+ * - `brightness_grid` is not written to or read from concurrently
  */
-void sp_brightness_grid_set(struct SPBrightnessGrid *this_,
+void sp_brightness_grid_set(struct SPBrightnessGrid *brightness_grid,
                             size_t x,
                             size_t y,
                             uint8_t value);
@@ -511,30 +533,34 @@ void sp_brightness_grid_set(struct SPBrightnessGrid *this_,
 /**
  * Gets an unsafe reference to the data of the `SPBrightnessGrid` instance.
  *
+ * # Arguments
+ *
+ * - `brightness_grid`: instance to read from
+ *
  * ## Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBrightnessGrid`
+ * - `brightness_grid` points to a valid `SPBrightnessGrid`
  * - the returned memory range is never accessed after the passed `SPBrightnessGrid` has been freed
  * - the returned memory range is never accessed concurrently, either via the `SPBrightnessGrid` or directly
  */
-struct SPByteSlice sp_brightness_grid_unsafe_data_ref(struct SPBrightnessGrid *this_);
+struct SPByteSlice sp_brightness_grid_unsafe_data_ref(struct SPBrightnessGrid *brightness_grid);
 
 /**
  * Gets the width of the `SPBrightnessGrid` instance.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `brightness_grid`: instance to read from
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBrightnessGrid`
+ * - `brightness_grid` points to a valid `SPBrightnessGrid`
  */
-size_t sp_brightness_grid_width(const struct SPBrightnessGrid *this_);
+size_t sp_brightness_grid_width(const struct SPBrightnessGrid *brightness_grid);
 
 /**
  * Set pixel data starting at the pixel offset on screen.
@@ -729,12 +755,12 @@ struct SPCommand *sp_command_clear(void);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid instance of `SPCommand`
- * - `this` is not written to concurrently
+ * - `command` points to a valid instance of `SPCommand`
+ * - `command` is not written to concurrently
  * - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
  */
-struct SPCommand *sp_command_clone(const struct SPCommand *original);
+struct SPCommand *sp_command_clone(const struct SPCommand *command);
 
 /**
  * Show text on the screen.
@@ -789,11 +815,11 @@ struct SPCommand *sp_command_fade_out(void);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPCommand`
- * - `this` is not used concurrently or after this call
- * - `this` was not passed to another consuming function, e.g. to create a `SPPacket`
+ * - `command` points to a valid `SPCommand`
+ * - `command` is not used concurrently or after this call
+ * - `command` was not passed to another consuming function, e.g. to create a `SPPacket`
  */
-void sp_command_free(struct SPCommand *ptr);
+void sp_command_free(struct SPCommand *command);
 
 /**
  * Kills the udp daemon on the display, which usually results in a restart.
@@ -837,10 +863,10 @@ struct SPCommand *sp_command_try_from_packet(struct SPPacket *packet);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPConnection`
- * - `this` is not used concurrently or after this call
+ * - `connection` points to a valid `SPConnection`
+ * - `connection` is not used concurrently or after this call
  */
-void sp_connection_free(struct SPConnection *ptr);
+void sp_connection_free(struct SPConnection *connection);
 
 /**
  * Creates a new instance of `SPConnection`.
@@ -863,7 +889,7 @@ struct SPConnection *sp_connection_open(const char *host);
 /**
  * Sends a `SPCommand` to the display using the `SPConnection`.
  *
- * The passed `SPCommand` gets consumed.
+ * The passed `command` gets consumed.
  *
  * returns: true in case of success
  *
@@ -881,7 +907,7 @@ bool sp_connection_send_command(const struct SPConnection *connection,
 /**
  * Sends a `SPPacket` to the display using the `SPConnection`.
  *
- * The passed `SPPacket` gets consumed.
+ * The passed `packet` gets consumed.
  *
  * returns: true in case of success
  *
@@ -889,9 +915,9 @@ bool sp_connection_send_command(const struct SPConnection *connection,
  *
  * The caller has to make sure that:
  *
- * - `SPConnection` points to a valid instance of `SPConnection`
- * - `SPPacket` points to a valid instance of `SPPacket`
- * - `SPPacket` is not used concurrently or after this call
+ * - `connection` points to a valid instance of `SPConnection`
+ * - `packet` points to a valid instance of `SPPacket`
+ * - `packet` is not used concurrently or after this call
  */
 bool sp_connection_send_packet(const struct SPConnection *connection,
                                struct SPPacket *packet);
@@ -905,29 +931,29 @@ bool sp_connection_send_packet(const struct SPConnection *connection,
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPCp437Grid`
- * - `this` is not written to concurrently
+ * - `cp437_grid` points to a valid `SPCp437Grid`
+ * - `cp437_grid` is not written to concurrently
  * - the returned instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_cp437_grid_free`.
  */
-struct SPCp437Grid *sp_cp437_grid_clone(const struct SPCp437Grid *this_);
+struct SPCp437Grid *sp_cp437_grid_clone(const struct SPCp437Grid *cp437_grid);
 
 /**
  * Sets the value of all cells in the `SPCp437Grid`.
  *
  * # Arguments
  *
- * - `this`: instance to write to
+ * - `cp437_grid`: instance to write to
  * - `value`: the value to set all cells to
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPCp437Grid`
- * - `this` is not written to or read from concurrently
+ * - `cp437_grid` points to a valid `SPCp437Grid`
+ * - `cp437_grid` is not written to or read from concurrently
  */
-void sp_cp437_grid_fill(struct SPCp437Grid *this_, uint8_t value);
+void sp_cp437_grid_fill(struct SPCp437Grid *cp437_grid, uint8_t value);
 
 /**
  * Deallocates a `SPCp437Grid`.
@@ -936,18 +962,18 @@ void sp_cp437_grid_fill(struct SPCp437Grid *this_, uint8_t value);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPCp437Grid`
- * - `this` is not used concurrently or after this call
- * - `this` was not passed to another consuming function, e.g. to create a `SPCommand`
+ * - `cp437_grid` points to a valid `SPCp437Grid`
+ * - `cp437_grid` is not used concurrently or after cp437_grid call
+ * - `cp437_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
  */
-void sp_cp437_grid_free(struct SPCp437Grid *this_);
+void sp_cp437_grid_free(struct SPCp437Grid *cp437_grid);
 
 /**
  * Gets the current value at the specified position.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `cp437_grid`: instance to read from
  * - `x` and `y`: position of the cell to read
  *
  * # Panics
@@ -958,25 +984,27 @@ void sp_cp437_grid_free(struct SPCp437Grid *this_);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPCp437Grid`
- * - `this` is not written to concurrently
+ * - `cp437_grid` points to a valid `SPCp437Grid`
+ * - `cp437_grid` is not written to concurrently
  */
-uint8_t sp_cp437_grid_get(const struct SPCp437Grid *this_, size_t x, size_t y);
+uint8_t sp_cp437_grid_get(const struct SPCp437Grid *cp437_grid,
+                          size_t x,
+                          size_t y);
 
 /**
  * Gets the height of the `SPCp437Grid` instance.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `cp437_grid`: instance to read from
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPCp437Grid`
+ * - `cp437_grid` points to a valid `SPCp437Grid`
  */
-size_t sp_cp437_grid_height(const struct SPCp437Grid *this_);
+size_t sp_cp437_grid_height(const struct SPCp437Grid *cp437_grid);
 
 /**
  * Loads a `SPCp437Grid` with the specified dimensions from the provided data.
@@ -1021,7 +1049,7 @@ struct SPCp437Grid *sp_cp437_grid_new(size_t width,
  *
  * # Arguments
  *
- * - `this`: instance to write to
+ * - `cp437_grid`: instance to write to
  * - `x` and `y`: position of the cell
  * - `value`: the value to write to the cell
  *
@@ -1035,10 +1063,10 @@ struct SPCp437Grid *sp_cp437_grid_new(size_t width,
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPBitVec`
- * - `this` is not written to or read from concurrently
+ * - `cp437_grid` points to a valid `SPBitVec`
+ * - `cp437_grid` is not written to or read from concurrently
  */
-void sp_cp437_grid_set(struct SPCp437Grid *this_,
+void sp_cp437_grid_set(struct SPCp437Grid *cp437_grid,
                        size_t x,
                        size_t y,
                        uint8_t value);
@@ -1052,26 +1080,26 @@ void sp_cp437_grid_set(struct SPCp437Grid *this_,
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPCp437Grid`
+ * - `cp437_grid` points to a valid `SPCp437Grid`
  * - the returned memory range is never accessed after the passed `SPCp437Grid` has been freed
  * - the returned memory range is never accessed concurrently, either via the `SPCp437Grid` or directly
  */
-struct SPByteSlice sp_cp437_grid_unsafe_data_ref(struct SPCp437Grid *this_);
+struct SPByteSlice sp_cp437_grid_unsafe_data_ref(struct SPCp437Grid *cp437_grid);
 
 /**
  * Gets the width of the `SPCp437Grid` instance.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `cp437_grid`: instance to read from
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPCp437Grid`
+ * - `cp437_grid` points to a valid `SPCp437Grid`
  */
-size_t sp_cp437_grid_width(const struct SPCp437Grid *this_);
+size_t sp_cp437_grid_width(const struct SPCp437Grid *cp437_grid);
 
 /**
  * Clones a `SPPacket`.
@@ -1082,12 +1110,12 @@ size_t sp_cp437_grid_width(const struct SPCp437Grid *this_);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPacket`
- * - `this` is not written to concurrently
+ * - `packet` points to a valid `SPPacket`
+ * - `packet` is not written to concurrently
  * - the returned instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_packet_free`.
  */
-struct SPPacket *sp_packet_clone(const struct SPPacket *this_);
+struct SPPacket *sp_packet_clone(const struct SPPacket *packet);
 
 /**
  * Deallocates a `SPPacket`.
@@ -1096,10 +1124,10 @@ struct SPPacket *sp_packet_clone(const struct SPPacket *this_);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPacket`
- * - `this` is not used concurrently or after this call
+ * - `packet` points to a valid `SPPacket`
+ * - `packet` is not used concurrently or after this call
  */
-void sp_packet_free(struct SPPacket *this_);
+void sp_packet_free(struct SPPacket *packet);
 
 /**
  * Turns a `SPCommand` into a `SPPacket`.
@@ -1144,29 +1172,29 @@ struct SPPacket *sp_packet_try_load(const uint8_t *data,
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPixelGrid`
- * - `this` is not written to concurrently
+ * - `pixel_grid` points to a valid `SPPixelGrid`
+ * - `pixel_grid` is not written to concurrently
  * - the returned instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_pixel_grid_free`.
  */
-struct SPPixelGrid *sp_pixel_grid_clone(const struct SPPixelGrid *this_);
+struct SPPixelGrid *sp_pixel_grid_clone(const struct SPPixelGrid *pixel_grid);
 
 /**
  * Sets the state of all pixels in the `SPPixelGrid`.
  *
  * # Arguments
  *
- * - `this`: instance to write to
+ * - `pixel_grid`: instance to write to
  * - `value`: the value to set all pixels to
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPixelGrid`
- * - `this` is not written to or read from concurrently
+ * - `pixel_grid` points to a valid `SPPixelGrid`
+ * - `pixel_grid` is not written to or read from concurrently
  */
-void sp_pixel_grid_fill(struct SPPixelGrid *this_, bool value);
+void sp_pixel_grid_fill(struct SPPixelGrid *pixel_grid, bool value);
 
 /**
  * Deallocates a `SPPixelGrid`.
@@ -1175,18 +1203,18 @@ void sp_pixel_grid_fill(struct SPPixelGrid *this_, bool value);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPixelGrid`
- * - `this` is not used concurrently or after this call
- * - `this` was not passed to another consuming function, e.g. to create a `SPCommand`
+ * - `pixel_grid` points to a valid `SPPixelGrid`
+ * - `pixel_grid` is not used concurrently or after pixel_grid call
+ * - `pixel_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
  */
-void sp_pixel_grid_free(struct SPPixelGrid *this_);
+void sp_pixel_grid_free(struct SPPixelGrid *pixel_grid);
 
 /**
  * Gets the current value at the specified position in the `SPPixelGrid`.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `pixel_grid`: instance to read from
  * - `x` and `y`: position of the cell to read
  *
  * # Panics
@@ -1197,25 +1225,27 @@ void sp_pixel_grid_free(struct SPPixelGrid *this_);
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPixelGrid`
- * - `this` is not written to concurrently
+ * - `pixel_grid` points to a valid `SPPixelGrid`
+ * - `pixel_grid` is not written to concurrently
  */
-bool sp_pixel_grid_get(const struct SPPixelGrid *this_, size_t x, size_t y);
+bool sp_pixel_grid_get(const struct SPPixelGrid *pixel_grid,
+                       size_t x,
+                       size_t y);
 
 /**
  * Gets the height in pixels of the `SPPixelGrid` instance.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `pixel_grid`: instance to read from
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPixelGrid`
+ * - `pixel_grid` points to a valid `SPPixelGrid`
  */
-size_t sp_pixel_grid_height(const struct SPPixelGrid *this_);
+size_t sp_pixel_grid_height(const struct SPPixelGrid *pixel_grid);
 
 /**
  * Loads a `SPPixelGrid` with the specified dimensions from the provided data.
@@ -1274,7 +1304,7 @@ struct SPPixelGrid *sp_pixel_grid_new(size_t width,
  *
  * # Arguments
  *
- * - `this`: instance to write to
+ * - `pixel_grid`: instance to write to
  * - `x` and `y`: position of the cell
  * - `value`: the value to write to the cell
  *
@@ -1288,10 +1318,10 @@ struct SPPixelGrid *sp_pixel_grid_new(size_t width,
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPixelGrid`
- * - `this` is not written to or read from concurrently
+ * - `pixel_grid` points to a valid `SPPixelGrid`
+ * - `pixel_grid` is not written to or read from concurrently
  */
-void sp_pixel_grid_set(struct SPPixelGrid *this_,
+void sp_pixel_grid_set(struct SPPixelGrid *pixel_grid,
                        size_t x,
                        size_t y,
                        bool value);
@@ -1303,26 +1333,26 @@ void sp_pixel_grid_set(struct SPPixelGrid *this_,
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPixelGrid`
+ * - `pixel_grid` points to a valid `SPPixelGrid`
  * - the returned memory range is never accessed after the passed `SPPixelGrid` has been freed
  * - the returned memory range is never accessed concurrently, either via the `SPPixelGrid` or directly
  */
-struct SPByteSlice sp_pixel_grid_unsafe_data_ref(struct SPPixelGrid *this_);
+struct SPByteSlice sp_pixel_grid_unsafe_data_ref(struct SPPixelGrid *pixel_grid);
 
 /**
  * Gets the width in pixels of the `SPPixelGrid` instance.
  *
  * # Arguments
  *
- * - `this`: instance to read from
+ * - `pixel_grid`: instance to read from
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `this` points to a valid `SPPixelGrid`
+ * - `pixel_grid` points to a valid `SPPixelGrid`
  */
-size_t sp_pixel_grid_width(const struct SPPixelGrid *this_);
+size_t sp_pixel_grid_width(const struct SPPixelGrid *pixel_grid);
 
 #ifdef __cplusplus
 } // extern "C"

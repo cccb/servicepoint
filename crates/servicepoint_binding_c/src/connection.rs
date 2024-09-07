@@ -47,7 +47,7 @@ pub unsafe extern "C" fn sp_connection_open(
 
 /// Sends a `SPPacket` to the display using the `SPConnection`.
 ///
-/// The passed `SPPacket` gets consumed.
+/// The passed `packet` gets consumed.
 ///
 /// returns: true in case of success
 ///
@@ -55,9 +55,9 @@ pub unsafe extern "C" fn sp_connection_open(
 ///
 /// The caller has to make sure that:
 ///
-/// - `SPConnection` points to a valid instance of `SPConnection`
-/// - `SPPacket` points to a valid instance of `SPPacket`
-/// - `SPPacket` is not used concurrently or after this call
+/// - `connection` points to a valid instance of `SPConnection`
+/// - `packet` points to a valid instance of `SPPacket`
+/// - `packet` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send_packet(
     connection: *const SPConnection,
@@ -69,7 +69,7 @@ pub unsafe extern "C" fn sp_connection_send_packet(
 
 /// Sends a `SPCommand` to the display using the `SPConnection`.
 ///
-/// The passed `SPCommand` gets consumed.
+/// The passed `command` gets consumed.
 ///
 /// returns: true in case of success
 ///
@@ -95,9 +95,9 @@ pub unsafe extern "C" fn sp_connection_send_command(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPConnection`
-/// - `this` is not used concurrently or after this call
+/// - `connection` points to a valid `SPConnection`
+/// - `connection` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_connection_free(ptr: *mut SPConnection) {
-    _ = Box::from_raw(ptr);
+pub unsafe extern "C" fn sp_connection_free(connection: *mut SPConnection) {
+    _ = Box::from_raw(connection);
 }

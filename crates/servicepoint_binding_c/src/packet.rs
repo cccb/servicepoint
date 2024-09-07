@@ -63,15 +63,15 @@ pub unsafe extern "C" fn sp_packet_try_load(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPPacket`
-/// - `this` is not written to concurrently
+/// - `packet` points to a valid `SPPacket`
+/// - `packet` is not written to concurrently
 /// - the returned instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_packet_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_clone(
-    this: *const SPPacket,
+    packet: *const SPPacket,
 ) -> *mut SPPacket {
-    Box::into_raw(Box::new(SPPacket((*this).0.clone())))
+    Box::into_raw(Box::new(SPPacket((*packet).0.clone())))
 }
 
 /// Deallocates a `SPPacket`.
@@ -80,9 +80,9 @@ pub unsafe extern "C" fn sp_packet_clone(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPPacket`
-/// - `this` is not used concurrently or after this call
+/// - `packet` points to a valid `SPPacket`
+/// - `packet` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_packet_free(this: *mut SPPacket) {
-    _ = Box::from_raw(this)
+pub unsafe extern "C" fn sp_packet_free(packet: *mut SPPacket) {
+    _ = Box::from_raw(packet)
 }

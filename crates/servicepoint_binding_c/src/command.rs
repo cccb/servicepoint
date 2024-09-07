@@ -63,15 +63,15 @@ pub unsafe extern "C" fn sp_command_try_from_packet(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid instance of `SPCommand`
-/// - `this` is not written to concurrently
+/// - `command` points to a valid instance of `SPCommand`
+/// - `command` is not written to concurrently
 /// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_clone(
-    original: *const SPCommand,
+    command: *const SPCommand,
 ) -> *mut SPCommand {
-    Box::into_raw(Box::new((*original).clone()))
+    Box::into_raw(Box::new((*command).clone()))
 }
 
 /// Set all pixels to the off state.
@@ -177,7 +177,7 @@ pub unsafe extern "C" fn sp_command_char_brightness(
     let byte_grid = *Box::from_raw(grid);
     Box::into_raw(Box::new(SPCommand(servicepoint::Command::CharBrightness(
         Origin::new(x, y),
-        byte_grid.actual,
+        byte_grid.0,
     ))))
 }
 
@@ -394,10 +394,10 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `SPCommand`
-/// - `this` is not used concurrently or after this call
-/// - `this` was not passed to another consuming function, e.g. to create a `SPPacket`
+/// - `command` points to a valid `SPCommand`
+/// - `command` is not used concurrently or after this call
+/// - `command` was not passed to another consuming function, e.g. to create a `SPPacket`
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_free(ptr: *mut SPCommand) {
-    _ = Box::from_raw(ptr);
+pub unsafe extern "C" fn sp_command_free(command: *mut SPCommand) {
+    _ = Box::from_raw(command);
 }
