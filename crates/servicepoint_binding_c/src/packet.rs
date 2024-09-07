@@ -12,6 +12,8 @@ pub struct SPPacket(pub(crate) servicepoint::Packet);
 /// Turns a `SPCommand` into a `SPPacket`.
 /// The `SPCommand` gets consumed.
 ///
+/// Will never return NULL.
+///
 /// # Safety
 ///
 /// The caller has to make sure that:
@@ -54,6 +56,8 @@ pub unsafe extern "C" fn sp_packet_try_load(
 }
 
 /// Clones a `SPPacket`.
+///
+/// Will never return NULL.
 ///
 /// # Safety
 ///

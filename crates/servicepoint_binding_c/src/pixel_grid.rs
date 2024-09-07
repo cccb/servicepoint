@@ -25,7 +25,7 @@ pub struct SPPixelGrid(pub(crate) servicepoint::PixelGrid);
 /// - `width`: size in pixels in x-direction
 /// - `height`: size in pixels in y-direction
 ///
-/// returns: `SPPixelGrid` initialized to all pixels off
+/// returns: `SPPixelGrid` initialized to all pixels off. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -54,7 +54,7 @@ pub unsafe extern "C" fn sp_pixel_grid_new(
 /// - `width`: size in pixels in x-direction
 /// - `height`: size in pixels in y-direction
 ///
-/// returns: `SPPixelGrid` that contains a copy of the provided data
+/// returns: `SPPixelGrid` that contains a copy of the provided data. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -82,6 +82,8 @@ pub unsafe extern "C" fn sp_pixel_grid_load(
 }
 
 /// Clones a `SPPixelGrid`.
+///
+/// Will never return NULL.
 ///
 /// # Safety
 ///

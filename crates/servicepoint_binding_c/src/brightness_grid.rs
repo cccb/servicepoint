@@ -35,7 +35,7 @@ impl Clone for SPBrightnessGrid {
 
 /// Creates a new `SPBrightnessGrid` with the specified dimensions.
 ///
-/// returns: `SPBrightnessGrid` initialized to 0.
+/// returns: `SPBrightnessGrid` initialized to 0. Will never return NULL.
 ///
 /// # Safety
 ///

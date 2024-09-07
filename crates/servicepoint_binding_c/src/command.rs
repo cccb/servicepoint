@@ -314,6 +314,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
 /// </div>
 ///
+/// Will never return NULL.
+///
 /// # Safety
 ///
 /// The caller has to make sure that:
@@ -338,7 +340,9 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 /// Allocates a new `Command::BitmapLinearWin` instance.
 /// The passed `SPPixelGrid` gets consumed.
 ///
-/// Sets a window of pixels to the specified values
+/// Sets a window of pixels to the specified values.
+///
+/// Will never return NULL.
 ///
 /// # Safety
 ///

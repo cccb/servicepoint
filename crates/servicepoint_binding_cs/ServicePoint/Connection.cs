@@ -20,7 +20,15 @@ public sealed class Connection : SpNativeInstance<BindGen.Connection>
     {
         unsafe
         {
-            return NativeMethods.sp_connection_send(Instance, packet.Into());
+            return NativeMethods.sp_connection_send_packet(Instance, packet.Into());
+        }
+    }
+
+    public bool Send(Command command)
+    {
+        unsafe
+        {
+            return NativeMethods.sp_connection_send_command(Instance, command.Into());
         }
     }
 

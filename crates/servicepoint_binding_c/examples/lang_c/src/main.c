@@ -10,10 +10,9 @@ int main(void) {
     sp_pixel_grid_fill(pixels, true);
 
     SPCommand *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
-    SPPacket *packet = sp_packet_from_command(command);
-    while (sp_connection_send(connection, sp_packet_clone(packet)));
+    while (sp_connection_send_command(connection, sp_command_clone(command)));
 
-    sp_packet_free(packet);
+    sp_command_free(command);
     sp_connection_free(connection);
     return 0;
 }

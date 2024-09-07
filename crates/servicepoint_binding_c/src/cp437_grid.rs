@@ -51,6 +51,8 @@ pub unsafe extern "C" fn sp_cp437_grid_new(
 
 /// Loads a `SPCp437Grid` with the specified dimensions from the provided data.
 ///
+/// Will never return NULL.
+///
 /// # Panics
 ///
 /// When the provided `data_length` is not sufficient for the `height` and `width`
@@ -77,6 +79,8 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
 }
 
 /// Clones a `SPCp437Grid`.
+///
+/// Will never return NULL.
 ///
 /// # Safety
 ///
@@ -218,6 +222,8 @@ pub unsafe extern "C" fn sp_cp437_grid_height(
 }
 
 /// Gets an unsafe reference to the data of the `SPCp437Grid` instance.
+///
+/// Will never return NULL.
 ///
 /// ## Safety
 ///

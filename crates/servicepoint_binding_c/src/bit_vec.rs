@@ -39,7 +39,7 @@ impl Clone for SPBitVec {
 ///
 /// - `size`: size in bits.
 ///
-/// returns: `SPBitVec` with all bits set to false.
+/// returns: `SPBitVec` with all bits set to false. Will never return NULL.
 ///
 /// # Panics
 ///

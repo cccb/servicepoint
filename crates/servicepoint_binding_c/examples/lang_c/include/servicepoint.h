@@ -306,7 +306,7 @@ struct SPBitVec *sp_bit_vec_load(const uint8_t *data,
  *
  * - `size`: size in bits.
  *
- * returns: `SPBitVec` with all bits set to false.
+ * returns: `SPBitVec` with all bits set to false. Will never return NULL.
  *
  * # Panics
  *
@@ -468,7 +468,7 @@ struct SPBrightnessGrid *sp_brightness_grid_load(size_t width,
 /**
  * Creates a new `SPBrightnessGrid` with the specified dimensions.
  *
- * returns: `SPBrightnessGrid` initialized to 0.
+ * returns: `SPBrightnessGrid` initialized to 0. Will never return NULL.
  *
  * # Safety
  *
@@ -615,7 +615,9 @@ struct SPCommand *sp_command_bitmap_linear_or(size_t offset,
  * Allocates a new `Command::BitmapLinearWin` instance.
  * The passed `SPPixelGrid` gets consumed.
  *
- * Sets a window of pixels to the specified values
+ * Sets a window of pixels to the specified values.
+ *
+ * Will never return NULL.
  *
  * # Safety
  *
@@ -738,6 +740,8 @@ struct SPCommand *sp_command_clone(const struct SPCommand *original);
  *     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
  * </div>
  *
+ * Will never return NULL.
+ *
  * # Safety
  *
  * The caller has to make sure that:
@@ -846,6 +850,23 @@ void sp_connection_free(struct SPConnection *ptr);
 struct SPConnection *sp_connection_open(const char *host);
 
 /**
+ * Sends a `SPCommand` to the display using the `SPConnection`.
+ * The passed `SPCommand` gets consumed.
+ *
+ * returns: true in case of success
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `connection` points to a valid instance of `SPConnection`
+ * - `command` points to a valid instance of `SPPacket`
+ * - `command` is not used concurrently or after this call
+ */
+bool sp_connection_send_command(const struct SPConnection *connection,
+                                struct SPCommand *command);
+
+/**
  * Sends a `SPPacket` to the display using the `SPConnection`.
  * The passed `SPPacket` gets consumed.
  *
@@ -859,11 +880,13 @@ struct SPConnection *sp_connection_open(const char *host);
  * - `SPPacket` points to a valid instance of `SPPacket`
  * - `SPPacket` is not used concurrently or after this call
  */
-bool sp_connection_send(const struct SPConnection *connection,
-                        struct SPPacket *packet);
+bool sp_connection_send_packet(const struct SPConnection *connection,
+                               struct SPPacket *packet);
 
 /**
  * Clones a `SPCp437Grid`.
+ *
+ * Will never return NULL.
  *
  * # Safety
  *
@@ -945,6 +968,8 @@ size_t sp_cp437_grid_height(const struct SPCp437Grid *this_);
 /**
  * Loads a `SPCp437Grid` with the specified dimensions from the provided data.
  *
+ * Will never return NULL.
+ *
  * # Panics
  *
  * When the provided `data_length` is not sufficient for the `height` and `width`
@@ -1008,6 +1033,8 @@ void sp_cp437_grid_set(struct SPCp437Grid *this_,
 /**
  * Gets an unsafe reference to the data of the `SPCp437Grid` instance.
  *
+ * Will never return NULL.
+ *
  * ## Safety
  *
  * The caller has to make sure that:
@@ -1036,6 +1063,8 @@ size_t sp_cp437_grid_width(const struct SPCp437Grid *this_);
 /**
  * Clones a `SPPacket`.
  *
+ * Will never return NULL.
+ *
  * # Safety
  *
  * The caller has to make sure that:
@@ -1062,6 +1091,8 @@ void sp_packet_free(struct SPPacket *this_);
 /**
  * Turns a `SPCommand` into a `SPPacket`.
  * The `SPCommand` gets consumed.
+ *
+ * Will never return NULL.
  *
  * # Safety
  *
@@ -1093,6 +1124,8 @@ struct SPPacket *sp_packet_try_load(const uint8_t *data,
 
 /**
  * Clones a `SPPixelGrid`.
+ *
+ * Will never return NULL.
  *
  * # Safety
  *
@@ -1179,7 +1212,7 @@ size_t sp_pixel_grid_height(const struct SPPixelGrid *this_);
  * - `width`: size in pixels in x-direction
  * - `height`: size in pixels in y-direction
  *
- * returns: `SPPixelGrid` that contains a copy of the provided data
+ * returns: `SPPixelGrid` that contains a copy of the provided data. Will never return NULL.
  *
  * # Panics
  *
@@ -1207,7 +1240,7 @@ struct SPPixelGrid *sp_pixel_grid_load(size_t width,
  * - `width`: size in pixels in x-direction
  * - `height`: size in pixels in y-direction
  *
- * returns: `SPPixelGrid` initialized to all pixels off
+ * returns: `SPPixelGrid` initialized to all pixels off. Will never return NULL.
  *
  * # Panics
  *

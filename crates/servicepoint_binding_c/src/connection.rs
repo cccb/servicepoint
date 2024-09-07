@@ -5,7 +5,7 @@
 use std::ffi::{c_char, CStr};
 use std::ptr::null_mut;
 
-use crate::SPPacket;
+use crate::{SPCommand, SPPacket};
 
 /// A connection to the display.
 ///
@@ -58,12 +58,33 @@ pub unsafe extern "C" fn sp_connection_open(
 /// - `SPPacket` points to a valid instance of `SPPacket`
 /// - `SPPacket` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_connection_send(
+pub unsafe extern "C" fn sp_connection_send_packet(
     connection: *const SPConnection,
     packet: *mut SPPacket,
 ) -> bool {
     let packet = Box::from_raw(packet);
     (*connection).0.send((*packet).0).is_ok()
+}
+
+/// Sends a `SPCommand` to the display using the `SPConnection`.
+/// The passed `SPCommand` gets consumed.
+///
+/// returns: true in case of success
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `connection` points to a valid instance of `SPConnection`
+/// - `command` points to a valid instance of `SPPacket`
+/// - `command` is not used concurrently or after this call
+#[no_mangle]
+pub unsafe extern "C" fn sp_connection_send_command(
+    connection: *const SPConnection,
+    command: *mut SPCommand,
+) -> bool {
+    let command = (*Box::from_raw(command)).0;
+    (*connection).0.send(command).is_ok()
 }
 
 /// Closes and deallocates a `SPConnection`.

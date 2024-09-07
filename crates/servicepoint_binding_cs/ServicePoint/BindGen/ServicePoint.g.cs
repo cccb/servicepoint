@@ -26,7 +26,7 @@ namespace ServicePoint.BindGen
         ///
         ///  - `size`: size in bits.
         ///
-        ///  returns: `SPBitVec` with all bits set to false.
+        ///  returns: `SPBitVec` with all bits set to false. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -195,7 +195,7 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  Creates a new `SPBrightnessGrid` with the specified dimensions.
         ///
-        ///  returns: `SPBrightnessGrid` initialized to 0.
+        ///  returns: `SPBrightnessGrid` initialized to 0. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -597,6 +597,8 @@ namespace ServicePoint.BindGen
         ///      Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
         ///  &lt;/div&gt;
         ///
+        ///  Will never return NULL.
+        ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
@@ -613,7 +615,9 @@ namespace ServicePoint.BindGen
         ///  Allocates a new `Command::BitmapLinearWin` instance.
         ///  The passed `SPPixelGrid` gets consumed.
         ///
-        ///  Sets a window of pixels to the specified values
+        ///  Sets a window of pixels to the specified values.
+        ///
+        ///  Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -682,9 +686,27 @@ namespace ServicePoint.BindGen
         ///  - `SPPacket` points to a valid instance of `SPPacket`
         ///  - `SPPacket` is not used concurrently or after this call
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_send", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send(Connection* connection, Packet* packet);
+        public static extern bool sp_connection_send_packet(Connection* connection, Packet* packet);
+
+        /// <summary>
+        ///  Sends a `SPCommand` to the display using the `SPConnection`.
+        ///  The passed `SPCommand` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of `SPConnection`
+        ///  - `command` points to a valid instance of `SPPacket`
+        ///  - `command` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_connection_send_command(Connection* connection, Command* command);
 
         /// <summary>
         ///  Closes and deallocates a `SPConnection`.
@@ -717,6 +739,8 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  Loads a `SPCp437Grid` with the specified dimensions from the provided data.
         ///
+        ///  Will never return NULL.
+        ///
         ///  # Panics
         ///
         ///  When the provided `data_length` is not sufficient for the `height` and `width`
@@ -735,6 +759,8 @@ namespace ServicePoint.BindGen
 
         /// <summary>
         ///  Clones a `SPCp437Grid`.
+        ///
+        ///  Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -862,6 +888,8 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  Gets an unsafe reference to the data of the `SPCp437Grid` instance.
         ///
+        ///  Will never return NULL.
+        ///
         ///  ## Safety
         ///
         ///  The caller has to make sure that:
@@ -876,6 +904,8 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  Turns a `SPCommand` into a `SPPacket`.
         ///  The `SPCommand` gets consumed.
+        ///
+        ///  Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -908,6 +938,8 @@ namespace ServicePoint.BindGen
 
         /// <summary>
         ///  Clones a `SPPacket`.
+        ///
+        ///  Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -942,7 +974,7 @@ namespace ServicePoint.BindGen
         ///  - `width`: size in pixels in x-direction
         ///  - `height`: size in pixels in y-direction
         ///
-        ///  returns: `SPPixelGrid` initialized to all pixels off
+        ///  returns: `SPPixelGrid` initialized to all pixels off. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -966,7 +998,7 @@ namespace ServicePoint.BindGen
         ///  - `width`: size in pixels in x-direction
         ///  - `height`: size in pixels in y-direction
         ///
-        ///  returns: `SPPixelGrid` that contains a copy of the provided data
+        ///  returns: `SPPixelGrid` that contains a copy of the provided data. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -986,6 +1018,8 @@ namespace ServicePoint.BindGen
 
         /// <summary>
         ///  Clones a `SPPixelGrid`.
+        ///
+        ///  Will never return NULL.
         ///
         ///  # Safety
         ///
