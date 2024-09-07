@@ -71,7 +71,7 @@ impl Connection {
             Connection::Udp(socket) => {
                 socket
                     .send(&data)
-                    .map_err(move |io_err| SendError::IoError(io_err))
+                    .map_err(SendError::IoError)
                     .map(move |_| ()) // ignore Ok value
             }
             Connection::Fake => Ok(()),

@@ -190,10 +190,17 @@ impl TryFrom<Packet> for Command {
 
     /// Try to interpret the `Packet` as one containing a `Command`
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
-        let Packet(Header(command_u16, a, _, _, _), _) = packet;
-        let command_code = match CommandCode::try_from(command_u16) {
+        let Packet {
+            header: Header {
+                command_code,
+                a,
+                ..
+            },
+            ..
+        } = packet;
+        let command_code = match CommandCode::try_from(command_code) {
             Err(()) => {
-                return Err(TryFromPacketError::InvalidCommand(command_u16));
+                return Err(TryFromPacketError::InvalidCommand(command_code));
             }
             Ok(value) => value,
         };
@@ -266,8 +273,16 @@ impl Command {
         packet: Packet,
         compression: CompressionCode,
     ) -> Result<Command, TryFromPacketError> {
-        let Packet(Header(_, tiles_x, pixels_y, tile_w, pixel_h), payload) =
-            packet;
+        let Packet {
+            header: Header {
+                command_code: _,
+                a: tiles_x,
+                b: pixels_y,
+                c: tile_w,
+                d: pixel_h,
+            },
+            payload,
+        } = packet;
 
         let payload = match into_decompressed(compression, payload) {
             None => return Err(TryFromPacketError::DecompressionFailed),
@@ -290,7 +305,16 @@ impl Command {
         packet: Packet,
         command: Command,
     ) -> Result<Command, TryFromPacketError> {
-        let Packet(Header(_, a, b, c, d), payload) = packet;
+        let Packet {
+            header: Header {
+                command_code: _,
+                a,
+                b,
+                c,
+                d,
+            },
+            payload,
+        } = packet;
         if !payload.is_empty() {
             Err(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
         } else if a != 0 || b != 0 || c != 0 || d != 0 {
@@ -304,7 +328,15 @@ impl Command {
     fn packet_into_linear_bitmap(
         packet: Packet,
     ) -> Result<(SpBitVec, CompressionCode), TryFromPacketError> {
-        let Packet(Header(_, _, length, sub, reserved), payload) = packet;
+        let Packet {
+            header: Header {
+                b: length,
+                c: sub,
+                d: reserved,
+                ..
+            },
+            payload,
+        } = packet;
         if reserved != 0 {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
         }
@@ -330,7 +362,16 @@ impl Command {
     fn packet_into_char_brightness(
         packet: &Packet,
     ) -> Result<Command, TryFromPacketError> {
-        let Packet(Header(_, x, y, width, height), payload) = packet;
+        let Packet {
+            header: Header {
+                command_code: _,
+                a: x,
+                b: y,
+                c: width,
+                d: height,
+            },
+            payload,
+        } = packet;
 
         let grid =
             PrimitiveGrid::load(*width as usize, *height as usize, payload);
@@ -348,7 +389,16 @@ impl Command {
     fn packet_into_brightness(
         packet: &Packet,
     ) -> Result<Command, TryFromPacketError> {
-        let Packet(Header(_, a, b, c, d), payload) = packet;
+        let Packet {
+            header: Header {
+                command_code: _,
+                a,
+                b,
+                c,
+                d,
+            },
+            payload,
+        } = packet;
         if payload.len() != 1 {
             return Err(TryFromPacketError::UnexpectedPayloadSize(
                 1,
@@ -369,7 +419,16 @@ impl Command {
     fn packet_into_cp437(
         packet: &Packet,
     ) -> Result<Command, TryFromPacketError> {
-        let Packet(Header(_, a, b, c, d), payload) = packet;
+        let Packet {
+            header: Header {
+                command_code: _,
+                a,
+                b,
+                c,
+                d,
+            },
+            payload,
+        } = packet;
         Ok(Command::Cp437Data(
             Origin::new(*a as usize, *b as usize),
             Cp437Grid::load(*c as usize, *d as usize, payload),
@@ -483,7 +542,16 @@ mod tests {
 
     #[test]
     fn error_invalid_command() {
-        let p = Packet(Header(0xFF, 0x00, 0x00, 0x00, 0x00), vec![]);
+        let p = Packet {
+            header: Header {
+                command_code: 0xFF,
+                a: 0x00,
+                b: 0x00,
+                c: 0x00,
+                d: 0x00,
+            },
+            payload: vec![],
+        };
         let result = Command::try_from(p);
         assert!(matches!(
             result,
@@ -493,10 +561,16 @@ mod tests {
 
     #[test]
     fn error_extraneous_header_values_clear() {
-        let p = Packet(
-            Header(CommandCode::Clear.into(), 0x05, 0x00, 0x00, 0x00),
-            vec![],
-        );
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::Clear.into(),
+                a: 0x05,
+                b: 0x00,
+                c: 0x00,
+                d: 0x00,
+            },
+            payload: vec![],
+        };
         let result = Command::try_from(p);
         assert!(matches!(
             result,
@@ -506,10 +580,16 @@ mod tests {
 
     #[test]
     fn error_extraneous_header_values_brightness() {
-        let p = Packet(
-            Header(CommandCode::Brightness.into(), 0x00, 0x13, 0x37, 0x00),
-            vec![5],
-        );
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::Brightness.into(),
+                a: 0x00,
+                b: 0x13,
+                c: 0x37,
+                d: 0x00,
+            },
+            payload: vec![5],
+        };
         let result = Command::try_from(p);
         assert!(matches!(
             result,
@@ -519,10 +599,16 @@ mod tests {
 
     #[test]
     fn error_extraneous_header_hard_reset() {
-        let p = Packet(
-            Header(CommandCode::HardReset.into(), 0x00, 0x00, 0x00, 0x01),
-            vec![],
-        );
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::HardReset.into(),
+                a: 0x00,
+                b: 0x00,
+                c: 0x00,
+                d: 0x01,
+            },
+            payload: vec![],
+        };
         let result = Command::try_from(p);
         assert!(matches!(
             result,
@@ -532,10 +618,16 @@ mod tests {
 
     #[test]
     fn error_extraneous_header_fade_out() {
-        let p = Packet(
-            Header(CommandCode::FadeOut.into(), 0x10, 0x00, 0x00, 0x01),
-            vec![],
-        );
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::FadeOut.into(),
+                a: 0x10,
+                b: 0x00,
+                c: 0x00,
+                d: 0x01,
+            },
+            payload: vec![],
+        };
         let result = Command::try_from(p);
         assert!(matches!(
             result,
@@ -545,10 +637,16 @@ mod tests {
 
     #[test]
     fn error_unexpected_payload() {
-        let p = Packet(
-            Header(CommandCode::FadeOut.into(), 0x00, 0x00, 0x00, 0x00),
-            vec![5, 7],
-        );
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::FadeOut.into(),
+                a: 0x00,
+                b: 0x00,
+                c: 0x00,
+                d: 0x00,
+            },
+            payload: vec![5, 7],
+        };
         let result = Command::try_from(p);
         assert!(matches!(
             result,
@@ -564,15 +662,19 @@ mod tests {
                 PixelGrid::new(8, 8),
                 compression,
             )
-            .into();
-            let Packet(header, mut payload) = p;
+                .into();
+
+            let Packet {
+                header,
+                mut payload,
+            } = p;
 
             // mangle it
             for byte in payload.iter_mut() {
                 *byte -= *byte / 2;
             }
 
-            let p = Packet(header, payload);
+            let p = Packet { header, payload };
             let result = Command::try_from(p);
             if compression != CompressionCode::Uncompressed {
                 assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
@@ -590,15 +692,18 @@ mod tests {
                 BitVec::repeat(false, 8),
                 compression,
             )
-            .into();
-            let Packet(header, mut payload) = p;
+                .into();
+            let Packet {
+                header,
+                mut payload,
+            } = p;
 
             // mangle it
             for byte in payload.iter_mut() {
                 *byte -= *byte / 2;
             }
 
-            let p = Packet(header, payload);
+            let p = Packet { header, payload };
             let result = Command::try_from(p);
             if compression != CompressionCode::Uncompressed {
                 assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
@@ -612,32 +717,59 @@ mod tests {
     #[test]
     fn unexpected_payload_size_brightness() {
         assert_eq!(
-            Command::try_from(Packet(
-                Header(CommandCode::Brightness.into(), 0, 0, 0, 0),
-                vec!(),
-            )),
+            Command::try_from(Packet {
+                header: Header {
+                    command_code: CommandCode::Brightness.into(),
+                    a: 0,
+                    b: 0,
+                    c: 0,
+                    d: 0,
+                },
+                payload: vec!()
+            }),
             Err(TryFromPacketError::UnexpectedPayloadSize(1, 0))
         );
 
         assert_eq!(
-            Command::try_from(Packet(
-                Header(CommandCode::Brightness.into(), 0, 0, 0, 0),
-                vec!(0, 0),
-            )),
+            Command::try_from(Packet {
+                header: Header {
+                    command_code: CommandCode::Brightness.into(),
+                    a: 0,
+                    b: 0,
+                    c: 0,
+                    d: 0,
+                },
+                payload: vec!(0, 0)
+            }),
             Err(TryFromPacketError::UnexpectedPayloadSize(1, 2))
         );
     }
 
     #[test]
     fn error_reserved_used() {
-        let Packet(header, payload) = Command::BitmapLinear(
+        let Packet { header, payload } = Command::BitmapLinear(
             0,
             BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
-        .into();
-        let Header(command, offset, length, sub, _reserved) = header;
-        let p = Packet(Header(command, offset, length, sub, 69), payload);
+            .into();
+        let Header {
+            command_code: command,
+            a: offset,
+            b: length,
+            c: sub,
+            d: _reserved,
+        } = header;
+        let p = Packet {
+            header: Header {
+                command_code: command,
+                a: offset,
+                b: length,
+                c: sub,
+                d: 69,
+            },
+            payload,
+        };
         assert_eq!(
             Command::try_from(p),
             Err(TryFromPacketError::ExtraneousHeaderValues)
@@ -646,14 +778,29 @@ mod tests {
 
     #[test]
     fn error_invalid_compression() {
-        let Packet(header, payload) = Command::BitmapLinear(
+        let Packet { header, payload } = Command::BitmapLinear(
             0,
             BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
-        .into();
-        let Header(command, offset, length, _sub, reserved) = header;
-        let p = Packet(Header(command, offset, length, 42, reserved), payload);
+            .into();
+        let Header {
+            command_code: command,
+            a: offset,
+            b: length,
+            c: _sub,
+            d: reserved,
+        } = header;
+        let p = Packet {
+            header: Header {
+                command_code: command,
+                a: offset,
+                b: length,
+                c: 42,
+                d: reserved,
+            },
+            payload,
+        };
         assert_eq!(
             Command::try_from(p),
             Err(TryFromPacketError::InvalidCompressionCode(42))
@@ -662,17 +809,29 @@ mod tests {
 
     #[test]
     fn error_unexpected_size() {
-        let Packet(header, payload) = Command::BitmapLinear(
+        let Packet { header, payload } = Command::BitmapLinear(
             0,
             BitVec::repeat(false, 8),
             CompressionCode::Uncompressed,
         )
-        .into();
-        let Header(command, offset, length, compression, reserved) = header;
-        let p = Packet(
-            Header(command, offset, 420, compression, reserved),
+            .into();
+        let Header {
+            command_code: command,
+            a: offset,
+            b: length,
+            c: compression,
+            d: reserved,
+        } = header;
+        let p = Packet {
+            header: Header {
+                command_code: command,
+                a: offset,
+                b: 420,
+                c: compression,
+                d: reserved,
+            },
             payload,
-        );
+        };
         assert_eq!(
             Command::try_from(p),
             Err(TryFromPacketError::UnexpectedPayloadSize(

@@ -546,25 +546,25 @@ namespace ServicePoint.BindGen
         public static extern ByteSlice sp_cp437_grid_unsafe_data_ref(Cp437Grid* @this);
 
         /// <summary>
-        ///  Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.
+        ///  Tries to turn a `SPPacket` into a `SPCommand`. The packet is deallocated in the process.
         ///
-        ///  Returns: pointer to new `Command` instance or NULL
+        ///  Returns: pointer to new `SPCommand` instance or NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `packet` points to a valid instance of `Packet`
+        ///  - `packet` points to a valid instance of `SPPacket`
         ///  - `packet` is not used concurrently or after this call
         ///  - the result is checked for NULL
-        ///  - the returned `Command` instance is freed in some way, either by using a consuming function or
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_dealloc`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_try_from_packet(Packet* packet);
 
         /// <summary>
-        ///  Clones a `Command` instance.
+        ///  Clones a `SPCommand` instance.
         ///
         ///  # Safety
         ///
@@ -581,6 +581,14 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  Allocates a new `Command::Clear` instance.
         ///
+        ///  Set all pixels to the off state. Does not affect brightness.
+        ///
+        ///  # Examples
+        ///
+        ///  ```C
+        ///  sp_connection_send(connection, sp_command_clear());
+        ///  ```
+        ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
@@ -593,6 +601,9 @@ namespace ServicePoint.BindGen
 
         /// <summary>
         ///  Allocates a new `Command::HardReset` instance.
+        ///
+        ///  Kills the udp daemon on the display, which usually results in a restart.
+        ///  Please do not send this in your normal program flow.
         ///
         ///  # Safety
         ///
@@ -639,6 +650,8 @@ namespace ServicePoint.BindGen
         ///  Allocates a new `Command::CharBrightness` instance.
         ///  The passed `SPBrightnessGrid` gets consumed.
         ///
+        ///  Set the brightness of individual tiles in a rectangular area of the display.
+        ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
@@ -654,6 +667,13 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  Allocates a new `Command::BitmapLinear` instance.
         ///  The passed `BitVec` gets consumed.
+        ///
+        ///  Set pixel data starting at the pixel offset on screen.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained `BitVec` is always uncompressed.
         ///
         ///  # Safety
         ///
@@ -672,6 +692,13 @@ namespace ServicePoint.BindGen
         ///  Allocates a new `Command::BitmapLinearAnd` instance.
         ///  The passed `BitVec` gets consumed.
         ///
+        ///  Set pixel data according to an and-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained `BitVec` is always uncompressed.
+        ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
@@ -688,6 +715,13 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  Allocates a new `Command::BitmapLinearOr` instance.
         ///  The passed `BitVec` gets consumed.
+        ///
+        ///  Set pixel data according to an or-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained `BitVec` is always uncompressed.
         ///
         ///  # Safety
         ///
@@ -706,6 +740,13 @@ namespace ServicePoint.BindGen
         ///  Allocates a new `Command::BitmapLinearXor` instance.
         ///  The passed `BitVec` gets consumed.
         ///
+        ///  Set pixel data according to a xor-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained `BitVec` is always uncompressed.
+        ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
@@ -723,6 +764,13 @@ namespace ServicePoint.BindGen
         ///  Allocates a new `Command::Cp437Data` instance.
         ///  The passed `ByteGrid` gets consumed.
         ///
+        ///  Show text on the screen.
+        ///
+        ///  &lt;div class="warning"&gt;
+        ///      The library does not currently convert between UTF-8 and CP-437.
+        ///      Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
+        ///  &lt;/div&gt;
+        ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
@@ -739,6 +787,8 @@ namespace ServicePoint.BindGen
         ///  Allocates a new `Command::BitmapLinearWin` instance.
         ///  The passed `PixelGrid` gets consumed.
         ///
+        ///  Sets a window of pixels to the specified values
+        ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
@@ -754,6 +804,13 @@ namespace ServicePoint.BindGen
 
         /// <summary>
         ///  Deallocates a `Command`.
+        ///
+        ///  # Examples
+        ///
+        ///  ```C
+        ///  SPCommand c = sp_command_clear();
+        ///  sp_command_dealloc(c);
+        ///  ```
         ///
         ///  # Safety
         ///
