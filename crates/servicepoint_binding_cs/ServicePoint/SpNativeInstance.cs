@@ -22,7 +22,7 @@ public abstract class SpNativeInstance<T>
         _instance = instance;
     }
 
-    private protected abstract void Dealloc();
+    private protected abstract void Free();
 
     internal unsafe T* Into()
     {
@@ -34,7 +34,7 @@ public abstract class SpNativeInstance<T>
     private unsafe void ReleaseUnmanagedResources()
     {
         if (_instance != null)
-            Dealloc();
+            Free();
         _instance = null;
     }
 

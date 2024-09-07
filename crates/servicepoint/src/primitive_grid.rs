@@ -82,7 +82,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell
+    /// - `x` and `y`: position of the cell
     ///
     /// # Panics
     ///
@@ -96,7 +96,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell
+    /// - `x` and `y`: position of the cell
     ///
     /// returns: Reference to cell or None
     pub fn get_ref_mut_optional(
@@ -117,8 +117,8 @@ impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell
-    /// * `value`: the value to write to the cell
+    /// - `x` and `y`: position of the cell
+    /// - `value`: the value to write to the cell
     ///
     /// # Panics
     ///
@@ -132,7 +132,7 @@ impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {
     ///
     /// # Arguments
     ///
-    /// * `x` and `y`: position of the cell to read
+    /// - `x` and `y`: position of the cell to read
     ///
     /// # Panics
     ///

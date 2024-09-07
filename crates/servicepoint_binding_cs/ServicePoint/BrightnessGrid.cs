@@ -2,7 +2,7 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class BrightnessGrid : SpNativeInstance<BindGen.CBrightnessGrid>
+public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
 {
     public static BrightnessGrid New(int width, int height)
     {
@@ -92,12 +92,9 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.CBrightnessGrid>
         }
     }
 
-    private unsafe BrightnessGrid(BindGen.CBrightnessGrid* instance) : base(instance)
+    private unsafe BrightnessGrid(BindGen.BrightnessGrid* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_brightness_grid_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_brightness_grid_free(Instance);
 }

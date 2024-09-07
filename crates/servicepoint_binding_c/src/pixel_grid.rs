@@ -1,19 +1,31 @@
-//! C functions for interacting with `PixelGrid`s
+//! C functions for interacting with `SPPixelGrid`s
 //!
 //! prefix `sp_pixel_grid_`
 
-use servicepoint::{DataRef, Grid, PixelGrid};
+use servicepoint::{DataRef, Grid};
 
-use crate::c_slice::CByteSlice;
+use crate::byte_slice::SPByteSlice;
 
-/// Creates a new `PixelGrid` with the specified dimensions.
+/// A grid of pixels.
+///
+/// # Examples
+///
+/// ```C
+/// Cp437Grid grid = sp_pixel_grid_new(8, 3);
+/// sp_pixel_grid_fill(grid, true);
+/// sp_pixel_grid_set(grid, 0, 0, false);
+/// sp_pixel_grid_free(grid);
+/// ```
+pub struct SPPixelGrid(pub(crate) servicepoint::PixelGrid);
+
+/// Creates a new `SPPixelGrid` with the specified dimensions.
 ///
 /// # Arguments
 ///
-/// * `width`: size in pixels in x-direction
-/// * `height`: size in pixels in y-direction
+/// - `width`: size in pixels in x-direction
+/// - `height`: size in pixels in y-direction
 ///
-/// returns: `PixelGrid` initialized to all pixels off
+/// returns: `SPPixelGrid` initialized to all pixels off. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -24,23 +36,25 @@ use crate::c_slice::CByteSlice;
 /// The caller has to make sure that:
 ///
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_pixel_grid_dealloc`.
+///   by explicitly calling `sp_pixel_grid_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_pixel_grid_new(
     width: usize,
     height: usize,
-) -> *mut PixelGrid {
-    Box::into_raw(Box::new(PixelGrid::new(width, height)))
+) -> *mut SPPixelGrid {
+    Box::into_raw(Box::new(SPPixelGrid(servicepoint::PixelGrid::new(
+        width, height,
+    ))))
 }
 
-/// Loads a `PixelGrid` with the specified dimensions from the provided data.
+/// Loads a `SPPixelGrid` with the specified dimensions from the provided data.
 ///
 /// # Arguments
 ///
-/// * `width`: size in pixels in x-direction
-/// * `height`: size in pixels in y-direction
+/// - `width`: size in pixels in x-direction
+/// - `height`: size in pixels in y-direction
 ///
-/// returns: `PixelGrid` that contains a copy of the provided data
+/// returns: `SPPixelGrid` that contains a copy of the provided data. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -53,55 +67,59 @@ pub unsafe extern "C" fn sp_pixel_grid_new(
 ///
 /// - `data` points to a valid memory location of at least `data_length` bytes in size.
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_pixel_grid_dealloc`.
+///   by explicitly calling `sp_pixel_grid_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_pixel_grid_load(
     width: usize,
     height: usize,
     data: *const u8,
     data_length: usize,
-) -> *mut PixelGrid {
+) -> *mut SPPixelGrid {
     let data = std::slice::from_raw_parts(data, data_length);
-    Box::into_raw(Box::new(PixelGrid::load(width, height, data)))
+    Box::into_raw(Box::new(SPPixelGrid(servicepoint::PixelGrid::load(
+        width, height, data,
+    ))))
 }
 
-/// Clones a `PixelGrid`.
+/// Clones a `SPPixelGrid`.
+///
+/// Will never return NULL.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `PixelGrid`
-/// - `this` is not written to concurrently
+/// - `pixel_grid` points to a valid `SPPixelGrid`
+/// - `pixel_grid` is not written to concurrently
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_pixel_grid_dealloc`.
+///   by explicitly calling `sp_pixel_grid_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_pixel_grid_clone(
-    this: *const PixelGrid,
-) -> *mut PixelGrid {
-    Box::into_raw(Box::new((*this).clone()))
+    pixel_grid: *const SPPixelGrid,
+) -> *mut SPPixelGrid {
+    Box::into_raw(Box::new(SPPixelGrid((*pixel_grid).0.clone())))
 }
 
-/// Deallocates a `PixelGrid`.
+/// Deallocates a `SPPixelGrid`.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `PixelGrid`
-/// - `this` is not used concurrently or after this call
-/// - `this` was not passed to another consuming function, e.g. to create a `Command`
+/// - `pixel_grid` points to a valid `SPPixelGrid`
+/// - `pixel_grid` is not used concurrently or after pixel_grid call
+/// - `pixel_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
 #[no_mangle]
-pub unsafe extern "C" fn sp_pixel_grid_dealloc(this: *mut PixelGrid) {
-    _ = Box::from_raw(this);
+pub unsafe extern "C" fn sp_pixel_grid_free(pixel_grid: *mut SPPixelGrid) {
+    _ = Box::from_raw(pixel_grid);
 }
 
-/// Gets the current value at the specified position in the `PixelGrid`.
+/// Gets the current value at the specified position in the `SPPixelGrid`.
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
-/// * `x` and `y`: position of the cell to read
+/// - `pixel_grid`: instance to read from
+/// - `x` and `y`: position of the cell to read
 ///
 /// # Panics
 ///
@@ -111,24 +129,24 @@ pub unsafe extern "C" fn sp_pixel_grid_dealloc(this: *mut PixelGrid) {
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `PixelGrid`
-/// - `this` is not written to concurrently
+/// - `pixel_grid` points to a valid `SPPixelGrid`
+/// - `pixel_grid` is not written to concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_pixel_grid_get(
-    this: *const PixelGrid,
+    pixel_grid: *const SPPixelGrid,
     x: usize,
     y: usize,
 ) -> bool {
-    (*this).get(x, y)
+    (*pixel_grid).0.get(x, y)
 }
 
-/// Sets the value of the specified position in the `PixelGrid`.
+/// Sets the value of the specified position in the `SPPixelGrid`.
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `x` and `y`: position of the cell
-/// * `value`: the value to write to the cell
+/// - `pixel_grid`: instance to write to
+/// - `x` and `y`: position of the cell
+/// - `value`: the value to write to the cell
 ///
 /// returns: old value of the cell
 ///
@@ -140,83 +158,90 @@ pub unsafe extern "C" fn sp_pixel_grid_get(
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `PixelGrid`
-/// - `this` is not written to or read from concurrently
+/// - `pixel_grid` points to a valid `SPPixelGrid`
+/// - `pixel_grid` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_pixel_grid_set(
-    this: *mut PixelGrid,
+    pixel_grid: *mut SPPixelGrid,
     x: usize,
     y: usize,
     value: bool,
 ) {
-    (*this).set(x, y, value);
+    (*pixel_grid).0.set(x, y, value);
 }
 
-/// Sets the state of all pixels in the `PixelGrid`.
+/// Sets the state of all pixels in the `SPPixelGrid`.
 ///
 /// # Arguments
 ///
-/// * `this`: instance to write to
-/// * `value`: the value to set all pixels to
+/// - `pixel_grid`: instance to write to
+/// - `value`: the value to set all pixels to
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `PixelGrid`
-/// - `this` is not written to or read from concurrently
+/// - `pixel_grid` points to a valid `SPPixelGrid`
+/// - `pixel_grid` is not written to or read from concurrently
 #[no_mangle]
-pub unsafe extern "C" fn sp_pixel_grid_fill(this: *mut PixelGrid, value: bool) {
-    (*this).fill(value);
+pub unsafe extern "C" fn sp_pixel_grid_fill(
+    pixel_grid: *mut SPPixelGrid,
+    value: bool,
+) {
+    (*pixel_grid).0.fill(value);
 }
 
-/// Gets the width in pixels of the `PixelGrid` instance.
+/// Gets the width in pixels of the `SPPixelGrid` instance.
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
+/// - `pixel_grid`: instance to read from
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `PixelGrid`
+/// - `pixel_grid` points to a valid `SPPixelGrid`
 #[no_mangle]
-pub unsafe extern "C" fn sp_pixel_grid_width(this: *const PixelGrid) -> usize {
-    (*this).width()
+pub unsafe extern "C" fn sp_pixel_grid_width(
+    pixel_grid: *const SPPixelGrid,
+) -> usize {
+    (*pixel_grid).0.width()
 }
 
-/// Gets the height in pixels of the `PixelGrid` instance.
+/// Gets the height in pixels of the `SPPixelGrid` instance.
 ///
 /// # Arguments
 ///
-/// * `this`: instance to read from
+/// - `pixel_grid`: instance to read from
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `PixelGrid`
+/// - `pixel_grid` points to a valid `SPPixelGrid`
 #[no_mangle]
-pub unsafe extern "C" fn sp_pixel_grid_height(this: *const PixelGrid) -> usize {
-    (*this).height()
+pub unsafe extern "C" fn sp_pixel_grid_height(
+    pixel_grid: *const SPPixelGrid,
+) -> usize {
+    (*pixel_grid).0.height()
 }
 
-/// Gets an unsafe reference to the data of the `PixelGrid` instance.
+/// Gets an unsafe reference to the data of the `SPPixelGrid` instance.
 ///
 /// ## Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `PixelGrid`
-/// - the returned memory range is never accessed after the passed `PixelGrid` has been freed
-/// - the returned memory range is never accessed concurrently, either via the `PixelGrid` or directly
+/// - `pixel_grid` points to a valid `SPPixelGrid`
+/// - the returned memory range is never accessed after the passed `SPPixelGrid` has been freed
+/// - the returned memory range is never accessed concurrently, either via the `SPPixelGrid` or directly
 #[no_mangle]
 pub unsafe extern "C" fn sp_pixel_grid_unsafe_data_ref(
-    this: *mut PixelGrid,
-) -> CByteSlice {
-    let data = (*this).data_ref_mut();
-    CByteSlice {
+    pixel_grid: *mut SPPixelGrid,
+) -> SPByteSlice {
+    let data = (*pixel_grid).0.data_ref_mut();
+    SPByteSlice {
         start: data.as_mut_ptr_range().start,
         length: data.len(),
     }

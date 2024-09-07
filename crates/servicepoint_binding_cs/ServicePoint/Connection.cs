@@ -20,14 +20,19 @@ public sealed class Connection : SpNativeInstance<BindGen.Connection>
     {
         unsafe
         {
-            return NativeMethods.sp_connection_send(Instance, packet.Into());
+            return NativeMethods.sp_connection_send_packet(Instance, packet.Into());
         }
     }
 
-    private protected override unsafe void Dealloc()
+    public bool Send(Command command)
     {
-        NativeMethods.sp_connection_dealloc(Instance);
+        unsafe
+        {
+            return NativeMethods.sp_connection_send_command(Instance, command.Into());
+        }
     }
+
+    private protected override unsafe void Free() => NativeMethods.sp_connection_free(Instance);
 
     private unsafe Connection(BindGen.Connection* instance) : base(instance)
     {

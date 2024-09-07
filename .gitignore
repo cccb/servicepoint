@@ -4,3 +4,4 @@ out
 bin
 obj
 .direnv
+.envrc

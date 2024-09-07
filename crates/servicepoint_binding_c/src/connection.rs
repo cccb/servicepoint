@@ -1,13 +1,24 @@
-//! C functions for interacting with `Connection`s
+//! C functions for interacting with `SPConnection`s
 //!
 //! prefix `sp_connection_`
 
 use std::ffi::{c_char, CStr};
 use std::ptr::null_mut;
 
-use servicepoint::{Connection, Packet};
+use crate::{SPCommand, SPPacket};
 
-/// Creates a new instance of `Connection`.
+/// A connection to the display.
+///
+/// # Examples
+///
+/// ```C
+/// CConnection connection = sp_connection_open("172.23.42.29:2342");
+/// if (connection != NULL)
+///     sp_connection_send_command(connection, sp_command_clear());
+/// ```
+pub struct SPConnection(pub(crate) servicepoint::Connection);
+
+/// Creates a new instance of `SPConnection`.
 ///
 /// returns: NULL if connection fails, or connected instance
 ///
@@ -20,22 +31,23 @@ use servicepoint::{Connection, Packet};
 /// The caller has to make sure that:
 ///
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_connection_dealloc`.
+///   by explicitly calling `sp_connection_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_open(
     host: *const c_char,
-) -> *mut Connection {
+) -> *mut SPConnection {
     let host = CStr::from_ptr(host).to_str().expect("Bad encoding");
-    let connection = match Connection::open(host) {
+    let connection = match servicepoint::Connection::open(host) {
         Err(_) => return null_mut(),
         Ok(value) => value,
     };
 
-    Box::into_raw(Box::new(connection))
+    Box::into_raw(Box::new(SPConnection(connection)))
 }
 
-/// Sends a `Packet` to the display using the `Connection`.
-/// The passed `Packet` gets consumed.
+/// Sends a `SPPacket` to the display using the `SPConnection`.
+///
+/// The passed `packet` gets consumed.
 ///
 /// returns: true in case of success
 ///
@@ -43,27 +55,49 @@ pub unsafe extern "C" fn sp_connection_open(
 ///
 /// The caller has to make sure that:
 ///
-/// - `connection` points to a valid instance of `Connection`
-/// - `packet` points to a valid instance of `Packet`
+/// - `connection` points to a valid instance of `SPConnection`
+/// - `packet` points to a valid instance of `SPPacket`
 /// - `packet` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_connection_send(
-    connection: *const Connection,
-    packet: *mut Packet,
+pub unsafe extern "C" fn sp_connection_send_packet(
+    connection: *const SPConnection,
+    packet: *mut SPPacket,
 ) -> bool {
     let packet = Box::from_raw(packet);
-    (*connection).send(*packet).is_ok()
+    (*connection).0.send((*packet).0).is_ok()
 }
 
-/// Closes and deallocates a `Connection`.
+/// Sends a `SPCommand` to the display using the `SPConnection`.
+///
+/// The passed `command` gets consumed.
+///
+/// returns: true in case of success
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `this` points to a valid `Connection`
-/// - `this` is not used concurrently or after this call
+/// - `connection` points to a valid instance of `SPConnection`
+/// - `command` points to a valid instance of `SPPacket`
+/// - `command` is not used concurrently or after this call
 #[no_mangle]
-pub unsafe extern "C" fn sp_connection_dealloc(ptr: *mut Connection) {
-    _ = Box::from_raw(ptr);
+pub unsafe extern "C" fn sp_connection_send_command(
+    connection: *const SPConnection,
+    command: *mut SPCommand,
+) -> bool {
+    let command = (*Box::from_raw(command)).0;
+    (*connection).0.send(command).is_ok()
+}
+
+/// Closes and deallocates a `SPConnection`.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `connection` points to a valid `SPConnection`
+/// - `connection` is not used concurrently or after this call
+#[no_mangle]
+pub unsafe extern "C" fn sp_connection_free(connection: *mut SPConnection) {
+    _ = Box::from_raw(connection);
 }

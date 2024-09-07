@@ -96,8 +96,5 @@ public sealed class PixelGrid : SpNativeInstance<BindGen.PixelGrid>
     {
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_pixel_grid_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_pixel_grid_free(Instance);
 }

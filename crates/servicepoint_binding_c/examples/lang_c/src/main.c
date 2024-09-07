@@ -2,18 +2,17 @@
 #include "servicepoint.h"
 
 int main(void) {
-    sp_Connection *connection = sp_connection_open("localhost:2342");
+    SPConnection *connection = sp_connection_open("172.23.42.29:2342");
     if (connection == NULL)
         return 1;
 
-    sp_PixelGrid *pixels = sp_pixel_grid_new(sp_PIXEL_WIDTH, sp_PIXEL_HEIGHT);
+    SPPixelGrid *pixels = sp_pixel_grid_new(SP_PIXEL_WIDTH, SP_PIXEL_HEIGHT);
     sp_pixel_grid_fill(pixels, true);
 
-    sp_Command *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
-    sp_Packet *packet = sp_packet_from_command(command);
-    if (!sp_connection_send(connection, packet))
-        return 1;
+    SPCommand *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
+    while (sp_connection_send_command(connection, sp_command_clone(command)));
 
-    sp_connection_dealloc(connection);
+    sp_command_free(command);
+    sp_connection_free(connection);
     return 0;
 }

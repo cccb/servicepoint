@@ -14,278 +14,1212 @@ namespace ServicePoint.BindGen
     {
         const string __DllName = "servicepoint_binding_c";
 
-        public const nuint TILE_SIZE = 8;
-        public const nuint TILE_WIDTH = 56;
-        public const nuint TILE_HEIGHT = 20;
+        public const nuint SP_TILE_SIZE = 8;
+        public const nuint SP_TILE_WIDTH = 56;
+        public const nuint SP_TILE_HEIGHT = 20;
 
 
-        /// <summary>Creates a new `BitVec` instance.  # Arguments  * `size`: size in bits.  returns: `BitVec` with all bits set to false.  # Panics  When `size` is not divisible by 8.  # Safety  The caller has to make sure that:  - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_bit_vec_dealloc`.</summary>
+        /// <summary>
+        ///  Creates a new `SPBitVec` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `size`: size in bits.
+        ///
+        ///  returns: `SPBitVec` with all bits set to false. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  When `size` is not divisible by 8.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bit_vec_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBitVec* sp_bit_vec_new(nuint size);
+        public static extern BitVec* sp_bit_vec_new(nuint size);
 
-        /// <summary>Interpret the data as a series of bits and load then into a new `BitVec` instance.  # Safety  The caller has to make sure that:  - `data` points to a valid memory location of at least `data_length` bytes in size. - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_bit_vec_dealloc`.</summary>
+        /// <summary>
+        ///  Interpret the data as a series of bits and load then into a new `SPBitVec` instance.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory location of at least `data_length`
+        ///    bytes in size.
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bit_vec_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBitVec* sp_bit_vec_load(byte* data, nuint data_length);
+        public static extern BitVec* sp_bit_vec_load(byte* data, nuint data_length);
 
-        /// <summary>Clones a `BitVec`.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to concurrently - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_bit_vec_dealloc`.</summary>
+        /// <summary>
+        ///  Clones a `SPBitVec`.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid `SPBitVec`
+        ///  - `bit_vec` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bit_vec_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBitVec* sp_bit_vec_clone(CBitVec* @this);
+        public static extern BitVec* sp_bit_vec_clone(BitVec* bit_vec);
 
-        /// <summary>Deallocates a `BitVec`.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not used concurrently or after this call - `this` was not passed to another consuming function, e.g. to create a `Command`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_dealloc(CBitVec* @this);
+        /// <summary>
+        ///  Deallocates a `SPBitVec`.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid `SPBitVec`
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `bit_vec` was not passed to another consuming function, e.g. to create a `SPCommand`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bit_vec_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bit_vec_free(BitVec* bit_vec);
 
-        /// <summary>Gets the value of a bit from the `BitVec`.  # Arguments  * `this`: instance to read from * `index`: the bit index to read  returns: value of the bit  # Panics  When accessing `index` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to concurrently</summary>
+        /// <summary>
+        ///  Gets the value of a bit from the `SPBitVec`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to read from
+        ///  - `index`: the bit index to read
+        ///
+        ///  returns: value of the bit
+        ///
+        ///  # Panics
+        ///
+        ///  When accessing `index` out of bounds.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid `SPBitVec`
+        ///  - `bit_vec` is not written to concurrently
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_get(CBitVec* @this, nuint index);
+        public static extern bool sp_bit_vec_get(BitVec* bit_vec, nuint index);
 
-        /// <summary>Sets the value of a bit in the `BitVec`.  # Arguments  * `this`: instance to write to * `index`: the bit index to edit * `value`: the value to set the bit to  returns: old value of the bit  # Panics  When accessing `index` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
+        /// <summary>
+        ///  Sets the value of a bit in the `SPBitVec`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///  - `index`: the bit index to edit
+        ///  - `value`: the value to set the bit to
+        ///
+        ///  returns: old value of the bit
+        ///
+        ///  # Panics
+        ///
+        ///  When accessing `index` out of bounds.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid `SPBitVec`
+        ///  - `bit_vec` is not written to or read from concurrently
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_set(CBitVec* @this, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
+        public static extern void sp_bit_vec_set(BitVec* bit_vec, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
 
-        /// <summary>Sets the value of all bits in the `BitVec`.  # Arguments  * `value`: the value to set all bits to  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
+        /// <summary>
+        ///  Sets the value of all bits in the `SPBitVec`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///  - `value`: the value to set all bits to
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid `SPBitVec`
+        ///  - `bit_vec` is not written to or read from concurrently
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_fill(CBitVec* @this, [MarshalAs(UnmanagedType.U1)] bool value);
+        public static extern void sp_bit_vec_fill(BitVec* bit_vec, [MarshalAs(UnmanagedType.U1)] bool value);
 
-        /// <summary>Gets the length of the `BitVec` in bits.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec`</summary>
+        /// <summary>
+        ///  Gets the length of the `SPBitVec` in bits.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid `SPBitVec`
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bit_vec_len(CBitVec* @this);
+        public static extern nuint sp_bit_vec_len(BitVec* bit_vec);
 
-        /// <summary>Returns true if length is 0.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec`</summary>
+        /// <summary>
+        ///  Returns true if length is 0.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid `SPBitVec`
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_is_empty(CBitVec* @this);
+        public static extern bool sp_bit_vec_is_empty(BitVec* bit_vec);
 
-        /// <summary>Gets an unsafe reference to the data of the `BitVec` instance.  ## Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - the returned memory range is never accessed after the passed `BitVec` has been freed - the returned memory range is never accessed concurrently, either via the `BitVec` or directly</summary>
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the `SPBitVec` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  ## Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid `SPBitVec`
+        ///  - the returned memory range is never accessed after the passed `SPBitVec` has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the `SPBitVec` or directly
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bit_vec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_bit_vec_unsafe_data_ref(CBitVec* @this);
+        public static extern ByteSlice sp_bit_vec_unsafe_data_ref(BitVec* bit_vec);
 
-        /// <summary>Creates a new `BrightnessGrid` with the specified dimensions.  returns: `BrightnessGrid` initialized to 0.  # Safety  The caller has to make sure that:  - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_brightness_grid_dealloc`.</summary>
+        /// <summary>
+        ///  Creates a new `SPBrightnessGrid` with the specified dimensions.
+        ///
+        ///  returns: `SPBrightnessGrid` initialized to 0. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_brightness_grid_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBrightnessGrid* sp_brightness_grid_new(nuint width, nuint height);
+        public static extern BrightnessGrid* sp_brightness_grid_new(nuint width, nuint height);
 
-        /// <summary>Loads a `BrightnessGrid` with the specified dimensions from the provided data.  # Panics  When the provided `data_length` is not sufficient for the `height` and `width`  # Safety  The caller has to make sure that:  - `data` points to a valid memory location of at least `data_length` bytes in size. - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_brightness_grid_dealloc`.</summary>
+        /// <summary>
+        ///  Loads a `SPBrightnessGrid` with the specified dimensions from the provided data.
+        ///
+        ///  # Panics
+        ///
+        ///  When the provided `data_length` is not sufficient for the `height` and `width`
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory location of at least `data_length`
+        ///    bytes in size.
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_brightness_grid_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBrightnessGrid* sp_brightness_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        public static extern BrightnessGrid* sp_brightness_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
-        /// <summary>Clones a `BrightnessGrid`.  # Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid` - `this` is not written to concurrently - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_brightness_grid_dealloc`.</summary>
+        /// <summary>
+        ///  Clones a `SPBrightnessGrid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid `SPBrightnessGrid`
+        ///  - `brightness_grid` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_brightness_grid_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CBrightnessGrid* sp_brightness_grid_clone(CBrightnessGrid* @this);
+        public static extern BrightnessGrid* sp_brightness_grid_clone(BrightnessGrid* brightness_grid);
 
-        /// <summary>Deallocates a `BrightnessGrid`.  # Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid` - `this` is not used concurrently or after this call - `this` was not passed to another consuming function, e.g. to create a `Command`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_brightness_grid_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_dealloc(CBrightnessGrid* @this);
+        /// <summary>
+        ///  Deallocates a `SPBrightnessGrid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid `SPBrightnessGrid`
+        ///  - `brightness_grid` is not used concurrently or after this call
+        ///  - `brightness_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_brightness_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_brightness_grid_free(BrightnessGrid* brightness_grid);
 
-        /// <summary>Gets the current value at the specified position.  # Arguments  * `this`: instance to read from * `x` and `y`: position of the cell to read  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid` - `this` is not written to concurrently</summary>
+        /// <summary>
+        ///  Gets the current value at the specified position.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///  - `x` and `y`: position of the cell to read
+        ///
+        ///  # Panics
+        ///
+        ///  When accessing `x` or `y` out of bounds.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid `SPBrightnessGrid`
+        ///  - `brightness_grid` is not written to concurrently
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_brightness_grid_get(CBrightnessGrid* @this, nuint x, nuint y);
+        public static extern byte sp_brightness_grid_get(BrightnessGrid* brightness_grid, nuint x, nuint y);
 
-        /// <summary>Sets the value of the specified position in the `BrightnessGrid`.  # Arguments  * `this`: instance to write to * `x` and `y`: position of the cell * `value`: the value to write to the cell  returns: old value of the cell  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
+        /// <summary>
+        ///  Sets the value of the specified position in the `SPBrightnessGrid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to write to
+        ///  - `x` and `y`: position of the cell
+        ///  - `value`: the value to write to the cell
+        ///
+        ///  returns: old value of the cell
+        ///
+        ///  # Panics
+        ///
+        ///  - When accessing `x` or `y` out of bounds.
+        ///  - When providing an invalid brightness value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid `SPBitVec`
+        ///  - `brightness_grid` is not written to or read from concurrently
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_set(CBrightnessGrid* @this, nuint x, nuint y, byte value);
+        public static extern void sp_brightness_grid_set(BrightnessGrid* brightness_grid, nuint x, nuint y, byte value);
 
-        /// <summary>Sets the value of all cells in the `BrightnessGrid`.  # Arguments  * `this`: instance to write to * `value`: the value to set all cells to  # Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid` - `this` is not written to or read from concurrently</summary>
+        /// <summary>
+        ///  Sets the value of all cells in the `SPBrightnessGrid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to write to
+        ///  - `value`: the value to set all cells to
+        ///
+        ///  # Panics
+        ///
+        ///  - When providing an invalid brightness value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid `SPBrightnessGrid`
+        ///  - `brightness_grid` is not written to or read from concurrently
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_fill(CBrightnessGrid* @this, byte value);
+        public static extern void sp_brightness_grid_fill(BrightnessGrid* brightness_grid, byte value);
 
-        /// <summary>Gets the width of the `BrightnessGrid` instance.  # Arguments  * `this`: instance to read from  # Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid`</summary>
+        /// <summary>
+        ///  Gets the width of the `SPBrightnessGrid` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid `SPBrightnessGrid`
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_brightness_grid_width(CBrightnessGrid* @this);
+        public static extern nuint sp_brightness_grid_width(BrightnessGrid* brightness_grid);
 
-        /// <summary>Gets the height of the `BrightnessGrid` instance.  # Arguments  * `this`: instance to read from  # Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid`</summary>
+        /// <summary>
+        ///  Gets the height of the `SPBrightnessGrid` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid `SPBrightnessGrid`
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_brightness_grid_height(CBrightnessGrid* @this);
+        public static extern nuint sp_brightness_grid_height(BrightnessGrid* brightness_grid);
 
-        /// <summary>Gets an unsafe reference to the data of the `BrightnessGrid` instance.  ## Safety  The caller has to make sure that:  - `this` points to a valid `BrightnessGrid` - the returned memory range is never accessed after the passed `BrightnessGrid` has been freed - the returned memory range is never accessed concurrently, either via the `BrightnessGrid` or directly</summary>
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the `SPBrightnessGrid` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  ## Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid `SPBrightnessGrid`
+        ///  - the returned memory range is never accessed after the passed `SPBrightnessGrid` has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the `SPBrightnessGrid` or directly
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_brightness_grid_unsafe_data_ref(CBrightnessGrid* @this);
+        public static extern ByteSlice sp_brightness_grid_unsafe_data_ref(BrightnessGrid* brightness_grid);
 
-        /// <summary>Creates a new `Cp437Grid` with the specified dimensions.  returns: `Cp437Grid` initialized to 0.  # Safety  The caller has to make sure that:  - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_cp437_grid_dealloc`.</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCp437Grid* sp_cp437_grid_new(nuint width, nuint height);
-
-        /// <summary>Loads a `Cp437Grid` with the specified dimensions from the provided data.  # Panics  When the provided `data_length` is not sufficient for the `height` and `width`  # Safety  The caller has to make sure that:  - `data` points to a valid memory location of at least `data_length` bytes in size. - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_cp437_grid_dealloc`.</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
-
-        /// <summary>Clones a `Cp437Grid`.  # Safety  The caller has to make sure that:  - `this` points to a valid `Cp437Grid` - `this` is not written to concurrently - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_cp437_grid_dealloc`.</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CCp437Grid* sp_cp437_grid_clone(CCp437Grid* @this);
-
-        /// <summary>Deallocates a `Cp437Grid`.  # Safety  The caller has to make sure that:  - `this` points to a valid `Cp437Grid` - `this` is not used concurrently or after this call - `this` was not passed to another consuming function, e.g. to create a `Command`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_dealloc(CCp437Grid* @this);
-
-        /// <summary>Gets the current value at the specified position.  # Arguments  * `this`: instance to read from * `x` and `y`: position of the cell to read  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `Cp437Grid` - `this` is not written to concurrently</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_cp437_grid_get(CCp437Grid* @this, nuint x, nuint y);
-
-        /// <summary>Sets the value of the specified position in the `Cp437Grid`.  # Arguments  * `this`: instance to write to * `x` and `y`: position of the cell * `value`: the value to write to the cell  returns: old value of the cell  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `BitVec` - `this` is not written to or read from concurrently</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_set(CCp437Grid* @this, nuint x, nuint y, byte value);
-
-        /// <summary>Sets the value of all cells in the `Cp437Grid`.  # Arguments  * `this`: instance to write to * `value`: the value to set all cells to  # Safety  The caller has to make sure that:  - `this` points to a valid `Cp437Grid` - `this` is not written to or read from concurrently</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_fill(CCp437Grid* @this, byte value);
-
-        /// <summary>Gets the width of the `Cp437Grid` instance.  # Arguments  * `this`: instance to read from  # Safety  The caller has to make sure that:  - `this` points to a valid `Cp437Grid`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_width(CCp437Grid* @this);
-
-        /// <summary>Gets the height of the `Cp437Grid` instance.  # Arguments  * `this`: instance to read from  # Safety  The caller has to make sure that:  - `this` points to a valid `Cp437Grid`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_height(CCp437Grid* @this);
-
-        /// <summary>Gets an unsafe reference to the data of the `Cp437Grid` instance.  ## Safety  The caller has to make sure that:  - `this` points to a valid `Cp437Grid` - the returned memory range is never accessed after the passed `Cp437Grid` has been freed - the returned memory range is never accessed concurrently, either via the `Cp437Grid` or directly</summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_cp437_grid_unsafe_data_ref(CCp437Grid* @this);
-
-        /// <summary>Tries to turn a `Packet` into a `Command`. The packet is deallocated in the process.  Returns: pointer to new `Command` instance or NULL  # Safety  The caller has to make sure that:  - `packet` points to a valid instance of `Packet` - `packet` is not used concurrently or after this call - the result is checked for NULL - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Tries to turn a `SPPacket` into a `SPCommand`.
+        ///
+        ///  The packet is deallocated in the process.
+        ///
+        ///  Returns: pointer to new `SPCommand` instance or NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `SPPacket` points to a valid instance of `SPPacket`
+        ///  - `SPPacket` is not used concurrently or after this call
+        ///  - the result is checked for NULL
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_try_from_packet(Packet* packet);
 
-        /// <summary>Clones a `Command` instance.  # Safety  The caller has to make sure that:  - `this` points to a valid instance of `Command` - `this` is not written to concurrently - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Clones a `SPCommand` instance.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `command` points to a valid instance of `SPCommand`
+        ///  - `command` is not written to concurrently
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_clone(Command* original);
+        public static extern Command* sp_command_clone(Command* command);
 
-        /// <summary>Allocates a new `Command::Clear` instance.  # Safety  The caller has to make sure that:  - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Set all pixels to the off state.
+        ///
+        ///  Does not affect brightness.
+        ///
+        ///  Returns: a new `Command::Clear` instance. Will never return NULL.
+        ///
+        ///  # Examples
+        ///
+        ///  ```C
+        ///  sp_connection_send_command(connection, sp_command_clear());
+        ///  ```
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_clear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_clear();
 
-        /// <summary>Allocates a new `Command::HardReset` instance.  # Safety  The caller has to make sure that:  - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Kills the udp daemon on the display, which usually results in a restart.
+        ///
+        ///  Please do not send this in your normal program flow.
+        ///
+        ///  Returns: a new `Command::HardReset` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_hard_reset", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_hard_reset();
 
-        /// <summary>Allocates a new `Command::FadeOut` instance.  # Safety  The caller has to make sure that:  - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  A yet-to-be-tested command.
+        ///
+        ///  Returns: a new `Command::FadeOut` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_fade_out", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_fade_out();
 
-        /// <summary>Allocates a new `Command::Brightness` instance for setting the brightness of all tiles to the same value.  # Panics  - When the provided brightness value is out of range (0-11).  # Safety  The caller has to make sure that:  - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Set the brightness of all tiles to the same value.
+        ///
+        ///  Returns: a new `Command::Brightness` instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - When the provided brightness value is out of range (0-11).
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_brightness(byte brightness);
 
-        /// <summary>Allocates a new `Command::CharBrightness` instance. The passed `ByteGrid` gets consumed.  # Safety  The caller has to make sure that:  - `byte_grid` points to a valid instance of `ByteGrid` - `byte_grid` is not used concurrently or after this call - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Set the brightness of individual tiles in a rectangular area of the display.
+        ///
+        ///  The passed `SPBrightnessGrid` gets consumed.
+        ///
+        ///  Returns: a new `Command::CharBrightness` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `grid` points to a valid instance of `SPBrightnessGrid`
+        ///  - `grid` is not used concurrently or after this call
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_char_brightness(nuint x, nuint y, CBrightnessGrid* byte_grid);
+        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* grid);
 
-        /// <summary>Allocates a new `Command::BitmapLinear` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Set pixel data starting at the pixel offset on screen.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained `SPBitVec` is always uncompressed.
+        ///
+        ///  The passed `SPBitVec` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinear` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid instance of `SPBitVec`
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
-        /// <summary>Allocates a new `Command::BitmapLinearAnd` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Set pixel data according to an and-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained `SPBitVec` is always uncompressed.
+        ///
+        ///  The passed `SPBitVec` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinearAnd` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid instance of `SPBitVec`
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_and", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_and(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_and(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
-        /// <summary>Allocates a new `Command::BitmapLinearOr` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Set pixel data according to an or-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained `SPBitVec` is always uncompressed.
+        ///
+        ///  The passed `SPBitVec` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinearOr` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid instance of `SPBitVec`
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_or", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_or(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_or(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
-        /// <summary>Allocates a new `Command::BitmapLinearXor` instance. The passed `BitVec` gets consumed.  # Safety  The caller has to make sure that:  - `bit_vec` points to a valid instance of `BitVec` - `bit_vec` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Set pixel data according to a xor-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained `SPBitVec` is always uncompressed.
+        ///
+        ///  The passed `SPBitVec` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinearXor` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid instance of `SPBitVec`
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_xor", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, CBitVec* bit_vec, CompressionCode compression);
+        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, BitVec* bit_vec, CompressionCode compression);
 
-        /// <summary>Allocates a new `Command::Cp437Data` instance. The passed `ByteGrid` gets consumed.  # Safety  The caller has to make sure that:  - `byte_grid` points to a valid instance of `ByteGrid` - `byte_grid` is not used concurrently or after this call - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Show text on the screen.
+        ///
+        ///  &lt;div class="warning"&gt;
+        ///      The library does not currently convert between UTF-8 and CP-437.
+        ///      Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
+        ///  &lt;/div&gt;
+        ///
+        ///  The passed `SPCp437Grid` gets consumed.///
+        ///
+        ///  Returns: a new `Command::Cp437Data` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `grid` points to a valid instance of `SPCp437Grid`
+        ///  - `grid` is not used concurrently or after this call
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_cp437_data(nuint x, nuint y, CCp437Grid* byte_grid);
+        public static extern Command* sp_command_cp437_data(nuint x, nuint y, Cp437Grid* grid);
 
-        /// <summary>Allocates a new `Command::BitmapLinearWin` instance. The passed `PixelGrid` gets consumed.  # Safety  The caller has to make sure that:  - `pixel_grid` points to a valid instance of `PixelGrid` - `pixel_grid` is not used concurrently or after this call - `compression` matches one of the allowed enum values - the returned `Command` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_command_dealloc`.</summary>
+        /// <summary>
+        ///  Sets a window of pixels to the specified values.
+        ///
+        ///  The passed `SPPixelGrid` gets consumed.
+        ///
+        ///  Returns: a new `Command::BitmapLinearWin` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid instance of `SPPixelGrid`
+        ///  - `pixel_grid` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Command* sp_command_bitmap_linear_win(nuint x, nuint y, PixelGrid* pixel_grid, CompressionCode compression_code);
 
-        /// <summary>Deallocates a `Command`.  # Safety  The caller has to make sure that:  - `this` points to a valid `Command` - `this` is not used concurrently or after this call - `this` was not passed to another consuming function, e.g. to create a `Packet`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_command_dealloc(Command* ptr);
+        /// <summary>
+        ///  Deallocates a `SPCommand`.
+        ///
+        ///  # Examples
+        ///
+        ///  ```C
+        ///  SPCommand c = sp_command_clear();
+        ///  sp_command_free(c);
+        ///  ```
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `command` points to a valid `SPCommand`
+        ///  - `command` is not used concurrently or after this call
+        ///  - `command` was not passed to another consuming function, e.g. to create a `SPPacket`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_command_free(Command* command);
 
-        /// <summary>Creates a new instance of `Connection`.  returns: NULL if connection fails, or connected instance  # Panics  Bad string encoding  # Safety  The caller has to make sure that:  - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_connection_dealloc`.</summary>
+        /// <summary>
+        ///  Creates a new instance of `SPConnection`.
+        ///
+        ///  returns: NULL if connection fails, or connected instance
+        ///
+        ///  # Panics
+        ///
+        ///  Bad string encoding
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_connection_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Connection* sp_connection_open(byte* host);
 
-        /// <summary>Sends a `Packet` to the display using the `Connection`. The passed `Packet` gets consumed.  returns: true in case of success  # Safety  The caller has to make sure that:  - `connection` points to a valid instance of `Connection` - `packet` points to a valid instance of `Packet` - `packet` is not used concurrently or after this call</summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_send", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        /// <summary>
+        ///  Sends a `SPPacket` to the display using the `SPConnection`.
+        ///
+        ///  The passed `packet` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of `SPConnection`
+        ///  - `packet` points to a valid instance of `SPPacket`
+        ///  - `packet` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send(Connection* connection, Packet* packet);
+        public static extern bool sp_connection_send_packet(Connection* connection, Packet* packet);
 
-        /// <summary>Closes and deallocates a `Connection`.  # Safety  The caller has to make sure that:  - `this` points to a valid `Connection` - `this` is not used concurrently or after this call</summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_connection_dealloc(Connection* ptr);
-
-        /// <summary>Creates a new `PixelGrid` with the specified dimensions.  # Arguments  * `width`: size in pixels in x-direction * `height`: size in pixels in y-direction  returns: `PixelGrid` initialized to all pixels off  # Panics  - when the width is not dividable by 8  # Safety  The caller has to make sure that:  - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_pixel_grid_dealloc`.</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern PixelGrid* sp_pixel_grid_new(nuint width, nuint height);
-
-        /// <summary>Loads a `PixelGrid` with the specified dimensions from the provided data.  # Arguments  * `width`: size in pixels in x-direction * `height`: size in pixels in y-direction  returns: `PixelGrid` that contains a copy of the provided data  # Panics  - when the dimensions and data size do not match exactly. - when the width is not dividable by 8  # Safety  The caller has to make sure that:  - `data` points to a valid memory location of at least `data_length` bytes in size. - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_pixel_grid_dealloc`.</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern PixelGrid* sp_pixel_grid_load(nuint width, nuint height, byte* data, nuint data_length);
-
-        /// <summary>Clones a `PixelGrid`.  # Safety  The caller has to make sure that:  - `this` points to a valid `PixelGrid` - `this` is not written to concurrently - the returned instance is freed in some way, either by using a consuming function or by explicitly calling `sp_pixel_grid_dealloc`.</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern PixelGrid* sp_pixel_grid_clone(PixelGrid* @this);
-
-        /// <summary>Deallocates a `PixelGrid`.  # Safety  The caller has to make sure that:  - `this` points to a valid `PixelGrid` - `this` is not used concurrently or after this call - `this` was not passed to another consuming function, e.g. to create a `Command`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_pixel_grid_dealloc(PixelGrid* @this);
-
-        /// <summary>Gets the current value at the specified position in the `PixelGrid`.  # Arguments  * `this`: instance to read from * `x` and `y`: position of the cell to read  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `PixelGrid` - `this` is not written to concurrently</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        /// <summary>
+        ///  Sends a `SPCommand` to the display using the `SPConnection`.
+        ///
+        ///  The passed `command` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of `SPConnection`
+        ///  - `command` points to a valid instance of `SPPacket`
+        ///  - `command` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_pixel_grid_get(PixelGrid* @this, nuint x, nuint y);
+        public static extern bool sp_connection_send_command(Connection* connection, Command* command);
 
-        /// <summary>Sets the value of the specified position in the `PixelGrid`.  # Arguments  * `this`: instance to write to * `x` and `y`: position of the cell * `value`: the value to write to the cell  returns: old value of the cell  # Panics  When accessing `x` or `y` out of bounds.  # Safety  The caller has to make sure that:  - `this` points to a valid `PixelGrid` - `this` is not written to or read from concurrently</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_pixel_grid_set(PixelGrid* @this, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
+        /// <summary>
+        ///  Closes and deallocates a `SPConnection`.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid `SPConnection`
+        ///  - `connection` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_connection_free(Connection* connection);
 
-        /// <summary>Sets the state of all pixels in the `PixelGrid`.  # Arguments  * `this`: instance to write to * `value`: the value to set all pixels to  # Safety  The caller has to make sure that:  - `this` points to a valid `PixelGrid` - `this` is not written to or read from concurrently</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_pixel_grid_fill(PixelGrid* @this, [MarshalAs(UnmanagedType.U1)] bool value);
+        /// <summary>
+        ///  Creates a new `SPCp437Grid` with the specified dimensions.
+        ///
+        ///  returns: `SPCp437Grid` initialized to 0.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_cp437_grid_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Cp437Grid* sp_cp437_grid_new(nuint width, nuint height);
 
-        /// <summary>Gets the width in pixels of the `PixelGrid` instance.  # Arguments  * `this`: instance to read from  # Safety  The caller has to make sure that:  - `this` points to a valid `PixelGrid`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_pixel_grid_width(PixelGrid* @this);
+        /// <summary>
+        ///  Loads a `SPCp437Grid` with the specified dimensions from the provided data.
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  When the provided `data_length` is not sufficient for the `height` and `width`
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory location of at least `data_length`
+        ///    bytes in size.
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_cp437_grid_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Cp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
-        /// <summary>Gets the height in pixels of the `PixelGrid` instance.  # Arguments  * `this`: instance to read from  # Safety  The caller has to make sure that:  - `this` points to a valid `PixelGrid`</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_pixel_grid_height(PixelGrid* @this);
+        /// <summary>
+        ///  Clones a `SPCp437Grid`.
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid `SPCp437Grid`
+        ///  - `cp437_grid` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_cp437_grid_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Cp437Grid* sp_cp437_grid_clone(Cp437Grid* cp437_grid);
 
-        /// <summary>Gets an unsafe reference to the data of the `PixelGrid` instance.  ## Safety  The caller has to make sure that:  - `this` points to a valid `PixelGrid` - the returned memory range is never accessed after the passed `PixelGrid` has been freed - the returned memory range is never accessed concurrently, either via the `PixelGrid` or directly</summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern CByteSlice sp_pixel_grid_unsafe_data_ref(PixelGrid* @this);
+        /// <summary>
+        ///  Deallocates a `SPCp437Grid`.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid `SPCp437Grid`
+        ///  - `cp437_grid` is not used concurrently or after cp437_grid call
+        ///  - `cp437_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_cp437_grid_free(Cp437Grid* cp437_grid);
 
-        /// <summary>Turns a `Command` into a `Packet`. The `Command` gets consumed.  # Safety  The caller has to make sure that:  - `command` points to a valid instance of `Command` - `command` is not used concurrently or after this call - the returned `Packet` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_packet_dealloc`.</summary>
+        /// <summary>
+        ///  Gets the current value at the specified position.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `cp437_grid`: instance to read from
+        ///  - `x` and `y`: position of the cell to read
+        ///
+        ///  # Panics
+        ///
+        ///  When accessing `x` or `y` out of bounds.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid `SPCp437Grid`
+        ///  - `cp437_grid` is not written to concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern byte sp_cp437_grid_get(Cp437Grid* cp437_grid, nuint x, nuint y);
+
+        /// <summary>
+        ///  Sets the value of the specified position in the `SPCp437Grid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `cp437_grid`: instance to write to
+        ///  - `x` and `y`: position of the cell
+        ///  - `value`: the value to write to the cell
+        ///
+        ///  returns: old value of the cell
+        ///
+        ///  # Panics
+        ///
+        ///  When accessing `x` or `y` out of bounds.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid `SPBitVec`
+        ///  - `cp437_grid` is not written to or read from concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_cp437_grid_set(Cp437Grid* cp437_grid, nuint x, nuint y, byte value);
+
+        /// <summary>
+        ///  Sets the value of all cells in the `SPCp437Grid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `cp437_grid`: instance to write to
+        ///  - `value`: the value to set all cells to
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid `SPCp437Grid`
+        ///  - `cp437_grid` is not written to or read from concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_cp437_grid_fill(Cp437Grid* cp437_grid, byte value);
+
+        /// <summary>
+        ///  Gets the width of the `SPCp437Grid` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `cp437_grid`: instance to read from
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid `SPCp437Grid`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_cp437_grid_width(Cp437Grid* cp437_grid);
+
+        /// <summary>
+        ///  Gets the height of the `SPCp437Grid` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `cp437_grid`: instance to read from
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid `SPCp437Grid`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_cp437_grid_height(Cp437Grid* cp437_grid);
+
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the `SPCp437Grid` instance.
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  ## Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid `SPCp437Grid`
+        ///  - the returned memory range is never accessed after the passed `SPCp437Grid` has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the `SPCp437Grid` or directly
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern ByteSlice sp_cp437_grid_unsafe_data_ref(Cp437Grid* cp437_grid);
+
+        /// <summary>
+        ///  Turns a `SPCommand` into a `SPPacket`.
+        ///  The `SPCommand` gets consumed.
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `SPCommand` points to a valid instance of `SPCommand`
+        ///  - `SPCommand` is not used concurrently or after this call
+        ///  - the returned `SPPacket` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Packet* sp_packet_from_command(Command* command);
 
-        /// <summary>Tries to load a `Packet` from the passed array with the specified length.  returns: NULL in case of an error, pointer to the allocated packet otherwise  # Safety  The caller has to make sure that:  - `data` points to a valid memory region of at least `length` bytes - `data` is not written to concurrently - the returned `Packet` instance is freed in some way, either by using a consuming function or by explicitly calling `sp_packet_dealloc`.</summary>
+        /// <summary>
+        ///  Tries to load a `SPPacket` from the passed array with the specified length.
+        ///
+        ///  returns: NULL in case of an error, pointer to the allocated packet otherwise
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory region of at least `length` bytes
+        ///  - `data` is not written to concurrently
+        ///  - the returned `SPPacket` instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
+        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern Packet* sp_packet_try_load(byte* data, nuint length);
 
-        /// <summary>Deallocates a `Packet`.  # Safety  The caller has to make sure that:  - `this` points to a valid `Packet` - `this` is not used concurrently or after this call</summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_dealloc", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_packet_dealloc(Packet* @this);
+        /// <summary>
+        ///  Clones a `SPPacket`.
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `packet` points to a valid `SPPacket`
+        ///  - `packet` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_packet_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp_packet_clone(Packet* packet);
+
+        /// <summary>
+        ///  Deallocates a `SPPacket`.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `packet` points to a valid `SPPacket`
+        ///  - `packet` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_packet_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_packet_free(Packet* packet);
+
+        /// <summary>
+        ///  Creates a new `SPPixelGrid` with the specified dimensions.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `width`: size in pixels in x-direction
+        ///  - `height`: size in pixels in y-direction
+        ///
+        ///  returns: `SPPixelGrid` initialized to all pixels off. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when the width is not dividable by 8
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_pixel_grid_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern PixelGrid* sp_pixel_grid_new(nuint width, nuint height);
+
+        /// <summary>
+        ///  Loads a `SPPixelGrid` with the specified dimensions from the provided data.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `width`: size in pixels in x-direction
+        ///  - `height`: size in pixels in y-direction
+        ///
+        ///  returns: `SPPixelGrid` that contains a copy of the provided data. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when the dimensions and data size do not match exactly.
+        ///  - when the width is not dividable by 8
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory location of at least `data_length` bytes in size.
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_pixel_grid_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern PixelGrid* sp_pixel_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+
+        /// <summary>
+        ///  Clones a `SPPixelGrid`.
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid `SPPixelGrid`
+        ///  - `pixel_grid` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_pixel_grid_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern PixelGrid* sp_pixel_grid_clone(PixelGrid* pixel_grid);
+
+        /// <summary>
+        ///  Deallocates a `SPPixelGrid`.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid `SPPixelGrid`
+        ///  - `pixel_grid` is not used concurrently or after pixel_grid call
+        ///  - `pixel_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_pixel_grid_free(PixelGrid* pixel_grid);
+
+        /// <summary>
+        ///  Gets the current value at the specified position in the `SPPixelGrid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `pixel_grid`: instance to read from
+        ///  - `x` and `y`: position of the cell to read
+        ///
+        ///  # Panics
+        ///
+        ///  When accessing `x` or `y` out of bounds.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid `SPPixelGrid`
+        ///  - `pixel_grid` is not written to concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_pixel_grid_get(PixelGrid* pixel_grid, nuint x, nuint y);
+
+        /// <summary>
+        ///  Sets the value of the specified position in the `SPPixelGrid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `pixel_grid`: instance to write to
+        ///  - `x` and `y`: position of the cell
+        ///  - `value`: the value to write to the cell
+        ///
+        ///  returns: old value of the cell
+        ///
+        ///  # Panics
+        ///
+        ///  When accessing `x` or `y` out of bounds.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid `SPPixelGrid`
+        ///  - `pixel_grid` is not written to or read from concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_pixel_grid_set(PixelGrid* pixel_grid, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
+
+        /// <summary>
+        ///  Sets the state of all pixels in the `SPPixelGrid`.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `pixel_grid`: instance to write to
+        ///  - `value`: the value to set all pixels to
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid `SPPixelGrid`
+        ///  - `pixel_grid` is not written to or read from concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_pixel_grid_fill(PixelGrid* pixel_grid, [MarshalAs(UnmanagedType.U1)] bool value);
+
+        /// <summary>
+        ///  Gets the width in pixels of the `SPPixelGrid` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `pixel_grid`: instance to read from
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid `SPPixelGrid`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_pixel_grid_width(PixelGrid* pixel_grid);
+
+        /// <summary>
+        ///  Gets the height in pixels of the `SPPixelGrid` instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `pixel_grid`: instance to read from
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid `SPPixelGrid`
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_pixel_grid_height(PixelGrid* pixel_grid);
+
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the `SPPixelGrid` instance.
+        ///
+        ///  ## Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `pixel_grid` points to a valid `SPPixelGrid`
+        ///  - the returned memory range is never accessed after the passed `SPPixelGrid` has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the `SPPixelGrid` or directly
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern ByteSlice sp_pixel_grid_unsafe_data_ref(PixelGrid* pixel_grid);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CBitVec
+    public unsafe partial struct BitVec
     {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CBrightnessGrid
+    public unsafe partial struct BrightnessGrid
     {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CCp437Grid
-    {
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct CByteSlice
+    public unsafe partial struct ByteSlice
     {
         public byte* start;
         public nuint length;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct Command
+    {
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -294,7 +1228,7 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct PixelGrid
+    public unsafe partial struct Cp437Grid
     {
     }
 
@@ -303,22 +1237,11 @@ namespace ServicePoint.BindGen
     {
     }
 
-
-    public enum Command
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct PixelGrid
     {
-        Clear,
-        Cp437Data,
-        BitmapLinearWin,
-        Brightness,
-        CharBrightness,
-        BitmapLinear,
-        BitmapLinearAnd,
-        BitmapLinearOr,
-        BitmapLinearXor,
-        HardReset,
-        FadeOut,
-        BitmapLegacy,
     }
+
 
     public enum CompressionCode : ushort
     {

@@ -39,7 +39,7 @@ Because of that, there is no NuGet package you can use directly.
 Including this repository as a submodule and building from source is the recommended way of using the library.
 
 ```bash
-git submodule add https://github.com/kaesaecracker/servicepoint.git
+git submodule add https://github.com/cccb/servicepoint.git
 git commit -m "add servicepoint submodule"
 ```
 

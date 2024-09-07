@@ -3,7 +3,7 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Cp437Grid : SpNativeInstance<BindGen.CCp437Grid>
+public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
 {
     public static Cp437Grid New(int width, int height)
     {
@@ -123,12 +123,9 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.CCp437Grid>
         }
     }
 
-    private unsafe Cp437Grid(BindGen.CCp437Grid* instance) : base(instance)
+    private unsafe Cp437Grid(BindGen.Cp437Grid* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_cp437_grid_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_cp437_grid_free(Instance);
 }

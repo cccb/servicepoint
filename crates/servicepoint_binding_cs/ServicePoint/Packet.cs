@@ -32,8 +32,5 @@ public sealed class Packet : SpNativeInstance<BindGen.Packet>
     {
     }
 
-    private protected override unsafe void Dealloc()
-    {
-        NativeMethods.sp_packet_dealloc(Instance);
-    }
+    private protected override unsafe void Free() => NativeMethods.sp_packet_free(Instance);
 }

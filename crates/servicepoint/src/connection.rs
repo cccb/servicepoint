@@ -9,14 +9,21 @@ use crate::Packet;
 ///
 /// # Examples
 /// ```rust
-/// # use servicepoint::Command;
 /// let connection = servicepoint::Connection::open("172.23.42.29:2342")
 ///     .expect("connection failed");
-///  connection.send(Command::Clear)
+///  connection.send(servicepoint::Command::Clear)
 ///     .expect("send failed");
 /// ```
-pub struct Connection {
-    socket: UdpSocket,
+pub enum Connection {
+    /// A real connection using the UDP protocol
+    Udp(UdpSocket),
+    /// A fake connection for testing that does not actually send anything
+    Fake,
+}
+
+#[derive(Debug)]
+pub enum SendError {
+    IoError(std::io::Error),
 }
 
 impl Connection {
@@ -37,39 +44,37 @@ impl Connection {
         info!("connecting to {addr:?}");
         let socket = UdpSocket::bind("0.0.0.0:0")?;
         socket.connect(addr)?;
-        Ok(Self { socket })
+        Ok(Self::Udp(socket))
     }
 
     /// Send something packet-like to the display. Usually this is in the form of a Command.
     ///
     /// # Arguments
     ///
-    /// * `packet`: the packet-like to send
+    /// - `packet`: the packet-like to send
     ///
-    /// returns: Ok if packet was sent, otherwise socket error
-    ///
-    /// # Errors
-    ///
-    /// Any errors produced while sending using the underlying socket.
+    /// returns: true if packet was sent, otherwise false
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
-    /// # let connection = servicepoint::Connection::open("172.23.42.29:2342")
-    /// #     .expect("connection failed");
+    /// # let connection = servicepoint::Connection::Fake;
     ///  // turn off all pixels on display
-    ///  connection.send(Command::Clear)
-    ///     .expect("send failed");
+    ///  connection.send(servicepoint::Command::Clear)
+    ///      .expect("send failed");
     /// ```
-    pub fn send(
-        &self,
-        packet: impl Into<Packet>,
-    ) -> Result<(), std::io::Error> {
+    pub fn send(&self, packet: impl Into<Packet>) -> Result<(), SendError> {
         let packet = packet.into();
         debug!("sending {packet:?}");
         let data: Vec<u8> = packet.into();
-        self.socket.send(&data)?;
-        Ok(())
+        match self {
+            Connection::Udp(socket) => {
+                socket
+                    .send(&data)
+                    .map_err(SendError::IoError)
+                    .map(move |_| ()) // ignore Ok value
+            }
+            Connection::Fake => Ok(()),
+        }
     }
 }

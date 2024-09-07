@@ -3,25 +3,84 @@ use std::mem::size_of;
 use crate::command_code::CommandCode;
 use crate::compression::into_compressed;
 use crate::{
-    Command, CompressionCode, Grid, Offset, Origin, PixelGrid, Pixels,
+    Command, CompressionCode, Grid, Offset, Origin, PixelGrid, Pixels, Tiles,
     TILE_SIZE,
 };
 
-/// A raw header. Should probably not be used directly.
-#[derive(Debug, PartialEq)]
-pub struct Header(pub u16, pub u16, pub u16, pub u16, pub u16);
+/// A raw header.
+///
+/// The header specifies the kind of command, the size of the payload and where to display the
+/// payload, where applicable.
+///
+/// Because the meaning of most fields depend on the command, there are no speaking names for them.
+///
+/// Should probably only be used directly to use features not exposed by the library.
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Header {
+    /// The first two bytes specify which command this packet represents.
+    pub command_code: u16,
+    /// First command-specific value
+    pub a: u16,
+    /// Second command-specific value
+    pub b: u16,
+    /// Third command-specific value
+    pub c: u16,
+    /// Fourth command-specific value
+    pub d: u16,
+}
 
-/// The raw payload. Should probably not be used directly.
+/// The raw payload.
+///
+/// Should probably only be used directly to use features not exposed by the library.
 pub type Payload = Vec<u8>;
 
-/// The raw packet. Should probably not be used directly.
-#[derive(Debug, PartialEq)]
-pub struct Packet(pub Header, pub Payload);
+/// The raw packet.
+///
+/// Contents should probably only be used directly to use features not exposed by the library.
+///
+/// # Examples
+///
+/// Converting a packet to a command and back:
+///
+/// ```rust
+/// # use servicepoint::{Command, Packet};
+/// # let command = Command::Clear;
+/// let packet: Packet = command.into();
+/// let command: Command = Command::try_from(packet).expect("could not read packet");
+/// ```
+///
+/// Converting a packet to bytes and back:
+///
+/// ```rust
+/// # use servicepoint::{Command, Packet};
+/// # let command = Command::Clear;
+/// # let packet: Packet = command.into();
+/// let bytes: Vec<u8> = packet.into();
+/// let packet = Packet::try_from(bytes).expect("could not read packet from bytes");
+/// ```
+///
+#[derive(Clone, Debug, PartialEq)]
+pub struct Packet {
+    /// Meta-information for the packed command
+    pub header: Header,
+    /// The data for the packed command
+    pub payload: Payload,
+}
 
 impl From<Packet> for Vec<u8> {
     /// Turn the packet into raw bytes ready to send
     fn from(value: Packet) -> Self {
-        let Packet(Header(mode, a, b, c, d), payload) = value;
+        let Packet {
+            header:
+                Header {
+                    command_code: mode,
+                    a,
+                    b,
+                    c,
+                    d,
+                },
+            payload,
+        } = value;
 
         let mut packet = vec![0u8; 10 + payload.len()];
         packet[0..=1].copy_from_slice(&u16::to_be_bytes(mode));
@@ -36,13 +95,6 @@ impl From<Packet> for Vec<u8> {
     }
 }
 
-fn u16_from_be_slice(slice: &[u8]) -> u16 {
-    let mut bytes = [0u8; 2];
-    bytes[0] = slice[0];
-    bytes[1] = slice[1];
-    u16::from_be_bytes(bytes)
-}
-
 impl TryFrom<&[u8]> for Packet {
     type Error = ();
 
@@ -54,14 +106,31 @@ impl TryFrom<&[u8]> for Packet {
             return Err(());
         }
 
-        let mode = u16_from_be_slice(&value[0..=1]);
-        let a = u16_from_be_slice(&value[2..=3]);
-        let b = u16_from_be_slice(&value[4..=5]);
-        let c = u16_from_be_slice(&value[6..=7]);
-        let d = u16_from_be_slice(&value[8..=9]);
+        let header = {
+            let command_code = Self::u16_from_be_slice(&value[0..=1]);
+            let a = Self::u16_from_be_slice(&value[2..=3]);
+            let b = Self::u16_from_be_slice(&value[4..=5]);
+            let c = Self::u16_from_be_slice(&value[6..=7]);
+            let d = Self::u16_from_be_slice(&value[8..=9]);
+            Header {
+                command_code,
+                a,
+                b,
+                c,
+                d,
+            }
+        };
         let payload = value[10..].to_vec();
 
-        Ok(Packet(Header(mode, a, b, c, d), payload))
+        Ok(Packet { header, payload })
+    }
+}
+
+impl TryFrom<Vec<u8>> for Packet {
+    type Error = ();
+
+    fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
+        Self::try_from(value.as_slice())
     }
 }
 
@@ -79,26 +148,23 @@ impl From<Command> for Packet {
             Command::BitmapLegacy => {
                 Self::command_code_only(CommandCode::BitmapLegacy)
             }
-            Command::CharBrightness(origin, grid) => Packet(
-                Header(
-                    CommandCode::CharBrightness.into(),
-                    origin.x as u16,
-                    origin.y as u16,
-                    grid.width() as u16,
-                    grid.height() as u16,
-                ),
-                grid.into(),
-            ),
-            Command::Brightness(brightness) => Packet(
-                Header(
-                    CommandCode::Brightness.into(),
-                    0x00000,
-                    0x0000,
-                    0x0000,
-                    0x0000,
-                ),
-                vec![brightness.into()],
-            ),
+            Command::CharBrightness(origin, grid) => {
+                Self::origin_grid_to_packet(
+                    origin,
+                    grid,
+                    CommandCode::CharBrightness,
+                )
+            }
+            Command::Brightness(brightness) => Packet {
+                header: Header {
+                    command_code: CommandCode::Brightness.into(),
+                    a: 0x00000,
+                    b: 0x0000,
+                    c: 0x0000,
+                    d: 0x0000,
+                },
+                payload: vec![brightness.into()],
+            },
             Command::BitmapLinearWin(origin, pixels, compression) => {
                 Self::bitmap_win_into_packet(origin, pixels, compression)
             }
@@ -134,15 +200,10 @@ impl From<Command> for Packet {
                     bits.into(),
                 )
             }
-            Command::Cp437Data(origin, grid) => Packet(
-                Header(
-                    CommandCode::Cp437Data.into(),
-                    origin.x as u16,
-                    origin.y as u16,
-                    grid.width() as u16,
-                    grid.height() as u16,
-                ),
-                grid.into(),
+            Command::Cp437Data(origin, grid) => Self::origin_grid_to_packet(
+                origin,
+                grid,
+                CommandCode::Cp437Data,
             ),
         }
     }
@@ -159,16 +220,16 @@ impl Packet {
     ) -> Packet {
         let length = payload.len() as u16;
         let payload = into_compressed(compression, payload);
-        Packet(
-            Header(
-                command.into(),
-                offset as u16,
-                length,
-                compression.into(),
-                0,
-            ),
+        Packet {
+            header: Header {
+                command_code: command.into(),
+                a: offset as u16,
+                b: length,
+                c: compression.into(),
+                d: 0,
+            },
             payload,
-        )
+        }
     }
 
     #[allow(clippy::cast_possible_truncation)]
@@ -198,15 +259,54 @@ impl Packet {
             CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
         };
 
-        Packet(
-            Header(command.into(), tile_x, origin.y as u16, tile_w, pixel_h),
+        Packet {
+            header: Header {
+                command_code: command.into(),
+                a: tile_x,
+                b: origin.y as u16,
+                c: tile_w,
+                d: pixel_h,
+            },
             payload,
-        )
+        }
     }
 
     /// Helper method for creating empty packets only containing the command code
     fn command_code_only(code: CommandCode) -> Packet {
-        Packet(Header(code.into(), 0x0000, 0x0000, 0x0000, 0x0000), vec![])
+        Packet {
+            header: Header {
+                command_code: code.into(),
+                a: 0x0000,
+                b: 0x0000,
+                c: 0x0000,
+                d: 0x0000,
+            },
+            payload: vec![],
+        }
+    }
+
+    fn u16_from_be_slice(slice: &[u8]) -> u16 {
+        let mut bytes = [0u8; 2];
+        bytes[0] = slice[0];
+        bytes[1] = slice[1];
+        u16::from_be_bytes(bytes)
+    }
+
+    fn origin_grid_to_packet<T>(
+        origin: Origin<Tiles>,
+        grid: impl Grid<T> + Into<Payload>,
+        command_code: CommandCode,
+    ) -> Packet {
+        Packet {
+            header: Header {
+                command_code: command_code.into(),
+                a: origin.x as u16,
+                b: origin.y as u16,
+                c: grid.width() as u16,
+                d: grid.height() as u16,
+            },
+            payload: grid.into(),
+        }
     }
 }
 
@@ -216,10 +316,31 @@ mod tests {
 
     #[test]
     fn round_trip() {
-        let p = Packet(Header(0, 1, 2, 3, 4), vec![42u8; 23]);
+        let p = Packet {
+            header: Header {
+                command_code: 0,
+                a: 1,
+                b: 2,
+                c: 3,
+                d: 4,
+            },
+            payload: vec![42u8; 23],
+        };
         let data: Vec<u8> = p.into();
         let p = Packet::try_from(&*data).unwrap();
-        assert_eq!(p, Packet(Header(0, 1, 2, 3, 4), vec![42u8; 23]));
+        assert_eq!(
+            p,
+            Packet {
+                header: Header {
+                    command_code: 0,
+                    a: 1,
+                    b: 2,
+                    c: 3,
+                    d: 4
+                },
+                payload: vec![42u8; 23]
+            }
+        );
     }
 
     #[test]
