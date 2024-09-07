@@ -17,18 +17,18 @@ This crate contains C bindings for the `servicepoint` library, enabling users to
 #include "servicepoint.h"
 
 int main(void) {
-    sp_Connection *connection = sp_connection_open("localhost:2342");
+    SPConnection *connection = sp_connection_open("172.23.42.29:2342");
     if (connection == NULL)
         return 1;
 
-    sp_PixelGrid *pixels = sp_pixel_grid_new(sp_PIXEL_WIDTH, sp_PIXEL_HEIGHT);
+    SPPixelGrid *pixels = sp_pixel_grid_new(SP_PIXEL_WIDTH, SP_PIXEL_HEIGHT);
     sp_pixel_grid_fill(pixels, true);
 
-    sp_Command *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
-    sp_Packet *packet = sp_packet_from_command(command);
-    if (!sp_connection_send(connection, packet))
-        return 1;
+    SPCommand *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
+    SPPacket *packet = sp_packet_from_command(command);
+    while (sp_connection_send(connection, sp_packet_clone(packet)));
 
+    sp_packet_dealloc(packet);
     sp_connection_dealloc(connection);
     return 0;
 }
@@ -53,7 +53,7 @@ You have the choice of linking statically (recommended) or dynamically.
 ## Notes on differences to rust library
 
 - function names are: `sp_` \<struct_name\> \<rust name\>.
-- Instances get consumed in the same way they do when writing rust / C# code. Do not use an instance after an (implicit!) free.
+- Instances get consumed in the same way they do when writing rust code. Do not use an instance after an (implicit!) free.
 - Option<T> or Result<T, E> turn into nullable return values - check for NULL!
 - There are no specifics for C++ here yet. You might get a nicer header when generating directly for C++, but it should be usable.
 - Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.

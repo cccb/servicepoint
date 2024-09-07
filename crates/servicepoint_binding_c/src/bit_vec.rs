@@ -2,7 +2,7 @@
 //!
 //! prefix `sp_bit_vec_`
 
-use crate::c_slice::SPByteSlice;
+use crate::SPByteSlice;
 use servicepoint::bitvec::prelude::{BitVec, Msb0};
 
 /// A vector of bits

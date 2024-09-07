@@ -11,7 +11,7 @@ fn main() {
         .input_extern_file("../servicepoint_binding_c/src/connection.rs")
         .input_extern_file("../servicepoint_binding_c/src/pixel_grid.rs")
         .input_extern_file("../servicepoint_binding_c/src/lib.rs")
-        .input_extern_file("../servicepoint_binding_c/src/c_slice.rs")
+        .input_extern_file("../servicepoint_binding_c/src/byte_slice.rs")
         .input_extern_file("../servicepoint_binding_c/src/packet.rs")
         .input_extern_file("../servicepoint_binding_c/src/constants.rs")
         .csharp_dll_name("servicepoint_binding_c")

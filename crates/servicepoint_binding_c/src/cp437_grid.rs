@@ -2,8 +2,8 @@
 //!
 //! prefix `sp_cp437_grid_`
 
-use crate::c_slice::SPByteSlice;
-use servicepoint::{Cp437Grid, DataRef, Grid};
+use crate::SPByteSlice;
+use servicepoint::{DataRef, Grid};
 
 /// A C-wrapper for grid containing codepage 437 characters.
 ///
@@ -18,7 +18,7 @@ use servicepoint::{Cp437Grid, DataRef, Grid};
 /// sp_cp437_grid_dealloc(grid);
 /// ```
 pub struct SPCp437Grid {
-    pub(crate) actual: Cp437Grid,
+    pub(crate) actual: servicepoint::Cp437Grid,
 }
 
 impl Clone for SPCp437Grid {
@@ -45,7 +45,7 @@ pub unsafe extern "C" fn sp_cp437_grid_new(
     height: usize,
 ) -> *mut SPCp437Grid {
     Box::into_raw(Box::new(SPCp437Grid {
-        actual: Cp437Grid::new(width, height),
+        actual: servicepoint::Cp437Grid::new(width, height),
     }))
 }
 
@@ -72,7 +72,7 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
 ) -> *mut SPCp437Grid {
     let data = std::slice::from_raw_parts(data, data_length);
     Box::into_raw(Box::new(SPCp437Grid {
-        actual: Cp437Grid::load(width, height, data),
+        actual: servicepoint::Cp437Grid::load(width, height, data),
     }))
 }
 

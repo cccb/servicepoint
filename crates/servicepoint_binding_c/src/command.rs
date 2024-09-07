@@ -6,13 +6,10 @@ use std::ptr::null_mut;
 
 use servicepoint::{Brightness, Origin};
 
-use crate::bit_vec::SPBitVec;
-use crate::brightness_grid::SPBrightnessGrid;
-use crate::constants::SPCompressionCode;
-use crate::cp437_grid::SPCp437Grid;
-use crate::packet::SPPacket;
-use crate::pixel_grid::SPPixelGrid;
-use crate::SPOffset;
+use crate::{
+    SPBitVec, SPBrightnessGrid, SPCompressionCode, SPCp437Grid, SPPacket,
+    SPPixelGrid,
+};
 
 /// A low-level display command.
 ///
@@ -196,7 +193,7 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear(
-    offset: SPOffset,
+    offset: usize,
     bit_vec: *mut SPBitVec,
     compression: SPCompressionCode,
 ) -> *mut SPCommand {
@@ -229,7 +226,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_and(
-    offset: SPOffset,
+    offset: usize,
     bit_vec: *mut SPBitVec,
     compression: SPCompressionCode,
 ) -> *mut SPCommand {
@@ -262,7 +259,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_or(
-    offset: SPOffset,
+    offset: usize,
     bit_vec: *mut SPBitVec,
     compression: SPCompressionCode,
 ) -> *mut SPCommand {
@@ -295,7 +292,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 ///   by explicitly calling `sp_command_dealloc`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
-    offset: SPOffset,
+    offset: usize,
     bit_vec: *mut SPBitVec,
     compression: SPCompressionCode,
 ) -> *mut SPCommand {

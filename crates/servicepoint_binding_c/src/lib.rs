@@ -1,24 +1,55 @@
-//! C API wrapper for the `servicepoint` crate.
+//! C API wrapper for the [servicepoint](https://docs.rs/servicepoint/latest/servicepoint/) crate.
+//!
+//! # Examples
+//!
+//! Make sure to check out [this GitHub repo](https://github.com/arfst23/ServicePoint) as well!
+//!
+//! ```C
+//! #include <stdio.h>
+//! #include "servicepoint.h"
+//!
+//! int main(void) {
+//!     SPConnection *connection = sp_connection_open("172.23.42.29:2342");
+//!     if (connection == NULL)
+//!         return 1;
+//!
+//!     SPPixelGrid *pixels = sp_pixel_grid_new(SP_PIXEL_WIDTH, SP_PIXEL_HEIGHT);
+//!     sp_pixel_grid_fill(pixels, true);
+//!
+//!     SPCommand *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
+//!     SPPacket *packet = sp_packet_from_command(command);
+//!     while (sp_connection_send(connection, sp_packet_clone(packet)));
+//!
+//!     sp_packet_dealloc(packet);
+//!     sp_connection_dealloc(connection);
+//!     return 0;
+//! }
+//! ```
 
-pub use crate::c_slice::SPByteSlice;
+pub use bit_vec::*;
+pub use brightness_grid::*;
+pub use byte_slice::*;
+pub use command::*;
+pub use connection::*;
+pub use constants::*;
+pub use cp437_grid::*;
+pub use packet::*;
+pub use pixel_grid::*;
 
-pub mod bit_vec;
+mod bit_vec;
 
-pub mod brightness_grid;
+mod brightness_grid;
 
-pub mod command;
+mod command;
 
-pub mod connection;
+mod connection;
 
-pub mod packet;
+mod packet;
 
-pub mod pixel_grid;
+mod pixel_grid;
 
-pub mod c_slice;
+mod byte_slice;
 
-pub mod cp437_grid;
+mod cp437_grid;
 
-pub mod constants;
-
-/// Type alias for documenting the meaning of the variable in enum values
-pub type SPOffset = usize;
+mod constants;

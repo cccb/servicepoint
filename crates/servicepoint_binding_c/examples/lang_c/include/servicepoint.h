@@ -167,6 +167,8 @@ typedef struct SPPixelGrid SPPixelGrid;
 /**
  * Represents a span of memory (`&mut [u8]` ) as a struct usable by C code.
  *
+ * You should not create an instance of this type in your C code.
+ *
  * # Safety
  *
  * The caller has to make sure that:
@@ -174,6 +176,8 @@ typedef struct SPPixelGrid SPPixelGrid;
  * - accesses to the memory pointed to with `start` is never accessed outside `length`
  * - the lifetime of the `CByteSlice` does not outlive the memory it points to, as described in
  *   the function returning this type.
+ * - an instance of this created from C is never passed to a consuming function, as the rust code
+ *   will try to free the memory of a potentially separate allocator.
  */
 typedef struct SPByteSlice {
     /**
@@ -185,11 +189,6 @@ typedef struct SPByteSlice {
      */
     size_t length;
 } SPByteSlice;
-
-/**
- * Type alias for documenting the meaning of the variable in enum values
- */
-typedef size_t SPOffset;
 
 #ifdef __cplusplus
 extern "C" {
@@ -556,7 +555,7 @@ size_t sp_brightness_grid_width(const struct SPBrightnessGrid *this_);
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct SPCommand *sp_command_bitmap_linear(SPOffset offset,
+struct SPCommand *sp_command_bitmap_linear(size_t offset,
                                            struct SPBitVec *bit_vec,
                                            SPCompressionCode compression);
 
@@ -581,7 +580,7 @@ struct SPCommand *sp_command_bitmap_linear(SPOffset offset,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct SPCommand *sp_command_bitmap_linear_and(SPOffset offset,
+struct SPCommand *sp_command_bitmap_linear_and(size_t offset,
                                                struct SPBitVec *bit_vec,
                                                SPCompressionCode compression);
 
@@ -606,7 +605,7 @@ struct SPCommand *sp_command_bitmap_linear_and(SPOffset offset,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct SPCommand *sp_command_bitmap_linear_or(SPOffset offset,
+struct SPCommand *sp_command_bitmap_linear_or(size_t offset,
                                               struct SPBitVec *bit_vec,
                                               SPCompressionCode compression);
 
@@ -652,7 +651,7 @@ struct SPCommand *sp_command_bitmap_linear_win(size_t x,
  * - the returned `Command` instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_dealloc`.
  */
-struct SPCommand *sp_command_bitmap_linear_xor(SPOffset offset,
+struct SPCommand *sp_command_bitmap_linear_xor(size_t offset,
                                                struct SPBitVec *bit_vec,
                                                SPCompressionCode compression);
 

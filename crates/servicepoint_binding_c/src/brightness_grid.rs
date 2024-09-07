@@ -2,7 +2,7 @@
 //!
 //! prefix `sp_brightness_grid_`
 
-use crate::c_slice::SPByteSlice;
+use crate::SPByteSlice;
 use servicepoint::{Brightness, DataRef, Grid, PrimitiveGrid};
 use std::intrinsics::transmute;
 

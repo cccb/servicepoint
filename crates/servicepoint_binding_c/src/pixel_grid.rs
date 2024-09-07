@@ -4,7 +4,7 @@
 
 use servicepoint::{DataRef, Grid};
 
-use crate::c_slice::SPByteSlice;
+use crate::byte_slice::SPByteSlice;
 
 /// A grid of pixels.
 ///

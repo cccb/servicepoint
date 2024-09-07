@@ -5,7 +5,7 @@
 use std::ffi::{c_char, CStr};
 use std::ptr::null_mut;
 
-use crate::packet::SPPacket;
+use crate::SPPacket;
 
 /// A connection to the display.
 ///

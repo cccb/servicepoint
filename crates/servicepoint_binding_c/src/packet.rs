@@ -4,7 +4,7 @@
 
 use std::ptr::null_mut;
 
-use crate::command::SPCommand;
+use crate::SPCommand;
 
 /// The raw packet
 pub struct SPPacket(pub(crate) servicepoint::Packet);
