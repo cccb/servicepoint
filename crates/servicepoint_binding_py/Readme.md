@@ -1,6 +1,6 @@
 # What is this?
 
-Python bindings for the rust servicepoint library.
+Python bindings for the rust servicepoint library built using [Maturin](https://www.maturin.rs).
 
 ## Building
 
