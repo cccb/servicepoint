@@ -18,13 +18,36 @@ pub type Cp437Grid = PrimitiveGrid<u8>;
 ///
 /// This struct and associated functions implement the UDP protocol for the display.
 ///
-/// To send a `Command`, use a `Connection`.
+/// To send a [Command], use a [connection][crate::Connection].
+///
+/// # Available commands
+///
+/// To send text, take a look at [Command::Cp437Data].
+///
+/// To draw pixels, the easiest command to use is [Command::BitmapLinearWin].
+///
+/// The other BitmapLinear-Commands operate on a region of pixel memory directly.
+/// [Command::BitmapLinear] overwrites a region.
+/// [Command::BitmapLinearOr], [Command::BitmapLinearAnd] and [Command::BitmapLinearXor] apply logical operations per pixel.
+///
+/// Out of bounds operations may be truncated or ignored by the display.
+///
+/// # Compression
+///
+/// Some commands can contain compressed payloads.
+/// To get started, use [CompressionCode::Uncompressed].
+///
+/// If you want to archive the best performance (e.g. latency),
+/// you can try the different compression algorithms for your hardware and use case.
+///
+/// In memory, the payload is not compressed in the [Command].
+/// Payload (de-)compression happens when converting the [Command] into a [Packet] or vice versa.
 ///
 /// # Examples
 ///
 /// ```rust
 /// # use servicepoint::{Brightness, Command, Connection, Packet};
-///
+/// #
 /// // create command
 /// let command = Command::Brightness(Brightness::MAX);
 ///
@@ -56,6 +79,8 @@ pub enum Command {
 
     /// Show text on the screen.
     ///
+    /// The text is sent in the form of a 2D grid of characters.
+    ///
     /// <div class="warning">
     ///     The library does not currently convert between UTF-8 and CP-437.
     ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
@@ -72,7 +97,29 @@ pub enum Command {
     /// ```
     Cp437Data(Origin<Tiles>, Cp437Grid),
 
-    /// Sets a window of pixels to the specified values
+    /// Overwrites a rectangular region of pixels.
+    ///
+    /// Origin coordinates must be divisible by 8.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+    /// # let connection = servicepoint::Connection::Fake;
+    /// #
+    /// let mut pixels = PixelGrid::max_sized();
+    /// // draw something to the pixels here
+    /// # pixels.set(2, 5, true);
+    ///
+    /// // create command to send pixels
+    /// let command = Command::BitmapLinearWin(
+    ///    servicepoint::Origin::new(0, 0),
+    ///    pixels,
+    ///    CompressionCode::Uncompressed
+    /// );
+    ///
+    /// connection.send(command).expect("send failed");
+    /// ```
     BitmapLinearWin(Origin<Pixels>, PixelGrid, CompressionCode),
 
     /// Set the brightness of all tiles to the same value.
@@ -95,7 +142,7 @@ pub enum Command {
     /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
     /// once the starting row is full, overwriting will continue on column 0.
     ///
-    /// The contained `BitVec` is always uncompressed.
+    /// The contained [BitVec] is always uncompressed.
     BitmapLinear(Offset, SpBitVec, CompressionCode),
 
     /// Set pixel data according to an and-mask starting at the offset.
@@ -103,7 +150,7 @@ pub enum Command {
     /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
     /// once the starting row is full, overwriting will continue on column 0.
     ///
-    /// The contained `BitVec` is always uncompressed.
+    /// The contained [BitVec] is always uncompressed.
     BitmapLinearAnd(Offset, SpBitVec, CompressionCode),
 
     /// Set pixel data according to an or-mask starting at the offset.
@@ -111,7 +158,7 @@ pub enum Command {
     /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
     /// once the starting row is full, overwriting will continue on column 0.
     ///
-    /// The contained `BitVec` is always uncompressed.
+    /// The contained [BitVec] is always uncompressed.
     BitmapLinearOr(Offset, SpBitVec, CompressionCode),
 
     /// Set pixel data according to a xor-mask starting at the offset.
@@ -119,7 +166,7 @@ pub enum Command {
     /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
     /// once the starting row is full, overwriting will continue on column 0.
     ///
-    /// The contained `BitVec` is always uncompressed.
+    /// The contained [BitVec] is always uncompressed.
     BitmapLinearXor(Offset, SpBitVec, CompressionCode),
 
     /// Kills the udp daemon on the display, which usually results in a restart.
@@ -166,7 +213,7 @@ pub enum Command {
 }
 
 #[derive(Debug)]
-/// Err values for `Command::try_from`.
+/// Err values for [Command::try_from].
 #[derive(PartialEq)]
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
@@ -188,7 +235,7 @@ pub enum TryFromPacketError {
 impl TryFrom<Packet> for Command {
     type Error = TryFromPacketError;
 
-    /// Try to interpret the `Packet` as one containing a `Command`
+    /// Try to interpret the [Packet] as one containing a [Command]
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
         let Packet {
             header: Header {

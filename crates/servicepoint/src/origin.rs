@@ -11,7 +11,7 @@ pub struct Origin<Unit: DisplayUnit> {
 }
 
 impl<Unit: DisplayUnit> Origin<Unit> {
-    /// Create a new `Origin` instance for the provided position.
+    /// Create a new [Origin] instance for the provided position.
     pub fn new(x: usize, y: usize) -> Self {
         Self {
             x,

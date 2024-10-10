@@ -1,4 +1,4 @@
-/// The u16 command codes used for the `Commands`.
+/// The u16 command codes used for the [Command]s.
 #[repr(u16)]
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum CommandCode {

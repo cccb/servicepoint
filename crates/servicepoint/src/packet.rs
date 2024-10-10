@@ -38,6 +38,8 @@ pub type Payload = Vec<u8>;
 ///
 /// Contents should probably only be used directly to use features not exposed by the library.
 ///
+/// You may want to use [Command][crate::Command] instead.
+///
 /// # Examples
 ///
 /// Converting a packet to a command and back:
@@ -46,7 +48,7 @@ pub type Payload = Vec<u8>;
 /// # use servicepoint::{Command, Packet};
 /// # let command = Command::Clear;
 /// let packet: Packet = command.into();
-/// let command: Command = Command::try_from(packet).expect("could not read packet");
+/// let command: Command = Command::try_from(packet).expect("could not read command from packet");
 /// ```
 ///
 /// Converting a packet to bytes and back:
@@ -98,9 +100,9 @@ impl From<Packet> for Vec<u8> {
 impl TryFrom<&[u8]> for Packet {
     type Error = ();
 
-    /// Tries to interpret the bytes as a `Packet`.
+    /// Tries to interpret the bytes as a [Packet].
     ///
-    /// returns: `Error` if slice is not long enough to be a `Packet`
+    /// returns: `Error` if slice is not long enough to be a [Packet]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         if value.len() < size_of::<Header>() {
             return Err(());
@@ -135,7 +137,7 @@ impl TryFrom<Vec<u8>> for Packet {
 }
 
 impl From<Command> for Packet {
-    /// Move the `Command` into a `Packet` instance for sending.
+    /// Move the [Command] into a [Packet] instance for sending.
     #[allow(clippy::cast_possible_truncation)]
     fn from(value: Command) -> Self {
         match value {
@@ -210,7 +212,7 @@ impl From<Command> for Packet {
 }
 
 impl Packet {
-    /// Helper method for `BitMapLinear*`-Commands into `Packet`
+    /// Helper method for `BitMapLinear*`-Commands into [Packet]
     #[allow(clippy::cast_possible_truncation)]
     fn bitmap_linear_into_packet(
         command: CommandCode,

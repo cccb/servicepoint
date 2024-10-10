@@ -7,6 +7,8 @@ use crate::Packet;
 
 /// A connection to the display.
 ///
+/// Used to send [Packets][Packet] or [Commands][crate::Command].
+///
 /// # Examples
 /// ```rust
 /// let connection = servicepoint::Connection::open("172.23.42.29:2342")

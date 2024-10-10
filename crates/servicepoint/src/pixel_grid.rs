@@ -13,14 +13,14 @@ pub struct PixelGrid {
 }
 
 impl PixelGrid {
-    /// Creates a new `PixelGrid` with the specified dimensions.
+    /// Creates a new [PixelGrid] with the specified dimensions.
     ///
     /// # Arguments
     ///
     /// - `width`: size in pixels in x-direction
     /// - `height`: size in pixels in y-direction
     ///
-    /// returns: `PixelGrid` initialized to all pixels off
+    /// returns: [PixelGrid] initialized to all pixels off
     ///
     /// # Panics
     ///
@@ -40,14 +40,14 @@ impl PixelGrid {
         Self::new(PIXEL_WIDTH, PIXEL_HEIGHT)
     }
 
-    /// Loads a `PixelGrid` with the specified dimensions from the provided data.
+    /// Loads a [PixelGrid] with the specified dimensions from the provided data.
     ///
     /// # Arguments
     ///
     /// - `width`: size in pixels in x-direction
     /// - `height`: size in pixels in y-direction
     ///
-    /// returns: `PixelGrid` that contains a copy of the provided data
+    /// returns: [PixelGrid] that contains a copy of the provided data
     ///
     /// # Panics
     ///
@@ -64,7 +64,7 @@ impl PixelGrid {
         }
     }
 
-    /// Iterate over all cells in `PixelGrid`.
+    /// Iterate over all cells in [PixelGrid].
     ///
     /// Order is equivalent to the following loop:
     /// ```
@@ -80,7 +80,7 @@ impl PixelGrid {
         self.bit_vec.iter().by_refs()
     }
 
-    /// Iterate over all cells in `PixelGrid` mutably.
+    /// Iterate over all cells in [PixelGrid] mutably.
     ///
     /// Order is equivalent to the following loop:
     /// ```
@@ -107,7 +107,7 @@ impl PixelGrid {
         self.bit_vec.iter_mut()
     }
 
-    /// Iterate over all rows in `PixelGrid` top to bottom.
+    /// Iterate over all rows in [PixelGrid] top to bottom.
     pub fn iter_rows(&self) -> IterRows {
         IterRows {
             pixel_grid: self,
@@ -117,7 +117,7 @@ impl PixelGrid {
 }
 
 impl Grid<bool> for PixelGrid {
-    /// Sets the value of the specified position in the `PixelGrid`.
+    /// Sets the value of the specified position in the [PixelGrid].
     ///
     /// # Arguments
     ///
@@ -139,7 +139,7 @@ impl Grid<bool> for PixelGrid {
         self.bit_vec[x + y * self.width]
     }
 
-    /// Sets the state of all pixels in the `PixelGrid`.
+    /// Sets the state of all pixels in the [PixelGrid].
     ///
     /// # Arguments
     ///
@@ -169,7 +169,7 @@ impl DataRef<u8> for PixelGrid {
 }
 
 impl From<PixelGrid> for Vec<u8> {
-    /// Turns a `PixelGrid` into the underlying `Vec<u8>`.
+    /// Turns a [PixelGrid] into the underlying [`Vec<u8>`].
     fn from(value: PixelGrid) -> Self {
         value.bit_vec.into()
     }

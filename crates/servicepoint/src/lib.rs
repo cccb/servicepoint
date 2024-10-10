@@ -1,5 +1,9 @@
 //! Abstractions for the UDP protocol of the CCCB servicepoint display.
 //!
+//! Your starting point is a [Connection] to the display.
+//! With a connection, you can send [Command]s.
+//! When received, the display will update the state of the pixels.
+//!
 //! # Examples
 //!
 //! ```rust
