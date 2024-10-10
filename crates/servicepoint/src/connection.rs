@@ -3,7 +3,7 @@ use std::net::{ToSocketAddrs, UdpSocket};
 
 use log::{debug, info};
 
-use crate::Packet;
+use crate::packet::Packet;
 
 /// A connection to the display.
 ///
@@ -19,7 +19,7 @@ use crate::Packet;
 pub enum Connection {
     /// A real connection using the UDP protocol
     Udp(UdpSocket),
-    /// A fake connection for testing that does not actually send anything
+    /// A fake connection for testing that does not actually send anything.
     Fake,
 }
 

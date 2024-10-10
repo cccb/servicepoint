@@ -47,7 +47,6 @@ pub use crate::connection::Connection;
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
-pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
 pub use crate::primitive_grid::PrimitiveGrid;
 
@@ -62,7 +61,7 @@ mod connection;
 mod data_ref;
 mod grid;
 mod origin;
-mod packet;
+pub mod packet;
 mod pixel_grid;
 mod primitive_grid;
 

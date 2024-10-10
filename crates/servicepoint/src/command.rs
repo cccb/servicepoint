@@ -1,8 +1,10 @@
 use bitvec::prelude::BitVec;
 
 use crate::{
-    command_code::CommandCode, compression::into_decompressed, Brightness,
-    BrightnessGrid, CompressionCode, Header, Origin, Packet, PixelGrid, Pixels,
+    command_code::CommandCode,
+    compression::into_decompressed,
+    packet::{Header, Packet},
+    Brightness, BrightnessGrid, CompressionCode, Origin, PixelGrid, Pixels,
     PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
 };
 
@@ -46,7 +48,7 @@ pub type Cp437Grid = PrimitiveGrid<u8>;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{Brightness, Command, Connection, Packet};
+/// # use servicepoint::{Brightness, Command, Connection, packet::Packet};
 /// #
 /// // create command
 /// let command = Command::Brightness(Brightness::MAX);
