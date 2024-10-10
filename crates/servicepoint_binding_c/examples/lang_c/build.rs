@@ -12,5 +12,6 @@ fn main() {
     let mut cc = cc::Build::new();
     cc.file("src/main.c");
     cc.include(&sp_include);
+    cc.opt_level(2);
     cc.compile("lang_c");
 }
