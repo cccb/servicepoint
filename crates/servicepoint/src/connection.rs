@@ -80,3 +80,16 @@ impl Connection {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::packet::*;
+
+    #[test]
+    fn send_fake() {
+        let data: &[u8] = &[0u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let packet = Packet::try_from(data).unwrap();
+        Connection::Fake.send(packet).unwrap()
+    }
+}
