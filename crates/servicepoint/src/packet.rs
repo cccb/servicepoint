@@ -316,7 +316,7 @@ impl Packet {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Header, Packet};
+    use super::*;
 
     #[test]
     fn round_trip() {

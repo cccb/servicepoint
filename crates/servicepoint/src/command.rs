@@ -492,9 +492,12 @@ impl Command {
 #[cfg(test)]
 mod tests {
     use crate::{
-        bitvec::prelude::BitVec, command::TryFromPacketError,
-        command_code::CommandCode, origin::Pixels, Brightness, Command,
-        CompressionCode, Header, Origin, Packet, PixelGrid, PrimitiveGrid,
+        bitvec::prelude::BitVec,
+        command::TryFromPacketError,
+        command_code::CommandCode,
+        origin::Pixels,
+        packet::{Header, Packet},
+        Brightness, Command, CompressionCode, Origin, PixelGrid, PrimitiveGrid,
     };
 
     fn round_trip(original: Command) {
