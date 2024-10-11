@@ -40,7 +40,9 @@ pub unsafe extern "C" fn sp_cp437_grid_new(
     width: usize,
     height: usize,
 ) -> *mut SPCp437Grid {
-    Box::into_raw(Box::new(SPCp437Grid(servicepoint::Cp437Grid::new(width, height))))
+    Box::into_raw(Box::new(SPCp437Grid(servicepoint::Cp437Grid::new(
+        width, height,
+    ))))
 }
 
 /// Loads a `SPCp437Grid` with the specified dimensions from the provided data.
@@ -67,7 +69,9 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
     data_length: usize,
 ) -> *mut SPCp437Grid {
     let data = std::slice::from_raw_parts(data, data_length);
-    Box::into_raw(Box::new(SPCp437Grid(servicepoint::Cp437Grid::load(width, height, data))))
+    Box::into_raw(Box::new(SPCp437Grid(servicepoint::Cp437Grid::load(
+        width, height, data,
+    ))))
 }
 
 /// Clones a `SPCp437Grid`.

@@ -4,17 +4,12 @@ use crate::{
     command_code::CommandCode,
     compression::into_decompressed,
     packet::{Header, Packet},
-    Brightness, BrightnessGrid, CompressionCode, Origin, PixelGrid, Pixels,
-    PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
+    Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin, PixelGrid,
+    Pixels, PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
 };
 
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Offset = usize;
-
-/// A grid containing codepage 437 characters.
-///
-/// The encoding is currently not enforced.
-pub type Cp437Grid = PrimitiveGrid<u8>;
 
 /// A low-level display command.
 ///
@@ -92,9 +87,8 @@ pub enum Command {
     ///
     /// ```rust
     /// # use servicepoint::{Command, Connection, Cp437Grid, Origin};
-    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
-    /// let chars = ['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd'].map(move |c| c as u8);
-    /// let grid = Cp437Grid::load(5, 2, &chars);
+    /// # let connection = Connection::Fake;
+    /// let grid = Cp437Grid::load_ascii("Hello\nWorld", 5, false).unwrap();
     /// connection.send(Command::Cp437Data(Origin::new(2, 2), grid)).unwrap();
     /// ```
     Cp437Data(Origin<Tiles>, Cp437Grid),
