@@ -111,7 +111,6 @@ impl Connection {
 
         let request = ClientRequestBuilder::new(uri).into_client_request()?;
         let (sock, _) = connect(request)?;
-
         Ok(Self::WebSocket(sock))
     }
 
@@ -204,6 +203,15 @@ impl Connection {
                 Ok(())
             }
             _ => self.send(packet),
+        }
+    }
+}
+
+impl Drop for Connection {
+    fn drop(&mut self) {
+        #[cfg(feature = "protocol_websocket")]
+        if let Connection::WebSocket(sock) = self {
+            _ = sock.close(None);
         }
     }
 }
