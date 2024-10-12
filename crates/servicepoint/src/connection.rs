@@ -1,7 +1,11 @@
 use std::fmt::Debug;
-use std::net::{ToSocketAddrs, UdpSocket};
 
-use log::{debug, info};
+use log::debug;
+
+#[cfg(feature = "protocol_udp")]
+use log::info;
+#[cfg(feature = "protocol_udp")]
+use std::net::{ToSocketAddrs, UdpSocket};
 
 use crate::packet::Packet;
 
@@ -18,6 +22,7 @@ use crate::packet::Packet;
 /// ```
 pub enum Connection {
     /// A real connection using the UDP protocol
+    #[cfg(feature = "protocol_udp")]
     Udp(UdpSocket),
     /// A fake connection for testing that does not actually send anything.
     Fake,
@@ -42,6 +47,7 @@ impl Connection {
     ///  let connection = servicepoint::Connection::open("172.23.42.29:2342")
     ///     .expect("connection failed");
     /// ```
+    #[cfg(feature = "protocol_udp")]
     pub fn open(addr: impl ToSocketAddrs + Debug) -> std::io::Result<Self> {
         info!("connecting to {addr:?}");
         let socket = UdpSocket::bind("0.0.0.0:0")?;
@@ -70,13 +76,17 @@ impl Connection {
         debug!("sending {packet:?}");
         let data: Vec<u8> = packet.into();
         match self {
+            #[cfg(feature = "protocol_udp")]
             Connection::Udp(socket) => {
                 socket
                     .send(&data)
                     .map_err(SendError::IoError)
                     .map(move |_| ()) // ignore Ok value
             }
-            Connection::Fake => Ok(()),
+            Connection::Fake => {
+                let _ = data;
+                Ok(())
+            }
         }
     }
 }
