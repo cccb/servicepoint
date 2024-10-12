@@ -9,6 +9,17 @@ In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wa
 Display" or "Airport Display".
 This crate contains a library for parsing, encoding and sending packets to this display via UDP.
 
+## Installation
+
+```bash
+cargo add servicepoint
+```
+or
+```toml
+[dependencies]
+servicepoint = "0.9.0"
+```
+
 ## Examples
 
 ```rust
@@ -23,7 +34,7 @@ fn main() {
 }
 ```
 
-More examples are available in the crate. 
+More examples are available in the crate.
 Execute `cargo run --example` for a list of available examples and `cargo run --example <name>` to run one.
 
 ## Note on stability
@@ -32,22 +43,21 @@ This library is still in early development.
 You can absolutely use it, and it works, but expect minor breaking changes with every version bump.
 Please specify the full version including patch in your Cargo.toml until 1.0 is released.
 
-## Installation
-
-```bash
-cargo add servicepoint
-```
-
 ## Features
 
-This library has multiple compression libraries as optional dependencies.
-If you do not need compression/decompression support you can disable those features.
-In the likely case you only need one of them, you can include that one specifically.
+This library has multiple optional dependencies.
+You can choose to (not) include them by toggling the related features.
 
-```toml
-[dependencies]
-servicepoint = { version = "0.8.0", default-features = false, features = ["compression-bz"] }
-```
+| Name               | Default | Description                                |
+|--------------------|---------|--------------------------------------------|
+| compression_zlib   | false   | Enable additional compression algo         |
+| compression_bzip2  | false   | Enable additional compression algo         |
+| compression_lzma   | true    | Enable additional compression algo         |
+| compression_zstd   | false   | Enable additional compression algo         |
+| protocol_udp       | true    | Connection::Udp                            |
+| protocol_websocket | false   | Connection::WebSocket                      |
+| rand               | false   | impl Distribution<Brightness> for Standard |
+| cp437              | true    | Conversion to and from CP-437              |
 
 ## Everything else
 
