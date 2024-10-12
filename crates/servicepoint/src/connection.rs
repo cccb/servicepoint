@@ -90,7 +90,7 @@ impl Connection {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```no_run
     /// use tungstenite::http::Uri;
     /// use servicepoint::{Command, Connection};
     /// let uri = "ws://localhost:8080".parse().unwrap();

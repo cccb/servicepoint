@@ -89,8 +89,8 @@ pub enum Command {
     /// # use servicepoint::{Command, Connection, Origin};
     /// # let connection = Connection::Fake;
     /// use servicepoint::{CharGrid, Cp437Grid};
-    /// let grid = CharGrid::from(&"Hello,\nWorld!");
-    /// let grid = Cp437Grid::from(grid);
+    /// let grid = CharGrid::from("Hello,\nWorld!");
+    /// let grid = Cp437Grid::from(&grid);
     /// connection.send(Command::Cp437Data(Origin::ZERO, grid)).expect("send failed");
     /// ```
     ///
