@@ -17,7 +17,7 @@ cargo add servicepoint
 or
 ```toml
 [dependencies]
-servicepoint = "0.9.0"
+servicepoint = "0.9.1"
 ```
 
 ## Examples

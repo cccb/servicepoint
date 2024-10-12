@@ -53,3 +53,6 @@ clap = { version = "4.5", features = ["derive"] }
 
 [lints]
 workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
