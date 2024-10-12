@@ -331,7 +331,7 @@ mod tests {
             payload: vec![42u8; 23],
         };
         let data: Vec<u8> = p.into();
-        let p = Packet::try_from(&*data).unwrap();
+        let p = Packet::try_from(data).unwrap();
         assert_eq!(
             p,
             Packet {

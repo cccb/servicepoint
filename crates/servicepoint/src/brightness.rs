@@ -77,8 +77,8 @@ impl From<BrightnessGrid> for Vec<u8> {
     }
 }
 
-impl From<BrightnessGrid> for PrimitiveGrid<u8> {
-    fn from(value: PrimitiveGrid<Brightness>) -> Self {
+impl From<&BrightnessGrid> for PrimitiveGrid<u8> {
+    fn from(value: &PrimitiveGrid<Brightness>) -> Self {
         let u8s = value
             .iter()
             .map(|brightness| (*brightness).into())
@@ -107,5 +107,35 @@ impl TryFrom<PrimitiveGrid<u8>> for BrightnessGrid {
 impl Distribution<Brightness> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Brightness {
         Brightness(rng.gen_range(Brightness::MIN.0..=Brightness::MAX.0))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::DataRef;
+
+    #[test]
+    fn brightness_from_u8() {
+        assert_eq!(Err(100), Brightness::try_from(100));
+        assert_eq!(Ok(Brightness(1)), Brightness::try_from(1))
+    }
+
+    #[test]
+    #[cfg(feature = "rand")]
+    fn rand_brightness() {
+        let mut rng = rand::thread_rng();
+        for _ in 0..100 {
+            let _: Brightness = rng.gen();
+        }
+    }
+
+    #[test]
+    fn to_u8_grid() {
+        let mut grid = BrightnessGrid::new(2, 2);
+        grid.set(1, 0, Brightness::MIN);
+        grid.set(0, 1, Brightness::MAX);
+        let actual = PrimitiveGrid::from(&grid);
+        assert_eq!(actual.data_ref(), &[11, 0, 11, 11]);
     }
 }
