@@ -617,6 +617,7 @@ dependencies = [
  "clap",
  "flate2",
  "log",
+ "once_cell",
  "rand",
  "rust-lzma",
  "tungstenite",

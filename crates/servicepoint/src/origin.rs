@@ -12,6 +12,13 @@ pub struct Origin<Unit: DisplayUnit> {
 }
 
 impl<Unit: DisplayUnit> Origin<Unit> {
+    /// Top-left. Equivalent to `Origin::new(0, 0)`.
+    pub const ZERO: Self = Self {
+        x: 0,
+        y: 0,
+        phantom_data: PhantomData,
+    };
+
     /// Create a new [Origin] instance for the provided position.
     pub fn new(x: usize, y: usize) -> Self {
         Self {

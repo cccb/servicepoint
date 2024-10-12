@@ -21,9 +21,10 @@ zstd = { version = "0.13", optional = true }
 rust-lzma = { version = "0.6.0", optional = true }
 rand = { version = "0.8", optional = true }
 tungstenite = { version = "0.24.0", optional = true }
+once_cell = { version = "1.20.2", optional = true }
 
 [features]
-default = ["compression_lzma", "protocol_udp"]
+default = ["compression_lzma", "protocol_udp", "cp437"]
 compression_zlib = ["dep:flate2"]
 compression_bzip2 = ["dep:bzip2"]
 compression_lzma = ["dep:rust-lzma"]
@@ -32,15 +33,19 @@ all_compressions = ["compression_zlib", "compression_bzip2", "compression_lzma",
 rand = ["dep:rand"]
 protocol_udp = []
 protocol_websocket = ["dep:tungstenite"]
+cp437 = ["dep:once_cell"]
 
 [[example]]
 name = "random_brightness"
 required-features = ["rand"]
 
+[[example]]
+name = "game_of_life"
+required-features = ["rand"]
+
 [dev-dependencies]
 # for examples
 clap = { version = "4.5", features = ["derive"] }
-rand = "0.8"
 
 [lints]
 workspace = true

@@ -86,6 +86,15 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
+    /// # use servicepoint::{Command, Connection, Origin};
+    /// # let connection = Connection::Fake;
+    /// use servicepoint::{CharGrid, Cp437Grid};
+    /// let grid = CharGrid::from(&"Hello,\nWorld!");
+    /// let grid = Cp437Grid::from(grid);
+    /// connection.send(Command::Cp437Data(Origin::ZERO, grid)).expect("send failed");
+    /// ```
+    ///
+    /// ```rust
     /// # use servicepoint::{Command, Connection, Cp437Grid, Origin};
     /// # let connection = Connection::Fake;
     /// let grid = Cp437Grid::load_ascii("Hello\nWorld", 5, false).unwrap();
