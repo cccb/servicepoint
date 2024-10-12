@@ -79,12 +79,12 @@ pub trait Grid<T> {
         assert!(
             x < self.width(),
             "cannot access index [{x}, {y}] because x is outside of bounds 0..{}",
-            self.width()
+            self.width() - 1
         );
         assert!(
             y < self.height(),
-            "cannot access byte [{x}, {y}] because y is outside of bounds 0..{}",
-            self.height()
+            "cannot access index [{x}, {y}] because y is outside of bounds 0..{}",
+            self.height() - 1
         );
     }
 }

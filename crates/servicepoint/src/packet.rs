@@ -1,10 +1,34 @@
+//! Raw packet manipulation.
+//!
+//! Should probably only be used directly to use features not exposed by the library.
+//!
+//! # Examples
+//!
+//! Converting a packet to a command and back:
+//!
+//! ```rust
+//! use servicepoint::{Command, packet::Packet};
+//! # let command = Command::Clear;
+//! let packet: Packet = command.into();
+//! let command: Command = Command::try_from(packet).expect("could not read command from packet");
+//! ```
+//!
+//! Converting a packet to bytes and back:
+//!
+//! ```rust
+//! use servicepoint::{Command, packet::Packet};
+//! # let command = Command::Clear;
+//! # let packet: Packet = command.into();
+//! let bytes: Vec<u8> = packet.into();
+//! let packet = Packet::try_from(bytes).expect("could not read packet from bytes");
+//! ```
+
 use std::mem::size_of;
 
-use crate::command_code::CommandCode;
 use crate::compression::into_compressed;
 use crate::{
-    Command, CompressionCode, Grid, Offset, Origin, PixelGrid, Pixels, Tiles,
-    TILE_SIZE,
+    command_code::CommandCode, Command, CompressionCode, Grid, Offset, Origin,
+    PixelGrid, Pixels, Tiles, TILE_SIZE,
 };
 
 /// A raw header.
@@ -13,8 +37,6 @@ use crate::{
 /// payload, where applicable.
 ///
 /// Because the meaning of most fields depend on the command, there are no speaking names for them.
-///
-/// Should probably only be used directly to use features not exposed by the library.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Header {
     /// The first two bytes specify which command this packet represents.
@@ -38,26 +60,8 @@ pub type Payload = Vec<u8>;
 ///
 /// Contents should probably only be used directly to use features not exposed by the library.
 ///
-/// # Examples
+/// You may want to use [Command] instead.
 ///
-/// Converting a packet to a command and back:
-///
-/// ```rust
-/// # use servicepoint::{Command, Packet};
-/// # let command = Command::Clear;
-/// let packet: Packet = command.into();
-/// let command: Command = Command::try_from(packet).expect("could not read packet");
-/// ```
-///
-/// Converting a packet to bytes and back:
-///
-/// ```rust
-/// # use servicepoint::{Command, Packet};
-/// # let command = Command::Clear;
-/// # let packet: Packet = command.into();
-/// let bytes: Vec<u8> = packet.into();
-/// let packet = Packet::try_from(bytes).expect("could not read packet from bytes");
-/// ```
 ///
 #[derive(Clone, Debug, PartialEq)]
 pub struct Packet {
@@ -98,9 +102,9 @@ impl From<Packet> for Vec<u8> {
 impl TryFrom<&[u8]> for Packet {
     type Error = ();
 
-    /// Tries to interpret the bytes as a `Packet`.
+    /// Tries to interpret the bytes as a [Packet].
     ///
-    /// returns: `Error` if slice is not long enough to be a `Packet`
+    /// returns: `Error` if slice is not long enough to be a [Packet]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         if value.len() < size_of::<Header>() {
             return Err(());
@@ -135,7 +139,7 @@ impl TryFrom<Vec<u8>> for Packet {
 }
 
 impl From<Command> for Packet {
-    /// Move the `Command` into a `Packet` instance for sending.
+    /// Move the [Command] into a [Packet] instance for sending.
     #[allow(clippy::cast_possible_truncation)]
     fn from(value: Command) -> Self {
         match value {
@@ -210,7 +214,7 @@ impl From<Command> for Packet {
 }
 
 impl Packet {
-    /// Helper method for `BitMapLinear*`-Commands into `Packet`
+    /// Helper method for `BitMapLinear*`-Commands into [Packet]
     #[allow(clippy::cast_possible_truncation)]
     fn bitmap_linear_into_packet(
         command: CommandCode,
@@ -312,7 +316,7 @@ impl Packet {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Header, Packet};
+    use super::*;
 
     #[test]
     fn round_trip() {
@@ -327,7 +331,7 @@ mod tests {
             payload: vec![42u8; 23],
         };
         let data: Vec<u8> = p.into();
-        let p = Packet::try_from(&*data).unwrap();
+        let p = Packet::try_from(data).unwrap();
         assert_eq!(
             p,
             Packet {

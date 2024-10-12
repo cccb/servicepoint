@@ -1,5 +1,9 @@
 //! Abstractions for the UDP protocol of the CCCB servicepoint display.
 //!
+//! Your starting point is a [Connection] to the display.
+//! With a connection, you can send [Command]s.
+//! When received, the display will update the state of the pixels.
+//!
 //! # Examples
 //!
 //! ```rust
@@ -37,13 +41,13 @@ pub use bitvec;
 use bitvec::prelude::{BitVec, Msb0};
 
 pub use crate::brightness::{Brightness, BrightnessGrid};
-pub use crate::command::{Command, Cp437Grid, Offset};
+pub use crate::command::{Command, Offset};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
+pub use crate::cp437::{CharGrid, Cp437Grid};
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
-pub use crate::packet::{Header, Packet, Payload};
 pub use crate::pixel_grid::PixelGrid;
 pub use crate::primitive_grid::PrimitiveGrid;
 
@@ -55,10 +59,11 @@ mod command_code;
 mod compression;
 mod compression_code;
 mod connection;
+mod cp437;
 mod data_ref;
 mod grid;
 mod origin;
-mod packet;
+pub mod packet;
 mod pixel_grid;
 mod primitive_grid;
 

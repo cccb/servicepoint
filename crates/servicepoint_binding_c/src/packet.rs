@@ -7,7 +7,7 @@ use std::ptr::null_mut;
 use crate::SPCommand;
 
 /// The raw packet
-pub struct SPPacket(pub(crate) servicepoint::Packet);
+pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 
 /// Turns a `SPCommand` into a `SPPacket`.
 /// The `SPCommand` gets consumed.
@@ -49,7 +49,7 @@ pub unsafe extern "C" fn sp_packet_try_load(
     length: usize,
 ) -> *mut SPPacket {
     let data = std::slice::from_raw_parts(data, length);
-    match servicepoint::Packet::try_from(data) {
+    match servicepoint::packet::Packet::try_from(data) {
         Err(_) => null_mut(),
         Ok(packet) => Box::into_raw(Box::new(SPPacket(packet))),
     }

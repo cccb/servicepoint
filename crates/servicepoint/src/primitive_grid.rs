@@ -14,14 +14,14 @@ pub struct PrimitiveGrid<T: PrimitiveGridType> {
 }
 
 impl<T: PrimitiveGridType> PrimitiveGrid<T> {
-    /// Creates a new `PrimitiveGrid` with the specified dimensions.
+    /// Creates a new [PrimitiveGrid] with the specified dimensions.
     ///
     /// # Arguments
     ///
     /// - width: size in x-direction
     /// - height: size in y-direction
     ///
-    /// returns: `PrimitiveGrid` initialized to default value.
+    /// returns: [PrimitiveGrid] initialized to default value.
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             data: vec![Default::default(); width * height],
@@ -30,9 +30,9 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         }
     }
 
-    /// Loads a `PrimitiveGrid` with the specified dimensions from the provided data.
+    /// Loads a [PrimitiveGrid] with the specified dimensions from the provided data.
     ///
-    /// returns: `PrimitiveGrid` that contains a copy of the provided data
+    /// returns: [PrimitiveGrid] that contains a copy of the provided data
     ///
     /// # Panics
     ///
@@ -47,7 +47,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         }
     }
 
-    /// Iterate over all cells in `PrimitiveGrid`.
+    /// Iterate over all cells in [PrimitiveGrid].
     ///
     /// Order is equivalent to the following loop:
     /// ```
@@ -63,7 +63,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         self.data.iter()
     }
 
-    /// Iterate over all rows in `PrimitiveGrid` top to bottom.
+    /// Iterate over all rows in [PrimitiveGrid] top to bottom.
     pub fn iter_rows(&self) -> IterRows<T> {
         IterRows {
             byte_grid: self,
@@ -168,7 +168,7 @@ impl<T: PrimitiveGridType> DataRef<T> for PrimitiveGrid<T> {
 }
 
 impl<T: PrimitiveGridType> From<PrimitiveGrid<T>> for Vec<T> {
-    /// Turn into the underlying `Vec<u8>` containing the rows of bytes.
+    /// Turn into the underlying [`Vec<u8>`] containing the rows of bytes.
     fn from(value: PrimitiveGrid<T>) -> Self {
         value.data
     }
