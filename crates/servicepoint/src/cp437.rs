@@ -1,4 +1,7 @@
-use crate::cp437::Cp437LoadError::InvalidChar;
+//! Conversion between UTF-8 and CP-437.
+//!
+//! Most of the functionality is only available with feature "cp437" enabled.
+
 use crate::{Grid, PrimitiveGrid};
 use std::collections::HashMap;
 
@@ -10,9 +13,16 @@ pub type Cp437Grid = PrimitiveGrid<u8>;
 /// A grid containing UTF-8 characters.
 pub type CharGrid = PrimitiveGrid<char>;
 
+/// Errors that can occur when loading CP-437.
 #[derive(Debug)]
 pub enum Cp437LoadError {
-    InvalidChar { index: usize, char: char },
+    /// Invalid character in input prevented loading
+    InvalidChar {
+        /// invalid character is at this position in input
+        index: usize,
+        /// the invalid character
+        char: char,
+    },
 }
 
 impl Cp437Grid {

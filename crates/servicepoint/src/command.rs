@@ -76,12 +76,7 @@ pub enum Command {
 
     /// Show text on the screen.
     ///
-    /// The text is sent in the form of a 2D grid of characters.
-    ///
-    /// <div class="warning">
-    ///     The library does not currently convert between UTF-8 and CP-437.
-    ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
-    /// </div>
+    /// The text is sent in the form of a 2D grid of [CP-437] encoded characters.
     ///
     /// # Examples
     ///
@@ -100,6 +95,7 @@ pub enum Command {
     /// let grid = Cp437Grid::load_ascii("Hello\nWorld", 5, false).unwrap();
     /// connection.send(Command::Cp437Data(Origin::new(2, 2), grid)).unwrap();
     /// ```
+    /// [CP-437]: https://en.wikipedia.org/wiki/Code_page_437
     Cp437Data(Origin<Tiles>, Cp437Grid),
 
     /// Overwrites a rectangular region of pixels.
@@ -217,9 +213,8 @@ pub enum Command {
     BitmapLegacy,
 }
 
-#[derive(Debug)]
 /// Err values for [Command::try_from].
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
     InvalidCommand(u16),
