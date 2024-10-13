@@ -9,7 +9,7 @@ int main(void) {
     SPPixelGrid *pixels = sp_pixel_grid_new(SP_PIXEL_WIDTH, SP_PIXEL_HEIGHT);
     sp_pixel_grid_fill(pixels, true);
 
-    SPCommand *command = sp_command_bitmap_linear_win(0, 0, pixels, Uncompressed);
+    SPCommand *command = sp_command_bitmap_linear_win(0, 0, pixels, SP_COMPRESSION_CODE_UNCOMPRESSED);
     while (sp_connection_send_command(connection, sp_command_clone(command)));
 
     sp_command_free(command);

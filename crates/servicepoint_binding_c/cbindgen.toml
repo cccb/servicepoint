@@ -31,3 +31,6 @@ all_features = true
 [export]
 include = []
 exclude = []
+
+[enum]
+rename_variants = "QualifiedScreamingSnakeCase"

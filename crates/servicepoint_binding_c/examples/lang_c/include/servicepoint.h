@@ -49,23 +49,23 @@ enum SPCompressionCode
     /**
      * no compression
      */
-    Uncompressed = 0,
+    SP_COMPRESSION_CODE_UNCOMPRESSED = 0,
     /**
      * compress using flate2 with zlib header
      */
-    Zlib = 26490,
+    SP_COMPRESSION_CODE_ZLIB = 26490,
     /**
      * compress using bzip2
      */
-    Bzip2 = 25210,
+    SP_COMPRESSION_CODE_BZIP2 = 25210,
     /**
      * compress using lzma
      */
-    Lzma = 27770,
+    SP_COMPRESSION_CODE_LZMA = 27770,
     /**
      * compress using Zstandard
      */
-    Zstd = 31347,
+    SP_COMPRESSION_CODE_ZSTD = 31347,
 };
 #ifndef __cplusplus
 typedef uint16_t SPCompressionCode;
