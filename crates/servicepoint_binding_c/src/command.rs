@@ -156,7 +156,7 @@ pub unsafe extern "C" fn sp_command_brightness(
 
 /// Set the brightness of individual tiles in a rectangular area of the display.
 ///
-/// The passed `SPBrightnessGrid` gets consumed.
+/// The passed [SPBrightnessGrid] gets consumed.
 ///
 /// Returns: a new `Command::CharBrightness` instance. Will never return NULL.
 ///
@@ -164,7 +164,7 @@ pub unsafe extern "C" fn sp_command_brightness(
 ///
 /// The caller has to make sure that:
 ///
-/// - `grid` points to a valid instance of `SPBrightnessGrid`
+/// - `grid` points to a valid instance of [SPBrightnessGrid]
 /// - `grid` is not used concurrently or after this call
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
