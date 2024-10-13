@@ -110,6 +110,16 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
             None
         }
     }
+
+    /// Convert between PrimitiveGrid types
+    pub fn convert<TConverted, F>(&self, f: F) -> PrimitiveGrid<TConverted>
+    where
+        TConverted: PrimitiveGridType,
+        F: FnMut(&T) -> TConverted,
+    {
+        let data = self.data_ref().iter().map(f).collect::<Vec<_>>();
+        PrimitiveGrid::load(self.width(), self.height(), &*data)
+    }
 }
 
 impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {

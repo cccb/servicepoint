@@ -133,34 +133,13 @@ mod feature_cp437 {
 
     impl From<&Cp437Grid> for CharGrid {
         fn from(value: &Cp437Grid) -> Self {
-            let mut grid = Self::new(value.width(), value.height());
-
-            for y in 0..grid.height() {
-                for x in 0..grid.width() {
-                    let converted = CP437_TO_UTF8[value.get(x, y) as usize];
-                    grid.set(x, y, converted);
-                }
-            }
-
-            grid
+            value.convert(move |cp437| cp437_to_char(*cp437))
         }
     }
 
     impl From<&CharGrid> for Cp437Grid {
         fn from(value: &CharGrid) -> Self {
-            let mut grid = Self::new(value.width(), value.height());
-
-            for y in 0..grid.height() {
-                for x in 0..grid.width() {
-                    let char = value.get(x, y);
-                    let converted = *UTF8_TO_CP437
-                        .get(&char)
-                        .unwrap_or(&MISSING_CHAR_CP437);
-                    grid.set(x, y, converted);
-                }
-            }
-
-            grid
+            value.convert(move |char| char_to_cp437(*char))
         }
     }
 
