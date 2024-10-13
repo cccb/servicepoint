@@ -146,9 +146,16 @@ mod feature_cp437 {
     impl From<&str> for CharGrid {
         fn from(value: &str) -> Self {
             let value = value.replace("\r\n", "\n");
-            let lines = value.split('\n').collect::<Vec<_>>();
+            let mut lines = value
+                .split('\n')
+                .map(move |line| line.trim_end())
+                .collect::<Vec<_>>();
             let width =
                 lines.iter().fold(0, move |a, x| std::cmp::max(a, x.len()));
+
+            while lines.last().is_some_and(move |line| line.is_empty()) {
+                _ = lines.pop();
+            }
 
             let mut grid = Self::new(width, lines.len());
             for (y, line) in lines.iter().enumerate() {
@@ -158,6 +165,22 @@ mod feature_cp437 {
             }
 
             grid
+        }
+    }
+
+    impl From<&CharGrid> for String {
+        fn from(value: &CharGrid) -> Self {
+            value
+                .iter_rows()
+                .map(move |chars| {
+                    chars
+                        .collect::<String>()
+                        .replace('\0', " ")
+                        .trim_end()
+                        .to_string()
+                })
+                .collect::<Vec<_>>()
+                .join("\n")
         }
     }
 
@@ -257,5 +280,14 @@ mod tests_feature_cp437 {
     #[test]
     fn convert_invalid() {
         assert_eq!(cp437_to_char(char_to_cp437('😜')), '?');
+    }
+
+    #[test]
+    fn str_to_char_grid() {
+        let original = "Hello\r\nWorld!\n...\n";
+        let grid = CharGrid::from(original);
+        assert_eq!(3, grid.height());
+        let actual = String::from(&grid);
+        assert_eq!("Hello\nWorld!\n...", actual);
     }
 }
