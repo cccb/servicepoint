@@ -18,7 +18,7 @@ use crate::{SPCommand, SPPacket};
 /// ```
 pub struct SPConnection(pub(crate) servicepoint::Connection);
 
-/// Creates a new instance of `SPConnection`.
+/// Creates a new instance of [SPConnection].
 ///
 /// returns: NULL if connection fails, or connected instance
 ///
@@ -45,7 +45,7 @@ pub unsafe extern "C" fn sp_connection_open(
     Box::into_raw(Box::new(SPConnection(connection)))
 }
 
-/// Sends a `SPPacket` to the display using the `SPConnection`.
+/// Sends a [SPPacket] to the display using the [SPConnection].
 ///
 /// The passed `packet` gets consumed.
 ///
@@ -55,8 +55,8 @@ pub unsafe extern "C" fn sp_connection_open(
 ///
 /// The caller has to make sure that:
 ///
-/// - `connection` points to a valid instance of `SPConnection`
-/// - `packet` points to a valid instance of `SPPacket`
+/// - `connection` points to a valid instance of [SPConnection]
+/// - `packet` points to a valid instance of [SPPacket]
 /// - `packet` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send_packet(
@@ -77,8 +77,8 @@ pub unsafe extern "C" fn sp_connection_send_packet(
 ///
 /// The caller has to make sure that:
 ///
-/// - `connection` points to a valid instance of `SPConnection`
-/// - `command` points to a valid instance of `SPPacket`
+/// - `connection` points to a valid instance of [SPConnection]
+/// - `command` points to a valid instance of [SPPacket]
 /// - `command` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send_command(
@@ -89,13 +89,19 @@ pub unsafe extern "C" fn sp_connection_send_command(
     (*connection).0.send(command).is_ok()
 }
 
-/// Closes and deallocates a `SPConnection`.
+/// Closes and deallocates a [SPConnection].
+///
+/// # Panics
+///
+/// # Panics
+///
+/// - when `connection` is NULL
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `connection` points to a valid `SPConnection`
+/// - `connection` points to a valid [SPConnection]
 /// - `connection` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_free(connection: *mut SPConnection) {

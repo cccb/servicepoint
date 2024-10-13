@@ -1,4 +1,4 @@
-//! C functions for interacting with `SPPacket`s
+//! C functions for interacting with [SPPacket]s
 //!
 //! prefix `sp_packet_`
 
@@ -9,7 +9,7 @@ use crate::SPCommand;
 /// The raw packet
 pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 
-/// Turns a [SPCommand] into a `SPPacket`.
+/// Turns a [SPCommand] into a [SPPacket].
 /// The [SPCommand] gets consumed.
 ///
 /// Will never return NULL.
@@ -20,7 +20,7 @@ pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 ///
 /// - [SPCommand] points to a valid instance of [SPCommand]
 /// - [SPCommand] is not used concurrently or after this call
-/// - the returned `SPPacket` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_packet_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_from_command(
@@ -31,7 +31,7 @@ pub unsafe extern "C" fn sp_packet_from_command(
     Box::into_raw(Box::new(packet))
 }
 
-/// Tries to load a `SPPacket` from the passed array with the specified length.
+/// Tries to load a [SPPacket] from the passed array with the specified length.
 ///
 /// returns: NULL in case of an error, pointer to the allocated packet otherwise
 ///
@@ -41,7 +41,7 @@ pub unsafe extern "C" fn sp_packet_from_command(
 ///
 /// - `data` points to a valid memory region of at least `length` bytes
 /// - `data` is not written to concurrently
-/// - the returned `SPPacket` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_packet_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_try_load(
@@ -55,7 +55,7 @@ pub unsafe extern "C" fn sp_packet_try_load(
     }
 }
 
-/// Clones a `SPPacket`.
+/// Clones a [SPPacket].
 ///
 /// Will never return NULL.
 ///
@@ -63,7 +63,7 @@ pub unsafe extern "C" fn sp_packet_try_load(
 ///
 /// The caller has to make sure that:
 ///
-/// - `packet` points to a valid `SPPacket`
+/// - `packet` points to a valid [SPPacket]
 /// - `packet` is not written to concurrently
 /// - the returned instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_packet_free`.
@@ -74,13 +74,13 @@ pub unsafe extern "C" fn sp_packet_clone(
     Box::into_raw(Box::new(SPPacket((*packet).0.clone())))
 }
 
-/// Deallocates a `SPPacket`.
+/// Deallocates a [SPPacket].
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `packet` points to a valid `SPPacket`
+/// - `packet` points to a valid [SPPacket]
 /// - `packet` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_free(packet: *mut SPPacket) {
