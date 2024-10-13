@@ -59,7 +59,7 @@ mod command_code;
 mod compression;
 mod compression_code;
 mod connection;
-mod cp437;
+pub mod cp437;
 mod data_ref;
 mod grid;
 mod origin;
