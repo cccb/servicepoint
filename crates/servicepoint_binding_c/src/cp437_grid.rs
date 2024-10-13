@@ -101,7 +101,7 @@ pub unsafe extern "C" fn sp_cp437_grid_clone(
 ///
 /// - `cp437_grid` points to a valid `SPCp437Grid`
 /// - `cp437_grid` is not used concurrently or after cp437_grid call
-/// - `cp437_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
+/// - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
 #[no_mangle]
 pub unsafe extern "C" fn sp_cp437_grid_free(cp437_grid: *mut SPCp437Grid) {
     _ = Box::from_raw(cp437_grid);
@@ -151,7 +151,7 @@ pub unsafe extern "C" fn sp_cp437_grid_get(
 ///
 /// The caller has to make sure that:
 ///
-/// - `cp437_grid` points to a valid `SPBitVec`
+/// - `cp437_grid` points to a valid [SPBitVec]
 /// - `cp437_grid` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_cp437_grid_set(

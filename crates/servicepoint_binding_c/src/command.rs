@@ -1,4 +1,4 @@
-//! C functions for interacting with `SPCommand`s
+//! C functions for interacting with [SPCommand]s
 //!
 //! prefix `sp_command_`
 
@@ -15,7 +15,7 @@ use crate::{
 ///
 /// This struct and associated functions implement the UDP protocol for the display.
 ///
-/// To send a `SPCommand`, use a `SPConnection`.
+/// To send a [SPCommand], use a `SPConnection`.
 ///
 /// # Examples
 ///
@@ -31,11 +31,11 @@ impl Clone for SPCommand {
     }
 }
 
-/// Tries to turn a `SPPacket` into a `SPCommand`.
+/// Tries to turn a `SPPacket` into a [SPCommand].
 ///
 /// The packet is deallocated in the process.
 ///
-/// Returns: pointer to new `SPCommand` instance or NULL
+/// Returns: pointer to new [SPCommand] instance or NULL
 ///
 /// # Safety
 ///
@@ -44,7 +44,7 @@ impl Clone for SPCommand {
 /// - `SPPacket` points to a valid instance of `SPPacket`
 /// - `SPPacket` is not used concurrently or after this call
 /// - the result is checked for NULL
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_try_from_packet(
@@ -57,15 +57,15 @@ pub unsafe extern "C" fn sp_command_try_from_packet(
     }
 }
 
-/// Clones a `SPCommand` instance.
+/// Clones a [SPCommand] instance.
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `command` points to a valid instance of `SPCommand`
+/// - `command` points to a valid instance of [SPCommand]
 /// - `command` is not written to concurrently
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_clone(
@@ -90,7 +90,7 @@ pub unsafe extern "C" fn sp_command_clone(
 ///
 /// The caller has to make sure that:
 ///
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_clear() -> *mut SPCommand {
@@ -107,7 +107,7 @@ pub unsafe extern "C" fn sp_command_clear() -> *mut SPCommand {
 ///
 /// The caller has to make sure that:
 ///
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_hard_reset() -> *mut SPCommand {
@@ -122,7 +122,7 @@ pub unsafe extern "C" fn sp_command_hard_reset() -> *mut SPCommand {
 ///
 /// The caller has to make sure that:
 ///
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_fade_out() -> *mut SPCommand {
@@ -141,7 +141,7 @@ pub unsafe extern "C" fn sp_command_fade_out() -> *mut SPCommand {
 ///
 /// The caller has to make sure that:
 ///
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_brightness(
@@ -166,7 +166,7 @@ pub unsafe extern "C" fn sp_command_brightness(
 ///
 /// - `grid` points to a valid instance of `SPBrightnessGrid`
 /// - `grid` is not used concurrently or after this call
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_char_brightness(
@@ -186,9 +186,9 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
-/// The contained `SPBitVec` is always uncompressed.
+/// The contained [SPBitVec] is always uncompressed.
 ///
-/// The passed `SPBitVec` gets consumed.
+/// The passed [SPBitVec] gets consumed.
 ///
 /// Returns: a new `Command::BitmapLinear` instance. Will never return NULL.
 ///
@@ -196,10 +196,10 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 ///
 /// The caller has to make sure that:
 ///
-/// - `bit_vec` points to a valid instance of `SPBitVec`
+/// - `bit_vec` points to a valid instance of [SPBitVec]
 /// - `bit_vec` is not used concurrently or after this call
 /// - `compression` matches one of the allowed enum values
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear(
@@ -220,9 +220,9 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
-/// The contained `SPBitVec` is always uncompressed.
+/// The contained [SPBitVec] is always uncompressed.
 ///
-/// The passed `SPBitVec` gets consumed.
+/// The passed [SPBitVec] gets consumed.
 ///
 /// Returns: a new `Command::BitmapLinearAnd` instance. Will never return NULL.
 ///
@@ -230,10 +230,10 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 ///
 /// The caller has to make sure that:
 ///
-/// - `bit_vec` points to a valid instance of `SPBitVec`
+/// - `bit_vec` points to a valid instance of [SPBitVec]
 /// - `bit_vec` is not used concurrently or after this call
 /// - `compression` matches one of the allowed enum values
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_and(
@@ -254,9 +254,9 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
-/// The contained `SPBitVec` is always uncompressed.
+/// The contained [SPBitVec] is always uncompressed.
 ///
-/// The passed `SPBitVec` gets consumed.
+/// The passed [SPBitVec] gets consumed.
 ///
 /// Returns: a new `Command::BitmapLinearOr` instance. Will never return NULL.
 ///
@@ -264,10 +264,10 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 ///
 /// The caller has to make sure that:
 ///
-/// - `bit_vec` points to a valid instance of `SPBitVec`
+/// - `bit_vec` points to a valid instance of [SPBitVec]
 /// - `bit_vec` is not used concurrently or after this call
 /// - `compression` matches one of the allowed enum values
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_or(
@@ -288,9 +288,9 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
-/// The contained `SPBitVec` is always uncompressed.
+/// The contained [SPBitVec] is always uncompressed.
 ///
-/// The passed `SPBitVec` gets consumed.
+/// The passed [SPBitVec] gets consumed.
 ///
 /// Returns: a new `Command::BitmapLinearXor` instance. Will never return NULL.
 ///
@@ -298,10 +298,10 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 ///
 /// The caller has to make sure that:
 ///
-/// - `bit_vec` points to a valid instance of `SPBitVec`
+/// - `bit_vec` points to a valid instance of [SPBitVec]
 /// - `bit_vec` is not used concurrently or after this call
 /// - `compression` matches one of the allowed enum values
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
@@ -334,7 +334,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 ///
 /// - `grid` points to a valid instance of `SPCp437Grid`
 /// - `grid` is not used concurrently or after this call
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_cp437_data(
@@ -362,7 +362,7 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 /// - `pixel_grid` points to a valid instance of `SPPixelGrid`
 /// - `pixel_grid` is not used concurrently or after this call
 /// - `compression` matches one of the allowed enum values
-/// - the returned `SPCommand` instance is freed in some way, either by using a consuming function or
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_win(
@@ -381,7 +381,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
     ))))
 }
 
-/// Deallocates a `SPCommand`.
+/// Deallocates a [SPCommand].
 ///
 /// # Examples
 ///
@@ -394,7 +394,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 ///
 /// The caller has to make sure that:
 ///
-/// - `command` points to a valid `SPCommand`
+/// - `command` points to a valid [SPCommand]
 /// - `command` is not used concurrently or after this call
 /// - `command` was not passed to another consuming function, e.g. to create a `SPPacket`
 #[no_mangle]

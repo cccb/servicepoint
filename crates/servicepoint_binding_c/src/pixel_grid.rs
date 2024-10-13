@@ -108,7 +108,7 @@ pub unsafe extern "C" fn sp_pixel_grid_clone(
 ///
 /// - `pixel_grid` points to a valid `SPPixelGrid`
 /// - `pixel_grid` is not used concurrently or after pixel_grid call
-/// - `pixel_grid` was not passed to another consuming function, e.g. to create a `SPCommand`
+/// - `pixel_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
 #[no_mangle]
 pub unsafe extern "C" fn sp_pixel_grid_free(pixel_grid: *mut SPPixelGrid) {
     _ = Box::from_raw(pixel_grid);

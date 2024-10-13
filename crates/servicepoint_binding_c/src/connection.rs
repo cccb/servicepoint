@@ -67,7 +67,7 @@ pub unsafe extern "C" fn sp_connection_send_packet(
     (*connection).0.send((*packet).0).is_ok()
 }
 
-/// Sends a `SPCommand` to the display using the `SPConnection`.
+/// Sends a [SPCommand] to the display using the `SPConnection`.
 ///
 /// The passed `command` gets consumed.
 ///

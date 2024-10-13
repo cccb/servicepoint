@@ -9,8 +9,8 @@ use crate::SPCommand;
 /// The raw packet
 pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 
-/// Turns a `SPCommand` into a `SPPacket`.
-/// The `SPCommand` gets consumed.
+/// Turns a [SPCommand] into a `SPPacket`.
+/// The [SPCommand] gets consumed.
 ///
 /// Will never return NULL.
 ///
@@ -18,8 +18,8 @@ pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 ///
 /// The caller has to make sure that:
 ///
-/// - `SPCommand` points to a valid instance of `SPCommand`
-/// - `SPCommand` is not used concurrently or after this call
+/// - [SPCommand] points to a valid instance of [SPCommand]
+/// - [SPCommand] is not used concurrently or after this call
 /// - the returned `SPPacket` instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_packet_free`.
 #[no_mangle]
