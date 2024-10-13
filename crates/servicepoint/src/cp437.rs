@@ -14,7 +14,7 @@ pub type Cp437Grid = PrimitiveGrid<u8>;
 pub type CharGrid = PrimitiveGrid<char>;
 
 /// Errors that can occur when loading CP-437.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Cp437LoadError {
     /// Invalid character in input prevented loading
     InvalidChar {
@@ -231,6 +231,17 @@ mod tests {
         let actual = Cp437Grid::load_ascii("HelloWorld", 5, true).unwrap();
         // line break will be added
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn load_ascii_invalid() {
+        assert_eq!(
+            Err(Cp437LoadError::InvalidChar {
+                char: '🥶',
+                index: 2
+            }),
+            Cp437Grid::load_ascii("?#🥶42", 3, false)
+        );
     }
 }
 

@@ -495,7 +495,8 @@ mod tests {
         command_code::CommandCode,
         origin::Pixels,
         packet::{Header, Packet},
-        Brightness, Command, CompressionCode, Origin, PixelGrid, PrimitiveGrid,
+        Brightness, BrightnessGrid, Command, CompressionCode, Origin,
+        PixelGrid, PrimitiveGrid,
     };
 
     fn round_trip(original: Command) {
@@ -900,6 +901,29 @@ mod tests {
         assert_eq!(
             Origin::<Pixels>::new(4, 2),
             Origin::new(1, 0) + Origin::new(3, 2)
+        );
+    }
+    #[test]
+    fn packet_into_char_brightness_invalid() {
+        let grid = BrightnessGrid::new(2, 2);
+        let command = Command::CharBrightness(Origin::ZERO, grid);
+        let mut packet: Packet = command.into();
+        let slot = packet.payload.get_mut(1).unwrap();
+        *slot = 23;
+        assert_eq!(
+            Command::try_from(packet),
+            Err(TryFromPacketError::InvalidBrightness(23))
+        );
+    }
+
+    #[test]
+    fn packet_into_brightness_invalid() {
+        let mut packet: Packet = Command::Brightness(Brightness::MAX).into();
+        let slot = packet.payload.get_mut(0).unwrap();
+        *slot = 42;
+        assert_eq!(
+            Command::try_from(packet),
+            Err(TryFromPacketError::InvalidBrightness(42))
         );
     }
 }
