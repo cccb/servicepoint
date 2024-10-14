@@ -27,7 +27,7 @@ impl Clone for SPCp437Grid {
 
 /// Creates a new [SPCp437Grid] with the specified dimensions.
 ///
-/// returns: [SPCp437Grid] initialized to 0.
+/// returns: [SPCp437Grid] initialized to 0. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -40,9 +40,11 @@ pub unsafe extern "C" fn sp_cp437_grid_new(
     width: usize,
     height: usize,
 ) -> *mut SPCp437Grid {
-    Box::into_raw(Box::new(SPCp437Grid(servicepoint::Cp437Grid::new(
+    let result = Box::into_raw(Box::new(SPCp437Grid(servicepoint::Cp437Grid::new(
         width, height,
-    ))))
+    ))));
+    assert!(!result.is_null());
+    result
 }
 
 /// Loads a [SPCp437Grid] with the specified dimensions from the provided data.
@@ -51,7 +53,8 @@ pub unsafe extern "C" fn sp_cp437_grid_new(
 ///
 /// # Panics
 ///
-/// When the provided `data_length` is not sufficient for the `height` and `width`
+/// - when `data` is NULL
+/// - when the provided `data_length` does not match `height` and `width`
 ///
 /// # Safety
 ///
@@ -68,15 +71,22 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
     data: *const u8,
     data_length: usize,
 ) -> *mut SPCp437Grid {
+    assert!(data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    Box::into_raw(Box::new(SPCp437Grid(servicepoint::Cp437Grid::load(
+    let result = Box::into_raw(Box::new(SPCp437Grid(servicepoint::Cp437Grid::load(
         width, height, data,
-    ))))
+    ))));
+    assert!(!result.is_null());
+    result
 }
 
 /// Clones a [SPCp437Grid].
 ///
 /// Will never return NULL.
+///
+/// # Panics
+///
+/// - when `cp437_grid` is NULL
 ///
 /// # Safety
 ///
@@ -90,10 +100,17 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
 pub unsafe extern "C" fn sp_cp437_grid_clone(
     cp437_grid: *const SPCp437Grid,
 ) -> *mut SPCp437Grid {
-    Box::into_raw(Box::new((*cp437_grid).clone()))
+    assert!(!cp437_grid.is_null());
+    let result = Box::into_raw(Box::new((*cp437_grid).clone()));
+    assert!(!result.is_null());
+    result
 }
 
 /// Deallocates a [SPCp437Grid].
+///
+/// # Panics
+///
+/// - when `cp437_grid` is NULL
 ///
 /// # Safety
 ///
@@ -104,6 +121,7 @@ pub unsafe extern "C" fn sp_cp437_grid_clone(
 /// - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
 #[no_mangle]
 pub unsafe extern "C" fn sp_cp437_grid_free(cp437_grid: *mut SPCp437Grid) {
+    assert!(!cp437_grid.is_null());
     _ = Box::from_raw(cp437_grid);
 }
 
@@ -116,7 +134,8 @@ pub unsafe extern "C" fn sp_cp437_grid_free(cp437_grid: *mut SPCp437Grid) {
 ///
 /// # Panics
 ///
-/// When accessing `x` or `y` out of bounds.
+/// - when `cp437_grid` is NULL
+/// - when accessing `x` or `y` out of bounds
 ///
 /// # Safety
 ///
@@ -130,6 +149,7 @@ pub unsafe extern "C" fn sp_cp437_grid_get(
     x: usize,
     y: usize,
 ) -> u8 {
+    assert!(!cp437_grid.is_null());
     (*cp437_grid).0.get(x, y)
 }
 
@@ -145,7 +165,8 @@ pub unsafe extern "C" fn sp_cp437_grid_get(
 ///
 /// # Panics
 ///
-/// When accessing `x` or `y` out of bounds.
+/// - when `cp437_grid` is NULL
+/// - when accessing `x` or `y` out of bounds
 ///
 /// # Safety
 ///
@@ -160,6 +181,7 @@ pub unsafe extern "C" fn sp_cp437_grid_set(
     y: usize,
     value: u8,
 ) {
+    assert!(!cp437_grid.is_null());
     (*cp437_grid).0.set(x, y, value);
 }
 
@@ -169,6 +191,10 @@ pub unsafe extern "C" fn sp_cp437_grid_set(
 ///
 /// - `cp437_grid`: instance to write to
 /// - `value`: the value to set all cells to
+///
+/// # Panics
+///
+/// - when `cp437_grid` is NULL
 ///
 /// # Safety
 ///
@@ -181,6 +207,7 @@ pub unsafe extern "C" fn sp_cp437_grid_fill(
     cp437_grid: *mut SPCp437Grid,
     value: u8,
 ) {
+    assert!(!cp437_grid.is_null());
     (*cp437_grid).0.fill(value);
 }
 
@@ -189,6 +216,10 @@ pub unsafe extern "C" fn sp_cp437_grid_fill(
 /// # Arguments
 ///
 /// - `cp437_grid`: instance to read from
+///
+/// # Panics
+///
+/// - when `cp437_grid` is NULL
 ///
 /// # Safety
 ///
@@ -199,6 +230,7 @@ pub unsafe extern "C" fn sp_cp437_grid_fill(
 pub unsafe extern "C" fn sp_cp437_grid_width(
     cp437_grid: *const SPCp437Grid,
 ) -> usize {
+    assert!(!cp437_grid.is_null());
     (*cp437_grid).0.width()
 }
 
@@ -207,6 +239,10 @@ pub unsafe extern "C" fn sp_cp437_grid_width(
 /// # Arguments
 ///
 /// - `cp437_grid`: instance to read from
+///
+/// # Panics
+///
+/// - when `cp437_grid` is NULL
 ///
 /// # Safety
 ///
@@ -217,12 +253,17 @@ pub unsafe extern "C" fn sp_cp437_grid_width(
 pub unsafe extern "C" fn sp_cp437_grid_height(
     cp437_grid: *const SPCp437Grid,
 ) -> usize {
+    assert!(!cp437_grid.is_null());
     (*cp437_grid).0.height()
 }
 
 /// Gets an unsafe reference to the data of the [SPCp437Grid] instance.
 ///
 /// Will never return NULL.
+///
+/// # Panics
+///
+/// - when `cp437_grid` is NULL
 ///
 /// ## Safety
 ///

@@ -14,6 +14,10 @@ pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 ///
 /// Will never return NULL.
 ///
+/// # Panics
+///
+/// - when `command` is NULL
+///
 /// # Safety
 ///
 /// The caller has to make sure that:
@@ -26,14 +30,21 @@ pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 pub unsafe extern "C" fn sp_packet_from_command(
     command: *mut SPCommand,
 ) -> *mut SPPacket {
+    assert!(!command.is_null());
     let command = *Box::from_raw(command);
     let packet = SPPacket(command.0.into());
-    Box::into_raw(Box::new(packet))
+    let result = Box::into_raw(Box::new(packet));
+    assert!(!result.is_null());
+    result
 }
 
 /// Tries to load a [SPPacket] from the passed array with the specified length.
 ///
 /// returns: NULL in case of an error, pointer to the allocated packet otherwise
+///
+/// # Panics
+///
+/// - when `data` is NULL
 ///
 /// # Safety
 ///
@@ -48,6 +59,7 @@ pub unsafe extern "C" fn sp_packet_try_load(
     data: *const u8,
     length: usize,
 ) -> *mut SPPacket {
+    assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, length);
     match servicepoint::packet::Packet::try_from(data) {
         Err(_) => null_mut(),
@@ -58,6 +70,10 @@ pub unsafe extern "C" fn sp_packet_try_load(
 /// Clones a [SPPacket].
 ///
 /// Will never return NULL.
+///
+/// # Panics
+///
+/// - when `packet` is NULL
 ///
 /// # Safety
 ///
@@ -71,10 +87,17 @@ pub unsafe extern "C" fn sp_packet_try_load(
 pub unsafe extern "C" fn sp_packet_clone(
     packet: *const SPPacket,
 ) -> *mut SPPacket {
-    Box::into_raw(Box::new(SPPacket((*packet).0.clone())))
+    assert!(!packet.is_null());
+    let result = Box::into_raw(Box::new(SPPacket((*packet).0.clone())));
+    assert!(!result.is_null());
+    result
 }
 
 /// Deallocates a [SPPacket].
+///
+/// # Panics
+///
+/// - when `sp_packet_free` is NULL
 ///
 /// # Safety
 ///
@@ -84,5 +107,6 @@ pub unsafe extern "C" fn sp_packet_clone(
 /// - `packet` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_free(packet: *mut SPPacket) {
+    assert!(!packet.is_null());
     _ = Box::from_raw(packet)
 }

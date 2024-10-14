@@ -1,4 +1,4 @@
-//! C functions for interacting with `SPConnection`s
+//! C functions for interacting with [SPConnection]s
 //!
 //! prefix `sp_connection_`
 
@@ -24,7 +24,7 @@ pub struct SPConnection(pub(crate) servicepoint::Connection);
 ///
 /// # Panics
 ///
-/// Bad string encoding
+/// - when `host` is null or an invalid host
 ///
 /// # Safety
 ///
@@ -36,6 +36,7 @@ pub struct SPConnection(pub(crate) servicepoint::Connection);
 pub unsafe extern "C" fn sp_connection_open(
     host: *const c_char,
 ) -> *mut SPConnection {
+    assert!(!host.is_null());
     let host = CStr::from_ptr(host).to_str().expect("Bad encoding");
     let connection = match servicepoint::Connection::open(host) {
         Err(_) => return null_mut(),
@@ -51,6 +52,11 @@ pub unsafe extern "C" fn sp_connection_open(
 ///
 /// returns: true in case of success
 ///
+/// # Panics
+///
+/// - when `connection` is NULL
+/// - when `packet` is NULL
+///
 /// # Safety
 ///
 /// The caller has to make sure that:
@@ -63,15 +69,22 @@ pub unsafe extern "C" fn sp_connection_send_packet(
     connection: *const SPConnection,
     packet: *mut SPPacket,
 ) -> bool {
+    assert!(!connection.is_null());
+    assert!(!packet.is_null());
     let packet = Box::from_raw(packet);
     (*connection).0.send((*packet).0).is_ok()
 }
 
-/// Sends a [SPCommand] to the display using the `SPConnection`.
+/// Sends a [SPCommand] to the display using the [SPConnection].
 ///
 /// The passed `command` gets consumed.
 ///
 /// returns: true in case of success
+///
+/// # Panics
+///
+/// - when `connection` is NULL
+/// - when `command` is NULL
 ///
 /// # Safety
 ///
@@ -85,13 +98,13 @@ pub unsafe extern "C" fn sp_connection_send_command(
     connection: *const SPConnection,
     command: *mut SPCommand,
 ) -> bool {
+    assert!(!connection.is_null());
+    assert!(!command.is_null());
     let command = (*Box::from_raw(command)).0;
     (*connection).0.send(command).is_ok()
 }
 
 /// Closes and deallocates a [SPConnection].
-///
-/// # Panics
 ///
 /// # Panics
 ///
@@ -105,5 +118,6 @@ pub unsafe extern "C" fn sp_connection_send_command(
 /// - `connection` is not used concurrently or after this call
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_free(connection: *mut SPConnection) {
+    assert!(!connection.is_null());
     _ = Box::from_raw(connection);
 }

@@ -42,9 +42,11 @@ pub unsafe extern "C" fn sp_pixel_grid_new(
     width: usize,
     height: usize,
 ) -> *mut SPPixelGrid {
-    Box::into_raw(Box::new(SPPixelGrid(servicepoint::PixelGrid::new(
+    let result = Box::into_raw(Box::new(SPPixelGrid(servicepoint::PixelGrid::new(
         width, height,
-    ))))
+    ))));
+    assert!(!result.is_null());
+    result
 }
 
 /// Loads a [SPPixelGrid] with the specified dimensions from the provided data.
@@ -58,6 +60,7 @@ pub unsafe extern "C" fn sp_pixel_grid_new(
 ///
 /// # Panics
 ///
+/// - when `data` is NULL
 /// - when the dimensions and data size do not match exactly.
 /// - when the width is not dividable by 8
 ///
@@ -75,15 +78,22 @@ pub unsafe extern "C" fn sp_pixel_grid_load(
     data: *const u8,
     data_length: usize,
 ) -> *mut SPPixelGrid {
+    assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    Box::into_raw(Box::new(SPPixelGrid(servicepoint::PixelGrid::load(
+    let result = Box::into_raw(Box::new(SPPixelGrid(servicepoint::PixelGrid::load(
         width, height, data,
-    ))))
+    ))));
+    assert!(!result.is_null());
+    result
 }
 
 /// Clones a [SPPixelGrid].
 ///
 /// Will never return NULL.
+///
+/// # Panics
+///
+/// - when `pixel_grid` is NULL
 ///
 /// # Safety
 ///
@@ -97,10 +107,17 @@ pub unsafe extern "C" fn sp_pixel_grid_load(
 pub unsafe extern "C" fn sp_pixel_grid_clone(
     pixel_grid: *const SPPixelGrid,
 ) -> *mut SPPixelGrid {
-    Box::into_raw(Box::new(SPPixelGrid((*pixel_grid).0.clone())))
+    assert!(!pixel_grid.is_null());
+    let result = Box::into_raw(Box::new(SPPixelGrid((*pixel_grid).0.clone())));
+    assert!(!result.is_null());
+    result
 }
 
 /// Deallocates a [SPPixelGrid].
+///
+/// # Panics
+///
+/// - when `pixel_grid` is NULL
 ///
 /// # Safety
 ///
@@ -111,6 +128,7 @@ pub unsafe extern "C" fn sp_pixel_grid_clone(
 /// - `pixel_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
 #[no_mangle]
 pub unsafe extern "C" fn sp_pixel_grid_free(pixel_grid: *mut SPPixelGrid) {
+    assert!(!pixel_grid.is_null());
     _ = Box::from_raw(pixel_grid);
 }
 
@@ -123,7 +141,8 @@ pub unsafe extern "C" fn sp_pixel_grid_free(pixel_grid: *mut SPPixelGrid) {
 ///
 /// # Panics
 ///
-/// When accessing `x` or `y` out of bounds.
+/// - when `pixel_grid` is NULL
+/// - when accessing `x` or `y` out of bounds
 ///
 /// # Safety
 ///
@@ -137,6 +156,7 @@ pub unsafe extern "C" fn sp_pixel_grid_get(
     x: usize,
     y: usize,
 ) -> bool {
+    assert!(!pixel_grid.is_null());
     (*pixel_grid).0.get(x, y)
 }
 
@@ -152,7 +172,8 @@ pub unsafe extern "C" fn sp_pixel_grid_get(
 ///
 /// # Panics
 ///
-/// When accessing `x` or `y` out of bounds.
+/// - when `pixel_grid` is NULL
+/// - when accessing `x` or `y` out of bounds
 ///
 /// # Safety
 ///
@@ -167,6 +188,7 @@ pub unsafe extern "C" fn sp_pixel_grid_set(
     y: usize,
     value: bool,
 ) {
+    assert!(!pixel_grid.is_null());
     (*pixel_grid).0.set(x, y, value);
 }
 
@@ -176,6 +198,10 @@ pub unsafe extern "C" fn sp_pixel_grid_set(
 ///
 /// - `pixel_grid`: instance to write to
 /// - `value`: the value to set all pixels to
+///
+/// # Panics
+///
+/// - when `pixel_grid` is NULL
 ///
 /// # Safety
 ///
@@ -188,6 +214,7 @@ pub unsafe extern "C" fn sp_pixel_grid_fill(
     pixel_grid: *mut SPPixelGrid,
     value: bool,
 ) {
+    assert!(!pixel_grid.is_null());
     (*pixel_grid).0.fill(value);
 }
 
@@ -196,6 +223,10 @@ pub unsafe extern "C" fn sp_pixel_grid_fill(
 /// # Arguments
 ///
 /// - `pixel_grid`: instance to read from
+///
+/// # Panics
+///
+/// - when `pixel_grid` is NULL
 ///
 /// # Safety
 ///
@@ -206,6 +237,7 @@ pub unsafe extern "C" fn sp_pixel_grid_fill(
 pub unsafe extern "C" fn sp_pixel_grid_width(
     pixel_grid: *const SPPixelGrid,
 ) -> usize {
+    assert!(!pixel_grid.is_null());
     (*pixel_grid).0.width()
 }
 
@@ -214,6 +246,10 @@ pub unsafe extern "C" fn sp_pixel_grid_width(
 /// # Arguments
 ///
 /// - `pixel_grid`: instance to read from
+///
+/// # Panics
+///
+/// - when `pixel_grid` is NULL
 ///
 /// # Safety
 ///
@@ -224,12 +260,17 @@ pub unsafe extern "C" fn sp_pixel_grid_width(
 pub unsafe extern "C" fn sp_pixel_grid_height(
     pixel_grid: *const SPPixelGrid,
 ) -> usize {
+    assert!(!pixel_grid.is_null());
     (*pixel_grid).0.height()
 }
 
 /// Gets an unsafe reference to the data of the [SPPixelGrid] instance.
 ///
-/// ## Safety
+/// # Panics
+///
+/// - when `pixel_grid` is NULL
+///
+/// # Safety
 ///
 /// The caller has to make sure that:
 ///
@@ -240,6 +281,7 @@ pub unsafe extern "C" fn sp_pixel_grid_height(
 pub unsafe extern "C" fn sp_pixel_grid_unsafe_data_ref(
     pixel_grid: *mut SPPixelGrid,
 ) -> SPByteSlice {
+    assert!(!pixel_grid.is_null());
     let data = (*pixel_grid).0.data_ref_mut();
     SPByteSlice {
         start: data.as_mut_ptr_range().start,
