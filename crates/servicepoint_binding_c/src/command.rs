@@ -8,7 +8,7 @@ use servicepoint::{Brightness, Origin};
 
 use crate::{
     SPBitVec, SPBrightnessGrid, SPCompressionCode, SPCp437Grid, SPPacket,
-    SPPixelGrid,
+    SPBitmap,
 };
 
 /// A low-level display command.
@@ -413,21 +413,21 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 
 /// Sets a window of pixels to the specified values.
 ///
-/// The passed [SPPixelGrid] gets consumed.
+/// The passed [SPBitmap] gets consumed.
 ///
 /// Returns: a new [Command::BitmapLinearWin] instance. Will never return NULL.
 ///
 /// # Panics
 ///
-/// - when `pixel_grid` is null
+/// - when `bitmap` is null
 /// - when `compression_code` is not a valid value
 ///
 /// # Safety
 ///
 /// The caller has to make sure that:
 ///
-/// - `pixel_grid` points to a valid instance of [SPPixelGrid]
-/// - `pixel_grid` is not used concurrently or after this call
+/// - `bitmap` points to a valid instance of [SPBitmap]
+/// - `bitmap` is not used concurrently or after this call
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
@@ -435,11 +435,11 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 pub unsafe extern "C" fn sp_command_bitmap_linear_win(
     x: usize,
     y: usize,
-    pixel_grid: *mut SPPixelGrid,
+    bitmap: *mut SPBitmap,
     compression_code: SPCompressionCode,
 ) -> *mut SPCommand {
-    assert!(!pixel_grid.is_null());
-    let byte_grid = (*Box::from_raw(pixel_grid)).0;
+    assert!(!bitmap.is_null());
+    let byte_grid = (*Box::from_raw(bitmap)).0;
     let result = Box::into_raw(Box::new(SPCommand(servicepoint::Command::BitmapLinearWin(
         Origin::new(x, y),
         byte_grid,

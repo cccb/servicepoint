@@ -4,7 +4,7 @@ use crate::{
     command_code::CommandCode,
     compression::into_decompressed,
     packet::{Header, Packet},
-    Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin, PixelGrid,
+    Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin, Bitmap,
     Pixels, PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
 };
 
@@ -105,10 +105,10 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+    /// # use servicepoint::{Command, CompressionCode, Grid, Bitmap};
     /// # let connection = servicepoint::Connection::Fake;
     /// #
-    /// let mut pixels = PixelGrid::max_sized();
+    /// let mut pixels = Bitmap::max_sized();
     /// // draw something to the pixels here
     /// # pixels.set(2, 5, true);
     ///
@@ -121,7 +121,7 @@ pub enum Command {
     ///
     /// connection.send(command).expect("send failed");
     /// ```
-    BitmapLinearWin(Origin<Pixels>, PixelGrid, CompressionCode),
+    BitmapLinearWin(Origin<Pixels>, Bitmap, CompressionCode),
 
     /// Set the brightness of all tiles to the same value.
     ///
@@ -337,7 +337,7 @@ impl Command {
 
         Ok(Command::BitmapLinearWin(
             Origin::new(tiles_x as usize * TILE_SIZE, pixels_y as usize),
-            PixelGrid::load(
+            Bitmap::load(
                 tile_w as usize * TILE_SIZE,
                 pixel_h as usize,
                 &payload,
@@ -371,7 +371,7 @@ impl Command {
         }
     }
 
-    /// Helper method for Packets into `BitMapLinear*`-Commands
+    /// Helper method for Packets into `BitmapLinear*`-Commands
     fn packet_into_linear_bitmap(
         packet: Packet,
     ) -> Result<(SpBitVec, CompressionCode), TryFromPacketError> {
@@ -496,7 +496,7 @@ mod tests {
         origin::Pixels,
         packet::{Header, Packet},
         Brightness, BrightnessGrid, Command, CompressionCode, Origin,
-        PixelGrid, PrimitiveGrid,
+        Bitmap, PrimitiveGrid,
     };
 
     fn round_trip(original: Command) {
@@ -589,7 +589,7 @@ mod tests {
             ));
             round_trip(Command::BitmapLinearWin(
                 Origin::new(0, 0),
-                PixelGrid::max_sized(),
+                Bitmap::max_sized(),
                 compression,
             ));
         }
@@ -714,7 +714,7 @@ mod tests {
         for compression in all_compressions().to_owned() {
             let p: Packet = Command::BitmapLinearWin(
                 Origin::new(16, 8),
-                PixelGrid::new(8, 8),
+                Bitmap::new(8, 8),
                 compression,
             )
             .into();

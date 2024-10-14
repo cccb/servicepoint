@@ -465,341 +465,6 @@ namespace ServicePoint.BindGen
         public static extern ByteSlice sp_brightness_grid_unsafe_data_ref(BrightnessGrid* brightness_grid);
 
         /// <summary>
-        ///  Tries to turn a [SPPacket] into a [SPCommand].
-        ///
-        ///  The packet is deallocated in the process.
-        ///
-        ///  Returns: pointer to new [SPCommand] instance or NULL if parsing failed.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `packet` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - [SPPacket] points to a valid instance of [SPPacket]
-        ///  - [SPPacket] is not used concurrently or after this call
-        ///  - the result is checked for NULL
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_try_from_packet(Packet* packet);
-
-        /// <summary>
-        ///  Clones a [SPCommand] instance.
-        ///
-        ///  returns: new [SPCommand] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `command` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `command` points to a valid instance of [SPCommand]
-        ///  - `command` is not written to concurrently
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_clone(Command* command);
-
-        /// <summary>
-        ///  Set all pixels to the off state.
-        ///
-        ///  Does not affect brightness.
-        ///
-        ///  Returns: a new [Command::Clear] instance. Will never return NULL.
-        ///
-        ///  # Examples
-        ///
-        ///  ```C
-        ///  sp_connection_send_command(connection, sp_command_clear());
-        ///  ```
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_clear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_clear();
-
-        /// <summary>
-        ///  Kills the udp daemon on the display, which usually results in a restart.
-        ///
-        ///  Please do not send this in your normal program flow.
-        ///
-        ///  Returns: a new [Command::HardReset] instance. Will never return NULL.
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_hard_reset", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_hard_reset();
-
-        /// <summary>
-        ///  A yet-to-be-tested command.
-        ///
-        ///  Returns: a new `Command::FadeOut` instance. Will never return NULL.
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_fade_out", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_fade_out();
-
-        /// <summary>
-        ///  Set the brightness of all tiles to the same value.
-        ///
-        ///  Returns: a new [Command::Brightness] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - When the provided brightness value is out of range (0-11).
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_brightness(byte brightness);
-
-        /// <summary>
-        ///  Set the brightness of individual tiles in a rectangular area of the display.
-        ///
-        ///  The passed [SPBrightnessGrid] gets consumed.
-        ///
-        ///  Returns: a new [Command::CharBrightness] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `grid` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `grid` points to a valid instance of [SPBrightnessGrid]
-        ///  - `grid` is not used concurrently or after this call
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* grid);
-
-        /// <summary>
-        ///  Set pixel data starting at the pixel offset on screen.
-        ///
-        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
-        ///  once the starting row is full, overwriting will continue on column 0.
-        ///
-        ///  The contained [SPBitVec] is always uncompressed.
-        ///
-        ///  The passed [SPBitVec] gets consumed.
-        ///
-        ///  Returns: a new [Command::BitmapLinear] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is null
-        ///  - when `compression_code` is not a valid value
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid instance of [SPBitVec]
-        ///  - `bit_vec` is not used concurrently or after this call
-        ///  - `compression` matches one of the allowed enum values
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear(nuint offset, BitVec* bit_vec, CompressionCode compression);
-
-        /// <summary>
-        ///  Set pixel data according to an and-mask starting at the offset.
-        ///
-        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
-        ///  once the starting row is full, overwriting will continue on column 0.
-        ///
-        ///  The contained [SPBitVec] is always uncompressed.
-        ///
-        ///  The passed [SPBitVec] gets consumed.
-        ///
-        ///  Returns: a new [Command::BitmapLinearAnd] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is null
-        ///  - when `compression_code` is not a valid value
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid instance of [SPBitVec]
-        ///  - `bit_vec` is not used concurrently or after this call
-        ///  - `compression` matches one of the allowed enum values
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_and", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_and(nuint offset, BitVec* bit_vec, CompressionCode compression);
-
-        /// <summary>
-        ///  Set pixel data according to an or-mask starting at the offset.
-        ///
-        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
-        ///  once the starting row is full, overwriting will continue on column 0.
-        ///
-        ///  The contained [SPBitVec] is always uncompressed.
-        ///
-        ///  The passed [SPBitVec] gets consumed.
-        ///
-        ///  Returns: a new [Command::BitmapLinearOr] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is null
-        ///  - when `compression_code` is not a valid value
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid instance of [SPBitVec]
-        ///  - `bit_vec` is not used concurrently or after this call
-        ///  - `compression` matches one of the allowed enum values
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_or", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_or(nuint offset, BitVec* bit_vec, CompressionCode compression);
-
-        /// <summary>
-        ///  Set pixel data according to a xor-mask starting at the offset.
-        ///
-        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
-        ///  once the starting row is full, overwriting will continue on column 0.
-        ///
-        ///  The contained [SPBitVec] is always uncompressed.
-        ///
-        ///  The passed [SPBitVec] gets consumed.
-        ///
-        ///  Returns: a new [Command::BitmapLinearXor] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is null
-        ///  - when `compression_code` is not a valid value
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid instance of [SPBitVec]
-        ///  - `bit_vec` is not used concurrently or after this call
-        ///  - `compression` matches one of the allowed enum values
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_xor", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, BitVec* bit_vec, CompressionCode compression);
-
-        /// <summary>
-        ///  Show text on the screen.
-        ///
-        ///  The passed [SPCp437Grid] gets consumed.
-        ///
-        ///  Returns: a new [Command::Cp437Data] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `grid` is null
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `grid` points to a valid instance of [SPCp437Grid]
-        ///  - `grid` is not used concurrently or after this call
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_cp437_data(nuint x, nuint y, Cp437Grid* grid);
-
-        /// <summary>
-        ///  Sets a window of pixels to the specified values.
-        ///
-        ///  The passed [SPPixelGrid] gets consumed.
-        ///
-        ///  Returns: a new [Command::BitmapLinearWin] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `pixel_grid` is null
-        ///  - when `compression_code` is not a valid value
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `pixel_grid` points to a valid instance of [SPPixelGrid]
-        ///  - `pixel_grid` is not used concurrently or after this call
-        ///  - `compression` matches one of the allowed enum values
-        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_command_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_win(nuint x, nuint y, PixelGrid* pixel_grid, CompressionCode compression_code);
-
-        /// <summary>
-        ///  Deallocates a [SPCommand].
-        ///
-        ///  # Examples
-        ///
-        ///  ```C
-        ///  SPCommand c = sp_command_clear();
-        ///  sp_command_free(c);
-        ///  ```
-        ///
-        ///  # Panics
-        ///
-        ///  - when `command` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `command` points to a valid [SPCommand]
-        ///  - `command` is not used concurrently or after this call
-        ///  - `command` was not passed to another consuming function, e.g. to create a [SPPacket]
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_command_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_command_free(Command* command);
-
-        /// <summary>
         ///  Creates a new instance of [SPConnection].
         ///
         ///  returns: NULL if connection fails, or connected instance
@@ -1172,14 +837,349 @@ namespace ServicePoint.BindGen
         public static extern void sp_packet_free(Packet* packet);
 
         /// <summary>
-        ///  Creates a new [SPPixelGrid] with the specified dimensions.
+        ///  Tries to turn a [SPPacket] into a [SPCommand].
+        ///
+        ///  The packet is deallocated in the process.
+        ///
+        ///  Returns: pointer to new [SPCommand] instance or NULL if parsing failed.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `packet` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - [SPPacket] points to a valid instance of [SPPacket]
+        ///  - [SPPacket] is not used concurrently or after this call
+        ///  - the result is checked for NULL
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_try_from_packet(Packet* packet);
+
+        /// <summary>
+        ///  Clones a [SPCommand] instance.
+        ///
+        ///  returns: new [SPCommand] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `command` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `command` points to a valid instance of [SPCommand]
+        ///  - `command` is not written to concurrently
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_clone(Command* command);
+
+        /// <summary>
+        ///  Set all pixels to the off state.
+        ///
+        ///  Does not affect brightness.
+        ///
+        ///  Returns: a new [Command::Clear] instance. Will never return NULL.
+        ///
+        ///  # Examples
+        ///
+        ///  ```C
+        ///  sp_connection_send_command(connection, sp_command_clear());
+        ///  ```
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_clear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_clear();
+
+        /// <summary>
+        ///  Kills the udp daemon on the display, which usually results in a restart.
+        ///
+        ///  Please do not send this in your normal program flow.
+        ///
+        ///  Returns: a new [Command::HardReset] instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_hard_reset", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_hard_reset();
+
+        /// <summary>
+        ///  A yet-to-be-tested command.
+        ///
+        ///  Returns: a new `Command::FadeOut` instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_fade_out", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_fade_out();
+
+        /// <summary>
+        ///  Set the brightness of all tiles to the same value.
+        ///
+        ///  Returns: a new [Command::Brightness] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - When the provided brightness value is out of range (0-11).
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_brightness(byte brightness);
+
+        /// <summary>
+        ///  Set the brightness of individual tiles in a rectangular area of the display.
+        ///
+        ///  The passed [SPBrightnessGrid] gets consumed.
+        ///
+        ///  Returns: a new [Command::CharBrightness] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `grid` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `grid` points to a valid instance of [SPBrightnessGrid]
+        ///  - `grid` is not used concurrently or after this call
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* grid);
+
+        /// <summary>
+        ///  Set pixel data starting at the pixel offset on screen.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained [SPBitVec] is always uncompressed.
+        ///
+        ///  The passed [SPBitVec] gets consumed.
+        ///
+        ///  Returns: a new [Command::BitmapLinear] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is null
+        ///  - when `compression_code` is not a valid value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid instance of [SPBitVec]
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_bitmap_linear(nuint offset, BitVec* bit_vec, CompressionCode compression);
+
+        /// <summary>
+        ///  Set pixel data according to an and-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained [SPBitVec] is always uncompressed.
+        ///
+        ///  The passed [SPBitVec] gets consumed.
+        ///
+        ///  Returns: a new [Command::BitmapLinearAnd] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is null
+        ///  - when `compression_code` is not a valid value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid instance of [SPBitVec]
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_and", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_bitmap_linear_and(nuint offset, BitVec* bit_vec, CompressionCode compression);
+
+        /// <summary>
+        ///  Set pixel data according to an or-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained [SPBitVec] is always uncompressed.
+        ///
+        ///  The passed [SPBitVec] gets consumed.
+        ///
+        ///  Returns: a new [Command::BitmapLinearOr] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is null
+        ///  - when `compression_code` is not a valid value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid instance of [SPBitVec]
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_or", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_bitmap_linear_or(nuint offset, BitVec* bit_vec, CompressionCode compression);
+
+        /// <summary>
+        ///  Set pixel data according to a xor-mask starting at the offset.
+        ///
+        ///  The screen will continuously overwrite more pixel data without regarding the offset, meaning
+        ///  once the starting row is full, overwriting will continue on column 0.
+        ///
+        ///  The contained [SPBitVec] is always uncompressed.
+        ///
+        ///  The passed [SPBitVec] gets consumed.
+        ///
+        ///  Returns: a new [Command::BitmapLinearXor] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is null
+        ///  - when `compression_code` is not a valid value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid instance of [SPBitVec]
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_xor", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, BitVec* bit_vec, CompressionCode compression);
+
+        /// <summary>
+        ///  Show text on the screen.
+        ///
+        ///  The passed [SPCp437Grid] gets consumed.
+        ///
+        ///  Returns: a new [Command::Cp437Data] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `grid` is null
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `grid` points to a valid instance of [SPCp437Grid]
+        ///  - `grid` is not used concurrently or after this call
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_cp437_data(nuint x, nuint y, Cp437Grid* grid);
+
+        /// <summary>
+        ///  Sets a window of pixels to the specified values.
+        ///
+        ///  The passed [SPBitmap] gets consumed.
+        ///
+        ///  Returns: a new [Command::BitmapLinearWin] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is null
+        ///  - when `compression_code` is not a valid value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid instance of [SPBitmap]
+        ///  - `bitmap` is not used concurrently or after this call
+        ///  - `compression` matches one of the allowed enum values
+        ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_command_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Command* sp_command_bitmap_linear_win(nuint x, nuint y, Bitmap* bitmap, CompressionCode compression_code);
+
+        /// <summary>
+        ///  Deallocates a [SPCommand].
+        ///
+        ///  # Examples
+        ///
+        ///  ```C
+        ///  SPCommand c = sp_command_clear();
+        ///  sp_command_free(c);
+        ///  ```
+        ///
+        ///  # Panics
+        ///
+        ///  - when `command` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `command` points to a valid [SPCommand]
+        ///  - `command` is not used concurrently or after this call
+        ///  - `command` was not passed to another consuming function, e.g. to create a [SPPacket]
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_command_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_command_free(Command* command);
+
+        /// <summary>
+        ///  Creates a new [SPBitmap] with the specified dimensions.
         ///
         ///  # Arguments
         ///
         ///  - `width`: size in pixels in x-direction
         ///  - `height`: size in pixels in y-direction
         ///
-        ///  returns: [SPPixelGrid] initialized to all pixels off. Will never return NULL.
+        ///  returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -1190,20 +1190,20 @@ namespace ServicePoint.BindGen
         ///  The caller has to make sure that:
         ///
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_pixel_grid_free`.
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern PixelGrid* sp_pixel_grid_new(nuint width, nuint height);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_new(nuint width, nuint height);
 
         /// <summary>
-        ///  Loads a [SPPixelGrid] with the specified dimensions from the provided data.
+        ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
         ///
         ///  # Arguments
         ///
         ///  - `width`: size in pixels in x-direction
         ///  - `height`: size in pixels in y-direction
         ///
-        ///  returns: [SPPixelGrid] that contains a copy of the provided data. Will never return NULL.
+        ///  returns: [SPBitmap] that contains a copy of the provided data. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -1217,80 +1217,80 @@ namespace ServicePoint.BindGen
         ///
         ///  - `data` points to a valid memory location of at least `data_length` bytes in size.
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_pixel_grid_free`.
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern PixelGrid* sp_pixel_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
-        ///  Clones a [SPPixelGrid].
+        ///  Clones a [SPBitmap].
         ///
         ///  Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `pixel_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `pixel_grid` points to a valid [SPPixelGrid]
-        ///  - `pixel_grid` is not written to concurrently
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to concurrently
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_pixel_grid_free`.
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern PixelGrid* sp_pixel_grid_clone(PixelGrid* pixel_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_clone(Bitmap* bitmap);
 
         /// <summary>
-        ///  Deallocates a [SPPixelGrid].
+        ///  Deallocates a [SPBitmap].
         ///
         ///  # Panics
         ///
-        ///  - when `pixel_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `pixel_grid` points to a valid [SPPixelGrid]
-        ///  - `pixel_grid` is not used concurrently or after pixel_grid call
-        ///  - `pixel_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not used concurrently or after bitmap call
+        ///  - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_pixel_grid_free(PixelGrid* pixel_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_free(Bitmap* bitmap);
 
         /// <summary>
-        ///  Gets the current value at the specified position in the [SPPixelGrid].
+        ///  Gets the current value at the specified position in the [SPBitmap].
         ///
         ///  # Arguments
         ///
-        ///  - `pixel_grid`: instance to read from
+        ///  - `bitmap`: instance to read from
         ///  - `x` and `y`: position of the cell to read
         ///
         ///  # Panics
         ///
-        ///  - when `pixel_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///  - when accessing `x` or `y` out of bounds
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `pixel_grid` points to a valid [SPPixelGrid]
-        ///  - `pixel_grid` is not written to concurrently
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_pixel_grid_get(PixelGrid* pixel_grid, nuint x, nuint y);
+        public static extern bool sp_bitmap_get(Bitmap* bitmap, nuint x, nuint y);
 
         /// <summary>
-        ///  Sets the value of the specified position in the [SPPixelGrid].
+        ///  Sets the value of the specified position in the [SPBitmap].
         ///
         ///  # Arguments
         ///
-        ///  - `pixel_grid`: instance to write to
+        ///  - `bitmap`: instance to write to
         ///  - `x` and `y`: position of the cell
         ///  - `value`: the value to write to the cell
         ///
@@ -1298,98 +1298,98 @@ namespace ServicePoint.BindGen
         ///
         ///  # Panics
         ///
-        ///  - when `pixel_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///  - when accessing `x` or `y` out of bounds
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `pixel_grid` points to a valid [SPPixelGrid]
-        ///  - `pixel_grid` is not written to or read from concurrently
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to or read from concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_pixel_grid_set(PixelGrid* pixel_grid, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_set(Bitmap* bitmap, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
-        ///  Sets the state of all pixels in the [SPPixelGrid].
+        ///  Sets the state of all pixels in the [SPBitmap].
         ///
         ///  # Arguments
         ///
-        ///  - `pixel_grid`: instance to write to
+        ///  - `bitmap`: instance to write to
         ///  - `value`: the value to set all pixels to
         ///
         ///  # Panics
         ///
-        ///  - when `pixel_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `pixel_grid` points to a valid [SPPixelGrid]
-        ///  - `pixel_grid` is not written to or read from concurrently
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to or read from concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_pixel_grid_fill(PixelGrid* pixel_grid, [MarshalAs(UnmanagedType.U1)] bool value);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_fill(Bitmap* bitmap, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
-        ///  Gets the width in pixels of the [SPPixelGrid] instance.
+        ///  Gets the width in pixels of the [SPBitmap] instance.
         ///
         ///  # Arguments
         ///
-        ///  - `pixel_grid`: instance to read from
+        ///  - `bitmap`: instance to read from
         ///
         ///  # Panics
         ///
-        ///  - when `pixel_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `pixel_grid` points to a valid [SPPixelGrid]
+        ///  - `bitmap` points to a valid [SPBitmap]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_pixel_grid_width(PixelGrid* pixel_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_bitmap_width(Bitmap* bitmap);
 
         /// <summary>
-        ///  Gets the height in pixels of the [SPPixelGrid] instance.
+        ///  Gets the height in pixels of the [SPBitmap] instance.
         ///
         ///  # Arguments
         ///
-        ///  - `pixel_grid`: instance to read from
+        ///  - `bitmap`: instance to read from
         ///
         ///  # Panics
         ///
-        ///  - when `pixel_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `pixel_grid` points to a valid [SPPixelGrid]
+        ///  - `bitmap` points to a valid [SPBitmap]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_pixel_grid_height(PixelGrid* pixel_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_bitmap_height(Bitmap* bitmap);
 
         /// <summary>
-        ///  Gets an unsafe reference to the data of the [SPPixelGrid] instance.
+        ///  Gets an unsafe reference to the data of the [SPBitmap] instance.
         ///
         ///  # Panics
         ///
-        ///  - when `pixel_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `pixel_grid` points to a valid [SPPixelGrid]
-        ///  - the returned memory range is never accessed after the passed [SPPixelGrid] has been freed
-        ///  - the returned memory range is never accessed concurrently, either via the [SPPixelGrid] or directly
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - the returned memory range is never accessed after the passed [SPBitmap] has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_pixel_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_pixel_grid_unsafe_data_ref(PixelGrid* pixel_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern ByteSlice sp_bitmap_unsafe_data_ref(Bitmap* bitmap);
 
 
     }
@@ -1412,11 +1412,6 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Command
-    {
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct Connection
     {
     }
@@ -1432,7 +1427,12 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct PixelGrid
+    public unsafe partial struct Command
+    {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct Bitmap
     {
     }
 

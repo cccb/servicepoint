@@ -6,7 +6,7 @@ using var connection = Connection.Open("127.0.0.1:2342");
 connection.Send(Command.Clear().IntoPacket());
 connection.Send(Command.Brightness(128).IntoPacket());
 
-using var pixels = PixelGrid.New(Constants.PixelWidth, Constants.PixelHeight);
+using var pixels = Bitmap.New(Constants.PixelWidth, Constants.PixelHeight);
 
 for (var offset = 0; offset < int.MaxValue; offset++)
 {

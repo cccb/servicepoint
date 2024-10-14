@@ -28,7 +28,7 @@ fn main() {
 
     // put all pixels in on state
     if cli.enable_all {
-        let mut filled_grid = PixelGrid::max_sized();
+        let mut filled_grid = Bitmap::max_sized();
         filled_grid.fill(true);
 
         let command = BitmapLinearWin(

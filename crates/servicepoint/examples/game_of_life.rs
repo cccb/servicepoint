@@ -34,7 +34,7 @@ fn main() {
     }
 }
 
-fn iteration(field: PixelGrid) -> PixelGrid {
+fn iteration(field: Bitmap) -> Bitmap {
     let mut next = field.clone();
     for x in 0..field.width() {
         for y in 0..field.height() {
@@ -51,7 +51,7 @@ fn iteration(field: PixelGrid) -> PixelGrid {
     next
 }
 
-fn count_neighbors(field: &PixelGrid, x: i32, y: i32) -> i32 {
+fn count_neighbors(field: &Bitmap, x: i32, y: i32) -> i32 {
     let mut count = 0;
     for nx in x - 1..=x + 1 {
         for ny in y - 1..=y + 1 {
@@ -78,8 +78,8 @@ fn count_neighbors(field: &PixelGrid, x: i32, y: i32) -> i32 {
     count
 }
 
-fn make_random_field(probability: f64) -> PixelGrid {
-    let mut field = PixelGrid::max_sized();
+fn make_random_field(probability: f64) -> Bitmap {
+    let mut field = Bitmap::max_sized();
     let mut rng = rand::thread_rng();
     let d = distributions::Bernoulli::new(probability).unwrap();
     for x in 0..field.width() {

@@ -15,7 +15,7 @@ fn main() {
     let connection = Connection::open(cli.destination)
         .expect("could not connect to display");
 
-    let mut pixels = PixelGrid::max_sized();
+    let mut pixels = Bitmap::max_sized();
     pixels.fill(true);
 
     let command = Command::BitmapLinearWin(

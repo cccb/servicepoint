@@ -16,7 +16,7 @@ fn main() {
     let connection = Connection::open(Cli::parse().destination)
         .expect("could not connect to display");
 
-    let mut pixels = PixelGrid::max_sized();
+    let mut pixels = Bitmap::max_sized();
     for x_offset in 0..usize::MAX {
         pixels.fill(false);
 

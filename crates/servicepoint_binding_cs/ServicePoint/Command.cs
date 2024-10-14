@@ -105,11 +105,11 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
         }
     }
 
-    public static Command BitmapLinearWin(int x, int y, PixelGrid pixelGrid, CompressionCode compression)
+    public static Command BitmapLinearWin(int x, int y, Bitmap bitmap, CompressionCode compression)
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_bitmap_linear_win((ushort)x, (ushort)y, pixelGrid.Into(), compression));
+            return new Command(NativeMethods.sp_command_bitmap_linear_win((ushort)x, (ushort)y, bitmap.Into(), compression));
         }
     }
 

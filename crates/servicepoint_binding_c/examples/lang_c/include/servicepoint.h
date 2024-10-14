@@ -84,6 +84,20 @@ typedef uint16_t SPCompressionCode;
 typedef struct SPBitVec SPBitVec;
 
 /**
+ * A grid of pixels.
+ *
+ * # Examples
+ *
+ * ```C
+ * Cp437Grid grid = sp_bitmap_new(8, 3);
+ * sp_bitmap_fill(grid, true);
+ * sp_bitmap_set(grid, 0, 0, false);
+ * sp_bitmap_free(grid);
+ * ```
+ */
+typedef struct SPBitmap SPBitmap;
+
+/**
  * A grid containing brightness values.
  *
  * # Examples
@@ -151,20 +165,6 @@ typedef struct SPCp437Grid SPCp437Grid;
  * The raw packet
  */
 typedef struct SPPacket SPPacket;
-
-/**
- * A grid of pixels.
- *
- * # Examples
- *
- * ```C
- * Cp437Grid grid = sp_pixel_grid_new(8, 3);
- * sp_pixel_grid_fill(grid, true);
- * sp_pixel_grid_set(grid, 0, 0, false);
- * sp_pixel_grid_free(grid);
- * ```
- */
-typedef struct SPPixelGrid SPPixelGrid;
 
 /**
  * Represents a span of memory (`&mut [u8]` ) as a struct usable by C code.
@@ -402,6 +402,219 @@ void sp_bit_vec_set(struct SPBitVec *bit_vec, size_t index, bool value);
  * - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
  */
 struct SPByteSlice sp_bit_vec_unsafe_data_ref(struct SPBitVec *bit_vec);
+
+/**
+ * Clones a [SPBitmap].
+ *
+ * Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when `bitmap` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bitmap` points to a valid [SPBitmap]
+ * - `bitmap` is not written to concurrently
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_bitmap_free`.
+ */
+struct SPBitmap *sp_bitmap_clone(const struct SPBitmap *bitmap);
+
+/**
+ * Sets the state of all pixels in the [SPBitmap].
+ *
+ * # Arguments
+ *
+ * - `bitmap`: instance to write to
+ * - `value`: the value to set all pixels to
+ *
+ * # Panics
+ *
+ * - when `bitmap` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bitmap` points to a valid [SPBitmap]
+ * - `bitmap` is not written to or read from concurrently
+ */
+void sp_bitmap_fill(struct SPBitmap *bitmap, bool value);
+
+/**
+ * Deallocates a [SPBitmap].
+ *
+ * # Panics
+ *
+ * - when `bitmap` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bitmap` points to a valid [SPBitmap]
+ * - `bitmap` is not used concurrently or after bitmap call
+ * - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
+ */
+void sp_bitmap_free(struct SPBitmap *bitmap);
+
+/**
+ * Gets the current value at the specified position in the [SPBitmap].
+ *
+ * # Arguments
+ *
+ * - `bitmap`: instance to read from
+ * - `x` and `y`: position of the cell to read
+ *
+ * # Panics
+ *
+ * - when `bitmap` is NULL
+ * - when accessing `x` or `y` out of bounds
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bitmap` points to a valid [SPBitmap]
+ * - `bitmap` is not written to concurrently
+ */
+bool sp_bitmap_get(const struct SPBitmap *bitmap, size_t x, size_t y);
+
+/**
+ * Gets the height in pixels of the [SPBitmap] instance.
+ *
+ * # Arguments
+ *
+ * - `bitmap`: instance to read from
+ *
+ * # Panics
+ *
+ * - when `bitmap` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bitmap` points to a valid [SPBitmap]
+ */
+size_t sp_bitmap_height(const struct SPBitmap *bitmap);
+
+/**
+ * Loads a [SPBitmap] with the specified dimensions from the provided data.
+ *
+ * # Arguments
+ *
+ * - `width`: size in pixels in x-direction
+ * - `height`: size in pixels in y-direction
+ *
+ * returns: [SPBitmap] that contains a copy of the provided data. Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when `data` is NULL
+ * - when the dimensions and data size do not match exactly.
+ * - when the width is not dividable by 8
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `data` points to a valid memory location of at least `data_length` bytes in size.
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_bitmap_free`.
+ */
+struct SPBitmap *sp_bitmap_load(size_t width,
+                                size_t height,
+                                const uint8_t *data,
+                                size_t data_length);
+
+/**
+ * Creates a new [SPBitmap] with the specified dimensions.
+ *
+ * # Arguments
+ *
+ * - `width`: size in pixels in x-direction
+ * - `height`: size in pixels in y-direction
+ *
+ * returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when the width is not dividable by 8
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_bitmap_free`.
+ */
+struct SPBitmap *sp_bitmap_new(size_t width,
+                               size_t height);
+
+/**
+ * Sets the value of the specified position in the [SPBitmap].
+ *
+ * # Arguments
+ *
+ * - `bitmap`: instance to write to
+ * - `x` and `y`: position of the cell
+ * - `value`: the value to write to the cell
+ *
+ * returns: old value of the cell
+ *
+ * # Panics
+ *
+ * - when `bitmap` is NULL
+ * - when accessing `x` or `y` out of bounds
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bitmap` points to a valid [SPBitmap]
+ * - `bitmap` is not written to or read from concurrently
+ */
+void sp_bitmap_set(struct SPBitmap *bitmap, size_t x, size_t y, bool value);
+
+/**
+ * Gets an unsafe reference to the data of the [SPBitmap] instance.
+ *
+ * # Panics
+ *
+ * - when `bitmap` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bitmap` points to a valid [SPBitmap]
+ * - the returned memory range is never accessed after the passed [SPBitmap] has been freed
+ * - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
+ */
+struct SPByteSlice sp_bitmap_unsafe_data_ref(struct SPBitmap *bitmap);
+
+/**
+ * Gets the width in pixels of the [SPBitmap] instance.
+ *
+ * # Arguments
+ *
+ * - `bitmap`: instance to read from
+ *
+ * # Panics
+ *
+ * - when `bitmap` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bitmap` points to a valid [SPBitmap]
+ */
+size_t sp_bitmap_width(const struct SPBitmap *bitmap);
 
 /**
  * Clones a [SPBrightnessGrid].
@@ -726,28 +939,28 @@ struct SPCommand *sp_command_bitmap_linear_or(size_t offset,
 /**
  * Sets a window of pixels to the specified values.
  *
- * The passed [SPPixelGrid] gets consumed.
+ * The passed [SPBitmap] gets consumed.
  *
  * Returns: a new [Command::BitmapLinearWin] instance. Will never return NULL.
  *
  * # Panics
  *
- * - when `pixel_grid` is null
+ * - when `bitmap` is null
  * - when `compression_code` is not a valid value
  *
  * # Safety
  *
  * The caller has to make sure that:
  *
- * - `pixel_grid` points to a valid instance of [SPPixelGrid]
- * - `pixel_grid` is not used concurrently or after this call
+ * - `bitmap` points to a valid instance of [SPBitmap]
+ * - `bitmap` is not used concurrently or after this call
  * - `compression` matches one of the allowed enum values
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
  */
 struct SPCommand *sp_command_bitmap_linear_win(size_t x,
                                                size_t y,
-                                               struct SPPixelGrid *pixel_grid,
+                                               struct SPBitmap *bitmap,
                                                SPCompressionCode compression_code);
 
 /**
@@ -1329,224 +1542,6 @@ struct SPPacket *sp_packet_from_command(struct SPCommand *command);
  */
 struct SPPacket *sp_packet_try_load(const uint8_t *data,
                                     size_t length);
-
-/**
- * Clones a [SPPixelGrid].
- *
- * Will never return NULL.
- *
- * # Panics
- *
- * - when `pixel_grid` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `pixel_grid` points to a valid [SPPixelGrid]
- * - `pixel_grid` is not written to concurrently
- * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_pixel_grid_free`.
- */
-struct SPPixelGrid *sp_pixel_grid_clone(const struct SPPixelGrid *pixel_grid);
-
-/**
- * Sets the state of all pixels in the [SPPixelGrid].
- *
- * # Arguments
- *
- * - `pixel_grid`: instance to write to
- * - `value`: the value to set all pixels to
- *
- * # Panics
- *
- * - when `pixel_grid` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `pixel_grid` points to a valid [SPPixelGrid]
- * - `pixel_grid` is not written to or read from concurrently
- */
-void sp_pixel_grid_fill(struct SPPixelGrid *pixel_grid, bool value);
-
-/**
- * Deallocates a [SPPixelGrid].
- *
- * # Panics
- *
- * - when `pixel_grid` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `pixel_grid` points to a valid [SPPixelGrid]
- * - `pixel_grid` is not used concurrently or after pixel_grid call
- * - `pixel_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
- */
-void sp_pixel_grid_free(struct SPPixelGrid *pixel_grid);
-
-/**
- * Gets the current value at the specified position in the [SPPixelGrid].
- *
- * # Arguments
- *
- * - `pixel_grid`: instance to read from
- * - `x` and `y`: position of the cell to read
- *
- * # Panics
- *
- * - when `pixel_grid` is NULL
- * - when accessing `x` or `y` out of bounds
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `pixel_grid` points to a valid [SPPixelGrid]
- * - `pixel_grid` is not written to concurrently
- */
-bool sp_pixel_grid_get(const struct SPPixelGrid *pixel_grid,
-                       size_t x,
-                       size_t y);
-
-/**
- * Gets the height in pixels of the [SPPixelGrid] instance.
- *
- * # Arguments
- *
- * - `pixel_grid`: instance to read from
- *
- * # Panics
- *
- * - when `pixel_grid` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `pixel_grid` points to a valid [SPPixelGrid]
- */
-size_t sp_pixel_grid_height(const struct SPPixelGrid *pixel_grid);
-
-/**
- * Loads a [SPPixelGrid] with the specified dimensions from the provided data.
- *
- * # Arguments
- *
- * - `width`: size in pixels in x-direction
- * - `height`: size in pixels in y-direction
- *
- * returns: [SPPixelGrid] that contains a copy of the provided data. Will never return NULL.
- *
- * # Panics
- *
- * - when `data` is NULL
- * - when the dimensions and data size do not match exactly.
- * - when the width is not dividable by 8
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `data` points to a valid memory location of at least `data_length` bytes in size.
- * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_pixel_grid_free`.
- */
-struct SPPixelGrid *sp_pixel_grid_load(size_t width,
-                                       size_t height,
-                                       const uint8_t *data,
-                                       size_t data_length);
-
-/**
- * Creates a new [SPPixelGrid] with the specified dimensions.
- *
- * # Arguments
- *
- * - `width`: size in pixels in x-direction
- * - `height`: size in pixels in y-direction
- *
- * returns: [SPPixelGrid] initialized to all pixels off. Will never return NULL.
- *
- * # Panics
- *
- * - when the width is not dividable by 8
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_pixel_grid_free`.
- */
-struct SPPixelGrid *sp_pixel_grid_new(size_t width,
-                                      size_t height);
-
-/**
- * Sets the value of the specified position in the [SPPixelGrid].
- *
- * # Arguments
- *
- * - `pixel_grid`: instance to write to
- * - `x` and `y`: position of the cell
- * - `value`: the value to write to the cell
- *
- * returns: old value of the cell
- *
- * # Panics
- *
- * - when `pixel_grid` is NULL
- * - when accessing `x` or `y` out of bounds
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `pixel_grid` points to a valid [SPPixelGrid]
- * - `pixel_grid` is not written to or read from concurrently
- */
-void sp_pixel_grid_set(struct SPPixelGrid *pixel_grid,
-                       size_t x,
-                       size_t y,
-                       bool value);
-
-/**
- * Gets an unsafe reference to the data of the [SPPixelGrid] instance.
- *
- * # Panics
- *
- * - when `pixel_grid` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `pixel_grid` points to a valid [SPPixelGrid]
- * - the returned memory range is never accessed after the passed [SPPixelGrid] has been freed
- * - the returned memory range is never accessed concurrently, either via the [SPPixelGrid] or directly
- */
-struct SPByteSlice sp_pixel_grid_unsafe_data_ref(struct SPPixelGrid *pixel_grid);
-
-/**
- * Gets the width in pixels of the [SPPixelGrid] instance.
- *
- * # Arguments
- *
- * - `pixel_grid`: instance to read from
- *
- * # Panics
- *
- * - when `pixel_grid` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `pixel_grid` points to a valid [SPPixelGrid]
- */
-size_t sp_pixel_grid_width(const struct SPPixelGrid *pixel_grid);
 
 #ifdef __cplusplus
 }  // extern "C"
