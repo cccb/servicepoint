@@ -120,7 +120,7 @@ mod feature_cp437 {
         /* FX */ '≡', '±', '≥', '≤', '⌠', '⌡', '÷', '≈', '°', '∙', '·', '√', 'ⁿ', '²', '■', ' ',
     ];
 
-    const UTF8_TO_CP437: once_cell::sync::Lazy<HashMap<char, u8>> =
+    static UTF8_TO_CP437: once_cell::sync::Lazy<HashMap<char, u8>> =
         once_cell::sync::Lazy::new(|| {
             let pairs = CP437_TO_UTF8
                 .iter()

@@ -118,7 +118,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         F: FnMut(&T) -> TConverted,
     {
         let data = self.data_ref().iter().map(f).collect::<Vec<_>>();
-        PrimitiveGrid::load(self.width(), self.height(), &*data)
+        PrimitiveGrid::load(self.width(), self.height(), &data)
     }
 }
 

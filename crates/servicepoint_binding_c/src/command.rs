@@ -4,7 +4,7 @@
 
 use std::ptr::null_mut;
 
-use servicepoint::{Brightness, Command, Origin};
+use servicepoint::{Brightness, Origin};
 
 use crate::{
     SPBitVec, SPBrightnessGrid, SPCompressionCode, SPCp437Grid, SPPacket,
