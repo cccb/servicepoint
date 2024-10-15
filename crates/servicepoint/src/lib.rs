@@ -40,6 +40,7 @@ use std::time::Duration;
 pub use bitvec;
 use bitvec::prelude::{BitVec, Msb0};
 
+pub use crate::bitmap::Bitmap;
 pub use crate::brightness::{Brightness, BrightnessGrid};
 pub use crate::command::{Command, Offset};
 pub use crate::compression_code::CompressionCode;
@@ -48,11 +49,11 @@ pub use crate::cp437::{CharGrid, Cp437Grid};
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
-pub use crate::bitmap::Bitmap;
 pub use crate::primitive_grid::PrimitiveGrid;
 
 type SpBitVec = BitVec<u8, Msb0>;
 
+mod bitmap;
 mod brightness;
 mod command;
 mod command_code;
@@ -64,7 +65,6 @@ mod data_ref;
 mod grid;
 mod origin;
 pub mod packet;
-mod bitmap;
 mod primitive_grid;
 
 /// size of a single tile in one dimension

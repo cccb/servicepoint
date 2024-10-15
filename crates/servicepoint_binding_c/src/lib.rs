@@ -26,6 +26,7 @@
 //! ```
 
 pub use crate::bit_vec::*;
+pub use crate::bitmap::*;
 pub use crate::brightness_grid::*;
 pub use crate::byte_slice::*;
 pub use crate::command::*;
@@ -33,9 +34,9 @@ pub use crate::connection::*;
 pub use crate::constants::*;
 pub use crate::cp437_grid::*;
 pub use crate::packet::*;
-pub use crate::bitmap::*;
 
 mod bit_vec;
+mod bitmap;
 mod brightness_grid;
 mod byte_slice;
 mod command;
@@ -43,4 +44,3 @@ mod connection;
 mod constants;
 mod cp437_grid;
 mod packet;
-mod bitmap;

@@ -197,7 +197,7 @@ impl<'t> Iterator for IterRows<'t> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{DataRef, Grid, Bitmap};
+    use crate::{Bitmap, DataRef, Grid};
 
     #[test]
     fn fill() {

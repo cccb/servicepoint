@@ -4,7 +4,7 @@ use crate::{
     command_code::CommandCode,
     compression::into_decompressed,
     packet::{Header, Packet},
-    Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin, Bitmap,
+    Bitmap, Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin,
     Pixels, PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
 };
 
@@ -495,8 +495,8 @@ mod tests {
         command_code::CommandCode,
         origin::Pixels,
         packet::{Header, Packet},
-        Brightness, BrightnessGrid, Command, CompressionCode, Origin,
-        Bitmap, PrimitiveGrid,
+        Bitmap, Brightness, BrightnessGrid, Command, CompressionCode, Origin,
+        PrimitiveGrid,
     };
 
     fn round_trip(original: Command) {
@@ -903,6 +903,7 @@ mod tests {
             Origin::new(1, 0) + Origin::new(3, 2)
         );
     }
+
     #[test]
     fn packet_into_char_brightness_invalid() {
         let grid = BrightnessGrid::new(2, 2);

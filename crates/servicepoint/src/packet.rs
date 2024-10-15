@@ -27,8 +27,8 @@ use std::mem::size_of;
 
 use crate::compression::into_compressed;
 use crate::{
-    command_code::CommandCode, Command, CompressionCode, Grid, Offset, Origin,
-    Bitmap, Pixels, Tiles, TILE_SIZE,
+    command_code::CommandCode, Bitmap, Command, CompressionCode, Grid, Offset,
+    Origin, Pixels, Tiles, TILE_SIZE,
 };
 
 /// A raw header.

@@ -1,7 +1,7 @@
 //! Example for how to use the WebSocket connection
 
 use servicepoint::{
-    Command, CompressionCode, Connection, Grid, Origin, Bitmap,
+    Bitmap, Command, CompressionCode, Connection, Grid, Origin,
 };
 
 fn main() {

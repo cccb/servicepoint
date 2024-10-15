@@ -210,10 +210,7 @@ pub unsafe extern "C" fn sp_bitmap_set(
 /// - `bitmap` points to a valid [SPBitmap]
 /// - `bitmap` is not written to or read from concurrently
 #[no_mangle]
-pub unsafe extern "C" fn sp_bitmap_fill(
-    bitmap: *mut SPBitmap,
-    value: bool,
-) {
+pub unsafe extern "C" fn sp_bitmap_fill(bitmap: *mut SPBitmap, value: bool) {
     assert!(!bitmap.is_null());
     (*bitmap).0.fill(value);
 }
@@ -234,9 +231,7 @@ pub unsafe extern "C" fn sp_bitmap_fill(
 ///
 /// - `bitmap` points to a valid [SPBitmap]
 #[no_mangle]
-pub unsafe extern "C" fn sp_bitmap_width(
-    bitmap: *const SPBitmap,
-) -> usize {
+pub unsafe extern "C" fn sp_bitmap_width(bitmap: *const SPBitmap) -> usize {
     assert!(!bitmap.is_null());
     (*bitmap).0.width()
 }
@@ -257,9 +252,7 @@ pub unsafe extern "C" fn sp_bitmap_width(
 ///
 /// - `bitmap` points to a valid [SPBitmap]
 #[no_mangle]
-pub unsafe extern "C" fn sp_bitmap_height(
-    bitmap: *const SPBitmap,
-) -> usize {
+pub unsafe extern "C" fn sp_bitmap_height(bitmap: *const SPBitmap) -> usize {
     assert!(!bitmap.is_null());
     (*bitmap).0.height()
 }
