@@ -21,13 +21,8 @@ use std::intrinsics::transmute;
 /// SPCommand command = sp_command_char_brightness(grid);
 /// sp_connection_free(connection);
 /// ```
+#[derive(Clone)]
 pub struct SPBrightnessGrid(pub(crate) servicepoint::BrightnessGrid);
-
-impl Clone for SPBrightnessGrid {
-    fn clone(&self) -> Self {
-        SPBrightnessGrid(self.0.clone())
-    }
-}
 
 /// Creates a new [SPBrightnessGrid] with the specified dimensions.
 ///

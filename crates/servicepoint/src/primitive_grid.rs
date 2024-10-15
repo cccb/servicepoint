@@ -114,6 +114,18 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// Convert between PrimitiveGrid types.
     ///
     /// See also [Iterator::map].
+    ///
+    /// # Examples
+    ///
+    /// Use logic written for u8s and then convert to [Brightness] values for sending in a [Command].
+    /// ```
+    /// # fn foo(grid: &mut PrimitiveGrid<u8>) {}
+    /// # use servicepoint::{Brightness, BrightnessGrid, Command, Origin, PrimitiveGrid, TILE_HEIGHT, TILE_WIDTH};
+    /// let mut grid: PrimitiveGrid<u8> = PrimitiveGrid::new(TILE_WIDTH, TILE_HEIGHT);
+    /// foo(&mut grid);
+    /// let grid: BrightnessGrid = grid.map(Brightness::saturating_from);
+    /// let command = Command::CharBrightness(Origin::ZERO, grid);
+    /// ```
     pub fn map<TConverted, F>(&self, f: F) -> PrimitiveGrid<TConverted>
     where
         TConverted: PrimitiveGridType,

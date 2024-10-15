@@ -60,6 +60,17 @@ impl Brightness {
     pub const MAX: Brightness = Brightness(11);
     /// lowest possible brightness value, 0
     pub const MIN: Brightness = Brightness(0);
+
+    /// Create a brightness value without returning an error for brightnesses above [Brightness::MAX].
+    ///
+    /// returns: the specified value as a [Brightness], or [Brightness::MAX].
+    pub fn saturating_from(value: u8) -> Brightness {
+        if value > Brightness::MAX.into() {
+            Brightness::MAX
+        } else {
+            Brightness(value)
+        }
+    }
 }
 
 impl Default for Brightness {
@@ -137,5 +148,11 @@ mod tests {
         grid.set(0, 1, Brightness::MAX);
         let actual = PrimitiveGrid::from(&grid);
         assert_eq!(actual.data_ref(), &[11, 0, 11, 11]);
+    }
+
+    #[test]
+    fn saturating_convert() {
+        assert_eq!(Brightness::MAX, Brightness::saturating_from(100));
+        assert_eq!(Brightness(5), Brightness::saturating_from(5));
     }
 }
