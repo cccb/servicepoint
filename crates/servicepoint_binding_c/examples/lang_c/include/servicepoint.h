@@ -197,213 +197,6 @@ extern "C" {
 #endif // __cplusplus
 
 /**
- * Clones a [SPBitVec].
- *
- * returns: new [SPBitVec] instance. Will never return NULL.
- *
- * # Panics
- *
- * - when `bit_vec` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `bit_vec` points to a valid [SPBitVec]
- * - `bit_vec` is not written to concurrently
- * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_bitvec_free`.
- */
-struct SPBitVec *sp_bitvec_clone(const struct SPBitVec *bit_vec);
-
-/**
- * Sets the value of all bits in the [SPBitVec].
- *
- * # Arguments
- *
- * - `bit_vec`: instance to write to
- * - `value`: the value to set all bits to
- *
- * # Panics
- *
- * - when `bit_vec` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `bit_vec` points to a valid [SPBitVec]
- * - `bit_vec` is not written to or read from concurrently
- */
-void sp_bitvec_fill(struct SPBitVec *bit_vec, bool value);
-
-/**
- * Deallocates a [SPBitVec].
- *
- * # Panics
- *
- * - when `but_vec` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `bit_vec` points to a valid [SPBitVec]
- * - `bit_vec` is not used concurrently or after this call
- * - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
- */
-void sp_bitvec_free(struct SPBitVec *bit_vec);
-
-/**
- * Gets the value of a bit from the [SPBitVec].
- *
- * # Arguments
- *
- * - `bit_vec`: instance to read from
- * - `index`: the bit index to read
- *
- * returns: value of the bit
- *
- * # Panics
- *
- * - when `bit_vec` is NULL
- * - when accessing `index` out of bounds
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `bit_vec` points to a valid [SPBitVec]
- * - `bit_vec` is not written to concurrently
- */
-bool sp_bitvec_get(const struct SPBitVec *bit_vec, size_t index);
-
-/**
- * Returns true if length is 0.
- *
- * # Arguments
- *
- * - `bit_vec`: instance to write to
- *
- * # Panics
- *
- * - when `bit_vec` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `bit_vec` points to a valid [SPBitVec]
- */
-bool sp_bitvec_is_empty(const struct SPBitVec *bit_vec);
-
-/**
- * Gets the length of the [SPBitVec] in bits.
- *
- * # Arguments
- *
- * - `bit_vec`: instance to write to
- *
- * # Panics
- *
- * - when `bit_vec` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `bit_vec` points to a valid [SPBitVec]
- */
-size_t sp_bitvec_len(const struct SPBitVec *bit_vec);
-
-/**
- * Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
- *
- * returns: [SPBitVec] instance containing data. Will never return NULL.
- *
- * # Panics
- *
- * - when `data` is NULL
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `data` points to a valid memory location of at least `data_length`
- *   bytes in size.
- * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_bitvec_free`.
- */
-struct SPBitVec *sp_bitvec_load(const uint8_t *data,
-                                 size_t data_length);
-
-/**
- * Creates a new [SPBitVec] instance.
- *
- * # Arguments
- *
- * - `size`: size in bits.
- *
- * returns: [SPBitVec] with all bits set to false. Will never return NULL.
- *
- * # Panics
- *
- * - when `size` is not divisible by 8.
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_bitvec_free`.
- */
-struct SPBitVec *sp_bitvec_new(size_t size);
-
-/**
- * Sets the value of a bit in the [SPBitVec].
- *
- * # Arguments
- *
- * - `bit_vec`: instance to write to
- * - `index`: the bit index to edit
- * - `value`: the value to set the bit to
- *
- * # Panics
- *
- * - when `bit_vec` is NULL
- * - when accessing `index` out of bounds
- *
- * # Safety
- *
- * The caller has to make sure that:
- *
- * - `bit_vec` points to a valid [SPBitVec]
- * - `bit_vec` is not written to or read from concurrently
- */
-void sp_bitvec_set(struct SPBitVec *bit_vec, size_t index, bool value);
-
-/**
- * Gets an unsafe reference to the data of the [SPBitVec] instance.
- *
- * # Arguments
- *
- * - `bit_vec`: instance to write to
- *
- * # Panics
- *
- * - when `bit_vec` is NULL
- *
- * ## Safety
- *
- * The caller has to make sure that:
- *
- * - `bit_vec` points to a valid [SPBitVec]
- * - the returned memory range is never accessed after the passed [SPBitVec] has been freed
- * - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
- */
-struct SPByteSlice sp_bitvec_unsafe_data_ref(struct SPBitVec *bit_vec);
-
-/**
  * Clones a [SPBitmap].
  *
  * Will never return NULL.
@@ -615,6 +408,213 @@ struct SPByteSlice sp_bitmap_unsafe_data_ref(struct SPBitmap *bitmap);
  * - `bitmap` points to a valid [SPBitmap]
  */
 size_t sp_bitmap_width(const struct SPBitmap *bitmap);
+
+/**
+ * Clones a [SPBitVec].
+ *
+ * returns: new [SPBitVec] instance. Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when `bit_vec` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bit_vec` points to a valid [SPBitVec]
+ * - `bit_vec` is not written to concurrently
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_bitvec_free`.
+ */
+struct SPBitVec *sp_bitvec_clone(const struct SPBitVec *bit_vec);
+
+/**
+ * Sets the value of all bits in the [SPBitVec].
+ *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to write to
+ * - `value`: the value to set all bits to
+ *
+ * # Panics
+ *
+ * - when `bit_vec` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bit_vec` points to a valid [SPBitVec]
+ * - `bit_vec` is not written to or read from concurrently
+ */
+void sp_bitvec_fill(struct SPBitVec *bit_vec, bool value);
+
+/**
+ * Deallocates a [SPBitVec].
+ *
+ * # Panics
+ *
+ * - when `but_vec` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bit_vec` points to a valid [SPBitVec]
+ * - `bit_vec` is not used concurrently or after this call
+ * - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
+ */
+void sp_bitvec_free(struct SPBitVec *bit_vec);
+
+/**
+ * Gets the value of a bit from the [SPBitVec].
+ *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to read from
+ * - `index`: the bit index to read
+ *
+ * returns: value of the bit
+ *
+ * # Panics
+ *
+ * - when `bit_vec` is NULL
+ * - when accessing `index` out of bounds
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bit_vec` points to a valid [SPBitVec]
+ * - `bit_vec` is not written to concurrently
+ */
+bool sp_bitvec_get(const struct SPBitVec *bit_vec, size_t index);
+
+/**
+ * Returns true if length is 0.
+ *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to write to
+ *
+ * # Panics
+ *
+ * - when `bit_vec` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bit_vec` points to a valid [SPBitVec]
+ */
+bool sp_bitvec_is_empty(const struct SPBitVec *bit_vec);
+
+/**
+ * Gets the length of the [SPBitVec] in bits.
+ *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to write to
+ *
+ * # Panics
+ *
+ * - when `bit_vec` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bit_vec` points to a valid [SPBitVec]
+ */
+size_t sp_bitvec_len(const struct SPBitVec *bit_vec);
+
+/**
+ * Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
+ *
+ * returns: [SPBitVec] instance containing data. Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when `data` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `data` points to a valid memory location of at least `data_length`
+ *   bytes in size.
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_bitvec_free`.
+ */
+struct SPBitVec *sp_bitvec_load(const uint8_t *data,
+                                size_t data_length);
+
+/**
+ * Creates a new [SPBitVec] instance.
+ *
+ * # Arguments
+ *
+ * - `size`: size in bits.
+ *
+ * returns: [SPBitVec] with all bits set to false. Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when `size` is not divisible by 8.
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_bitvec_free`.
+ */
+struct SPBitVec *sp_bitvec_new(size_t size);
+
+/**
+ * Sets the value of a bit in the [SPBitVec].
+ *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to write to
+ * - `index`: the bit index to edit
+ * - `value`: the value to set the bit to
+ *
+ * # Panics
+ *
+ * - when `bit_vec` is NULL
+ * - when accessing `index` out of bounds
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bit_vec` points to a valid [SPBitVec]
+ * - `bit_vec` is not written to or read from concurrently
+ */
+void sp_bitvec_set(struct SPBitVec *bit_vec, size_t index, bool value);
+
+/**
+ * Gets an unsafe reference to the data of the [SPBitVec] instance.
+ *
+ * # Arguments
+ *
+ * - `bit_vec`: instance to write to
+ *
+ * # Panics
+ *
+ * - when `bit_vec` is NULL
+ *
+ * ## Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `bit_vec` points to a valid [SPBitVec]
+ * - the returned memory range is never accessed after the passed [SPBitVec] has been freed
+ * - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
+ */
+struct SPByteSlice sp_bitvec_unsafe_data_ref(struct SPBitVec *bit_vec);
 
 /**
  * Clones a [SPBrightnessGrid].

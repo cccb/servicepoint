@@ -238,6 +238,171 @@ namespace ServicePoint.BindGen
         public static extern ByteSlice sp_bitvec_unsafe_data_ref(BitVec* bit_vec);
 
         /// <summary>
+        ///  Creates a new instance of [SPConnection].
+        ///
+        ///  returns: NULL if connection fails, or connected instance
+        ///
+        ///  # Panics
+        ///
+        ///  - when `host` is null or an invalid host
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_connection_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Connection* sp_connection_open(byte* host);
+
+        /// <summary>
+        ///  Sends a [SPPacket] to the display using the [SPConnection].
+        ///
+        ///  The passed `packet` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Panics
+        ///
+        ///  - when `connection` is NULL
+        ///  - when `packet` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of [SPConnection]
+        ///  - `packet` points to a valid instance of [SPPacket]
+        ///  - `packet` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_connection_send_packet(Connection* connection, Packet* packet);
+
+        /// <summary>
+        ///  Sends a [SPCommand] to the display using the [SPConnection].
+        ///
+        ///  The passed `command` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Panics
+        ///
+        ///  - when `connection` is NULL
+        ///  - when `command` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of [SPConnection]
+        ///  - `command` points to a valid instance of [SPPacket]
+        ///  - `command` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_connection_send_command(Connection* connection, Command* command);
+
+        /// <summary>
+        ///  Closes and deallocates a [SPConnection].
+        ///
+        ///  # Panics
+        ///
+        ///  - when `connection` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid [SPConnection]
+        ///  - `connection` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_connection_free(Connection* connection);
+
+        /// <summary>
+        ///  Turns a [SPCommand] into a [SPPacket].
+        ///  The [SPCommand] gets consumed.
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `command` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - [SPCommand] points to a valid instance of [SPCommand]
+        ///  - [SPCommand] is not used concurrently or after this call
+        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp_packet_from_command(Command* command);
+
+        /// <summary>
+        ///  Tries to load a [SPPacket] from the passed array with the specified length.
+        ///
+        ///  returns: NULL in case of an error, pointer to the allocated packet otherwise
+        ///
+        ///  # Panics
+        ///
+        ///  - when `data` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory region of at least `length` bytes
+        ///  - `data` is not written to concurrently
+        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp_packet_try_load(byte* data, nuint length);
+
+        /// <summary>
+        ///  Clones a [SPPacket].
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `packet` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `packet` points to a valid [SPPacket]
+        ///  - `packet` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_packet_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp_packet_clone(Packet* packet);
+
+        /// <summary>
+        ///  Deallocates a [SPPacket].
+        ///
+        ///  # Panics
+        ///
+        ///  - when `sp_packet_free` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `packet` points to a valid [SPPacket]
+        ///  - `packet` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_packet_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_packet_free(Packet* packet);
+
+        /// <summary>
         ///  Creates a new [SPBrightnessGrid] with the specified dimensions.
         ///
         ///  returns: [SPBrightnessGrid] initialized to 0. Will never return NULL.
@@ -465,194 +630,125 @@ namespace ServicePoint.BindGen
         public static extern ByteSlice sp_brightness_grid_unsafe_data_ref(BrightnessGrid* brightness_grid);
 
         /// <summary>
-        ///  Creates a new instance of [SPConnection].
+        ///  Creates a new [SPBitmap] with the specified dimensions.
         ///
-        ///  returns: NULL if connection fails, or connected instance
+        ///  # Arguments
+        ///
+        ///  - `width`: size in pixels in x-direction
+        ///  - `height`: size in pixels in y-direction
+        ///
+        ///  returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `host` is null or an invalid host
+        ///  - when the width is not dividable by 8
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_connection_free`.
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Connection* sp_connection_open(byte* host);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_new(nuint width, nuint height);
 
         /// <summary>
-        ///  Sends a [SPPacket] to the display using the [SPConnection].
+        ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
         ///
-        ///  The passed `packet` gets consumed.
+        ///  # Arguments
         ///
-        ///  returns: true in case of success
+        ///  - `width`: size in pixels in x-direction
+        ///  - `height`: size in pixels in y-direction
         ///
-        ///  # Panics
-        ///
-        ///  - when `connection` is NULL
-        ///  - when `packet` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `connection` points to a valid instance of [SPConnection]
-        ///  - `packet` points to a valid instance of [SPPacket]
-        ///  - `packet` is not used concurrently or after this call
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send_packet(Connection* connection, Packet* packet);
-
-        /// <summary>
-        ///  Sends a [SPCommand] to the display using the [SPConnection].
-        ///
-        ///  The passed `command` gets consumed.
-        ///
-        ///  returns: true in case of success
-        ///
-        ///  # Panics
-        ///
-        ///  - when `connection` is NULL
-        ///  - when `command` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `connection` points to a valid instance of [SPConnection]
-        ///  - `command` points to a valid instance of [SPPacket]
-        ///  - `command` is not used concurrently or after this call
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send_command(Connection* connection, Command* command);
-
-        /// <summary>
-        ///  Closes and deallocates a [SPConnection].
-        ///
-        ///  # Panics
-        ///
-        ///  - when `connection` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `connection` points to a valid [SPConnection]
-        ///  - `connection` is not used concurrently or after this call
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_connection_free(Connection* connection);
-
-        /// <summary>
-        ///  Creates a new [SPCp437Grid] with the specified dimensions.
-        ///
-        ///  returns: [SPCp437Grid] initialized to 0. Will never return NULL.
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_cp437_grid_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Cp437Grid* sp_cp437_grid_new(nuint width, nuint height);
-
-        /// <summary>
-        ///  Loads a [SPCp437Grid] with the specified dimensions from the provided data.
-        ///
-        ///  Will never return NULL.
+        ///  returns: [SPBitmap] that contains a copy of the provided data. Will never return NULL.
         ///
         ///  # Panics
         ///
         ///  - when `data` is NULL
-        ///  - when the provided `data_length` does not match `height` and `width`
+        ///  - when the dimensions and data size do not match exactly.
+        ///  - when the width is not dividable by 8
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `data` points to a valid memory location of at least `data_length`
-        ///    bytes in size.
+        ///  - `data` points to a valid memory location of at least `data_length` bytes in size.
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_cp437_grid_free`.
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Cp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
-        ///  Clones a [SPCp437Grid].
+        ///  Clones a [SPBitmap].
         ///
         ///  Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `cp437_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `cp437_grid` points to a valid [SPCp437Grid]
-        ///  - `cp437_grid` is not written to concurrently
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to concurrently
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_cp437_grid_free`.
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Cp437Grid* sp_cp437_grid_clone(Cp437Grid* cp437_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_clone(Bitmap* bitmap);
 
         /// <summary>
-        ///  Deallocates a [SPCp437Grid].
+        ///  Deallocates a [SPBitmap].
         ///
         ///  # Panics
         ///
-        ///  - when `cp437_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `cp437_grid` points to a valid [SPCp437Grid]
-        ///  - `cp437_grid` is not used concurrently or after cp437_grid call
-        ///  - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not used concurrently or after bitmap call
+        ///  - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_free(Cp437Grid* cp437_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_free(Bitmap* bitmap);
 
         /// <summary>
-        ///  Gets the current value at the specified position.
+        ///  Gets the current value at the specified position in the [SPBitmap].
         ///
         ///  # Arguments
         ///
-        ///  - `cp437_grid`: instance to read from
+        ///  - `bitmap`: instance to read from
         ///  - `x` and `y`: position of the cell to read
         ///
         ///  # Panics
         ///
-        ///  - when `cp437_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///  - when accessing `x` or `y` out of bounds
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `cp437_grid` points to a valid [SPCp437Grid]
-        ///  - `cp437_grid` is not written to concurrently
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_cp437_grid_get(Cp437Grid* cp437_grid, nuint x, nuint y);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_bitmap_get(Bitmap* bitmap, nuint x, nuint y);
 
         /// <summary>
-        ///  Sets the value of the specified position in the [SPCp437Grid].
+        ///  Sets the value of the specified position in the [SPBitmap].
         ///
         ///  # Arguments
         ///
-        ///  - `cp437_grid`: instance to write to
+        ///  - `bitmap`: instance to write to
         ///  - `x` and `y`: position of the cell
         ///  - `value`: the value to write to the cell
         ///
@@ -660,181 +756,98 @@ namespace ServicePoint.BindGen
         ///
         ///  # Panics
         ///
-        ///  - when `cp437_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///  - when accessing `x` or `y` out of bounds
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `cp437_grid` points to a valid [SPBitVec]
-        ///  - `cp437_grid` is not written to or read from concurrently
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to or read from concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_set(Cp437Grid* cp437_grid, nuint x, nuint y, byte value);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_set(Bitmap* bitmap, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
-        ///  Sets the value of all cells in the [SPCp437Grid].
+        ///  Sets the state of all pixels in the [SPBitmap].
         ///
         ///  # Arguments
         ///
-        ///  - `cp437_grid`: instance to write to
-        ///  - `value`: the value to set all cells to
+        ///  - `bitmap`: instance to write to
+        ///  - `value`: the value to set all pixels to
         ///
         ///  # Panics
         ///
-        ///  - when `cp437_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `cp437_grid` points to a valid [SPCp437Grid]
-        ///  - `cp437_grid` is not written to or read from concurrently
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to or read from concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_fill(Cp437Grid* cp437_grid, byte value);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_fill(Bitmap* bitmap, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
-        ///  Gets the width of the [SPCp437Grid] instance.
+        ///  Gets the width in pixels of the [SPBitmap] instance.
         ///
         ///  # Arguments
         ///
-        ///  - `cp437_grid`: instance to read from
+        ///  - `bitmap`: instance to read from
         ///
         ///  # Panics
         ///
-        ///  - when `cp437_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `cp437_grid` points to a valid [SPCp437Grid]
+        ///  - `bitmap` points to a valid [SPBitmap]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_width(Cp437Grid* cp437_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_bitmap_width(Bitmap* bitmap);
 
         /// <summary>
-        ///  Gets the height of the [SPCp437Grid] instance.
+        ///  Gets the height in pixels of the [SPBitmap] instance.
         ///
         ///  # Arguments
         ///
-        ///  - `cp437_grid`: instance to read from
+        ///  - `bitmap`: instance to read from
         ///
         ///  # Panics
         ///
-        ///  - when `cp437_grid` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `cp437_grid` points to a valid [SPCp437Grid]
+        ///  - `bitmap` points to a valid [SPBitmap]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_height(Cp437Grid* cp437_grid);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_bitmap_height(Bitmap* bitmap);
 
         /// <summary>
-        ///  Gets an unsafe reference to the data of the [SPCp437Grid] instance.
-        ///
-        ///  Will never return NULL.
+        ///  Gets an unsafe reference to the data of the [SPBitmap] instance.
         ///
         ///  # Panics
         ///
-        ///  - when `cp437_grid` is NULL
-        ///
-        ///  ## Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `cp437_grid` points to a valid [SPCp437Grid]
-        ///  - the returned memory range is never accessed after the passed [SPCp437Grid] has been freed
-        ///  - the returned memory range is never accessed concurrently, either via the [SPCp437Grid] or directly
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_cp437_grid_unsafe_data_ref(Cp437Grid* cp437_grid);
-
-        /// <summary>
-        ///  Turns a [SPCommand] into a [SPPacket].
-        ///  The [SPCommand] gets consumed.
-        ///
-        ///  Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `command` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - [SPCommand] points to a valid instance of [SPCommand]
-        ///  - [SPCommand] is not used concurrently or after this call
-        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_packet_free`.
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - the returned memory range is never accessed after the passed [SPBitmap] has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_from_command(Command* command);
-
-        /// <summary>
-        ///  Tries to load a [SPPacket] from the passed array with the specified length.
-        ///
-        ///  returns: NULL in case of an error, pointer to the allocated packet otherwise
-        ///
-        ///  # Panics
-        ///
-        ///  - when `data` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `data` points to a valid memory region of at least `length` bytes
-        ///  - `data` is not written to concurrently
-        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_packet_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_try_load(byte* data, nuint length);
-
-        /// <summary>
-        ///  Clones a [SPPacket].
-        ///
-        ///  Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `packet` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `packet` points to a valid [SPPacket]
-        ///  - `packet` is not written to concurrently
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_packet_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_clone(Packet* packet);
-
-        /// <summary>
-        ///  Deallocates a [SPPacket].
-        ///
-        ///  # Panics
-        ///
-        ///  - when `sp_packet_free` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `packet` points to a valid [SPPacket]
-        ///  - `packet` is not used concurrently or after this call
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_packet_free(Packet* packet);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern ByteSlice sp_bitmap_unsafe_data_ref(Bitmap* bitmap);
 
         /// <summary>
         ///  Tries to turn a [SPPacket] into a [SPCommand].
@@ -1172,125 +1185,110 @@ namespace ServicePoint.BindGen
         public static extern void sp_command_free(Command* command);
 
         /// <summary>
-        ///  Creates a new [SPBitmap] with the specified dimensions.
+        ///  Creates a new [SPCp437Grid] with the specified dimensions.
         ///
-        ///  # Arguments
-        ///
-        ///  - `width`: size in pixels in x-direction
-        ///  - `height`: size in pixels in y-direction
-        ///
-        ///  returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when the width is not dividable by 8
+        ///  returns: [SPCp437Grid] initialized to 0. Will never return NULL.
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
+        ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_new(nuint width, nuint height);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Cp437Grid* sp_cp437_grid_new(nuint width, nuint height);
 
         /// <summary>
-        ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `width`: size in pixels in x-direction
-        ///  - `height`: size in pixels in y-direction
-        ///
-        ///  returns: [SPBitmap] that contains a copy of the provided data. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `data` is NULL
-        ///  - when the dimensions and data size do not match exactly.
-        ///  - when the width is not dividable by 8
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `data` points to a valid memory location of at least `data_length` bytes in size.
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
-
-        /// <summary>
-        ///  Clones a [SPBitmap].
+        ///  Loads a [SPCp437Grid] with the specified dimensions from the provided data.
         ///
         ///  Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `bitmap` is NULL
+        ///  - when `data` is NULL
+        ///  - when the provided `data_length` does not match `height` and `width`
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to concurrently
+        ///  - `data` points to a valid memory location of at least `data_length`
+        ///    bytes in size.
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
+        ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_clone(Bitmap* bitmap);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Cp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
-        ///  Deallocates a [SPBitmap].
+        ///  Clones a [SPCp437Grid].
+        ///
+        ///  Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `bitmap` is NULL
+        ///  - when `cp437_grid` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not used concurrently or after bitmap call
-        ///  - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
+        ///  - `cp437_grid` points to a valid [SPCp437Grid]
+        ///  - `cp437_grid` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_free(Bitmap* bitmap);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Cp437Grid* sp_cp437_grid_clone(Cp437Grid* cp437_grid);
 
         /// <summary>
-        ///  Gets the current value at the specified position in the [SPBitmap].
+        ///  Deallocates a [SPCp437Grid].
+        ///
+        ///  # Panics
+        ///
+        ///  - when `cp437_grid` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `cp437_grid` points to a valid [SPCp437Grid]
+        ///  - `cp437_grid` is not used concurrently or after cp437_grid call
+        ///  - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_cp437_grid_free(Cp437Grid* cp437_grid);
+
+        /// <summary>
+        ///  Gets the current value at the specified position.
         ///
         ///  # Arguments
         ///
-        ///  - `bitmap`: instance to read from
+        ///  - `cp437_grid`: instance to read from
         ///  - `x` and `y`: position of the cell to read
         ///
         ///  # Panics
         ///
-        ///  - when `bitmap` is NULL
+        ///  - when `cp437_grid` is NULL
         ///  - when accessing `x` or `y` out of bounds
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to concurrently
+        ///  - `cp437_grid` points to a valid [SPCp437Grid]
+        ///  - `cp437_grid` is not written to concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bitmap_get(Bitmap* bitmap, nuint x, nuint y);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern byte sp_cp437_grid_get(Cp437Grid* cp437_grid, nuint x, nuint y);
 
         /// <summary>
-        ///  Sets the value of the specified position in the [SPBitmap].
+        ///  Sets the value of the specified position in the [SPCp437Grid].
         ///
         ///  # Arguments
         ///
-        ///  - `bitmap`: instance to write to
+        ///  - `cp437_grid`: instance to write to
         ///  - `x` and `y`: position of the cell
         ///  - `value`: the value to write to the cell
         ///
@@ -1298,109 +1296,106 @@ namespace ServicePoint.BindGen
         ///
         ///  # Panics
         ///
-        ///  - when `bitmap` is NULL
+        ///  - when `cp437_grid` is NULL
         ///  - when accessing `x` or `y` out of bounds
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to or read from concurrently
+        ///  - `cp437_grid` points to a valid [SPBitVec]
+        ///  - `cp437_grid` is not written to or read from concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_set(Bitmap* bitmap, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_cp437_grid_set(Cp437Grid* cp437_grid, nuint x, nuint y, byte value);
 
         /// <summary>
-        ///  Sets the state of all pixels in the [SPBitmap].
+        ///  Sets the value of all cells in the [SPCp437Grid].
         ///
         ///  # Arguments
         ///
-        ///  - `bitmap`: instance to write to
-        ///  - `value`: the value to set all pixels to
+        ///  - `cp437_grid`: instance to write to
+        ///  - `value`: the value to set all cells to
         ///
         ///  # Panics
         ///
-        ///  - when `bitmap` is NULL
+        ///  - when `cp437_grid` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to or read from concurrently
+        ///  - `cp437_grid` points to a valid [SPCp437Grid]
+        ///  - `cp437_grid` is not written to or read from concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_fill(Bitmap* bitmap, [MarshalAs(UnmanagedType.U1)] bool value);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_cp437_grid_fill(Cp437Grid* cp437_grid, byte value);
 
         /// <summary>
-        ///  Gets the width in pixels of the [SPBitmap] instance.
+        ///  Gets the width of the [SPCp437Grid] instance.
         ///
         ///  # Arguments
         ///
-        ///  - `bitmap`: instance to read from
+        ///  - `cp437_grid`: instance to read from
         ///
         ///  # Panics
         ///
-        ///  - when `bitmap` is NULL
+        ///  - when `cp437_grid` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `cp437_grid` points to a valid [SPCp437Grid]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bitmap_width(Bitmap* bitmap);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_cp437_grid_width(Cp437Grid* cp437_grid);
 
         /// <summary>
-        ///  Gets the height in pixels of the [SPBitmap] instance.
+        ///  Gets the height of the [SPCp437Grid] instance.
         ///
         ///  # Arguments
         ///
-        ///  - `bitmap`: instance to read from
+        ///  - `cp437_grid`: instance to read from
         ///
         ///  # Panics
         ///
-        ///  - when `bitmap` is NULL
+        ///  - when `cp437_grid` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `cp437_grid` points to a valid [SPCp437Grid]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bitmap_height(Bitmap* bitmap);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_cp437_grid_height(Cp437Grid* cp437_grid);
 
         /// <summary>
-        ///  Gets an unsafe reference to the data of the [SPBitmap] instance.
+        ///  Gets an unsafe reference to the data of the [SPCp437Grid] instance.
+        ///
+        ///  Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `bitmap` is NULL
+        ///  - when `cp437_grid` is NULL
         ///
-        ///  # Safety
+        ///  ## Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - the returned memory range is never accessed after the passed [SPBitmap] has been freed
-        ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
+        ///  - `cp437_grid` points to a valid [SPCp437Grid]
+        ///  - the returned memory range is never accessed after the passed [SPCp437Grid] has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the [SPCp437Grid] or directly
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_bitmap_unsafe_data_ref(Bitmap* bitmap);
+        [DllImport(__DllName, EntryPoint = "sp_cp437_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern ByteSlice sp_cp437_grid_unsafe_data_ref(Cp437Grid* cp437_grid);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct BitVec
-    {
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct BrightnessGrid
     {
     }
 
@@ -1417,12 +1412,17 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Cp437Grid
+    public unsafe partial struct Packet
     {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Packet
+    public unsafe partial struct BrightnessGrid
+    {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct Bitmap
     {
     }
 
@@ -1432,7 +1432,7 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Bitmap
+    public unsafe partial struct Cp437Grid
     {
     }
 
