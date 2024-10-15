@@ -1,6 +1,6 @@
 //! C functions for interacting with [SPBitVec]s
 //!
-//! prefix `sp_bit_vec_`
+//! prefix `sp_bitvec_`
 
 use crate::SPByteSlice;
 use servicepoint::bitvec::prelude::{BitVec, Msb0};
@@ -9,9 +9,9 @@ use servicepoint::bitvec::prelude::{BitVec, Msb0};
 ///
 /// # Examples
 /// ```C
-/// SPBitVec vec = sp_bit_vec_new(8);
-/// sp_bit_vec_set(vec, 5, true);
-/// sp_bit_vec_free(vec);
+/// SPBitVec vec = sp_bitvec_new(8);
+/// sp_bitvec_set(vec, 5, true);
+/// sp_bitvec_free(vec);
 /// ```
 pub struct SPBitVec(BitVec<u8, Msb0>);
 
@@ -50,9 +50,9 @@ impl Clone for SPBitVec {
 /// The caller has to make sure that:
 ///
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_bit_vec_free`.
+///   by explicitly calling `sp_bitvec_free`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_new(size: usize) -> *mut SPBitVec {
+pub unsafe extern "C" fn sp_bitvec_new(size: usize) -> *mut SPBitVec {
     let result = Box::into_raw(Box::new(SPBitVec(BitVec::repeat(false, size))));
     assert!(!result.is_null());
     result
@@ -73,9 +73,9 @@ pub unsafe extern "C" fn sp_bit_vec_new(size: usize) -> *mut SPBitVec {
 /// - `data` points to a valid memory location of at least `data_length`
 ///   bytes in size.
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_bit_vec_free`.
+///   by explicitly calling `sp_bitvec_free`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_load(
+pub unsafe extern "C" fn sp_bitvec_load(
     data: *const u8,
     data_length: usize,
 ) -> *mut SPBitVec {
@@ -101,9 +101,9 @@ pub unsafe extern "C" fn sp_bit_vec_load(
 /// - `bit_vec` points to a valid [SPBitVec]
 /// - `bit_vec` is not written to concurrently
 /// - the returned instance is freed in some way, either by using a consuming function or
-///   by explicitly calling `sp_bit_vec_free`.
+///   by explicitly calling `sp_bitvec_free`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_clone(
+pub unsafe extern "C" fn sp_bitvec_clone(
     bit_vec: *const SPBitVec,
 ) -> *mut SPBitVec {
     assert!(!bit_vec.is_null());
@@ -126,7 +126,7 @@ pub unsafe extern "C" fn sp_bit_vec_clone(
 /// - `bit_vec` is not used concurrently or after this call
 /// - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_free(bit_vec: *mut SPBitVec) {
+pub unsafe extern "C" fn sp_bitvec_free(bit_vec: *mut SPBitVec) {
     assert!(!bit_vec.is_null());
     _ = Box::from_raw(bit_vec);
 }
@@ -152,7 +152,7 @@ pub unsafe extern "C" fn sp_bit_vec_free(bit_vec: *mut SPBitVec) {
 /// - `bit_vec` points to a valid [SPBitVec]
 /// - `bit_vec` is not written to concurrently
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_get(
+pub unsafe extern "C" fn sp_bitvec_get(
     bit_vec: *const SPBitVec,
     index: usize,
 ) -> bool {
@@ -180,7 +180,7 @@ pub unsafe extern "C" fn sp_bit_vec_get(
 /// - `bit_vec` points to a valid [SPBitVec]
 /// - `bit_vec` is not written to or read from concurrently
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_set(
+pub unsafe extern "C" fn sp_bitvec_set(
     bit_vec: *mut SPBitVec,
     index: usize,
     value: bool,
@@ -207,7 +207,7 @@ pub unsafe extern "C" fn sp_bit_vec_set(
 /// - `bit_vec` points to a valid [SPBitVec]
 /// - `bit_vec` is not written to or read from concurrently
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_fill(bit_vec: *mut SPBitVec, value: bool) {
+pub unsafe extern "C" fn sp_bitvec_fill(bit_vec: *mut SPBitVec, value: bool) {
     assert!(!bit_vec.is_null());
     (*bit_vec).0.fill(value)
 }
@@ -228,7 +228,7 @@ pub unsafe extern "C" fn sp_bit_vec_fill(bit_vec: *mut SPBitVec, value: bool) {
 ///
 /// - `bit_vec` points to a valid [SPBitVec]
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_len(bit_vec: *const SPBitVec) -> usize {
+pub unsafe extern "C" fn sp_bitvec_len(bit_vec: *const SPBitVec) -> usize {
     assert!(!bit_vec.is_null());
     (*bit_vec).0.len()
 }
@@ -249,7 +249,7 @@ pub unsafe extern "C" fn sp_bit_vec_len(bit_vec: *const SPBitVec) -> usize {
 ///
 /// - `bit_vec` points to a valid [SPBitVec]
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_is_empty(bit_vec: *const SPBitVec) -> bool {
+pub unsafe extern "C" fn sp_bitvec_is_empty(bit_vec: *const SPBitVec) -> bool {
     assert!(!bit_vec.is_null());
     (*bit_vec).0.is_empty()
 }
@@ -272,7 +272,7 @@ pub unsafe extern "C" fn sp_bit_vec_is_empty(bit_vec: *const SPBitVec) -> bool {
 /// - the returned memory range is never accessed after the passed [SPBitVec] has been freed
 /// - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
 #[no_mangle]
-pub unsafe extern "C" fn sp_bit_vec_unsafe_data_ref(
+pub unsafe extern "C" fn sp_bitvec_unsafe_data_ref(
     bit_vec: *mut SPBitVec,
 ) -> SPByteSlice {
     assert!(!bit_vec.is_null());

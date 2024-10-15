@@ -76,9 +76,9 @@ typedef uint16_t SPCompressionCode;
  *
  * # Examples
  * ```C
- * SPBitVec vec = sp_bit_vec_new(8);
- * sp_bit_vec_set(vec, 5, true);
- * sp_bit_vec_free(vec);
+ * SPBitVec vec = sp_bitvec_new(8);
+ * sp_bitvec_set(vec, 5, true);
+ * sp_bitvec_free(vec);
  * ```
  */
 typedef struct SPBitVec SPBitVec;
@@ -212,9 +212,9 @@ extern "C" {
  * - `bit_vec` points to a valid [SPBitVec]
  * - `bit_vec` is not written to concurrently
  * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_bit_vec_free`.
+ *   by explicitly calling `sp_bitvec_free`.
  */
-struct SPBitVec *sp_bit_vec_clone(const struct SPBitVec *bit_vec);
+struct SPBitVec *sp_bitvec_clone(const struct SPBitVec *bit_vec);
 
 /**
  * Sets the value of all bits in the [SPBitVec].
@@ -235,7 +235,7 @@ struct SPBitVec *sp_bit_vec_clone(const struct SPBitVec *bit_vec);
  * - `bit_vec` points to a valid [SPBitVec]
  * - `bit_vec` is not written to or read from concurrently
  */
-void sp_bit_vec_fill(struct SPBitVec *bit_vec, bool value);
+void sp_bitvec_fill(struct SPBitVec *bit_vec, bool value);
 
 /**
  * Deallocates a [SPBitVec].
@@ -252,7 +252,7 @@ void sp_bit_vec_fill(struct SPBitVec *bit_vec, bool value);
  * - `bit_vec` is not used concurrently or after this call
  * - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
  */
-void sp_bit_vec_free(struct SPBitVec *bit_vec);
+void sp_bitvec_free(struct SPBitVec *bit_vec);
 
 /**
  * Gets the value of a bit from the [SPBitVec].
@@ -276,7 +276,7 @@ void sp_bit_vec_free(struct SPBitVec *bit_vec);
  * - `bit_vec` points to a valid [SPBitVec]
  * - `bit_vec` is not written to concurrently
  */
-bool sp_bit_vec_get(const struct SPBitVec *bit_vec, size_t index);
+bool sp_bitvec_get(const struct SPBitVec *bit_vec, size_t index);
 
 /**
  * Returns true if length is 0.
@@ -295,7 +295,7 @@ bool sp_bit_vec_get(const struct SPBitVec *bit_vec, size_t index);
  *
  * - `bit_vec` points to a valid [SPBitVec]
  */
-bool sp_bit_vec_is_empty(const struct SPBitVec *bit_vec);
+bool sp_bitvec_is_empty(const struct SPBitVec *bit_vec);
 
 /**
  * Gets the length of the [SPBitVec] in bits.
@@ -314,7 +314,7 @@ bool sp_bit_vec_is_empty(const struct SPBitVec *bit_vec);
  *
  * - `bit_vec` points to a valid [SPBitVec]
  */
-size_t sp_bit_vec_len(const struct SPBitVec *bit_vec);
+size_t sp_bitvec_len(const struct SPBitVec *bit_vec);
 
 /**
  * Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
@@ -332,9 +332,9 @@ size_t sp_bit_vec_len(const struct SPBitVec *bit_vec);
  * - `data` points to a valid memory location of at least `data_length`
  *   bytes in size.
  * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_bit_vec_free`.
+ *   by explicitly calling `sp_bitvec_free`.
  */
-struct SPBitVec *sp_bit_vec_load(const uint8_t *data,
+struct SPBitVec *sp_bitvec_load(const uint8_t *data,
                                  size_t data_length);
 
 /**
@@ -355,9 +355,9 @@ struct SPBitVec *sp_bit_vec_load(const uint8_t *data,
  * The caller has to make sure that:
  *
  * - the returned instance is freed in some way, either by using a consuming function or
- *   by explicitly calling `sp_bit_vec_free`.
+ *   by explicitly calling `sp_bitvec_free`.
  */
-struct SPBitVec *sp_bit_vec_new(size_t size);
+struct SPBitVec *sp_bitvec_new(size_t size);
 
 /**
  * Sets the value of a bit in the [SPBitVec].
@@ -380,7 +380,7 @@ struct SPBitVec *sp_bit_vec_new(size_t size);
  * - `bit_vec` points to a valid [SPBitVec]
  * - `bit_vec` is not written to or read from concurrently
  */
-void sp_bit_vec_set(struct SPBitVec *bit_vec, size_t index, bool value);
+void sp_bitvec_set(struct SPBitVec *bit_vec, size_t index, bool value);
 
 /**
  * Gets an unsafe reference to the data of the [SPBitVec] instance.
@@ -401,7 +401,7 @@ void sp_bit_vec_set(struct SPBitVec *bit_vec, size_t index, bool value);
  * - the returned memory range is never accessed after the passed [SPBitVec] has been freed
  * - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
  */
-struct SPByteSlice sp_bit_vec_unsafe_data_ref(struct SPBitVec *bit_vec);
+struct SPByteSlice sp_bitvec_unsafe_data_ref(struct SPBitVec *bit_vec);
 
 /**
  * Clones a [SPBitmap].

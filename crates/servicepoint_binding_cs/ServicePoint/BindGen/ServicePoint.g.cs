@@ -37,10 +37,10 @@ namespace ServicePoint.BindGen
         ///  The caller has to make sure that:
         ///
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bit_vec_free`.
+        ///    by explicitly calling `sp_bitvec_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bit_vec_new(nuint size);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern BitVec* sp_bitvec_new(nuint size);
 
         /// <summary>
         ///  Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
@@ -58,10 +58,10 @@ namespace ServicePoint.BindGen
         ///  - `data` points to a valid memory location of at least `data_length`
         ///    bytes in size.
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bit_vec_free`.
+        ///    by explicitly calling `sp_bitvec_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bit_vec_load(byte* data, nuint data_length);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern BitVec* sp_bitvec_load(byte* data, nuint data_length);
 
         /// <summary>
         ///  Clones a [SPBitVec].
@@ -79,10 +79,10 @@ namespace ServicePoint.BindGen
         ///  - `bit_vec` points to a valid [SPBitVec]
         ///  - `bit_vec` is not written to concurrently
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bit_vec_free`.
+        ///    by explicitly calling `sp_bitvec_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bit_vec_clone(BitVec* bit_vec);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern BitVec* sp_bitvec_clone(BitVec* bit_vec);
 
         /// <summary>
         ///  Deallocates a [SPBitVec].
@@ -99,8 +99,8 @@ namespace ServicePoint.BindGen
         ///  - `bit_vec` is not used concurrently or after this call
         ///  - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_free(BitVec* bit_vec);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitvec_free(BitVec* bit_vec);
 
         /// <summary>
         ///  Gets the value of a bit from the [SPBitVec].
@@ -124,9 +124,9 @@ namespace ServicePoint.BindGen
         ///  - `bit_vec` points to a valid [SPBitVec]
         ///  - `bit_vec` is not written to concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_get(BitVec* bit_vec, nuint index);
+        public static extern bool sp_bitvec_get(BitVec* bit_vec, nuint index);
 
         /// <summary>
         ///  Sets the value of a bit in the [SPBitVec].
@@ -149,8 +149,8 @@ namespace ServicePoint.BindGen
         ///  - `bit_vec` points to a valid [SPBitVec]
         ///  - `bit_vec` is not written to or read from concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_set(BitVec* bit_vec, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitvec_set(BitVec* bit_vec, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
         ///  Sets the value of all bits in the [SPBitVec].
@@ -171,8 +171,8 @@ namespace ServicePoint.BindGen
         ///  - `bit_vec` points to a valid [SPBitVec]
         ///  - `bit_vec` is not written to or read from concurrently
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bit_vec_fill(BitVec* bit_vec, [MarshalAs(UnmanagedType.U1)] bool value);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitvec_fill(BitVec* bit_vec, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
         ///  Gets the length of the [SPBitVec] in bits.
@@ -191,8 +191,8 @@ namespace ServicePoint.BindGen
         ///
         ///  - `bit_vec` points to a valid [SPBitVec]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bit_vec_len(BitVec* bit_vec);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_bitvec_len(BitVec* bit_vec);
 
         /// <summary>
         ///  Returns true if length is 0.
@@ -211,9 +211,9 @@ namespace ServicePoint.BindGen
         ///
         ///  - `bit_vec` points to a valid [SPBitVec]
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bit_vec_is_empty(BitVec* bit_vec);
+        public static extern bool sp_bitvec_is_empty(BitVec* bit_vec);
 
         /// <summary>
         ///  Gets an unsafe reference to the data of the [SPBitVec] instance.
@@ -234,8 +234,8 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed after the passed [SPBitVec] has been freed
         ///  - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bit_vec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_bit_vec_unsafe_data_ref(BitVec* bit_vec);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern ByteSlice sp_bitvec_unsafe_data_ref(BitVec* bit_vec);
 
         /// <summary>
         ///  Creates a new [SPBrightnessGrid] with the specified dimensions.
