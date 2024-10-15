@@ -111,13 +111,19 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         }
     }
 
-    /// Convert between PrimitiveGrid types
-    pub fn convert<TConverted, F>(&self, f: F) -> PrimitiveGrid<TConverted>
+    /// Convert between PrimitiveGrid types.
+    ///
+    /// See also [Iterator::map].
+    pub fn map<TConverted, F>(&self, f: F) -> PrimitiveGrid<TConverted>
     where
         TConverted: PrimitiveGridType,
-        F: FnMut(&T) -> TConverted,
+        F: Fn(T) -> TConverted,
     {
-        let data = self.data_ref().iter().map(f).collect::<Vec<_>>();
+        let data = self
+            .data_ref()
+            .iter()
+            .map(|elem| f(*elem))
+            .collect::<Vec<_>>();
         PrimitiveGrid::load(self.width(), self.height(), &data)
     }
 }

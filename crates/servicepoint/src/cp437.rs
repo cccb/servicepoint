@@ -129,17 +129,17 @@ mod feature_cp437 {
             HashMap::from_iter(pairs)
         });
 
-    const MISSING_CHAR_CP437: u8 = 0x3F;
+    const MISSING_CHAR_CP437: u8 = 0x3F; // '?'
 
     impl From<&Cp437Grid> for CharGrid {
         fn from(value: &Cp437Grid) -> Self {
-            value.convert(move |cp437| cp437_to_char(*cp437))
+            value.map(cp437_to_char)
         }
     }
 
     impl From<&CharGrid> for Cp437Grid {
         fn from(value: &CharGrid) -> Self {
-            value.convert(move |char| char_to_cp437(*char))
+            value.map(char_to_cp437)
         }
     }
 
