@@ -2,7 +2,7 @@
 //!
 //! prefix `sp_packet_`
 
-use std::ptr::null_mut;
+use std::ptr::{null_mut, NonNull};
 
 use crate::SPCommand;
 
@@ -29,13 +29,11 @@ pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_from_command(
     command: *mut SPCommand,
-) -> *mut SPPacket {
+) -> NonNull<SPPacket> {
     assert!(!command.is_null());
     let command = *Box::from_raw(command);
-    let packet = SPPacket(command.0.into());
-    let result = Box::into_raw(Box::new(packet));
-    assert!(!result.is_null());
-    result
+    let result = Box::new(SPPacket(command.0.into()));
+    NonNull::from(Box::leak(result))
 }
 
 /// Tries to load a [SPPacket] from the passed array with the specified length.
@@ -86,11 +84,10 @@ pub unsafe extern "C" fn sp_packet_try_load(
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_clone(
     packet: *const SPPacket,
-) -> *mut SPPacket {
+) -> NonNull<SPPacket> {
     assert!(!packet.is_null());
-    let result = Box::into_raw(Box::new(SPPacket((*packet).0.clone())));
-    assert!(!result.is_null());
-    result
+    let result = Box::new(SPPacket((*packet).0.clone()));
+    NonNull::from(Box::leak(result))
 }
 
 /// Deallocates a [SPPacket].

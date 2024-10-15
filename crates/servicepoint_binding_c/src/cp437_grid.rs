@@ -2,6 +2,7 @@
 //!
 //! prefix `sp_cp437_grid_`
 
+use std::ptr::NonNull;
 use crate::SPByteSlice;
 use servicepoint::{DataRef, Grid};
 
@@ -39,12 +40,11 @@ impl Clone for SPCp437Grid {
 pub unsafe extern "C" fn sp_cp437_grid_new(
     width: usize,
     height: usize,
-) -> *mut SPCp437Grid {
-    let result = Box::into_raw(Box::new(SPCp437Grid(
+) -> NonNull<SPCp437Grid> {
+    let result = Box::new(SPCp437Grid(
         servicepoint::Cp437Grid::new(width, height),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Loads a [SPCp437Grid] with the specified dimensions from the provided data.
@@ -70,14 +70,13 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
     height: usize,
     data: *const u8,
     data_length: usize,
-) -> *mut SPCp437Grid {
+) -> NonNull<SPCp437Grid> {
     assert!(data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let result = Box::into_raw(Box::new(SPCp437Grid(
+    let result = Box::new(SPCp437Grid(
         servicepoint::Cp437Grid::load(width, height, data),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Clones a [SPCp437Grid].
@@ -99,11 +98,10 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
 #[no_mangle]
 pub unsafe extern "C" fn sp_cp437_grid_clone(
     cp437_grid: *const SPCp437Grid,
-) -> *mut SPCp437Grid {
+) -> NonNull<SPCp437Grid> {
     assert!(!cp437_grid.is_null());
-    let result = Box::into_raw(Box::new((*cp437_grid).clone()));
-    assert!(!result.is_null());
-    result
+    let result = Box::new((*cp437_grid).clone());
+    NonNull::from(Box::leak(result))
 }
 
 /// Deallocates a [SPCp437Grid].
@@ -278,7 +276,7 @@ pub unsafe extern "C" fn sp_cp437_grid_unsafe_data_ref(
 ) -> SPByteSlice {
     let data = (*cp437_grid).0.data_ref_mut();
     SPByteSlice {
-        start: data.as_mut_ptr_range().start,
+        start: NonNull::new(data.as_mut_ptr_range().start).unwrap(),
         length: data.len(),
     }
 }

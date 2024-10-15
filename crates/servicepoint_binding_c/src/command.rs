@@ -2,7 +2,7 @@
 //!
 //! prefix `sp_command_`
 
-use std::ptr::null_mut;
+use std::ptr::{null_mut, NonNull};
 
 use servicepoint::{Brightness, Origin};
 
@@ -80,11 +80,10 @@ pub unsafe extern "C" fn sp_command_try_from_packet(
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_clone(
     command: *const SPCommand,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     assert!(!command.is_null());
-    let result = Box::into_raw(Box::new((*command).clone()));
-    assert!(!result.is_null());
-    result
+    let result = Box::new((*command).clone());
+    NonNull::from(Box::leak(result))
 }
 
 /// Set all pixels to the off state.
@@ -106,11 +105,9 @@ pub unsafe extern "C" fn sp_command_clone(
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_clear() -> *mut SPCommand {
-    let result =
-        Box::into_raw(Box::new(SPCommand(servicepoint::Command::Clear)));
-    assert!(!result.is_null());
-    result
+pub unsafe extern "C" fn sp_command_clear() -> NonNull<SPCommand> {
+    let result = Box::new(SPCommand(servicepoint::Command::Clear));
+    NonNull::from(Box::leak(result))
 }
 
 /// Kills the udp daemon on the display, which usually results in a restart.
@@ -126,11 +123,9 @@ pub unsafe extern "C" fn sp_command_clear() -> *mut SPCommand {
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_hard_reset() -> *mut SPCommand {
-    let result =
-        Box::into_raw(Box::new(SPCommand(servicepoint::Command::HardReset)));
-    assert!(!result.is_null());
-    result
+pub unsafe extern "C" fn sp_command_hard_reset() -> NonNull<SPCommand> {
+    let result = Box::new(SPCommand(servicepoint::Command::HardReset));
+    NonNull::from(Box::leak(result))
 }
 
 /// A yet-to-be-tested command.
@@ -144,11 +139,9 @@ pub unsafe extern "C" fn sp_command_hard_reset() -> *mut SPCommand {
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_command_fade_out() -> *mut SPCommand {
-    let result =
-        Box::into_raw(Box::new(SPCommand(servicepoint::Command::FadeOut)));
-    assert!(!result.is_null());
-    result
+pub unsafe extern "C" fn sp_command_fade_out() -> NonNull<SPCommand> {
+    let result = Box::new(SPCommand(servicepoint::Command::FadeOut));
+    NonNull::from(Box::leak(result))
 }
 
 /// Set the brightness of all tiles to the same value.
@@ -168,14 +161,13 @@ pub unsafe extern "C" fn sp_command_fade_out() -> *mut SPCommand {
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_brightness(
     brightness: u8,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     let brightness =
         Brightness::try_from(brightness).expect("invalid brightness");
-    let result = Box::into_raw(Box::new(SPCommand(
+    let result = Box::new(SPCommand(
         servicepoint::Command::Brightness(brightness),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Set the brightness of individual tiles in a rectangular area of the display.
@@ -201,14 +193,13 @@ pub unsafe extern "C" fn sp_command_char_brightness(
     x: usize,
     y: usize,
     grid: *mut SPBrightnessGrid,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     assert!(!grid.is_null());
     let byte_grid = *Box::from_raw(grid);
-    let result = Box::into_raw(Box::new(SPCommand(
+    let result = Box::new(SPCommand(
         servicepoint::Command::CharBrightness(Origin::new(x, y), byte_grid.0),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Set pixel data starting at the pixel offset on screen.
@@ -241,18 +232,17 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
     offset: usize,
     bit_vec: *mut SPBitVec,
     compression: SPCompressionCode,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::into_raw(Box::new(SPCommand(
+    let result = Box::new(SPCommand(
         servicepoint::Command::BitmapLinear(
             offset,
             bit_vec.into(),
             compression.try_into().expect("invalid compression code"),
         ),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Set pixel data according to an and-mask starting at the offset.
@@ -285,18 +275,17 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
     offset: usize,
     bit_vec: *mut SPBitVec,
     compression: SPCompressionCode,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::into_raw(Box::new(SPCommand(
+    let result = Box::new(SPCommand(
         servicepoint::Command::BitmapLinearAnd(
             offset,
             bit_vec.into(),
             compression.try_into().expect("invalid compression code"),
         ),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Set pixel data according to an or-mask starting at the offset.
@@ -329,18 +318,17 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
     offset: usize,
     bit_vec: *mut SPBitVec,
     compression: SPCompressionCode,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::into_raw(Box::new(SPCommand(
+    let result = Box::new(SPCommand(
         servicepoint::Command::BitmapLinearOr(
             offset,
             bit_vec.into(),
             compression.try_into().expect("invalid compression code"),
         ),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Set pixel data according to a xor-mask starting at the offset.
@@ -373,18 +361,17 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
     offset: usize,
     bit_vec: *mut SPBitVec,
     compression: SPCompressionCode,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::into_raw(Box::new(SPCommand(
+    let result = Box::new(SPCommand(
         servicepoint::Command::BitmapLinearXor(
             offset,
             bit_vec.into(),
             compression.try_into().expect("invalid compression code"),
         ),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Show text on the screen.
@@ -410,14 +397,13 @@ pub unsafe extern "C" fn sp_command_cp437_data(
     x: usize,
     y: usize,
     grid: *mut SPCp437Grid,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     assert!(!grid.is_null());
     let grid = *Box::from_raw(grid);
-    let result = Box::into_raw(Box::new(SPCommand(
+    let result = Box::new(SPCommand(
         servicepoint::Command::Cp437Data(Origin::new(x, y), grid.0),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Sets a window of pixels to the specified values.
@@ -446,10 +432,10 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
     y: usize,
     bitmap: *mut SPBitmap,
     compression_code: SPCompressionCode,
-) -> *mut SPCommand {
+) -> NonNull<SPCommand> {
     assert!(!bitmap.is_null());
     let byte_grid = (*Box::from_raw(bitmap)).0;
-    let result = Box::into_raw(Box::new(SPCommand(
+    let result = Box::new(SPCommand(
         servicepoint::Command::BitmapLinearWin(
             Origin::new(x, y),
             byte_grid,
@@ -457,9 +443,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
                 .try_into()
                 .expect("invalid compression code"),
         ),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Deallocates a [SPCommand].

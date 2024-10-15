@@ -2,6 +2,7 @@
 //!
 //! prefix `sp_bitvec_`
 
+use std::ptr::NonNull;
 use crate::SPByteSlice;
 use servicepoint::bitvec::prelude::{BitVec, Msb0};
 
@@ -52,10 +53,9 @@ impl Clone for SPBitVec {
 /// - the returned instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_bitvec_free`.
 #[no_mangle]
-pub unsafe extern "C" fn sp_bitvec_new(size: usize) -> *mut SPBitVec {
-    let result = Box::into_raw(Box::new(SPBitVec(BitVec::repeat(false, size))));
-    assert!(!result.is_null());
-    result
+pub unsafe extern "C" fn sp_bitvec_new(size: usize) -> NonNull<SPBitVec> {
+    let result = Box::new(SPBitVec(BitVec::repeat(false, size)));
+    NonNull::from(Box::leak(result))
 }
 
 /// Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
@@ -78,12 +78,11 @@ pub unsafe extern "C" fn sp_bitvec_new(size: usize) -> *mut SPBitVec {
 pub unsafe extern "C" fn sp_bitvec_load(
     data: *const u8,
     data_length: usize,
-) -> *mut SPBitVec {
+) -> NonNull<SPBitVec> {
     assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let result = Box::into_raw(Box::new(SPBitVec(BitVec::from_slice(data))));
-    assert!(!result.is_null());
-    result
+    let result = Box::new(SPBitVec(BitVec::from_slice(data)));
+    NonNull::from(Box::leak(result))
 }
 
 /// Clones a [SPBitVec].
@@ -105,11 +104,10 @@ pub unsafe extern "C" fn sp_bitvec_load(
 #[no_mangle]
 pub unsafe extern "C" fn sp_bitvec_clone(
     bit_vec: *const SPBitVec,
-) -> *mut SPBitVec {
+) -> NonNull<SPBitVec> {
     assert!(!bit_vec.is_null());
-    let result = Box::into_raw(Box::new((*bit_vec).clone()));
-    assert!(!result.is_null());
-    result
+    let result = Box::new((*bit_vec).clone());
+    NonNull::from(Box::leak(result))
 }
 
 /// Deallocates a [SPBitVec].
@@ -278,7 +276,7 @@ pub unsafe extern "C" fn sp_bitvec_unsafe_data_ref(
     assert!(!bit_vec.is_null());
     let data = (*bit_vec).0.as_raw_mut_slice();
     SPByteSlice {
-        start: data.as_mut_ptr_range().start,
+        start: NonNull::new(data.as_mut_ptr_range().start).unwrap(),
         length: data.len(),
     }
 }

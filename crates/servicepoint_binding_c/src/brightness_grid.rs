@@ -5,6 +5,7 @@
 use crate::SPByteSlice;
 use servicepoint::{Brightness, DataRef, Grid, PrimitiveGrid};
 use std::intrinsics::transmute;
+use std::ptr::NonNull;
 
 /// A grid containing brightness values.
 ///
@@ -38,12 +39,11 @@ pub struct SPBrightnessGrid(pub(crate) servicepoint::BrightnessGrid);
 pub unsafe extern "C" fn sp_brightness_grid_new(
     width: usize,
     height: usize,
-) -> *mut SPBrightnessGrid {
-    let result = Box::into_raw(Box::new(SPBrightnessGrid(
+) -> NonNull<SPBrightnessGrid> {
+    let result = Box::new(SPBrightnessGrid(
         servicepoint::BrightnessGrid::new(width, height),
-    )));
-    assert!(!result.is_null());
-    result
+    ));
+    NonNull::from(Box::leak(result))
 }
 
 /// Loads a [SPBrightnessGrid] with the specified dimensions from the provided data.
@@ -69,15 +69,14 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
     height: usize,
     data: *const u8,
     data_length: usize,
-) -> *mut SPBrightnessGrid {
+) -> NonNull<SPBrightnessGrid> {
     assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
     let grid = PrimitiveGrid::load(width, height, data);
     let grid = servicepoint::BrightnessGrid::try_from(grid)
         .expect("invalid brightness value");
-    let result = Box::into_raw(Box::new(SPBrightnessGrid(grid)));
-    assert!(!result.is_null());
-    result
+    let result = Box::new(SPBrightnessGrid(grid));
+    NonNull::from(Box::leak(result))
 }
 
 /// Clones a [SPBrightnessGrid].
@@ -103,11 +102,10 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_clone(
     brightness_grid: *const SPBrightnessGrid,
-) -> *mut SPBrightnessGrid {
+) -> NonNull<SPBrightnessGrid> {
     assert!(!brightness_grid.is_null());
-    let result = Box::into_raw(Box::new((*brightness_grid).clone()));
-    assert!(!result.is_null());
-    result
+    let result = Box::new((*brightness_grid).clone());
+    NonNull::from(Box::leak(result))
 }
 
 /// Deallocates a [SPBrightnessGrid].
@@ -305,9 +303,10 @@ pub unsafe extern "C" fn sp_brightness_grid_unsafe_data_ref(
     assert!(!brightness_grid.is_null());
     assert_eq!(core::mem::size_of::<Brightness>(), 1);
     let data = (*brightness_grid).0.data_ref_mut();
+    // this assumes more about the memory layout than rust guarantees. yikes!
     let data: &mut [u8] = transmute(data);
     SPByteSlice {
-        start: data.as_mut_ptr_range().start,
+        start: NonNull::new(data.as_mut_ptr_range().start).unwrap(),
         length: data.len(),
     }
 }

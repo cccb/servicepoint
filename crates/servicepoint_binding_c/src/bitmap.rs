@@ -2,6 +2,7 @@
 //!
 //! prefix `sp_bitmap_`
 
+use std::ptr::NonNull;
 use servicepoint::{DataRef, Grid};
 
 use crate::byte_slice::SPByteSlice;
@@ -41,12 +42,11 @@ pub struct SPBitmap(pub(crate) servicepoint::Bitmap);
 pub unsafe extern "C" fn sp_bitmap_new(
     width: usize,
     height: usize,
-) -> *mut SPBitmap {
-    let result = Box::into_raw(Box::new(SPBitmap(servicepoint::Bitmap::new(
+) -> NonNull<SPBitmap> {
+    let result = Box::new(SPBitmap(servicepoint::Bitmap::new(
         width, height,
-    ))));
-    assert!(!result.is_null());
-    result
+    )));
+    NonNull::from(Box::leak(result))
 }
 
 /// Loads a [SPBitmap] with the specified dimensions from the provided data.
@@ -77,14 +77,13 @@ pub unsafe extern "C" fn sp_bitmap_load(
     height: usize,
     data: *const u8,
     data_length: usize,
-) -> *mut SPBitmap {
+) -> NonNull<SPBitmap> {
     assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let result = Box::into_raw(Box::new(SPBitmap(servicepoint::Bitmap::load(
+    let result = Box::new(SPBitmap(servicepoint::Bitmap::load(
         width, height, data,
-    ))));
-    assert!(!result.is_null());
-    result
+    )));
+    NonNull::from(Box::leak(result))
 }
 
 /// Clones a [SPBitmap].
@@ -106,11 +105,10 @@ pub unsafe extern "C" fn sp_bitmap_load(
 #[no_mangle]
 pub unsafe extern "C" fn sp_bitmap_clone(
     bitmap: *const SPBitmap,
-) -> *mut SPBitmap {
+) -> NonNull<SPBitmap> {
     assert!(!bitmap.is_null());
-    let result = Box::into_raw(Box::new(SPBitmap((*bitmap).0.clone())));
-    assert!(!result.is_null());
-    result
+    let result = Box::new(SPBitmap((*bitmap).0.clone()));
+    NonNull::from(Box::leak(result))
 }
 
 /// Deallocates a [SPBitmap].
@@ -277,7 +275,7 @@ pub unsafe extern "C" fn sp_bitmap_unsafe_data_ref(
     assert!(!bitmap.is_null());
     let data = (*bitmap).0.data_ref_mut();
     SPByteSlice {
-        start: data.as_mut_ptr_range().start,
+        start: NonNull::new(data.as_mut_ptr_range().start).unwrap(),
         length: data.len(),
     }
 }
