@@ -3,13 +3,13 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Packet : SpNativeInstance<BindGen.Packet>
+public sealed class Packet : SpNativeInstance<SPPacket>
 {
     public static Packet FromCommand(Command command)
     {
         unsafe
         {
-            return new Packet(NativeMethods.sp_packet_from_command(command.Into()));
+            return new Packet(PacketNative.sp_packet_from_command(command.Into()));
         }
     }
 
@@ -19,7 +19,7 @@ public sealed class Packet : SpNativeInstance<BindGen.Packet>
         {
             fixed (byte* bytesPtr = bytes)
             {
-                var instance = NativeMethods.sp_packet_try_load(bytesPtr, (nuint)bytes.Length);
+                var instance = PacketNative.sp_packet_try_load(bytesPtr, (nuint)bytes.Length);
                 packet = instance == null
                     ? null
                     : new Packet(instance);
@@ -28,9 +28,9 @@ public sealed class Packet : SpNativeInstance<BindGen.Packet>
         }
     }
 
-    private unsafe Packet(BindGen.Packet* instance) : base(instance)
+    private unsafe Packet(SPPacket* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => NativeMethods.sp_packet_free(Instance);
+    private protected override unsafe void Free() => PacketNative.sp_packet_free(Instance);
 }

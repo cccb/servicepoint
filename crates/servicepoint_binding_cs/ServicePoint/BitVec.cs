@@ -2,13 +2,13 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
+public sealed class BitVec : SpNativeInstance<SPBitVec>
 {
     public static BitVec New(nuint size)
     {
         unsafe
         {
-            return new BitVec(NativeMethods.sp_bitvec_new(size));
+            return new BitVec(BitVecNative.sp_bitvec_new(size));
         }
     }
 
@@ -18,7 +18,7 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new BitVec(NativeMethods.sp_bitvec_load(bytesPtr, (nuint)bytes.Length));
+                return new BitVec(BitVecNative.sp_bitvec_load(bytesPtr, (nuint)bytes.Length));
             }
         }
     }
@@ -27,7 +27,7 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
     {
         unsafe
         {
-            return new BitVec(NativeMethods.sp_bitvec_clone(Instance));
+            return new BitVec(BitVecNative.sp_bitvec_clone(Instance));
         }
     }
 
@@ -37,14 +37,14 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
         {
             unsafe
             {
-                return NativeMethods.sp_bitvec_get(Instance, index);
+                return BitVecNative.sp_bitvec_get(Instance, index);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp_bitvec_set(Instance, index, value);
+                BitVecNative.sp_bitvec_set(Instance, index, value);
             }
         }
     }
@@ -53,7 +53,7 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
     {
         unsafe
         {
-            NativeMethods.sp_bitvec_fill(Instance, value);
+            BitVecNative.sp_bitvec_fill(Instance, value);
         }
     }
 
@@ -63,7 +63,7 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
         {
             unsafe
             {
-                return NativeMethods.sp_bitvec_len(Instance);
+                return BitVecNative.sp_bitvec_len(Instance);
             }
         }
     }
@@ -74,15 +74,15 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
         {
             unsafe
             {
-                var slice = NativeMethods.sp_bitvec_unsafe_data_ref(Instance);
+                var slice = BitVecNative.sp_bitvec_unsafe_data_ref(Instance);
                 return new Span<byte>(slice.start, (int)slice.length);
             }
         }
     }
 
-    private unsafe BitVec(BindGen.BitVec* instance) : base(instance)
+    private unsafe BitVec(SPBitVec* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => NativeMethods.sp_bitvec_free(Instance);
+    private protected override unsafe void Free() => BitVecNative.sp_bitvec_free(Instance);
 }

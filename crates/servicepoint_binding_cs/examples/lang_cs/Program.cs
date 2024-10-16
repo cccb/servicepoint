@@ -1,5 +1,6 @@
 ﻿using ServicePoint;
-using CompressionCode = ServicePoint.BindGen.CompressionCode;
+
+using CompressionCode = ServicePoint.BindGen.SPCompressionCode;
 
 using var connection = Connection.Open("127.0.0.1:2342");
 

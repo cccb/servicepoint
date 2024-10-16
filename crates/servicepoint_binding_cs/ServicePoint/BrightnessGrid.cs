@@ -2,13 +2,13 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
+public sealed class BrightnessGrid : SpNativeInstance<SPBrightnessGrid>
 {
     public static BrightnessGrid New(nuint width, nuint height)
     {
         unsafe
         {
-            return new BrightnessGrid(NativeMethods.sp_brightness_grid_new(width, height));
+            return new BrightnessGrid(BrightnessGridNative.sp_brightness_grid_new(width, height));
         }
     }
 
@@ -18,7 +18,7 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new BrightnessGrid(NativeMethods.sp_brightness_grid_load(width, height, bytesPtr,
+                return new BrightnessGrid(BrightnessGridNative.sp_brightness_grid_load(width, height, bytesPtr,
                     (nuint)bytes.Length));
             }
         }
@@ -28,7 +28,7 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
     {
         unsafe
         {
-            return new BrightnessGrid(NativeMethods.sp_brightness_grid_clone(Instance));
+            return new BrightnessGrid(BrightnessGridNative.sp_brightness_grid_clone(Instance));
         }
     }
 
@@ -38,14 +38,14 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
         {
             unsafe
             {
-                return NativeMethods.sp_brightness_grid_get(Instance, x, y);
+                return BrightnessGridNative.sp_brightness_grid_get(Instance, x, y);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp_brightness_grid_set(Instance, x, y, value);
+                BrightnessGridNative.sp_brightness_grid_set(Instance, x, y, value);
             }
         }
     }
@@ -54,7 +54,7 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
     {
         unsafe
         {
-            NativeMethods.sp_brightness_grid_fill(Instance, value);
+            BrightnessGridNative.sp_brightness_grid_fill(Instance, value);
         }
     }
 
@@ -64,7 +64,7 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
         {
             unsafe
             {
-                return NativeMethods.sp_brightness_grid_width(Instance);
+                return BrightnessGridNative.sp_brightness_grid_width(Instance);
             }
         }
     }
@@ -75,7 +75,7 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
         {
             unsafe
             {
-                return NativeMethods.sp_brightness_grid_height(Instance);
+                return BrightnessGridNative.sp_brightness_grid_height(Instance);
             }
         }
     }
@@ -86,15 +86,15 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
         {
             unsafe
             {
-                var slice = NativeMethods.sp_brightness_grid_unsafe_data_ref(Instance);
+                var slice = BrightnessGridNative.sp_brightness_grid_unsafe_data_ref(Instance);
                 return new Span<byte>(slice.start, (int)slice.length);
             }
         }
     }
 
-    private unsafe BrightnessGrid(BindGen.BrightnessGrid* instance) : base(instance)
+    private unsafe BrightnessGrid(SPBrightnessGrid* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => NativeMethods.sp_brightness_grid_free(Instance);
+    private protected override unsafe void Free() => BrightnessGridNative.sp_brightness_grid_free(Instance);
 }

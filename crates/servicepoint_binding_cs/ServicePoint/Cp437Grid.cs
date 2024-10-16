@@ -3,13 +3,13 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
+public sealed class Cp437Grid : SpNativeInstance<SPCp437Grid>
 {
     public static Cp437Grid New(int width, int height)
     {
         unsafe
         {
-            return new Cp437Grid(NativeMethods.sp_cp437_grid_new((nuint)width, (nuint)height));
+            return new Cp437Grid(Cp437GridNative.sp_cp437_grid_new((nuint)width, (nuint)height));
         }
     }
 
@@ -19,7 +19,7 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new Cp437Grid(NativeMethods.sp_cp437_grid_load((nuint)width, (nuint)height, bytesPtr,
+                return new Cp437Grid(Cp437GridNative.sp_cp437_grid_load((nuint)width, (nuint)height, bytesPtr,
                     (nuint)bytes.Length));
             }
         }
@@ -29,7 +29,7 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
     {
         unsafe
         {
-            return new Cp437Grid(NativeMethods.sp_cp437_grid_clone(Instance));
+            return new Cp437Grid(Cp437GridNative.sp_cp437_grid_clone(Instance));
         }
     }
 
@@ -39,14 +39,14 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
         {
             unsafe
             {
-                return NativeMethods.sp_cp437_grid_get(Instance, (nuint)x, (nuint)y);
+                return Cp437GridNative.sp_cp437_grid_get(Instance, (nuint)x, (nuint)y);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp_cp437_grid_set(Instance, (nuint)x, (nuint)y, value);
+                Cp437GridNative.sp_cp437_grid_set(Instance, (nuint)x, (nuint)y, value);
             }
         }
     }
@@ -85,7 +85,7 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
     {
         unsafe
         {
-            NativeMethods.sp_cp437_grid_fill(Instance, value);
+            Cp437GridNative.sp_cp437_grid_fill(Instance, value);
         }
     }
 
@@ -95,7 +95,7 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
         {
             unsafe
             {
-                return (int)NativeMethods.sp_cp437_grid_width(Instance);
+                return (int)Cp437GridNative.sp_cp437_grid_width(Instance);
             }
         }
     }
@@ -106,7 +106,7 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
         {
             unsafe
             {
-                return (int)NativeMethods.sp_cp437_grid_height(Instance);
+                return (int)Cp437GridNative.sp_cp437_grid_height(Instance);
             }
         }
     }
@@ -117,15 +117,15 @@ public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
         {
             unsafe
             {
-                var slice = NativeMethods.sp_cp437_grid_unsafe_data_ref(Instance);
+                var slice = Cp437GridNative.sp_cp437_grid_unsafe_data_ref(Instance);
                 return new Span<byte>(slice.start, (int)slice.length);
             }
         }
     }
 
-    private unsafe Cp437Grid(BindGen.Cp437Grid* instance) : base(instance)
+    private unsafe Cp437Grid(SPCp437Grid* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => NativeMethods.sp_cp437_grid_free(Instance);
+    private protected override unsafe void Free() => Cp437GridNative.sp_cp437_grid_free(Instance);
 }

@@ -3,13 +3,13 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Command : SpNativeInstance<BindGen.Command>
+public sealed class Command : SpNativeInstance<SPCommand>
 {
     public static bool TryFromPacket(Packet packet, [MaybeNullWhen(false)] out Command command)
     {
         unsafe
         {
-            var result = NativeMethods.sp_command_try_from_packet(packet.Into());
+            var result = CommandNative.sp_command_try_from_packet(packet.Into());
             if (result == null)
             {
                 command = null;
@@ -25,7 +25,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_clone(Instance));
+            return new Command(CommandNative.sp_command_clone(Instance));
         }
     }
 
@@ -33,7 +33,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_clear());
+            return new Command(CommandNative.sp_command_clear());
         }
     }
 
@@ -41,7 +41,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_hard_reset());
+            return new Command(CommandNative.sp_command_hard_reset());
         }
     }
 
@@ -49,7 +49,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_fade_out());
+            return new Command(CommandNative.sp_command_fade_out());
         }
     }
 
@@ -57,7 +57,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_brightness(brightness));
+            return new Command(CommandNative.sp_command_brightness(brightness));
         }
     }
 
@@ -65,7 +65,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_char_brightness(x, y, grid.Into()));
+            return new Command(CommandNative.sp_command_char_brightness(x, y, grid.Into()));
         }
     }
 
@@ -74,7 +74,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
         unsafe
         {
             return new Command(
-                NativeMethods.sp_command_bitmap_linear(offset, bitVec.Into(), compressionCode));
+                CommandNative.sp_command_bitmap_linear(offset, bitVec.Into(), compressionCode));
         }
     }
 
@@ -83,7 +83,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
         unsafe
         {
             return new Command(
-                NativeMethods.sp_command_bitmap_linear_and(offset, bitVec.Into(), compressionCode));
+                CommandNative.sp_command_bitmap_linear_and(offset, bitVec.Into(), compressionCode));
         }
     }
 
@@ -92,7 +92,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
         unsafe
         {
             return new Command(
-                NativeMethods.sp_command_bitmap_linear_or(offset, bitVec.Into(), compressionCode));
+                CommandNative.sp_command_bitmap_linear_or(offset, bitVec.Into(), compressionCode));
         }
     }
 
@@ -101,7 +101,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
         unsafe
         {
             return new Command(
-                NativeMethods.sp_command_bitmap_linear_xor(offset, bitVec.Into(), compressionCode));
+                CommandNative.sp_command_bitmap_linear_xor(offset, bitVec.Into(), compressionCode));
         }
     }
 
@@ -109,7 +109,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_bitmap_linear_win(x, y, bitmap.Into(), compression));
+            return new Command(CommandNative.sp_command_bitmap_linear_win(x, y, bitmap.Into(), compression));
         }
     }
 
@@ -117,13 +117,13 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_cp437_data(x, y, byteGrid.Into()));
+            return new Command(CommandNative.sp_command_cp437_data(x, y, byteGrid.Into()));
         }
     }
 
-    private unsafe Command(BindGen.Command* instance) : base(instance)
+    private unsafe Command(SPCommand* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => NativeMethods.sp_command_free(Instance);
+    private protected override unsafe void Free() => CommandNative.sp_command_free(Instance);
 }

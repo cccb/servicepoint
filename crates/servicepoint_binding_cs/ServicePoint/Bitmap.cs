@@ -2,13 +2,13 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
+public sealed class Bitmap : SpNativeInstance<SPBitmap>
 {
     public static Bitmap New(nuint width, nuint height)
     {
         unsafe
         {
-            return new Bitmap(NativeMethods.sp_bitmap_new(width, height));
+            return new Bitmap(BitmapNative.sp_bitmap_new(width, height));
         }
     }
 
@@ -18,7 +18,7 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new Bitmap(NativeMethods.sp_bitmap_load(width, height, bytesPtr,
+                return new Bitmap(BitmapNative.sp_bitmap_load(width, height, bytesPtr,
                     (nuint)bytes.Length));
             }
         }
@@ -28,7 +28,7 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
     {
         unsafe
         {
-            return new Bitmap(NativeMethods.sp_bitmap_clone(Instance));
+            return new Bitmap(BitmapNative.sp_bitmap_clone(Instance));
         }
     }
 
@@ -38,14 +38,14 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
         {
             unsafe
             {
-                return NativeMethods.sp_bitmap_get(Instance, x, y);
+                return BitmapNative.sp_bitmap_get(Instance, x, y);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp_bitmap_set(Instance, x, y, value);
+                BitmapNative.sp_bitmap_set(Instance, x, y, value);
             }
         }
     }
@@ -54,7 +54,7 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
     {
         unsafe
         {
-            NativeMethods.sp_bitmap_fill(Instance, value);
+            BitmapNative.sp_bitmap_fill(Instance, value);
         }
     }
 
@@ -64,7 +64,7 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
         {
             unsafe
             {
-                return NativeMethods.sp_bitmap_width(Instance);
+                return BitmapNative.sp_bitmap_width(Instance);
             }
         }
     }
@@ -75,7 +75,7 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
         {
             unsafe
             {
-                return NativeMethods.sp_bitmap_height(Instance);
+                return BitmapNative.sp_bitmap_height(Instance);
             }
         }
     }
@@ -86,15 +86,15 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
         {
             unsafe
             {
-                var slice = NativeMethods.sp_bitmap_unsafe_data_ref(Instance);
+                var slice = BitmapNative.sp_bitmap_unsafe_data_ref(Instance);
                 return new Span<byte>(slice.start, (int)slice.length);
             }
         }
     }
 
-    private unsafe Bitmap(BindGen.Bitmap* instance) : base(instance)
+    private unsafe Bitmap(SPBitmap* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => NativeMethods.sp_bitmap_free(Instance);
+    private protected override unsafe void Free() => BitmapNative.sp_bitmap_free(Instance);
 }
