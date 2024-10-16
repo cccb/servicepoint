@@ -3,7 +3,7 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Packet : SpNativeInstance<SPPacket>
+public sealed class Packet : SpNativeInstance<BindGen.Packet>
 {
     public static Packet FromCommand(Command command)
     {
@@ -28,9 +28,9 @@ public sealed class Packet : SpNativeInstance<SPPacket>
         }
     }
 
-    private unsafe Packet(SPPacket* instance) : base(instance)
+    private unsafe Packet(BindGen.Packet* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => PacketNative.sp_packet_free(Instance);
+    private protected override unsafe void Free() => Instance->Free();
 }

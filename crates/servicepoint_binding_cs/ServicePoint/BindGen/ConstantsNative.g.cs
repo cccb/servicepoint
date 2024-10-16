@@ -23,7 +23,7 @@ namespace ServicePoint.BindGen
     }
 
 
-    public enum SPCompressionCode : ushort
+    public enum CompressionCode : ushort
     {
         Uncompressed = 0,
         Zlib = 26490,

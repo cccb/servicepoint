@@ -16,8 +16,12 @@ fn main() {
 
     for path in &paths {
         println!("cargo:rerun-if-changed={}", path.display());
-        let class = Path::new(path).file_stem().unwrap().to_str().unwrap();
-        let class = class.to_case(Case::UpperCamel) + "Native";
+        let file: &str = Path::new(path).file_stem().unwrap().to_str().unwrap();
+        if file == "lib"{
+            continue;
+        }
+
+        let class = file.to_case(Case::UpperCamel) + "Native";
         csbindgen::Builder::default()
             .input_extern_file(path)
             .csharp_class_name(&class)
@@ -27,6 +31,16 @@ fn main() {
             .csharp_class_accessibility("public")
             .csharp_generate_const_filter(|_| true)
             .always_included_types(["SPByteSlice", "SPCompressionCode"])
+            .csharp_type_rename(move |name| {
+                if name.len() > 2
+                    && name.starts_with("SP")
+                    && name.chars().nth(2).unwrap().is_uppercase()
+                {
+                    name[2..].to_string()
+                } else {
+                    name
+                }
+            })
             .generate_csharp_file(format!("ServicePoint/BindGen/{}.g.cs", &class))
             .unwrap();
     }

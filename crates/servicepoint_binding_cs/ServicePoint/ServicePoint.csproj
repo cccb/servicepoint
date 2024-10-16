@@ -10,6 +10,11 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
+
+    <PropertyGroup>
         <PackageId>ServicePoint</PackageId>
         <Version>0.10.0</Version>
         <Authors>Repository Authors</Authors>
@@ -45,6 +50,11 @@
         <Content Include="../../../target/release/libservicepoint_binding_c.so" CopyToOutputDirectory="Always">
             <Link>libservicepoint_binding_c.so</Link>
         </Content>
+    </ItemGroup>
+
+    <!--additional csbindgen code generators-->
+    <ItemGroup>
+        <PackageReference Include="csbindgen" Version="1.9.3" PrivateAssets="All"/>
     </ItemGroup>
 
     <ItemGroup>

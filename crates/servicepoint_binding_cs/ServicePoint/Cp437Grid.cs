@@ -3,23 +3,23 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Cp437Grid : SpNativeInstance<SPCp437Grid>
+public sealed class Cp437Grid : SpNativeInstance<BindGen.Cp437Grid>
 {
-    public static Cp437Grid New(int width, int height)
+    public static Cp437Grid New(nuint width, nuint height)
     {
         unsafe
         {
-            return new Cp437Grid(Cp437GridNative.sp_cp437_grid_new((nuint)width, (nuint)height));
+            return new Cp437Grid(Cp437GridNative.sp_cp437_grid_new(width, height));
         }
     }
 
-    public static Cp437Grid Load(int width, int height, Span<byte> bytes)
+    public static Cp437Grid Load(nuint width, nuint height, Span<byte> bytes)
     {
         unsafe
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new Cp437Grid(Cp437GridNative.sp_cp437_grid_load((nuint)width, (nuint)height, bytesPtr,
+                return new Cp437Grid(Cp437GridNative.sp_cp437_grid_load(width, height, bytesPtr,
                     (nuint)bytes.Length));
             }
         }
@@ -29,38 +29,38 @@ public sealed class Cp437Grid : SpNativeInstance<SPCp437Grid>
     {
         unsafe
         {
-            return new Cp437Grid(Cp437GridNative.sp_cp437_grid_clone(Instance));
+            return new Cp437Grid(Instance->Clone());
         }
     }
 
-    public byte this[int x, int y]
+    public byte this[nuint x, nuint y]
     {
         get
         {
             unsafe
             {
-                return Cp437GridNative.sp_cp437_grid_get(Instance, (nuint)x, (nuint)y);
+                return Instance->Get(x, y);
             }
         }
         set
         {
             unsafe
             {
-                Cp437GridNative.sp_cp437_grid_set(Instance, (nuint)x, (nuint)y, value);
+                Instance->Set(x, y, value);
             }
         }
     }
 
-    public string this[int y]
+    public string this[nuint y]
     {
         set
         {
             var width = Width;
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(value.Length, width);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan((nuint)value.Length, width);
 
-            var x = 0;
-            for (; x < value.Length; x++)
-                this[x, y] = (byte)value[x];
+            nuint x = 0;
+            for (; x < (nuint)value.Length; x++)
+                this[x, y] = (byte)value[(int)x];
 
             for (; x < width; x++)
                 this[x, y] = 0;
@@ -69,7 +69,7 @@ public sealed class Cp437Grid : SpNativeInstance<SPCp437Grid>
         get
         {
             var sb = new StringBuilder();
-            for (int x = 0; x < Width; x++)
+            for (nuint x = 0; x < Width; x++)
             {
                 var val = this[x, y];
                 if (val == 0)
@@ -85,28 +85,28 @@ public sealed class Cp437Grid : SpNativeInstance<SPCp437Grid>
     {
         unsafe
         {
-            Cp437GridNative.sp_cp437_grid_fill(Instance, value);
+            Instance->Fill(value);
         }
     }
 
-    public int Width
+    public nuint Width
     {
         get
         {
             unsafe
             {
-                return (int)Cp437GridNative.sp_cp437_grid_width(Instance);
+                return Instance->Width();
             }
         }
     }
 
-    public int Height
+    public nuint Height
     {
         get
         {
             unsafe
             {
-                return (int)Cp437GridNative.sp_cp437_grid_height(Instance);
+                return Instance->Height();
             }
         }
     }
@@ -117,15 +117,14 @@ public sealed class Cp437Grid : SpNativeInstance<SPCp437Grid>
         {
             unsafe
             {
-                var slice = Cp437GridNative.sp_cp437_grid_unsafe_data_ref(Instance);
-                return new Span<byte>(slice.start, (int)slice.length);
+                return Instance->UnsafeDataRef().AsSpan();
             }
         }
     }
 
-    private unsafe Cp437Grid(SPCp437Grid* instance) : base(instance)
+    private unsafe Cp437Grid(BindGen.Cp437Grid* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => Cp437GridNative.sp_cp437_grid_free(Instance);
+    private protected override unsafe void Free() => Instance->Free();
 }

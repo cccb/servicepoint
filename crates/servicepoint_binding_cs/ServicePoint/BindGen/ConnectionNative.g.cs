@@ -33,7 +33,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_connection_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern SPConnection* sp_connection_open(byte* host);
+        public static extern Connection* sp_connection_open(byte* host);
 
         /// <summary>
         ///  Sends a [SPPacket] to the display using the [SPConnection].
@@ -57,7 +57,7 @@ namespace ServicePoint.BindGen
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send_packet(SPConnection* connection, SPPacket* packet);
+        public static extern bool sp_connection_send_packet(Connection* connection, Packet* packet);
 
         /// <summary>
         ///  Sends a [SPCommand] to the display using the [SPConnection].
@@ -81,7 +81,7 @@ namespace ServicePoint.BindGen
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send_command(SPConnection* connection, SPCommand* command);
+        public static extern bool sp_connection_send_command(Connection* connection, Command* command);
 
         /// <summary>
         ///  Closes and deallocates a [SPConnection].
@@ -98,13 +98,13 @@ namespace ServicePoint.BindGen
         ///  - `connection` is not used concurrently or after this call
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_connection_free(SPConnection* connection);
+        public static extern void sp_connection_free(Connection* connection);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct SPConnection
+    public unsafe partial struct Connection
     {
     }
 

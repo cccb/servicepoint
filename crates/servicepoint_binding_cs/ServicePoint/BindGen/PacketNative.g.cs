@@ -36,7 +36,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_packet_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern SPPacket* sp_packet_from_command(SPCommand* command);
+        public static extern Packet* sp_packet_from_command(Command* command);
 
         /// <summary>
         ///  Tries to load a [SPPacket] from the passed array with the specified length.
@@ -57,7 +57,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_packet_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern SPPacket* sp_packet_try_load(byte* data, nuint length);
+        public static extern Packet* sp_packet_try_load(byte* data, nuint length);
 
         /// <summary>
         ///  Clones a [SPPacket].
@@ -78,7 +78,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_packet_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern SPPacket* sp_packet_clone(SPPacket* packet);
+        public static extern Packet* sp_packet_clone(Packet* packet);
 
         /// <summary>
         ///  Deallocates a [SPPacket].
@@ -95,13 +95,13 @@ namespace ServicePoint.BindGen
         ///  - `packet` is not used concurrently or after this call
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_packet_free(SPPacket* packet);
+        public static extern void sp_packet_free(Packet* packet);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct SPPacket
+    public unsafe partial struct Packet
     {
     }
 

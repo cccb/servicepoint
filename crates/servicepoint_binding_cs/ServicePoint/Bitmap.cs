@@ -2,7 +2,7 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Bitmap : SpNativeInstance<SPBitmap>
+public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
 {
     public static Bitmap New(nuint width, nuint height)
     {
@@ -28,7 +28,7 @@ public sealed class Bitmap : SpNativeInstance<SPBitmap>
     {
         unsafe
         {
-            return new Bitmap(BitmapNative.sp_bitmap_clone(Instance));
+            return new Bitmap(Instance->Clone());
         }
     }
 
@@ -38,14 +38,14 @@ public sealed class Bitmap : SpNativeInstance<SPBitmap>
         {
             unsafe
             {
-                return BitmapNative.sp_bitmap_get(Instance, x, y);
+                return Instance->Get(x, y);
             }
         }
         set
         {
             unsafe
             {
-                BitmapNative.sp_bitmap_set(Instance, x, y, value);
+                Instance->Set(x, y, value);
             }
         }
     }
@@ -54,7 +54,7 @@ public sealed class Bitmap : SpNativeInstance<SPBitmap>
     {
         unsafe
         {
-            BitmapNative.sp_bitmap_fill(Instance, value);
+            Instance->Fill(value);
         }
     }
 
@@ -64,7 +64,7 @@ public sealed class Bitmap : SpNativeInstance<SPBitmap>
         {
             unsafe
             {
-                return BitmapNative.sp_bitmap_width(Instance);
+                return Instance->Width();
             }
         }
     }
@@ -75,7 +75,7 @@ public sealed class Bitmap : SpNativeInstance<SPBitmap>
         {
             unsafe
             {
-                return BitmapNative.sp_bitmap_height(Instance);
+                return Instance->Height();
             }
         }
     }
@@ -86,15 +86,15 @@ public sealed class Bitmap : SpNativeInstance<SPBitmap>
         {
             unsafe
             {
-                var slice = BitmapNative.sp_bitmap_unsafe_data_ref(Instance);
+                var slice = Instance->UnsafeDataRef();
                 return new Span<byte>(slice.start, (int)slice.length);
             }
         }
     }
 
-    private unsafe Bitmap(SPBitmap* instance) : base(instance)
+    private unsafe Bitmap(BindGen.Bitmap* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => BitmapNative.sp_bitmap_free(Instance);
+    private protected override unsafe void Free() => Instance->Free();
 }

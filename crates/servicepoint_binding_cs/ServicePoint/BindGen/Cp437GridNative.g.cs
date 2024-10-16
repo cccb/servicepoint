@@ -29,7 +29,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern SPCp437Grid* sp_cp437_grid_new(nuint width, nuint height);
+        public static extern Cp437Grid* sp_cp437_grid_new(nuint width, nuint height);
 
         /// <summary>
         ///  Loads a [SPCp437Grid] with the specified dimensions from the provided data.
@@ -51,7 +51,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern SPCp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        public static extern Cp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
         ///  Clones a [SPCp437Grid].
@@ -72,7 +72,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern SPCp437Grid* sp_cp437_grid_clone(SPCp437Grid* cp437_grid);
+        public static extern Cp437Grid* sp_cp437_grid_clone(Cp437Grid* cp437_grid);
 
         /// <summary>
         ///  Deallocates a [SPCp437Grid].
@@ -90,7 +90,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_free(SPCp437Grid* cp437_grid);
+        public static extern void sp_cp437_grid_free(Cp437Grid* cp437_grid);
 
         /// <summary>
         ///  Gets the current value at the specified position.
@@ -113,7 +113,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` is not written to concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_cp437_grid_get(SPCp437Grid* cp437_grid, nuint x, nuint y);
+        public static extern byte sp_cp437_grid_get(Cp437Grid* cp437_grid, nuint x, nuint y);
 
         /// <summary>
         ///  Sets the value of the specified position in the [SPCp437Grid].
@@ -139,7 +139,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_set(SPCp437Grid* cp437_grid, nuint x, nuint y, byte value);
+        public static extern void sp_cp437_grid_set(Cp437Grid* cp437_grid, nuint x, nuint y, byte value);
 
         /// <summary>
         ///  Sets the value of all cells in the [SPCp437Grid].
@@ -161,7 +161,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_fill(SPCp437Grid* cp437_grid, byte value);
+        public static extern void sp_cp437_grid_fill(Cp437Grid* cp437_grid, byte value);
 
         /// <summary>
         ///  Gets the width of the [SPCp437Grid] instance.
@@ -181,7 +181,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_width(SPCp437Grid* cp437_grid);
+        public static extern nuint sp_cp437_grid_width(Cp437Grid* cp437_grid);
 
         /// <summary>
         ///  Gets the height of the [SPCp437Grid] instance.
@@ -201,7 +201,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_height(SPCp437Grid* cp437_grid);
+        public static extern nuint sp_cp437_grid_height(Cp437Grid* cp437_grid);
 
         /// <summary>
         ///  Gets an unsafe reference to the data of the [SPCp437Grid] instance.
@@ -221,13 +221,13 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed concurrently, either via the [SPCp437Grid] or directly
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern SPByteSlice sp_cp437_grid_unsafe_data_ref(SPCp437Grid* cp437_grid);
+        public static extern ByteSlice sp_cp437_grid_unsafe_data_ref(Cp437Grid* cp437_grid);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct SPCp437Grid
+    public unsafe partial struct Cp437Grid
     {
     }
 

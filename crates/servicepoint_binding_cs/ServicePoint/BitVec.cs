@@ -2,7 +2,7 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class BitVec : SpNativeInstance<SPBitVec>
+public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
 {
     public static BitVec New(nuint size)
     {
@@ -27,7 +27,7 @@ public sealed class BitVec : SpNativeInstance<SPBitVec>
     {
         unsafe
         {
-            return new BitVec(BitVecNative.sp_bitvec_clone(Instance));
+            return new BitVec(Instance->Clone());
         }
     }
 
@@ -37,14 +37,14 @@ public sealed class BitVec : SpNativeInstance<SPBitVec>
         {
             unsafe
             {
-                return BitVecNative.sp_bitvec_get(Instance, index);
+                return Instance->Get(index);
             }
         }
         set
         {
             unsafe
             {
-                BitVecNative.sp_bitvec_set(Instance, index, value);
+                Instance->Set(index, value);
             }
         }
     }
@@ -53,7 +53,7 @@ public sealed class BitVec : SpNativeInstance<SPBitVec>
     {
         unsafe
         {
-            BitVecNative.sp_bitvec_fill(Instance, value);
+            Instance->Fill(value);
         }
     }
 
@@ -63,7 +63,7 @@ public sealed class BitVec : SpNativeInstance<SPBitVec>
         {
             unsafe
             {
-                return BitVecNative.sp_bitvec_len(Instance);
+                return Instance->Len();
             }
         }
     }
@@ -74,15 +74,14 @@ public sealed class BitVec : SpNativeInstance<SPBitVec>
         {
             unsafe
             {
-                var slice = BitVecNative.sp_bitvec_unsafe_data_ref(Instance);
-                return new Span<byte>(slice.start, (int)slice.length);
+                return Instance->UnsafeDataRef().AsSpan();
             }
         }
     }
 
-    private unsafe BitVec(SPBitVec* instance) : base(instance)
+    private unsafe BitVec(BindGen.BitVec* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => BitVecNative.sp_bitvec_free(Instance);
+    private protected override unsafe void Free() => Instance->Free();
 }

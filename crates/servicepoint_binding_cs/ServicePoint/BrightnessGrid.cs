@@ -2,7 +2,7 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class BrightnessGrid : SpNativeInstance<SPBrightnessGrid>
+public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
 {
     public static BrightnessGrid New(nuint width, nuint height)
     {
@@ -28,7 +28,7 @@ public sealed class BrightnessGrid : SpNativeInstance<SPBrightnessGrid>
     {
         unsafe
         {
-            return new BrightnessGrid(BrightnessGridNative.sp_brightness_grid_clone(Instance));
+            return new BrightnessGrid(Instance->Clone());
         }
     }
 
@@ -38,14 +38,14 @@ public sealed class BrightnessGrid : SpNativeInstance<SPBrightnessGrid>
         {
             unsafe
             {
-                return BrightnessGridNative.sp_brightness_grid_get(Instance, x, y);
+                return Instance->Get(x, y);
             }
         }
         set
         {
             unsafe
             {
-                BrightnessGridNative.sp_brightness_grid_set(Instance, x, y, value);
+                Instance->Set(x, y, value);
             }
         }
     }
@@ -54,7 +54,7 @@ public sealed class BrightnessGrid : SpNativeInstance<SPBrightnessGrid>
     {
         unsafe
         {
-            BrightnessGridNative.sp_brightness_grid_fill(Instance, value);
+            Instance->Fill(value);
         }
     }
 
@@ -64,7 +64,7 @@ public sealed class BrightnessGrid : SpNativeInstance<SPBrightnessGrid>
         {
             unsafe
             {
-                return BrightnessGridNative.sp_brightness_grid_width(Instance);
+                return Instance->Width();
             }
         }
     }
@@ -75,7 +75,7 @@ public sealed class BrightnessGrid : SpNativeInstance<SPBrightnessGrid>
         {
             unsafe
             {
-                return BrightnessGridNative.sp_brightness_grid_height(Instance);
+                return Instance->Height();
             }
         }
     }
@@ -86,15 +86,14 @@ public sealed class BrightnessGrid : SpNativeInstance<SPBrightnessGrid>
         {
             unsafe
             {
-                var slice = BrightnessGridNative.sp_brightness_grid_unsafe_data_ref(Instance);
-                return new Span<byte>(slice.start, (int)slice.length);
+                return Instance->UnsafeDataRef().AsSpan();
             }
         }
     }
 
-    private unsafe BrightnessGrid(SPBrightnessGrid* instance) : base(instance)
+    private unsafe BrightnessGrid(BindGen.BrightnessGrid* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => BrightnessGridNative.sp_brightness_grid_free(Instance);
+    private protected override unsafe void Free() => Instance->Free();
 }

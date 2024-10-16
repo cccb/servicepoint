@@ -3,7 +3,7 @@ using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
-public sealed class Command : SpNativeInstance<SPCommand>
+public sealed class Command : SpNativeInstance<BindGen.Command>
 {
     public static bool TryFromPacket(Packet packet, [MaybeNullWhen(false)] out Command command)
     {
@@ -25,7 +25,7 @@ public sealed class Command : SpNativeInstance<SPCommand>
     {
         unsafe
         {
-            return new Command(CommandNative.sp_command_clone(Instance));
+            return new Command(Instance->Clone());
         }
     }
 
@@ -121,9 +121,9 @@ public sealed class Command : SpNativeInstance<SPCommand>
         }
     }
 
-    private unsafe Command(SPCommand* instance) : base(instance)
+    private unsafe Command(BindGen.Command* instance) : base(instance)
     {
     }
 
-    private protected override unsafe void Free() => CommandNative.sp_command_free(Instance);
+    private protected override unsafe void Free() => Instance->Free();
 }

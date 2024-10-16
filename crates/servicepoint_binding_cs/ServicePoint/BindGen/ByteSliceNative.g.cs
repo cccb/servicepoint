@@ -13,7 +13,7 @@ namespace ServicePoint.BindGen
     
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct SPByteSlice
+    public unsafe partial struct ByteSlice
     {
         public byte* start;
         public nuint length;
