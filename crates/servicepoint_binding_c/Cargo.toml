@@ -17,7 +17,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 cbindgen = "0.27.0"
 
 [dependencies.servicepoint]
-version = "0.9.1"
+version = "0.10.0"
 path = "../servicepoint"
 features = ["all_compressions"]
 
