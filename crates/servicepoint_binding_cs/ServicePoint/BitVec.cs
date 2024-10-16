@@ -4,11 +4,11 @@ namespace ServicePoint;
 
 public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
 {
-    public static BitVec New(int size)
+    public static BitVec New(nuint size)
     {
         unsafe
         {
-            return new BitVec(NativeMethods.sp_bitvec_new((nuint)size));
+            return new BitVec(NativeMethods.sp_bitvec_new(size));
         }
     }
 
@@ -31,20 +31,20 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
         }
     }
 
-    public bool this[int index]
+    public bool this[nuint index]
     {
         get
         {
             unsafe
             {
-                return NativeMethods.sp_bitvec_get(Instance, (nuint)index);
+                return NativeMethods.sp_bitvec_get(Instance, index);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp_bitvec_set(Instance, (nuint)index, value);
+                NativeMethods.sp_bitvec_set(Instance, index, value);
             }
         }
     }
@@ -57,13 +57,13 @@ public sealed class BitVec : SpNativeInstance<BindGen.BitVec>
         }
     }
 
-    public int Length
+    public nuint Length
     {
         get
         {
             unsafe
             {
-                return (int)NativeMethods.sp_bitvec_len(Instance);
+                return NativeMethods.sp_bitvec_len(Instance);
             }
         }
     }

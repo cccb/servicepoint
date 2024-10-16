@@ -4,21 +4,21 @@ namespace ServicePoint;
 
 public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
 {
-    public static Bitmap New(int width, int height)
+    public static Bitmap New(nuint width, nuint height)
     {
         unsafe
         {
-            return new Bitmap(NativeMethods.sp_bitmap_new((nuint)width, (nuint)height));
+            return new Bitmap(NativeMethods.sp_bitmap_new(width, height));
         }
     }
 
-    public static Bitmap Load(int width, int height, Span<byte> bytes)
+    public static Bitmap Load(nuint width, nuint height, Span<byte> bytes)
     {
         unsafe
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new Bitmap(NativeMethods.sp_bitmap_load((nuint)width, (nuint)height, bytesPtr,
+                return new Bitmap(NativeMethods.sp_bitmap_load(width, height, bytesPtr,
                     (nuint)bytes.Length));
             }
         }
@@ -32,20 +32,20 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
         }
     }
 
-    public bool this[int x, int y]
+    public bool this[nuint x, nuint y]
     {
         get
         {
             unsafe
             {
-                return NativeMethods.sp_bitmap_get(Instance, (nuint)x, (nuint)y);
+                return NativeMethods.sp_bitmap_get(Instance, x, y);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp_bitmap_set(Instance, (nuint)x, (nuint)y, value);
+                NativeMethods.sp_bitmap_set(Instance, x, y, value);
             }
         }
     }
@@ -58,24 +58,24 @@ public sealed class Bitmap : SpNativeInstance<BindGen.Bitmap>
         }
     }
 
-    public int Width
+    public nuint Width
     {
         get
         {
             unsafe
             {
-                return (int)NativeMethods.sp_bitmap_width(Instance);
+                return NativeMethods.sp_bitmap_width(Instance);
             }
         }
     }
 
-    public int Height
+    public nuint Height
     {
         get
         {
             unsafe
             {
-                return (int)NativeMethods.sp_bitmap_height(Instance);
+                return NativeMethods.sp_bitmap_height(Instance);
             }
         }
     }

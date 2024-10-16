@@ -4,21 +4,21 @@ namespace ServicePoint;
 
 public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
 {
-    public static BrightnessGrid New(int width, int height)
+    public static BrightnessGrid New(nuint width, nuint height)
     {
         unsafe
         {
-            return new BrightnessGrid(NativeMethods.sp_brightness_grid_new((nuint)width, (nuint)height));
+            return new BrightnessGrid(NativeMethods.sp_brightness_grid_new(width, height));
         }
     }
 
-    public static BrightnessGrid Load(int width, int height, Span<byte> bytes)
+    public static BrightnessGrid Load(nuint width, nuint height, Span<byte> bytes)
     {
         unsafe
         {
             fixed (byte* bytesPtr = bytes)
             {
-                return new BrightnessGrid(NativeMethods.sp_brightness_grid_load((nuint)width, (nuint)height, bytesPtr,
+                return new BrightnessGrid(NativeMethods.sp_brightness_grid_load(width, height, bytesPtr,
                     (nuint)bytes.Length));
             }
         }
@@ -32,20 +32,20 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
         }
     }
 
-    public byte this[int x, int y]
+    public byte this[nuint x, nuint y]
     {
         get
         {
             unsafe
             {
-                return NativeMethods.sp_brightness_grid_get(Instance, (nuint)x, (nuint)y);
+                return NativeMethods.sp_brightness_grid_get(Instance, x, y);
             }
         }
         set
         {
             unsafe
             {
-                NativeMethods.sp_brightness_grid_set(Instance, (nuint)x, (nuint)y, value);
+                NativeMethods.sp_brightness_grid_set(Instance, x, y, value);
             }
         }
     }
@@ -58,24 +58,24 @@ public sealed class BrightnessGrid : SpNativeInstance<BindGen.BrightnessGrid>
         }
     }
 
-    public int Width
+    public nuint Width
     {
         get
         {
             unsafe
             {
-                return (int)NativeMethods.sp_brightness_grid_width(Instance);
+                return NativeMethods.sp_brightness_grid_width(Instance);
             }
         }
     }
 
-    public int Height
+    public nuint Height
     {
         get
         {
             unsafe
             {
-                return (int)NativeMethods.sp_brightness_grid_height(Instance);
+                return NativeMethods.sp_brightness_grid_height(Instance);
             }
         }
     }
