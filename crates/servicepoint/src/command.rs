@@ -4,7 +4,7 @@ use crate::{
     command_code::CommandCode,
     compression::into_decompressed,
     packet::{Header, Packet},
-    Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin, PixelGrid,
+    Bitmap, Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin,
     Pixels, PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
 };
 
@@ -76,12 +76,7 @@ pub enum Command {
 
     /// Show text on the screen.
     ///
-    /// The text is sent in the form of a 2D grid of characters.
-    ///
-    /// <div class="warning">
-    ///     The library does not currently convert between UTF-8 and CP-437.
-    ///     Because Rust expects UTF-8 strings, it might be necessary to only send ASCII for now.
-    /// </div>
+    /// The text is sent in the form of a 2D grid of [CP-437] encoded characters.
     ///
     /// # Examples
     ///
@@ -100,6 +95,7 @@ pub enum Command {
     /// let grid = Cp437Grid::load_ascii("Hello\nWorld", 5, false).unwrap();
     /// connection.send(Command::Cp437Data(Origin::new(2, 2), grid)).unwrap();
     /// ```
+    /// [CP-437]: https://en.wikipedia.org/wiki/Code_page_437
     Cp437Data(Origin<Tiles>, Cp437Grid),
 
     /// Overwrites a rectangular region of pixels.
@@ -109,23 +105,23 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+    /// # use servicepoint::{Command, CompressionCode, Grid, Bitmap};
     /// # let connection = servicepoint::Connection::Fake;
     /// #
-    /// let mut pixels = PixelGrid::max_sized();
+    /// let mut pixels = Bitmap::max_sized();
     /// // draw something to the pixels here
     /// # pixels.set(2, 5, true);
     ///
     /// // create command to send pixels
     /// let command = Command::BitmapLinearWin(
-    ///    servicepoint::Origin::new(0, 0),
+    ///    servicepoint::Origin::ZERO,
     ///    pixels,
     ///    CompressionCode::Uncompressed
     /// );
     ///
     /// connection.send(command).expect("send failed");
     /// ```
-    BitmapLinearWin(Origin<Pixels>, PixelGrid, CompressionCode),
+    BitmapLinearWin(Origin<Pixels>, Bitmap, CompressionCode),
 
     /// Set the brightness of all tiles to the same value.
     ///
@@ -217,9 +213,8 @@ pub enum Command {
     BitmapLegacy,
 }
 
-#[derive(Debug)]
 /// Err values for [Command::try_from].
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
     InvalidCommand(u16),
@@ -342,7 +337,7 @@ impl Command {
 
         Ok(Command::BitmapLinearWin(
             Origin::new(tiles_x as usize * TILE_SIZE, pixels_y as usize),
-            PixelGrid::load(
+            Bitmap::load(
                 tile_w as usize * TILE_SIZE,
                 pixel_h as usize,
                 &payload,
@@ -376,7 +371,7 @@ impl Command {
         }
     }
 
-    /// Helper method for Packets into `BitMapLinear*`-Commands
+    /// Helper method for Packets into `BitmapLinear*`-Commands
     fn packet_into_linear_bitmap(
         packet: Packet,
     ) -> Result<(SpBitVec, CompressionCode), TryFromPacketError> {
@@ -500,7 +495,8 @@ mod tests {
         command_code::CommandCode,
         origin::Pixels,
         packet::{Header, Packet},
-        Brightness, Command, CompressionCode, Origin, PixelGrid, PrimitiveGrid,
+        Bitmap, Brightness, BrightnessGrid, Command, CompressionCode, Origin,
+        PrimitiveGrid,
     };
 
     fn round_trip(original: Command) {
@@ -592,8 +588,8 @@ mod tests {
                 compression,
             ));
             round_trip(Command::BitmapLinearWin(
-                Origin::new(0, 0),
-                PixelGrid::max_sized(),
+                Origin::ZERO,
+                Bitmap::max_sized(),
                 compression,
             ));
         }
@@ -718,7 +714,7 @@ mod tests {
         for compression in all_compressions().to_owned() {
             let p: Packet = Command::BitmapLinearWin(
                 Origin::new(16, 8),
-                PixelGrid::new(8, 8),
+                Bitmap::new(8, 8),
                 compression,
             )
             .into();
@@ -905,6 +901,30 @@ mod tests {
         assert_eq!(
             Origin::<Pixels>::new(4, 2),
             Origin::new(1, 0) + Origin::new(3, 2)
+        );
+    }
+
+    #[test]
+    fn packet_into_char_brightness_invalid() {
+        let grid = BrightnessGrid::new(2, 2);
+        let command = Command::CharBrightness(Origin::ZERO, grid);
+        let mut packet: Packet = command.into();
+        let slot = packet.payload.get_mut(1).unwrap();
+        *slot = 23;
+        assert_eq!(
+            Command::try_from(packet),
+            Err(TryFromPacketError::InvalidBrightness(23))
+        );
+    }
+
+    #[test]
+    fn packet_into_brightness_invalid() {
+        let mut packet: Packet = Command::Brightness(Brightness::MAX).into();
+        let slot = packet.payload.get_mut(0).unwrap();
+        *slot = 42;
+        assert_eq!(
+            Command::try_from(packet),
+            Err(TryFromPacketError::InvalidBrightness(42))
         );
     }
 }

@@ -6,21 +6,21 @@ use crate::{BitVec, DataRef, Grid, SpBitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
 
 /// A grid of pixels stored in packed bytes.
 #[derive(Debug, Clone, PartialEq)]
-pub struct PixelGrid {
+pub struct Bitmap {
     width: usize,
     height: usize,
     bit_vec: SpBitVec,
 }
 
-impl PixelGrid {
-    /// Creates a new [PixelGrid] with the specified dimensions.
+impl Bitmap {
+    /// Creates a new [Bitmap] with the specified dimensions.
     ///
     /// # Arguments
     ///
     /// - `width`: size in pixels in x-direction
     /// - `height`: size in pixels in y-direction
     ///
-    /// returns: [PixelGrid] initialized to all pixels off
+    /// returns: [Bitmap] initialized to all pixels off
     ///
     /// # Panics
     ///
@@ -40,14 +40,14 @@ impl PixelGrid {
         Self::new(PIXEL_WIDTH, PIXEL_HEIGHT)
     }
 
-    /// Loads a [PixelGrid] with the specified dimensions from the provided data.
+    /// Loads a [Bitmap] with the specified dimensions from the provided data.
     ///
     /// # Arguments
     ///
     /// - `width`: size in pixels in x-direction
     /// - `height`: size in pixels in y-direction
     ///
-    /// returns: [PixelGrid] that contains a copy of the provided data
+    /// returns: [Bitmap] that contains a copy of the provided data
     ///
     /// # Panics
     ///
@@ -64,12 +64,12 @@ impl PixelGrid {
         }
     }
 
-    /// Iterate over all cells in [PixelGrid].
+    /// Iterate over all cells in [Bitmap].
     ///
     /// Order is equivalent to the following loop:
     /// ```
-    /// # use servicepoint::{PixelGrid, Grid};
-    /// # let grid = PixelGrid::new(8,2);
+    /// # use servicepoint::{Bitmap, Grid};
+    /// # let grid = Bitmap::new(8,2);
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
     ///         grid.get(x, y);
@@ -80,12 +80,12 @@ impl PixelGrid {
         self.bit_vec.iter().by_refs()
     }
 
-    /// Iterate over all cells in [PixelGrid] mutably.
+    /// Iterate over all cells in [Bitmap] mutably.
     ///
     /// Order is equivalent to the following loop:
     /// ```
-    /// # use servicepoint::{PixelGrid, Grid};
-    /// # let mut grid = PixelGrid::new(8,2);
+    /// # use servicepoint::{Bitmap, Grid};
+    /// # let mut grid = Bitmap::new(8,2);
     /// # let value = false;
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
@@ -96,8 +96,8 @@ impl PixelGrid {
     ///
     /// # Example
     /// ```
-    /// # use servicepoint::{PixelGrid, Grid};
-    /// # let mut grid = PixelGrid::new(8,2);
+    /// # use servicepoint::{Bitmap, Grid};
+    /// # let mut grid = Bitmap::new(8,2);
     /// # let value = false;
     /// for (index, mut pixel) in grid.iter_mut().enumerate() {
     ///     pixel.set(index % 2 == 0)
@@ -107,17 +107,17 @@ impl PixelGrid {
         self.bit_vec.iter_mut()
     }
 
-    /// Iterate over all rows in [PixelGrid] top to bottom.
+    /// Iterate over all rows in [Bitmap] top to bottom.
     pub fn iter_rows(&self) -> IterRows {
         IterRows {
-            pixel_grid: self,
+            bitmap: self,
             row: 0,
         }
     }
 }
 
-impl Grid<bool> for PixelGrid {
-    /// Sets the value of the specified position in the [PixelGrid].
+impl Grid<bool> for Bitmap {
+    /// Sets the value of the specified position in the [Bitmap].
     ///
     /// # Arguments
     ///
@@ -139,7 +139,7 @@ impl Grid<bool> for PixelGrid {
         self.bit_vec[x + y * self.width]
     }
 
-    /// Sets the state of all pixels in the [PixelGrid].
+    /// Sets the state of all pixels in the [Bitmap].
     ///
     /// # Arguments
     ///
@@ -158,7 +158,7 @@ impl Grid<bool> for PixelGrid {
     }
 }
 
-impl DataRef<u8> for PixelGrid {
+impl DataRef<u8> for Bitmap {
     fn data_ref_mut(&mut self) -> &mut [u8] {
         self.bit_vec.as_raw_mut_slice()
     }
@@ -168,15 +168,15 @@ impl DataRef<u8> for PixelGrid {
     }
 }
 
-impl From<PixelGrid> for Vec<u8> {
-    /// Turns a [PixelGrid] into the underlying [`Vec<u8>`].
-    fn from(value: PixelGrid) -> Self {
+impl From<Bitmap> for Vec<u8> {
+    /// Turns a [Bitmap] into the underlying [`Vec<u8>`].
+    fn from(value: Bitmap) -> Self {
         value.bit_vec.into()
     }
 }
 
 pub struct IterRows<'t> {
-    pixel_grid: &'t PixelGrid,
+    bitmap: &'t Bitmap,
     row: usize,
 }
 
@@ -184,24 +184,24 @@ impl<'t> Iterator for IterRows<'t> {
     type Item = &'t BitSlice<u8, Msb0>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.row >= self.pixel_grid.height {
+        if self.row >= self.bitmap.height {
             return None;
         }
 
-        let start = self.row * self.pixel_grid.width;
-        let end = start + self.pixel_grid.width;
+        let start = self.row * self.bitmap.width;
+        let end = start + self.bitmap.width;
         self.row += 1;
-        Some(&self.pixel_grid.bit_vec[start..end])
+        Some(&self.bitmap.bit_vec[start..end])
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{DataRef, Grid, PixelGrid};
+    use crate::{Bitmap, DataRef, Grid};
 
     #[test]
     fn fill() {
-        let mut grid = PixelGrid::new(8, 2);
+        let mut grid = Bitmap::new(8, 2);
         assert_eq!(grid.data_ref(), [0x00, 0x00]);
 
         grid.fill(true);
@@ -213,7 +213,7 @@ mod tests {
 
     #[test]
     fn get_set() {
-        let mut grid = PixelGrid::new(8, 2);
+        let mut grid = Bitmap::new(8, 2);
         assert!(!grid.get(0, 0));
         assert!(!grid.get(1, 1));
 
@@ -228,7 +228,7 @@ mod tests {
 
     #[test]
     fn load() {
-        let mut grid = PixelGrid::new(8, 3);
+        let mut grid = Bitmap::new(8, 3);
         for x in 0..grid.width {
             for y in 0..grid.height {
                 grid.set(x, y, (x + y) % 2 == 0);
@@ -239,33 +239,33 @@ mod tests {
 
         let data: Vec<u8> = grid.into();
 
-        let grid = PixelGrid::load(8, 3, &data);
+        let grid = Bitmap::load(8, 3, &data);
         assert_eq!(grid.data_ref(), [0xAA, 0x55, 0xAA]);
     }
 
     #[test]
     #[should_panic]
     fn out_of_bounds_x() {
-        let vec = PixelGrid::new(8, 2);
+        let vec = Bitmap::new(8, 2);
         vec.get(8, 1);
     }
 
     #[test]
     #[should_panic]
     fn out_of_bounds_y() {
-        let mut vec = PixelGrid::new(8, 2);
+        let mut vec = Bitmap::new(8, 2);
         vec.set(1, 2, false);
     }
 
     #[test]
     fn iter() {
-        let grid = PixelGrid::new(8, 2);
+        let grid = Bitmap::new(8, 2);
         assert_eq!(16, grid.iter().count())
     }
 
     #[test]
     fn iter_rows() {
-        let grid = PixelGrid::load(8, 2, &[0x04, 0x40]);
+        let grid = Bitmap::load(8, 2, &[0x04, 0x40]);
         let mut iter = grid.iter_rows();
 
         assert_eq!(iter.next().unwrap().count_ones(), 1);
@@ -275,7 +275,7 @@ mod tests {
 
     #[test]
     fn iter_mut() {
-        let mut grid = PixelGrid::new(8, 2);
+        let mut grid = Bitmap::new(8, 2);
         for (index, mut pixel) in grid.iter_mut().enumerate() {
             pixel.set(index % 2 == 0);
         }
@@ -284,7 +284,7 @@ mod tests {
 
     #[test]
     fn data_ref_mut() {
-        let mut grid = PixelGrid::new(8, 2);
+        let mut grid = Bitmap::new(8, 2);
         let data = grid.data_ref_mut();
         data[1] = 0x0F;
         assert!(grid.get(7, 1));

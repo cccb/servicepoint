@@ -15,23 +15,24 @@ fn main() {
     let connection = Connection::open(cli.destination)
         .expect("could not connect to display");
 
-    let mut pixels = PixelGrid::max_sized();
+    let mut pixels = Bitmap::max_sized();
     pixels.fill(true);
 
     let command = Command::BitmapLinearWin(
-        Origin::new(0, 0),
+        Origin::ZERO,
         pixels,
         CompressionCode::Uncompressed,
     );
     connection.send(command).expect("send failed");
 
-    let max_brightness = usize::from(u8::from(Brightness::MAX));
+    let max_brightness: u8 = Brightness::MAX.into();
     let mut brightnesses = BrightnessGrid::new(TILE_WIDTH, TILE_HEIGHT);
     for (index, byte) in brightnesses.data_ref_mut().iter_mut().enumerate() {
-        *byte = Brightness::try_from((index % max_brightness) as u8).unwrap();
+        let level = index as u8 % max_brightness;
+        *byte = Brightness::try_from(level).unwrap();
     }
 
     connection
-        .send(Command::CharBrightness(Origin::new(0, 0), brightnesses))
+        .send(Command::CharBrightness(Origin::ZERO, brightnesses))
         .expect("send failed");
 }

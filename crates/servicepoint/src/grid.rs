@@ -76,15 +76,9 @@ pub trait Grid<T> {
     ///
     /// When the specified position is out of bounds for this grid.
     fn assert_in_bounds(&self, x: usize, y: usize) {
-        assert!(
-            x < self.width(),
-            "cannot access index [{x}, {y}] because x is outside of bounds 0..{}",
-            self.width() - 1
-        );
-        assert!(
-            y < self.height(),
-            "cannot access index [{x}, {y}] because y is outside of bounds 0..{}",
-            self.height() - 1
-        );
+        let width = self.width();
+        assert!(x < width, "cannot access index [{x}, {y}] because x is outside of bounds [0..{width})");
+        let height = self.height();
+        assert!(y < height, "cannot access index [{x}, {y}] because x is outside of bounds [0..{height})");
     }
 }

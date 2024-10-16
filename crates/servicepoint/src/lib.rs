@@ -7,7 +7,7 @@
 //! # Examples
 //!
 //! ```rust
-//! use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+//! use servicepoint::{Command, CompressionCode, Grid, Bitmap};
 //!
 //! let connection = servicepoint::Connection::open("127.0.0.1:2342")
 //!     .expect("connection failed");
@@ -18,15 +18,15 @@
 //! ```
 //!
 //! ```rust
-//! # use servicepoint::{Command, CompressionCode, Grid, PixelGrid};
+//! # use servicepoint::{Command, CompressionCode, Grid, Bitmap};
 //! # let connection = servicepoint::Connection::open("127.0.0.1:2342").expect("connection failed");
 //!  // turn on all pixels in a grid
-//!  let mut pixels = PixelGrid::max_sized();
+//!  let mut pixels = Bitmap::max_sized();
 //!  pixels.fill(true);
 //!
 //!  // create command to send pixels
 //!  let command = Command::BitmapLinearWin(
-//!     servicepoint::Origin::new(0, 0),
+//!     servicepoint::Origin::ZERO,
 //!     pixels,
 //!     CompressionCode::Uncompressed
 //!  );
@@ -40,6 +40,7 @@ use std::time::Duration;
 pub use bitvec;
 use bitvec::prelude::{BitVec, Msb0};
 
+pub use crate::bitmap::Bitmap;
 pub use crate::brightness::{Brightness, BrightnessGrid};
 pub use crate::command::{Command, Offset};
 pub use crate::compression_code::CompressionCode;
@@ -48,23 +49,22 @@ pub use crate::cp437::{CharGrid, Cp437Grid};
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
-pub use crate::pixel_grid::PixelGrid;
 pub use crate::primitive_grid::PrimitiveGrid;
 
 type SpBitVec = BitVec<u8, Msb0>;
 
+mod bitmap;
 mod brightness;
 mod command;
 mod command_code;
 mod compression;
 mod compression_code;
 mod connection;
-mod cp437;
+pub mod cp437;
 mod data_ref;
 mod grid;
 mod origin;
 pub mod packet;
-mod pixel_grid;
 mod primitive_grid;
 
 /// size of a single tile in one dimension
@@ -95,8 +95,8 @@ pub const TILE_HEIGHT: usize = 20;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
-/// let grid = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
+/// # use servicepoint::{PIXEL_HEIGHT, PIXEL_WIDTH, Bitmap};
+/// let grid = Bitmap::new(PIXEL_WIDTH, PIXEL_HEIGHT);
 /// ```
 pub const PIXEL_WIDTH: usize = TILE_WIDTH * TILE_SIZE;
 
@@ -105,8 +105,8 @@ pub const PIXEL_WIDTH: usize = TILE_WIDTH * TILE_SIZE;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{PIXEL_HEIGHT, PIXEL_WIDTH, PixelGrid};
-/// let grid = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
+/// # use servicepoint::{PIXEL_HEIGHT, PIXEL_WIDTH, Bitmap};
+/// let grid = Bitmap::new(PIXEL_WIDTH, PIXEL_HEIGHT);
 /// ```
 pub const PIXEL_HEIGHT: usize = TILE_HEIGHT * TILE_SIZE;
 
@@ -119,10 +119,10 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 ///
 /// ```rust
 /// # use std::time::Instant;
-/// # use servicepoint::{Command, CompressionCode, FRAME_PACING, Origin, PixelGrid};
+/// # use servicepoint::{Command, CompressionCode, FRAME_PACING, Origin, Bitmap};
 /// # let connection = servicepoint::Connection::open("172.23.42.29:2342")
 /// #     .expect("connection failed");
-/// # let pixels = PixelGrid::max_sized();
+/// # let pixels = Bitmap::max_sized();
 /// loop {
 ///    let start = Instant::now();
 ///

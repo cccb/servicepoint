@@ -1,5 +1,7 @@
 //! FFI slice helper
 
+use std::ptr::NonNull;
+
 #[repr(C)]
 /// Represents a span of memory (`&mut [u8]` ) as a struct usable by C code.
 ///
@@ -16,7 +18,7 @@
 ///   will try to free the memory of a potentially separate allocator.
 pub struct SPByteSlice {
     /// The start address of the memory
-    pub start: *mut u8,
+    pub start: NonNull<u8>,
     /// The amount of memory in bytes
     pub length: usize,
 }

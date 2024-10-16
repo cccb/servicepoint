@@ -25,7 +25,7 @@ fn main() {
     let connection = Connection::open(cli.destination)
         .expect("could not connect to display");
 
-    let mut enabled_pixels = PixelGrid::new(PIXEL_WIDTH, PIXEL_HEIGHT);
+    let mut enabled_pixels = Bitmap::max_sized();
     enabled_pixels.fill(true);
 
     for x_offset in 0..PIXEL_WIDTH {

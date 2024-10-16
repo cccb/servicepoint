@@ -11,7 +11,7 @@ using ServicePoint;
 
 // using statement calls Dispose() on scope exit, which frees unmanaged instances
 using var connection = Connection.Open("127.0.0.1:2342");
-using var pixels = PixelGrid.New(Constants.PixelWidth, Constants.PixelHeight);
+using var pixels = Bitmap.New(Constants.PixelWidth, Constants.PixelHeight);
 
 while (true)
 {

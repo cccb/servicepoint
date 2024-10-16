@@ -27,8 +27,8 @@ use std::mem::size_of;
 
 use crate::compression::into_compressed;
 use crate::{
-    command_code::CommandCode, Command, CompressionCode, Grid, Offset, Origin,
-    PixelGrid, Pixels, Tiles, TILE_SIZE,
+    command_code::CommandCode, Bitmap, Command, CompressionCode, Grid, Offset,
+    Origin, Pixels, Tiles, TILE_SIZE,
 };
 
 /// A raw header.
@@ -214,7 +214,7 @@ impl From<Command> for Packet {
 }
 
 impl Packet {
-    /// Helper method for `BitMapLinear*`-Commands into [Packet]
+    /// Helper method for `BitmapLinear*`-Commands into [Packet]
     #[allow(clippy::cast_possible_truncation)]
     fn bitmap_linear_into_packet(
         command: CommandCode,
@@ -239,7 +239,7 @@ impl Packet {
     #[allow(clippy::cast_possible_truncation)]
     fn bitmap_win_into_packet(
         origin: Origin<Pixels>,
-        pixels: PixelGrid,
+        pixels: Bitmap,
         compression: CompressionCode,
     ) -> Packet {
         debug_assert_eq!(origin.x % 8, 0);

@@ -1,7 +1,7 @@
 //! Example for how to use the WebSocket connection
 
 use servicepoint::{
-    Command, CompressionCode, Connection, Grid, Origin, PixelGrid,
+    Bitmap, Command, CompressionCode, Connection, Grid, Origin,
 };
 
 fn main() {
@@ -13,7 +13,7 @@ fn main() {
     // use send_mut instead of send
     connection.send_mut(Command::Clear).unwrap();
 
-    let mut pixels = PixelGrid::max_sized();
+    let mut pixels = Bitmap::max_sized();
     pixels.fill(true);
 
     // use send_mut instead of send

@@ -16,7 +16,7 @@ line_endings = "LF"
 
 ############################# Codegen Options ##################################
 
-style = "both"
+style = "type"
 usize_is_size_t = true
 
 # this is needed because otherwise the order in the C# bindings is different on different machines
@@ -31,3 +31,6 @@ all_features = true
 [export]
 include = []
 exclude = []
+
+[enum]
+rename_variants = "QualifiedScreamingSnakeCase"
