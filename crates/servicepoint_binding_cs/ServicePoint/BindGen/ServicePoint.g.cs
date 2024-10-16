@@ -17,6 +17,9 @@ namespace ServicePoint.BindGen
         public const nuint SP_TILE_SIZE = 8;
         public const nuint SP_TILE_WIDTH = 56;
         public const nuint SP_TILE_HEIGHT = 20;
+        public const byte SP_BRIGHTNESS_MIN = 0;
+        public const byte SP_BRIGHTNESS_MAX = 11;
+        public const byte SP_BRIGHTNESS_LEVELS = 12;
 
 
         /// <summary>

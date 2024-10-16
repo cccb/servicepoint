@@ -9,6 +9,21 @@
 #include <stdlib.h>
 
 /**
+ * Count of possible brightness values
+ */
+#define SP_BRIGHTNESS_LEVELS 12
+
+/**
+ * see [Brightness::MAX]
+ */
+#define SP_BRIGHTNESS_MAX 11
+
+/**
+ * see [Brightness::MIN]
+ */
+#define SP_BRIGHTNESS_MIN 0
+
+/**
  * pixel count on whole screen
  */
 #define SP_PIXEL_COUNT (SP_PIXEL_WIDTH * SP_PIXEL_HEIGHT)
