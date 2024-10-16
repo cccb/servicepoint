@@ -19,7 +19,7 @@ fn main() {
     pixels.fill(true);
 
     let command = Command::BitmapLinearWin(
-        Origin::new(0, 0),
+        Origin::ZERO,
         pixels,
         CompressionCode::Uncompressed,
     );
@@ -33,6 +33,6 @@ fn main() {
     }
 
     connection
-        .send(Command::CharBrightness(Origin::new(0, 0), brightnesses))
+        .send(Command::CharBrightness(Origin::ZERO, brightnesses))
         .expect("send failed");
 }

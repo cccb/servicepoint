@@ -26,7 +26,7 @@
 //!
 //!  // create command to send pixels
 //!  let command = Command::BitmapLinearWin(
-//!     servicepoint::Origin::new(0, 0),
+//!     servicepoint::Origin::ZERO,
 //!     pixels,
 //!     CompressionCode::Uncompressed
 //!  );

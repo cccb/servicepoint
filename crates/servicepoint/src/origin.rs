@@ -12,7 +12,7 @@ pub struct Origin<Unit: DisplayUnit> {
 }
 
 impl<Unit: DisplayUnit> Origin<Unit> {
-    /// Top-left. Equivalent to `Origin::new(0, 0)`.
+    /// Top-left. Equivalent to `Origin::ZERO`.
     pub const ZERO: Self = Self {
         x: 0,
         y: 0,

@@ -6,11 +6,11 @@
 /// # use servicepoint::{Command, CompressionCode, Origin, Bitmap};
 /// // create command without payload compression
 /// # let pixels = Bitmap::max_sized();
-/// _ = Command::BitmapLinearWin(Origin::new(0, 0), pixels, CompressionCode::Uncompressed);
+/// _ = Command::BitmapLinearWin(Origin::ZERO, pixels, CompressionCode::Uncompressed);
 ///
 /// // create command with payload compressed with lzma and appropriate header flags
 /// # let pixels = Bitmap::max_sized();
-/// _ = Command::BitmapLinearWin(Origin::new(0, 0), pixels, CompressionCode::Lzma);
+/// _ = Command::BitmapLinearWin(Origin::ZERO, pixels, CompressionCode::Lzma);
 /// ```
 #[repr(u16)]
 #[derive(Debug, Clone, Copy, PartialEq)]

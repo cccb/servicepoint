@@ -32,7 +32,7 @@ fn main() {
         filled_grid.fill(true);
 
         let command = BitmapLinearWin(
-            Origin::new(0, 0),
+            Origin::ZERO,
             filled_grid,
             CompressionCode::Lzma,
         );

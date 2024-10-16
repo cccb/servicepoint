@@ -25,7 +25,7 @@ fn main() {
         }
 
         let command = Command::BitmapLinearWin(
-            Origin::new(0, 0),
+            Origin::ZERO,
             pixels.clone(),
             CompressionCode::Lzma,
         );

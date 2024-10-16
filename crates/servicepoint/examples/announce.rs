@@ -46,6 +46,6 @@ fn main() {
     let cp437_grid = Cp437Grid::from(&grid);
 
     connection
-        .send(Command::Cp437Data(Origin::new(0, 0), cp437_grid))
+        .send(Command::Cp437Data(Origin::ZERO, cp437_grid))
         .expect("sending text failed");
 }

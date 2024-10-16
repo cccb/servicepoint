@@ -24,7 +24,7 @@ fn main() {
 
     loop {
         let command = Command::BitmapLinearWin(
-            Origin::new(0, 0),
+            Origin::ZERO,
             field.clone(),
             CompressionCode::Lzma,
         );

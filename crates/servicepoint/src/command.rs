@@ -114,7 +114,7 @@ pub enum Command {
     ///
     /// // create command to send pixels
     /// let command = Command::BitmapLinearWin(
-    ///    servicepoint::Origin::new(0, 0),
+    ///    servicepoint::Origin::ZERO,
     ///    pixels,
     ///    CompressionCode::Uncompressed
     /// );
@@ -588,7 +588,7 @@ mod tests {
                 compression,
             ));
             round_trip(Command::BitmapLinearWin(
-                Origin::new(0, 0),
+                Origin::ZERO,
                 Bitmap::max_sized(),
                 compression,
             ));
