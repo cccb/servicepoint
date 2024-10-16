@@ -8,8 +8,12 @@ fn main() {
 
     let mut builder = csbindgen::Builder::default();
 
-    for source in fs::read_dir("../servicepoint_binding_c/src").unwrap() {
-        let path = source.unwrap().path();
+    let mut paths = fs::read_dir("../servicepoint_binding_c/src").unwrap()
+        .map(|x| x.unwrap().path())
+        .collect::<Vec<_>>();
+    paths.sort();
+
+    for path in paths {
         println!("cargo:rerun-if-changed={}", path.display());
         builder = builder.input_extern_file(path);
     }

@@ -14,124 +14,261 @@ namespace ServicePoint.BindGen
     {
         const string __DllName = "servicepoint_binding_c";
 
-        public const nuint SP_TILE_SIZE = 8;
-        public const nuint SP_TILE_WIDTH = 56;
-        public const nuint SP_TILE_HEIGHT = 20;
         public const byte SP_BRIGHTNESS_MIN = 0;
         public const byte SP_BRIGHTNESS_MAX = 11;
         public const byte SP_BRIGHTNESS_LEVELS = 12;
+        public const nuint SP_TILE_SIZE = 8;
+        public const nuint SP_TILE_WIDTH = 56;
+        public const nuint SP_TILE_HEIGHT = 20;
 
 
         /// <summary>
-        ///  Creates a new instance of [SPConnection].
+        ///  Creates a new [SPBitmap] with the specified dimensions.
         ///
-        ///  returns: NULL if connection fails, or connected instance
+        ///  # Arguments
+        ///
+        ///  - `width`: size in pixels in x-direction
+        ///  - `height`: size in pixels in y-direction
+        ///
+        ///  returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `host` is null or an invalid host
+        ///  - when the width is not dividable by 8
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_connection_free`.
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Connection* sp_connection_open(byte* host);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_new(nuint width, nuint height);
 
         /// <summary>
-        ///  Sends a [SPPacket] to the display using the [SPConnection].
+        ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
         ///
-        ///  The passed `packet` gets consumed.
+        ///  # Arguments
         ///
-        ///  returns: true in case of success
+        ///  - `width`: size in pixels in x-direction
+        ///  - `height`: size in pixels in y-direction
+        ///
+        ///  returns: [SPBitmap] that contains a copy of the provided data. Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `connection` is NULL
-        ///  - when `packet` is NULL
+        ///  - when `data` is NULL
+        ///  - when the dimensions and data size do not match exactly.
+        ///  - when the width is not dividable by 8
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `connection` points to a valid instance of [SPConnection]
-        ///  - `packet` points to a valid instance of [SPPacket]
-        ///  - `packet` is not used concurrently or after this call
+        ///  - `data` points to a valid memory location of at least `data_length` bytes in size.
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send_packet(Connection* connection, Packet* packet);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
-        ///  Sends a [SPCommand] to the display using the [SPConnection].
-        ///
-        ///  The passed `command` gets consumed.
-        ///
-        ///  returns: true in case of success
-        ///
-        ///  # Panics
-        ///
-        ///  - when `connection` is NULL
-        ///  - when `command` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `connection` points to a valid instance of [SPConnection]
-        ///  - `command` points to a valid instance of [SPPacket]
-        ///  - `command` is not used concurrently or after this call
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send_command(Connection* connection, Command* command);
-
-        /// <summary>
-        ///  Closes and deallocates a [SPConnection].
-        ///
-        ///  # Panics
-        ///
-        ///  - when `connection` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `connection` points to a valid [SPConnection]
-        ///  - `connection` is not used concurrently or after this call
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_connection_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_connection_free(Connection* connection);
-
-        /// <summary>
-        ///  Turns a [SPCommand] into a [SPPacket].
-        ///  The [SPCommand] gets consumed.
+        ///  Clones a [SPBitmap].
         ///
         ///  Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `command` is NULL
+        ///  - when `bitmap` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - [SPCommand] points to a valid instance of [SPCommand]
-        ///  - [SPCommand] is not used concurrently or after this call
-        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_packet_free`.
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_from_command(Command* command);
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Bitmap* sp_bitmap_clone(Bitmap* bitmap);
 
         /// <summary>
-        ///  Tries to load a [SPPacket] from the passed array with the specified length.
+        ///  Deallocates a [SPBitmap].
         ///
-        ///  returns: NULL in case of an error, pointer to the allocated packet otherwise
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not used concurrently or after bitmap call
+        ///  - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_free(Bitmap* bitmap);
+
+        /// <summary>
+        ///  Gets the current value at the specified position in the [SPBitmap].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to read from
+        ///  - `x` and `y`: position of the cell to read
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///  - when accessing `x` or `y` out of bounds
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_bitmap_get(Bitmap* bitmap, nuint x, nuint y);
+
+        /// <summary>
+        ///  Sets the value of the specified position in the [SPBitmap].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to write to
+        ///  - `x` and `y`: position of the cell
+        ///  - `value`: the value to write to the cell
+        ///
+        ///  returns: old value of the cell
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///  - when accessing `x` or `y` out of bounds
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to or read from concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_set(Bitmap* bitmap, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
+
+        /// <summary>
+        ///  Sets the state of all pixels in the [SPBitmap].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to write to
+        ///  - `value`: the value to set all pixels to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to or read from concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitmap_fill(Bitmap* bitmap, [MarshalAs(UnmanagedType.U1)] bool value);
+
+        /// <summary>
+        ///  Gets the width in pixels of the [SPBitmap] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to read from
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_bitmap_width(Bitmap* bitmap);
+
+        /// <summary>
+        ///  Gets the height in pixels of the [SPBitmap] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to read from
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_bitmap_height(Bitmap* bitmap);
+
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the [SPBitmap] instance.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - the returned memory range is never accessed after the passed [SPBitmap] has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern ByteSlice sp_bitmap_unsafe_data_ref(Bitmap* bitmap);
+
+        /// <summary>
+        ///  Creates a new [SPBitVec] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `size`: size in bits.
+        ///
+        ///  returns: [SPBitVec] with all bits set to false. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `size` is not divisible by 8.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitvec_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern BitVec* sp_bitvec_new(nuint size);
+
+        /// <summary>
+        ///  Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
+        ///
+        ///  returns: [SPBitVec] instance containing data. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -141,51 +278,187 @@ namespace ServicePoint.BindGen
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `data` points to a valid memory region of at least `length` bytes
-        ///  - `data` is not written to concurrently
-        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_packet_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_try_load(byte* data, nuint length);
-
-        /// <summary>
-        ///  Clones a [SPPacket].
-        ///
-        ///  Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `packet` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `packet` points to a valid [SPPacket]
-        ///  - `packet` is not written to concurrently
+        ///  - `data` points to a valid memory location of at least `data_length`
+        ///    bytes in size.
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_packet_free`.
+        ///    by explicitly calling `sp_bitvec_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_clone(Packet* packet);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern BitVec* sp_bitvec_load(byte* data, nuint data_length);
 
         /// <summary>
-        ///  Deallocates a [SPPacket].
+        ///  Clones a [SPBitVec].
+        ///
+        ///  returns: new [SPBitVec] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `sp_packet_free` is NULL
+        ///  - when `bit_vec` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `packet` points to a valid [SPPacket]
-        ///  - `packet` is not used concurrently or after this call
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitvec_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_packet_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_packet_free(Packet* packet);
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern BitVec* sp_bitvec_clone(BitVec* bit_vec);
+
+        /// <summary>
+        ///  Deallocates a [SPBitVec].
+        ///
+        ///  # Panics
+        ///
+        ///  - when `but_vec` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not used concurrently or after this call
+        ///  - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitvec_free(BitVec* bit_vec);
+
+        /// <summary>
+        ///  Gets the value of a bit from the [SPBitVec].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to read from
+        ///  - `index`: the bit index to read
+        ///
+        ///  returns: value of the bit
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///  - when accessing `index` out of bounds
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not written to concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_bitvec_get(BitVec* bit_vec, nuint index);
+
+        /// <summary>
+        ///  Sets the value of a bit in the [SPBitVec].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///  - `index`: the bit index to edit
+        ///  - `value`: the value to set the bit to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///  - when accessing `index` out of bounds
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not written to or read from concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitvec_set(BitVec* bit_vec, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
+
+        /// <summary>
+        ///  Sets the value of all bits in the [SPBitVec].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///  - `value`: the value to set all bits to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not written to or read from concurrently
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_bitvec_fill(BitVec* bit_vec, [MarshalAs(UnmanagedType.U1)] bool value);
+
+        /// <summary>
+        ///  Gets the length of the [SPBitVec] in bits.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint sp_bitvec_len(BitVec* bit_vec);
+
+        /// <summary>
+        ///  Returns true if length is 0.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_bitvec_is_empty(BitVec* bit_vec);
+
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the [SPBitVec] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  ## Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - the returned memory range is never accessed after the passed [SPBitVec] has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_bitvec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern ByteSlice sp_bitvec_unsafe_data_ref(BitVec* bit_vec);
 
         /// <summary>
         ///  Creates a new [SPBrightnessGrid] with the specified dimensions.
@@ -413,226 +686,6 @@ namespace ServicePoint.BindGen
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern ByteSlice sp_brightness_grid_unsafe_data_ref(BrightnessGrid* brightness_grid);
-
-        /// <summary>
-        ///  Creates a new [SPBitmap] with the specified dimensions.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `width`: size in pixels in x-direction
-        ///  - `height`: size in pixels in y-direction
-        ///
-        ///  returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when the width is not dividable by 8
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_new(nuint width, nuint height);
-
-        /// <summary>
-        ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `width`: size in pixels in x-direction
-        ///  - `height`: size in pixels in y-direction
-        ///
-        ///  returns: [SPBitmap] that contains a copy of the provided data. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `data` is NULL
-        ///  - when the dimensions and data size do not match exactly.
-        ///  - when the width is not dividable by 8
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `data` points to a valid memory location of at least `data_length` bytes in size.
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
-
-        /// <summary>
-        ///  Clones a [SPBitmap].
-        ///
-        ///  Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to concurrently
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_clone(Bitmap* bitmap);
-
-        /// <summary>
-        ///  Deallocates a [SPBitmap].
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not used concurrently or after bitmap call
-        ///  - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_free(Bitmap* bitmap);
-
-        /// <summary>
-        ///  Gets the current value at the specified position in the [SPBitmap].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to read from
-        ///  - `x` and `y`: position of the cell to read
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///  - when accessing `x` or `y` out of bounds
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to concurrently
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bitmap_get(Bitmap* bitmap, nuint x, nuint y);
-
-        /// <summary>
-        ///  Sets the value of the specified position in the [SPBitmap].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to write to
-        ///  - `x` and `y`: position of the cell
-        ///  - `value`: the value to write to the cell
-        ///
-        ///  returns: old value of the cell
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///  - when accessing `x` or `y` out of bounds
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to or read from concurrently
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_set(Bitmap* bitmap, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
-
-        /// <summary>
-        ///  Sets the state of all pixels in the [SPBitmap].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to write to
-        ///  - `value`: the value to set all pixels to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to or read from concurrently
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_fill(Bitmap* bitmap, [MarshalAs(UnmanagedType.U1)] bool value);
-
-        /// <summary>
-        ///  Gets the width in pixels of the [SPBitmap] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to read from
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bitmap_width(Bitmap* bitmap);
-
-        /// <summary>
-        ///  Gets the height in pixels of the [SPBitmap] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to read from
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bitmap_height(Bitmap* bitmap);
-
-        /// <summary>
-        ///  Gets an unsafe reference to the data of the [SPBitmap] instance.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - the returned memory range is never accessed after the passed [SPBitmap] has been freed
-        ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitmap_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_bitmap_unsafe_data_ref(Bitmap* bitmap);
 
         /// <summary>
         ///  Tries to turn a [SPPacket] into a [SPCommand].
@@ -970,6 +1023,90 @@ namespace ServicePoint.BindGen
         public static extern void sp_command_free(Command* command);
 
         /// <summary>
+        ///  Creates a new instance of [SPConnection].
+        ///
+        ///  returns: NULL if connection fails, or connected instance
+        ///
+        ///  # Panics
+        ///
+        ///  - when `host` is null or an invalid host
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_connection_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Connection* sp_connection_open(byte* host);
+
+        /// <summary>
+        ///  Sends a [SPPacket] to the display using the [SPConnection].
+        ///
+        ///  The passed `packet` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Panics
+        ///
+        ///  - when `connection` is NULL
+        ///  - when `packet` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of [SPConnection]
+        ///  - `packet` points to a valid instance of [SPPacket]
+        ///  - `packet` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_connection_send_packet(Connection* connection, Packet* packet);
+
+        /// <summary>
+        ///  Sends a [SPCommand] to the display using the [SPConnection].
+        ///
+        ///  The passed `command` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Panics
+        ///
+        ///  - when `connection` is NULL
+        ///  - when `command` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of [SPConnection]
+        ///  - `command` points to a valid instance of [SPPacket]
+        ///  - `command` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static extern bool sp_connection_send_command(Connection* connection, Command* command);
+
+        /// <summary>
+        ///  Closes and deallocates a [SPConnection].
+        ///
+        ///  # Panics
+        ///
+        ///  - when `connection` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid [SPConnection]
+        ///  - `connection` is not used concurrently or after this call
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_connection_free(Connection* connection);
+
+        /// <summary>
         ///  Creates a new [SPCp437Grid] with the specified dimensions.
         ///
         ///  returns: [SPCp437Grid] initialized to 0. Will never return NULL.
@@ -1177,32 +1314,31 @@ namespace ServicePoint.BindGen
         public static extern ByteSlice sp_cp437_grid_unsafe_data_ref(Cp437Grid* cp437_grid);
 
         /// <summary>
-        ///  Creates a new [SPBitVec] instance.
+        ///  Turns a [SPCommand] into a [SPPacket].
+        ///  The [SPCommand] gets consumed.
         ///
-        ///  # Arguments
-        ///
-        ///  - `size`: size in bits.
-        ///
-        ///  returns: [SPBitVec] with all bits set to false. Will never return NULL.
+        ///  Will never return NULL.
         ///
         ///  # Panics
         ///
-        ///  - when `size` is not divisible by 8.
+        ///  - when `command` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitvec_free`.
+        ///  - [SPCommand] points to a valid instance of [SPCommand]
+        ///  - [SPCommand] is not used concurrently or after this call
+        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bitvec_new(nuint size);
+        [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp_packet_from_command(Command* command);
 
         /// <summary>
-        ///  Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
+        ///  Tries to load a [SPPacket] from the passed array with the specified length.
         ///
-        ///  returns: [SPBitVec] instance containing data. Will never return NULL.
+        ///  returns: NULL in case of an error, pointer to the allocated packet otherwise
         ///
         ///  # Panics
         ///
@@ -1212,189 +1348,68 @@ namespace ServicePoint.BindGen
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `data` points to a valid memory location of at least `data_length`
-        ///    bytes in size.
+        ///  - `data` points to a valid memory region of at least `length` bytes
+        ///  - `data` is not written to concurrently
+        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp_packet_try_load(byte* data, nuint length);
+
+        /// <summary>
+        ///  Clones a [SPPacket].
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `packet` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `packet` points to a valid [SPPacket]
+        ///  - `packet` is not written to concurrently
         ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitvec_free`.
+        ///    by explicitly calling `sp_packet_free`.
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bitvec_load(byte* data, nuint data_length);
+        [DllImport(__DllName, EntryPoint = "sp_packet_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Packet* sp_packet_clone(Packet* packet);
 
         /// <summary>
-        ///  Clones a [SPBitVec].
-        ///
-        ///  returns: new [SPBitVec] instance. Will never return NULL.
+        ///  Deallocates a [SPPacket].
         ///
         ///  # Panics
         ///
-        ///  - when `bit_vec` is NULL
+        ///  - when `sp_packet_free` is NULL
         ///
         ///  # Safety
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not written to concurrently
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitvec_free`.
+        ///  - `packet` points to a valid [SPPacket]
+        ///  - `packet` is not used concurrently or after this call
         /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BitVec* sp_bitvec_clone(BitVec* bit_vec);
-
-        /// <summary>
-        ///  Deallocates a [SPBitVec].
-        ///
-        ///  # Panics
-        ///
-        ///  - when `but_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not used concurrently or after this call
-        ///  - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitvec_free(BitVec* bit_vec);
-
-        /// <summary>
-        ///  Gets the value of a bit from the [SPBitVec].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to read from
-        ///  - `index`: the bit index to read
-        ///
-        ///  returns: value of the bit
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///  - when accessing `index` out of bounds
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not written to concurrently
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bitvec_get(BitVec* bit_vec, nuint index);
-
-        /// <summary>
-        ///  Sets the value of a bit in the [SPBitVec].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///  - `index`: the bit index to edit
-        ///  - `value`: the value to set the bit to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///  - when accessing `index` out of bounds
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not written to or read from concurrently
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitvec_set(BitVec* bit_vec, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
-
-        /// <summary>
-        ///  Sets the value of all bits in the [SPBitVec].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///  - `value`: the value to set all bits to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not written to or read from concurrently
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitvec_fill(BitVec* bit_vec, [MarshalAs(UnmanagedType.U1)] bool value);
-
-        /// <summary>
-        ///  Gets the length of the [SPBitVec] in bits.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bitvec_len(BitVec* bit_vec);
-
-        /// <summary>
-        ///  Returns true if length is 0.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bitvec_is_empty(BitVec* bit_vec);
-
-        /// <summary>
-        ///  Gets an unsafe reference to the data of the [SPBitVec] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  ## Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - the returned memory range is never accessed after the passed [SPBitVec] has been freed
-        ///  - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
-        /// </summary>
-        [DllImport(__DllName, EntryPoint = "sp_bitvec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_bitvec_unsafe_data_ref(BitVec* bit_vec);
+        [DllImport(__DllName, EntryPoint = "sp_packet_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void sp_packet_free(Packet* packet);
 
 
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct Bitmap
+    {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct BitVec
+    {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct BrightnessGrid
+    {
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -1405,27 +1420,12 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Connection
-    {
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Packet
-    {
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct BrightnessGrid
-    {
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Bitmap
-    {
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
     public unsafe partial struct Command
+    {
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe partial struct Connection
     {
     }
 
@@ -1435,7 +1435,7 @@ namespace ServicePoint.BindGen
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct BitVec
+    public unsafe partial struct Packet
     {
     }
 
