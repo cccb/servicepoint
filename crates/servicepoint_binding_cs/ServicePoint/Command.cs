@@ -9,7 +9,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            var result = NativeMethods.sp_command_try_from_packet(packet.Into());
+            var result = CommandNative.sp_command_try_from_packet(packet.Into());
             if (result == null)
             {
                 command = null;
@@ -25,7 +25,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_clone(Instance));
+            return new Command(Instance->Clone());
         }
     }
 
@@ -33,7 +33,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_clear());
+            return new Command(CommandNative.sp_command_clear());
         }
     }
 
@@ -41,7 +41,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_hard_reset());
+            return new Command(CommandNative.sp_command_hard_reset());
         }
     }
 
@@ -49,7 +49,7 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_fade_out());
+            return new Command(CommandNative.sp_command_fade_out());
         }
     }
 
@@ -57,67 +57,67 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_brightness(brightness));
+            return new Command(CommandNative.sp_command_brightness(brightness));
         }
     }
 
-    public static Command CharBrightness(int x, int y, BrightnessGrid grid)
+    public static Command CharBrightness(ushort x, ushort y, BrightnessGrid grid)
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_char_brightness((ushort)x, (ushort)y, grid.Into()));
+            return new Command(CommandNative.sp_command_char_brightness(x, y, grid.Into()));
         }
     }
 
-    public static Command BitmapLinear(int offset, BitVec bitVec, CompressionCode compressionCode)
-    {
-        unsafe
-        {
-            return new Command(
-                NativeMethods.sp_command_bitmap_linear((ushort)offset, bitVec.Into(), compressionCode));
-        }
-    }
-
-    public static Command BitmapLinearAnd(int offset, BitVec bitVec, CompressionCode compressionCode)
+    public static Command BitmapLinear(ushort offset, BitVec bitVec, CompressionCode compressionCode)
     {
         unsafe
         {
             return new Command(
-                NativeMethods.sp_command_bitmap_linear_and((ushort)offset, bitVec.Into(), compressionCode));
+                CommandNative.sp_command_bitmap_linear(offset, bitVec.Into(), compressionCode));
         }
     }
 
-    public static Command BitmapLinearOr(int offset, BitVec bitVec, CompressionCode compressionCode)
+    public static Command BitmapLinearAnd(ushort offset, BitVec bitVec, CompressionCode compressionCode)
     {
         unsafe
         {
             return new Command(
-                NativeMethods.sp_command_bitmap_linear_or((ushort)offset, bitVec.Into(), compressionCode));
+                CommandNative.sp_command_bitmap_linear_and(offset, bitVec.Into(), compressionCode));
         }
     }
 
-    public static Command BitmapLinearXor(int offset, BitVec bitVec, CompressionCode compressionCode)
+    public static Command BitmapLinearOr(ushort offset, BitVec bitVec, CompressionCode compressionCode)
     {
         unsafe
         {
             return new Command(
-                NativeMethods.sp_command_bitmap_linear_xor((ushort)offset, bitVec.Into(), compressionCode));
+                CommandNative.sp_command_bitmap_linear_or(offset, bitVec.Into(), compressionCode));
         }
     }
 
-    public static Command BitmapLinearWin(int x, int y, Bitmap bitmap, CompressionCode compression)
+    public static Command BitmapLinearXor(ushort offset, BitVec bitVec, CompressionCode compressionCode)
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_bitmap_linear_win((ushort)x, (ushort)y, bitmap.Into(), compression));
+            return new Command(
+                CommandNative.sp_command_bitmap_linear_xor(offset, bitVec.Into(), compressionCode));
         }
     }
 
-    public static Command Cp437Data(int x, int y, Cp437Grid byteGrid)
+    public static Command BitmapLinearWin(ushort x, ushort y, Bitmap bitmap, CompressionCode compression)
     {
         unsafe
         {
-            return new Command(NativeMethods.sp_command_cp437_data((ushort)x, (ushort)y, byteGrid.Into()));
+            return new Command(CommandNative.sp_command_bitmap_linear_win(x, y, bitmap.Into(), compression));
+        }
+    }
+
+    public static Command Cp437Data(ushort x, ushort y, Cp437Grid byteGrid)
+    {
+        unsafe
+        {
+            return new Command(CommandNative.sp_command_cp437_data(x, y, byteGrid.Into()));
         }
     }
 
@@ -125,5 +125,5 @@ public sealed class Command : SpNativeInstance<BindGen.Command>
     {
     }
 
-    private protected override unsafe void Free() => NativeMethods.sp_command_free(Instance);
+    private protected override unsafe void Free() => Instance->Free();
 }

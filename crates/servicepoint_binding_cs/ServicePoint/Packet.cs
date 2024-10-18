@@ -9,7 +9,7 @@ public sealed class Packet : SpNativeInstance<BindGen.Packet>
     {
         unsafe
         {
-            return new Packet(NativeMethods.sp_packet_from_command(command.Into()));
+            return new Packet(PacketNative.sp_packet_from_command(command.Into()));
         }
     }
 
@@ -19,7 +19,7 @@ public sealed class Packet : SpNativeInstance<BindGen.Packet>
         {
             fixed (byte* bytesPtr = bytes)
             {
-                var instance = NativeMethods.sp_packet_try_load(bytesPtr, (nuint)bytes.Length);
+                var instance = PacketNative.sp_packet_try_load(bytesPtr, (nuint)bytes.Length);
                 packet = instance == null
                     ? null
                     : new Packet(instance);
@@ -32,5 +32,5 @@ public sealed class Packet : SpNativeInstance<BindGen.Packet>
     {
     }
 
-    private protected override unsafe void Free() => NativeMethods.sp_packet_free(Instance);
+    private protected override unsafe void Free() => Instance->Free();
 }
