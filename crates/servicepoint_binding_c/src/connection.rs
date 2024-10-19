@@ -64,6 +64,8 @@ pub unsafe extern "C" fn sp_connection_open(
 /// - `connection` points to a valid instance of [SPConnection]
 /// - `packet` points to a valid instance of [SPPacket]
 /// - `packet` is not used concurrently or after this call
+///
+/// servicepoint_csbindgen_consumes: packet
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send_packet(
     connection: *const SPConnection,
@@ -93,6 +95,8 @@ pub unsafe extern "C" fn sp_connection_send_packet(
 /// - `connection` points to a valid instance of [SPConnection]
 /// - `command` points to a valid instance of [SPPacket]
 /// - `command` is not used concurrently or after this call
+///
+/// servicepoint_csbindgen_consumes: packet
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send_command(
     connection: *const SPConnection,
@@ -116,6 +120,8 @@ pub unsafe extern "C" fn sp_connection_send_command(
 ///
 /// - `connection` points to a valid [SPConnection]
 /// - `connection` is not used concurrently or after this call
+///
+/// servicepoint_csbindgen_consumes: connection
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_free(connection: *mut SPConnection) {
     assert!(!connection.is_null());

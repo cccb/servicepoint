@@ -86,7 +86,7 @@ namespace ServicePoint
         /// </summary>
         public Bitmap Clone()
         {
-            return new Bitmap(Bitmap.sp_bitmap_clone(Instance));
+            return new Bitmap(Bitmap.sp_bitmap_clone(this.Instance));
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace ServicePoint
         /// </summary>
         public bool Get(nuint x, nuint y)
         {
-            return Bitmap.sp_bitmap_get(Instance, x, y);
+            return Bitmap.sp_bitmap_get(this.Instance, x, y);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace ServicePoint
         /// </summary>
         public void Set(nuint x, nuint y, bool value)
         {
-            Bitmap.sp_bitmap_set(Instance, x, y, value);
+            Bitmap.sp_bitmap_set(this.Instance, x, y, value);
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace ServicePoint
         /// </summary>
         public void Fill(bool value)
         {
-            Bitmap.sp_bitmap_fill(Instance, value);
+            Bitmap.sp_bitmap_fill(this.Instance, value);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace ServicePoint
         /// </summary>
         public nuint Width()
         {
-            return Bitmap.sp_bitmap_width(Instance);
+            return Bitmap.sp_bitmap_width(this.Instance);
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace ServicePoint
         /// </summary>
         public nuint Height()
         {
-            return Bitmap.sp_bitmap_height(Instance);
+            return Bitmap.sp_bitmap_height(this.Instance);
         }
 
         /// <summary>
@@ -227,10 +227,11 @@ namespace ServicePoint
         /// </summary>
         public SPByteSlice UnsafeDataRef()
         {
-            return Bitmap.sp_bitmap_unsafe_data_ref(Instance);
+            return Bitmap.sp_bitmap_unsafe_data_ref(this.Instance);
         }
 
 
+#region internal machinery
         private SPBitmap* _instance;
         internal SPBitmap* Instance
         {
@@ -269,8 +270,11 @@ namespace ServicePoint
 
         ~Bitmap() => Free();
             
-        const string __DllName = "servicepoint_binding_c";
+#endregion
+
 #nullable restore
+#region native methods
+        const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitmap* sp_bitmap_new(nuint width, nuint height);
 
@@ -303,6 +307,7 @@ namespace ServicePoint
         private static extern SPByteSlice sp_bitmap_unsafe_data_ref(SPBitmap* bitmap);
 
 
+#endregion
     }
 
     [StructLayout(LayoutKind.Sequential)]

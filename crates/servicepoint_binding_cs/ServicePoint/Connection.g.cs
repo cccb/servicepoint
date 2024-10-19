@@ -55,10 +55,12 @@ namespace ServicePoint
         ///  - `connection` points to a valid instance of [SPConnection]
         ///  - `packet` points to a valid instance of [SPPacket]
         ///  - `packet` is not used concurrently or after this call
+        ///
+        ///  servicepoint_csbindgen_consumes: packet
         /// </summary>
         public bool SendPacket(Packet packet)
         {
-            return Connection.sp_connection_send_packet(Instance, packet.Instance);
+            return Connection.sp_connection_send_packet(this.Instance, packet.Into());
         }
 
         /// <summary>
@@ -80,13 +82,16 @@ namespace ServicePoint
         ///  - `connection` points to a valid instance of [SPConnection]
         ///  - `command` points to a valid instance of [SPPacket]
         ///  - `command` is not used concurrently or after this call
+        ///
+        ///  servicepoint_csbindgen_consumes: packet
         /// </summary>
         public bool SendCommand(Command command)
         {
-            return Connection.sp_connection_send_command(Instance, command.Instance);
+            return Connection.sp_connection_send_command(this.Instance, command.Instance);
         }
 
 
+#region internal machinery
         private SPConnection* _instance;
         internal SPConnection* Instance
         {
@@ -125,8 +130,11 @@ namespace ServicePoint
 
         ~Connection() => Free();
             
-        const string __DllName = "servicepoint_binding_c";
+#endregion
+
 #nullable restore
+#region native methods
+        const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPConnection* sp_connection_open(byte* host);
 
@@ -142,6 +150,7 @@ namespace ServicePoint
         private static extern void sp_connection_free(SPConnection* connection);
 
 
+#endregion
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -32,10 +32,12 @@ namespace ServicePoint
         ///  - [SPCommand] is not used concurrently or after this call
         ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_packet_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: command
         /// </summary>
         public static Packet FromCommand(Command command)
         {
-            return new Packet(Packet.sp_packet_from_command(command.Instance));
+            return new Packet(Packet.sp_packet_from_command(command.Into()));
         }
 
         /// <summary>
@@ -82,10 +84,11 @@ namespace ServicePoint
         /// </summary>
         public Packet Clone()
         {
-            return new Packet(Packet.sp_packet_clone(Instance));
+            return new Packet(Packet.sp_packet_clone(this.Instance));
         }
 
 
+#region internal machinery
         private SPPacket* _instance;
         internal SPPacket* Instance
         {
@@ -124,8 +127,11 @@ namespace ServicePoint
 
         ~Packet() => Free();
             
-        const string __DllName = "servicepoint_binding_c";
+#endregion
+
 #nullable restore
+#region native methods
+        const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPPacket* sp_packet_from_command(SPCommand* command);
 
@@ -139,6 +145,7 @@ namespace ServicePoint
         private static extern void sp_packet_free(SPPacket* packet);
 
 
+#endregion
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -8,13 +8,6 @@ use std::convert::Into;
 use std::intrinsics::transmute;
 use std::ptr::NonNull;
 
-/// see [Brightness::MIN]
-pub const SP_BRIGHTNESS_MIN: u8 = 0;
-/// see [Brightness::MAX]
-pub const SP_BRIGHTNESS_MAX: u8 = 11;
-/// Count of possible brightness values
-pub const SP_BRIGHTNESS_LEVELS: u8 = 12;
-
 /// A grid containing brightness values.
 ///
 /// # Examples
@@ -133,6 +126,8 @@ pub unsafe extern "C" fn sp_brightness_grid_clone(
 /// - `brightness_grid` points to a valid [SPBrightnessGrid]
 /// - `brightness_grid` is not used concurrently or after this call
 /// - `brightness_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+///
+/// servicepoint_csbindgen_consumes: brightness_grid
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_free(
     brightness_grid: *mut SPBrightnessGrid,

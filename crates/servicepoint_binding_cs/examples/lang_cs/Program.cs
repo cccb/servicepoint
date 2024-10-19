@@ -7,8 +7,8 @@ if (connection == null)
     return;
 }
 
-connection.Send(Command.Clear().IntoPacket());
-connection.Send(Command.Brightness(128).IntoPacket());
+connection.Send(Command.Clear());
+connection.Send(Command.Brightness(Constants.MaxBrightness));
 
 using var pixels = new Bitmap(Constants.PixelWidth, Constants.PixelHeight);
 

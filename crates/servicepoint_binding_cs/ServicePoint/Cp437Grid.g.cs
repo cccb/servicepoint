@@ -72,7 +72,7 @@ namespace ServicePoint
         /// </summary>
         public Cp437Grid Clone()
         {
-            return new Cp437Grid(Cp437Grid.sp_cp437_grid_clone(Instance));
+            return new Cp437Grid(Cp437Grid.sp_cp437_grid_clone(this.Instance));
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace ServicePoint
         /// </summary>
         public byte Get(nuint x, nuint y)
         {
-            return Cp437Grid.sp_cp437_grid_get(Instance, x, y);
+            return Cp437Grid.sp_cp437_grid_get(this.Instance, x, y);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace ServicePoint
         /// </summary>
         public void Set(nuint x, nuint y, byte value)
         {
-            Cp437Grid.sp_cp437_grid_set(Instance, x, y, value);
+            Cp437Grid.sp_cp437_grid_set(this.Instance, x, y, value);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace ServicePoint
         /// </summary>
         public void Fill(byte value)
         {
-            Cp437Grid.sp_cp437_grid_fill(Instance, value);
+            Cp437Grid.sp_cp437_grid_fill(this.Instance, value);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace ServicePoint
         /// </summary>
         public nuint Width()
         {
-            return Cp437Grid.sp_cp437_grid_width(Instance);
+            return Cp437Grid.sp_cp437_grid_width(this.Instance);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace ServicePoint
         /// </summary>
         public nuint Height()
         {
-            return Cp437Grid.sp_cp437_grid_height(Instance);
+            return Cp437Grid.sp_cp437_grid_height(this.Instance);
         }
 
         /// <summary>
@@ -215,10 +215,11 @@ namespace ServicePoint
         /// </summary>
         public SPByteSlice UnsafeDataRef()
         {
-            return Cp437Grid.sp_cp437_grid_unsafe_data_ref(Instance);
+            return Cp437Grid.sp_cp437_grid_unsafe_data_ref(this.Instance);
         }
 
 
+#region internal machinery
         private SPCp437Grid* _instance;
         internal SPCp437Grid* Instance
         {
@@ -257,8 +258,11 @@ namespace ServicePoint
 
         ~Cp437Grid() => Free();
             
-        const string __DllName = "servicepoint_binding_c";
+#endregion
+
 #nullable restore
+#region native methods
+        const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPCp437Grid* sp_cp437_grid_new(nuint width, nuint height);
 
@@ -290,6 +294,7 @@ namespace ServicePoint
         private static extern SPByteSlice sp_cp437_grid_unsafe_data_ref(SPCp437Grid* cp437_grid);
 
 
+#endregion
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -19,4 +19,8 @@ public static class Constants
 
     /// pixel count on whole screen
     public const nuint PixelCount = PixelWidth * PixelHeight;
+
+    public const byte MinBrightness = ConstantsNative.SP_BRIGHTNESS_MIN;
+    public const byte MaxBrightness = ConstantsNative.SP_BRIGHTNESS_MAX;
+    public const byte BrightnessLevels = ConstantsNative.SP_BRIGHTNESS_LEVELS;
 }

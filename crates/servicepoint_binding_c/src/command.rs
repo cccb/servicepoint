@@ -50,6 +50,8 @@ impl Clone for SPCommand {
 /// - the result is checked for NULL
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: packet
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_try_from_packet(
     packet: *mut SPPacket,
@@ -187,6 +189,8 @@ pub unsafe extern "C" fn sp_command_brightness(
 /// - `grid` is not used concurrently or after this call
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: grid
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_char_brightness(
     x: usize,
@@ -227,6 +231,8 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bit_vec
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear(
     offset: usize,
@@ -268,6 +274,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bit_vec
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_and(
     offset: usize,
@@ -309,6 +317,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bit_vec
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_or(
     offset: usize,
@@ -350,6 +360,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bit_vec
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
     offset: usize,
@@ -384,6 +396,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 /// - `grid` is not used concurrently or after this call
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: grid
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_cp437_data(
     x: usize,
@@ -419,6 +433,8 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bitmap
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_win(
     x: usize,
@@ -458,6 +474,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 /// - `command` points to a valid [SPCommand]
 /// - `command` is not used concurrently or after this call
 /// - `command` was not passed to another consuming function, e.g. to create a [SPPacket]
+///
+/// servicepoint_csbindgen_consumes: command
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_free(command: *mut SPCommand) {
     assert!(!command.is_null());

@@ -79,7 +79,7 @@ namespace ServicePoint
         /// </summary>
         public BitVec Clone()
         {
-            return new BitVec(BitVec.sp_bitvec_clone(Instance));
+            return new BitVec(BitVec.sp_bitvec_clone(this.Instance));
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace ServicePoint
         /// </summary>
         public bool Get(nuint index)
         {
-            return BitVec.sp_bitvec_get(Instance, index);
+            return BitVec.sp_bitvec_get(this.Instance, index);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace ServicePoint
         /// </summary>
         public void Set(nuint index, bool value)
         {
-            BitVec.sp_bitvec_set(Instance, index, value);
+            BitVec.sp_bitvec_set(this.Instance, index, value);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace ServicePoint
         /// </summary>
         public void Fill(bool value)
         {
-            BitVec.sp_bitvec_fill(Instance, value);
+            BitVec.sp_bitvec_fill(this.Instance, value);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace ServicePoint
         /// </summary>
         public nuint Len()
         {
-            return BitVec.sp_bitvec_len(Instance);
+            return BitVec.sp_bitvec_len(this.Instance);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace ServicePoint
         /// </summary>
         public bool IsEmpty()
         {
-            return BitVec.sp_bitvec_is_empty(Instance);
+            return BitVec.sp_bitvec_is_empty(this.Instance);
         }
 
         /// <summary>
@@ -224,10 +224,11 @@ namespace ServicePoint
         /// </summary>
         public SPByteSlice UnsafeDataRef()
         {
-            return BitVec.sp_bitvec_unsafe_data_ref(Instance);
+            return BitVec.sp_bitvec_unsafe_data_ref(this.Instance);
         }
 
 
+#region internal machinery
         private SPBitVec* _instance;
         internal SPBitVec* Instance
         {
@@ -266,8 +267,11 @@ namespace ServicePoint
 
         ~BitVec() => Free();
             
-        const string __DllName = "servicepoint_binding_c";
+#endregion
+
 #nullable restore
+#region native methods
+        const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_bitvec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitVec* sp_bitvec_new(nuint size);
 
@@ -301,6 +305,7 @@ namespace ServicePoint
         private static extern SPByteSlice sp_bitvec_unsafe_data_ref(SPBitVec* bit_vec);
 
 
+#endregion
     }
 
     [StructLayout(LayoutKind.Sequential)]

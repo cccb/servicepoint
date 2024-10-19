@@ -26,6 +26,8 @@ pub struct SPPacket(pub(crate) servicepoint::packet::Packet);
 /// - [SPCommand] is not used concurrently or after this call
 /// - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_packet_free`.
+///
+/// servicepoint_csbindgen_consumes: command
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_from_command(
     command: *mut SPCommand,
@@ -94,7 +96,7 @@ pub unsafe extern "C" fn sp_packet_clone(
 ///
 /// # Panics
 ///
-/// - when `sp_packet_free` is NULL
+/// - when `packet` is NULL
 ///
 /// # Safety
 ///
@@ -102,6 +104,8 @@ pub unsafe extern "C" fn sp_packet_clone(
 ///
 /// - `packet` points to a valid [SPPacket]
 /// - `packet` is not used concurrently or after this call
+///
+/// servicepoint_csbindgen_consumes: packet
 #[no_mangle]
 pub unsafe extern "C" fn sp_packet_free(packet: *mut SPPacket) {
     assert!(!packet.is_null());

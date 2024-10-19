@@ -10,17 +10,6 @@ using System.Runtime.InteropServices;
 
 namespace ServicePoint
 {
-    public static unsafe partial class BrightnessGridNative
-    {
-        const string __DllName = "servicepoint_binding_c";
-
-        public const byte SP_BRIGHTNESS_MIN = 0;
-        public const byte SP_BRIGHTNESS_MAX = 11;
-        public const byte SP_BRIGHTNESS_LEVELS = 12;
-
-
-
-    }
 
     public unsafe sealed partial class BrightnessGrid: IDisposable
     {
@@ -87,7 +76,7 @@ namespace ServicePoint
         /// </summary>
         public BrightnessGrid Clone()
         {
-            return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_clone(Instance));
+            return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_clone(this.Instance));
         }
 
         /// <summary>
@@ -114,7 +103,7 @@ namespace ServicePoint
         /// </summary>
         public byte Get(nuint x, nuint y)
         {
-            return BrightnessGrid.sp_brightness_grid_get(Instance, x, y);
+            return BrightnessGrid.sp_brightness_grid_get(this.Instance, x, y);
         }
 
         /// <summary>
@@ -143,7 +132,7 @@ namespace ServicePoint
         /// </summary>
         public void Set(nuint x, nuint y, byte value)
         {
-            BrightnessGrid.sp_brightness_grid_set(Instance, x, y, value);
+            BrightnessGrid.sp_brightness_grid_set(this.Instance, x, y, value);
         }
 
         /// <summary>
@@ -168,7 +157,7 @@ namespace ServicePoint
         /// </summary>
         public void Fill(byte value)
         {
-            BrightnessGrid.sp_brightness_grid_fill(Instance, value);
+            BrightnessGrid.sp_brightness_grid_fill(this.Instance, value);
         }
 
         /// <summary>
@@ -192,7 +181,7 @@ namespace ServicePoint
         /// </summary>
         public nuint Width()
         {
-            return BrightnessGrid.sp_brightness_grid_width(Instance);
+            return BrightnessGrid.sp_brightness_grid_width(this.Instance);
         }
 
         /// <summary>
@@ -216,7 +205,7 @@ namespace ServicePoint
         /// </summary>
         public nuint Height()
         {
-            return BrightnessGrid.sp_brightness_grid_height(Instance);
+            return BrightnessGrid.sp_brightness_grid_height(this.Instance);
         }
 
         /// <summary>
@@ -242,10 +231,11 @@ namespace ServicePoint
         /// </summary>
         public SPByteSlice UnsafeDataRef()
         {
-            return BrightnessGrid.sp_brightness_grid_unsafe_data_ref(Instance);
+            return BrightnessGrid.sp_brightness_grid_unsafe_data_ref(this.Instance);
         }
 
 
+#region internal machinery
         private SPBrightnessGrid* _instance;
         internal SPBrightnessGrid* Instance
         {
@@ -284,8 +274,11 @@ namespace ServicePoint
 
         ~BrightnessGrid() => Free();
             
-        const string __DllName = "servicepoint_binding_c";
+#endregion
+
 #nullable restore
+#region native methods
+        const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBrightnessGrid* sp_brightness_grid_new(nuint width, nuint height);
 
@@ -317,6 +310,7 @@ namespace ServicePoint
         private static extern SPByteSlice sp_brightness_grid_unsafe_data_ref(SPBrightnessGrid* brightness_grid);
 
 
+#endregion
     }
 
     [StructLayout(LayoutKind.Sequential)]

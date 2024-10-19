@@ -34,10 +34,12 @@ namespace ServicePoint
         ///  - the result is checked for NULL
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: packet
         /// </summary>
         public static Command? TryFromPacket(Packet packet)
         {
-            var native = Command.sp_command_try_from_packet(packet.Instance);
+            var native = Command.sp_command_try_from_packet(packet.Into());
             return native == null ? null : new Command(native);
         }
 
@@ -61,7 +63,7 @@ namespace ServicePoint
         /// </summary>
         public Command Clone()
         {
-            return new Command(Command.sp_command_clone(Instance));
+            return new Command(Command.sp_command_clone(this.Instance));
         }
 
         /// <summary>
@@ -165,10 +167,12 @@ namespace ServicePoint
         ///  - `grid` is not used concurrently or after this call
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: grid
         /// </summary>
         public static Command CharBrightness(nuint x, nuint y, BrightnessGrid grid)
         {
-            return new Command(Command.sp_command_char_brightness(x, y, grid.Instance));
+            return new Command(Command.sp_command_char_brightness(x, y, grid.Into()));
         }
 
         /// <summary>
@@ -197,10 +201,12 @@ namespace ServicePoint
         ///  - `compression` matches one of the allowed enum values
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: bit_vec
         /// </summary>
         public static Command BitmapLinear(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
-            return new Command(Command.sp_command_bitmap_linear(offset, bit_vec.Instance, compression));
+            return new Command(Command.sp_command_bitmap_linear(offset, bit_vec.Into(), compression));
         }
 
         /// <summary>
@@ -229,10 +235,12 @@ namespace ServicePoint
         ///  - `compression` matches one of the allowed enum values
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: bit_vec
         /// </summary>
         public static Command BitmapLinearAnd(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
-            return new Command(Command.sp_command_bitmap_linear_and(offset, bit_vec.Instance, compression));
+            return new Command(Command.sp_command_bitmap_linear_and(offset, bit_vec.Into(), compression));
         }
 
         /// <summary>
@@ -261,10 +269,12 @@ namespace ServicePoint
         ///  - `compression` matches one of the allowed enum values
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: bit_vec
         /// </summary>
         public static Command BitmapLinearOr(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
-            return new Command(Command.sp_command_bitmap_linear_or(offset, bit_vec.Instance, compression));
+            return new Command(Command.sp_command_bitmap_linear_or(offset, bit_vec.Into(), compression));
         }
 
         /// <summary>
@@ -293,10 +303,12 @@ namespace ServicePoint
         ///  - `compression` matches one of the allowed enum values
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: bit_vec
         /// </summary>
         public static Command BitmapLinearXor(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
-            return new Command(Command.sp_command_bitmap_linear_xor(offset, bit_vec.Instance, compression));
+            return new Command(Command.sp_command_bitmap_linear_xor(offset, bit_vec.Into(), compression));
         }
 
         /// <summary>
@@ -318,10 +330,12 @@ namespace ServicePoint
         ///  - `grid` is not used concurrently or after this call
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: grid
         /// </summary>
         public static Command Cp437Data(nuint x, nuint y, Cp437Grid grid)
         {
-            return new Command(Command.sp_command_cp437_data(x, y, grid.Instance));
+            return new Command(Command.sp_command_cp437_data(x, y, grid.Into()));
         }
 
         /// <summary>
@@ -345,13 +359,16 @@ namespace ServicePoint
         ///  - `compression` matches one of the allowed enum values
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
+        ///
+        ///  servicepoint_csbindgen_consumes: bitmap
         /// </summary>
         public static Command BitmapLinearWin(nuint x, nuint y, Bitmap bitmap, CompressionCode compression_code)
         {
-            return new Command(Command.sp_command_bitmap_linear_win(x, y, bitmap.Instance, compression_code));
+            return new Command(Command.sp_command_bitmap_linear_win(x, y, bitmap.Into(), compression_code));
         }
 
 
+#region internal machinery
         private SPCommand* _instance;
         internal SPCommand* Instance
         {
@@ -390,8 +407,11 @@ namespace ServicePoint
 
         ~Command() => Free();
             
-        const string __DllName = "servicepoint_binding_c";
+#endregion
+
 #nullable restore
+#region native methods
+        const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPCommand* sp_command_try_from_packet(SPPacket* packet);
 
@@ -435,6 +455,7 @@ namespace ServicePoint
         private static extern void sp_command_free(SPCommand* command);
 
 
+#endregion
     }
 
     [StructLayout(LayoutKind.Sequential)]
