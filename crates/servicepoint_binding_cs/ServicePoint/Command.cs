@@ -8,4 +8,9 @@ public sealed partial class Command
     {
         return (command = TryFromPacket(packet)) != null;
     }
+
+    public Packet IntoPacket()
+    {
+        return Packet.FromCommand(this);
+    }
 }

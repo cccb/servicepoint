@@ -15,4 +15,9 @@ public sealed partial class Packet
             }
         }
     }
+
+    public bool TryIntoCommand([MaybeNullWhen(false)] out Command command)
+    {
+        return Command.TryFromPacket(this, out command);
+    }
 }
