@@ -2,6 +2,17 @@ namespace ServicePoint;
 
 public sealed partial class BitVec
 {
+    public static BitVec Load(Span<byte> bytes)
+    {
+        unsafe
+        {
+            fixed (byte* bytesPtr = bytes)
+            {
+                return Load(bytesPtr, (nuint)bytes.Length);
+            }
+        }
+    }
+
     public bool this[nuint index]
     {
         get => Get(index);

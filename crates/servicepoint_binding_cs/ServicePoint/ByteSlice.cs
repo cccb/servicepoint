@@ -2,5 +2,5 @@ namespace ServicePoint;
 
 public partial struct SPByteSlice
 {
-    public unsafe Span<byte> AsSpan() => new Span<byte>(start, (int)length);
+    public unsafe Span<byte> AsSpan() => new (start, (int)length);
 }
