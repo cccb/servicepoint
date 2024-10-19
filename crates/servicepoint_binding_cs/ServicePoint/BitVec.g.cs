@@ -14,43 +14,214 @@ namespace ServicePoint
     public unsafe sealed partial class BitVec: IDisposable
     {
 #nullable enable
+        /// <summary>
+        ///  Creates a new [SPBitVec] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `size`: size in bits.
+        ///
+        ///  returns: [SPBitVec] with all bits set to false. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `size` is not divisible by 8.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitvec_free`.
+        /// </summary>
         public BitVec(nuint size) : this(sp_bitvec_new(size)) {}
 
+        /// <summary>
+        ///  Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
+        ///
+        ///  returns: [SPBitVec] instance containing data. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `data` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory location of at least `data_length`
+        ///    bytes in size.
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitvec_free`.
+        /// </summary>
         public static BitVec Load(byte* data, nuint data_length)
         {
             return new BitVec(BitVec.sp_bitvec_load(data, data_length));
         }
 
+        /// <summary>
+        ///  Clones a [SPBitVec].
+        ///
+        ///  returns: new [SPBitVec] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitvec_free`.
+        /// </summary>
         public BitVec Clone()
         {
             return new BitVec(BitVec.sp_bitvec_clone(Instance));
         }
 
+        /// <summary>
+        ///  Gets the value of a bit from the [SPBitVec].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to read from
+        ///  - `index`: the bit index to read
+        ///
+        ///  returns: value of the bit
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///  - when accessing `index` out of bounds
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not written to concurrently
+        /// </summary>
         public bool Get(nuint index)
         {
             return BitVec.sp_bitvec_get(Instance, index);
         }
 
+        /// <summary>
+        ///  Sets the value of a bit in the [SPBitVec].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///  - `index`: the bit index to edit
+        ///  - `value`: the value to set the bit to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///  - when accessing `index` out of bounds
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not written to or read from concurrently
+        /// </summary>
         public void Set(nuint index, bool value)
         {
             BitVec.sp_bitvec_set(Instance, index, value);
         }
 
+        /// <summary>
+        ///  Sets the value of all bits in the [SPBitVec].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///  - `value`: the value to set all bits to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - `bit_vec` is not written to or read from concurrently
+        /// </summary>
         public void Fill(bool value)
         {
             BitVec.sp_bitvec_fill(Instance, value);
         }
 
+        /// <summary>
+        ///  Gets the length of the [SPBitVec] in bits.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        /// </summary>
         public nuint Len()
         {
             return BitVec.sp_bitvec_len(Instance);
         }
 
+        /// <summary>
+        ///  Returns true if length is 0.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        /// </summary>
         public bool IsEmpty()
         {
             return BitVec.sp_bitvec_is_empty(Instance);
         }
 
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the [SPBitVec] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bit_vec`: instance to write to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bit_vec` is NULL
+        ///
+        ///  ## Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bit_vec` points to a valid [SPBitVec]
+        ///  - the returned memory range is never accessed after the passed [SPBitVec] has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
+        /// </summary>
         public SPByteSlice UnsafeDataRef()
         {
             return BitVec.sp_bitvec_unsafe_data_ref(Instance);
@@ -97,221 +268,35 @@ namespace ServicePoint
             
         const string __DllName = "servicepoint_binding_c";
 #nullable restore
-        /// <summary>
-        ///  Creates a new [SPBitVec] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `size`: size in bits.
-        ///
-        ///  returns: [SPBitVec] with all bits set to false. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `size` is not divisible by 8.
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitvec_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitVec* sp_bitvec_new(nuint size);
 
-        /// <summary>
-        ///  Interpret the data as a series of bits and load then into a new [SPBitVec] instance.
-        ///
-        ///  returns: [SPBitVec] instance containing data. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `data` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `data` points to a valid memory location of at least `data_length`
-        ///    bytes in size.
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitvec_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitVec* sp_bitvec_load(byte* data, nuint data_length);
 
-        /// <summary>
-        ///  Clones a [SPBitVec].
-        ///
-        ///  returns: new [SPBitVec] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not written to concurrently
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitvec_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitVec* sp_bitvec_clone(SPBitVec* bit_vec);
 
-        /// <summary>
-        ///  Deallocates a [SPBitVec].
-        ///
-        ///  # Panics
-        ///
-        ///  - when `but_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not used concurrently or after this call
-        ///  - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_bitvec_free(SPBitVec* bit_vec);
 
-        /// <summary>
-        ///  Gets the value of a bit from the [SPBitVec].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to read from
-        ///  - `index`: the bit index to read
-        ///
-        ///  returns: value of the bit
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///  - when accessing `index` out of bounds
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not written to concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
         private static extern bool sp_bitvec_get(SPBitVec* bit_vec, nuint index);
 
-        /// <summary>
-        ///  Sets the value of a bit in the [SPBitVec].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///  - `index`: the bit index to edit
-        ///  - `value`: the value to set the bit to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///  - when accessing `index` out of bounds
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not written to or read from concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_bitvec_set(SPBitVec* bit_vec, nuint index, [MarshalAs(UnmanagedType.U1)] bool value);
 
-        /// <summary>
-        ///  Sets the value of all bits in the [SPBitVec].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///  - `value`: the value to set all bits to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - `bit_vec` is not written to or read from concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_bitvec_fill(SPBitVec* bit_vec, [MarshalAs(UnmanagedType.U1)] bool value);
 
-        /// <summary>
-        ///  Gets the length of the [SPBitVec] in bits.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_len", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern nuint sp_bitvec_len(SPBitVec* bit_vec);
 
-        /// <summary>
-        ///  Returns true if length is 0.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_is_empty", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
         private static extern bool sp_bitvec_is_empty(SPBitVec* bit_vec);
 
-        /// <summary>
-        ///  Gets an unsafe reference to the data of the [SPBitVec] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bit_vec`: instance to write to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bit_vec` is NULL
-        ///
-        ///  ## Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bit_vec` points to a valid [SPBitVec]
-        ///  - the returned memory range is never accessed after the passed [SPBitVec] has been freed
-        ///  - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPByteSlice sp_bitvec_unsafe_data_ref(SPBitVec* bit_vec);
 

@@ -14,17 +14,73 @@ namespace ServicePoint
     public unsafe sealed partial class Connection: IDisposable
     {
 #nullable enable
+        /// <summary>
+        ///  Creates a new instance of [SPConnection].
+        ///
+        ///  returns: NULL if connection fails, or connected instance
+        ///
+        ///  # Panics
+        ///
+        ///  - when `host` is null or an invalid host
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_connection_free`.
+        /// </summary>
         public static Connection? Open(byte* host)
         {
             var native = Connection.sp_connection_open(host);
             return native == null ? null : new Connection(native);
         }
 
+        /// <summary>
+        ///  Sends a [SPPacket] to the display using the [SPConnection].
+        ///
+        ///  The passed `packet` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Panics
+        ///
+        ///  - when `connection` is NULL
+        ///  - when `packet` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of [SPConnection]
+        ///  - `packet` points to a valid instance of [SPPacket]
+        ///  - `packet` is not used concurrently or after this call
+        /// </summary>
         public bool SendPacket(Packet packet)
         {
             return Connection.sp_connection_send_packet(Instance, packet.Instance);
         }
 
+        /// <summary>
+        ///  Sends a [SPCommand] to the display using the [SPConnection].
+        ///
+        ///  The passed `command` gets consumed.
+        ///
+        ///  returns: true in case of success
+        ///
+        ///  # Panics
+        ///
+        ///  - when `connection` is NULL
+        ///  - when `command` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `connection` points to a valid instance of [SPConnection]
+        ///  - `command` points to a valid instance of [SPPacket]
+        ///  - `command` is not used concurrently or after this call
+        /// </summary>
         public bool SendCommand(Command command)
         {
             return Connection.sp_connection_send_command(Instance, command.Instance);
@@ -71,87 +127,17 @@ namespace ServicePoint
             
         const string __DllName = "servicepoint_binding_c";
 #nullable restore
-        /// <summary>
-        ///  Creates a new instance of [SPConnection].
-        ///
-        ///  returns: NULL if connection fails, or connected instance
-        ///
-        ///  # Panics
-        ///
-        ///  - when `host` is null or an invalid host
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_connection_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPConnection* sp_connection_open(byte* host);
 
-        /// <summary>
-        ///  Sends a [SPPacket] to the display using the [SPConnection].
-        ///
-        ///  The passed `packet` gets consumed.
-        ///
-        ///  returns: true in case of success
-        ///
-        ///  # Panics
-        ///
-        ///  - when `connection` is NULL
-        ///  - when `packet` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `connection` points to a valid instance of [SPConnection]
-        ///  - `packet` points to a valid instance of [SPPacket]
-        ///  - `packet` is not used concurrently or after this call
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
         private static extern bool sp_connection_send_packet(SPConnection* connection, SPPacket* packet);
 
-        /// <summary>
-        ///  Sends a [SPCommand] to the display using the [SPConnection].
-        ///
-        ///  The passed `command` gets consumed.
-        ///
-        ///  returns: true in case of success
-        ///
-        ///  # Panics
-        ///
-        ///  - when `connection` is NULL
-        ///  - when `command` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `connection` points to a valid instance of [SPConnection]
-        ///  - `command` points to a valid instance of [SPPacket]
-        ///  - `command` is not used concurrently or after this call
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
         private static extern bool sp_connection_send_command(SPConnection* connection, SPCommand* command);
 
-        /// <summary>
-        ///  Closes and deallocates a [SPConnection].
-        ///
-        ///  # Panics
-        ///
-        ///  - when `connection` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `connection` points to a valid [SPConnection]
-        ///  - `connection` is not used concurrently or after this call
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_connection_free(SPConnection* connection);
 

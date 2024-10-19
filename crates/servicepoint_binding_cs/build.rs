@@ -47,8 +47,7 @@ fn main() {
                 "SPBrightnessGrid",
             )
             .csharp_type_rename(move |name| {
-                if name == "SPCompressionCode"
-                {
+                if name == "SPCompressionCode" {
                     "CompressionCode".to_string()
                 } else {
                     name

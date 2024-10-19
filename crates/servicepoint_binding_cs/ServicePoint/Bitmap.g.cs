@@ -14,43 +14,217 @@ namespace ServicePoint
     public unsafe sealed partial class Bitmap: IDisposable
     {
 #nullable enable
+        /// <summary>
+        ///  Creates a new [SPBitmap] with the specified dimensions.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `width`: size in pixels in x-direction
+        ///  - `height`: size in pixels in y-direction
+        ///
+        ///  returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when the width is not dividable by 8
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitmap_free`.
+        /// </summary>
         public Bitmap(nuint width, nuint height) : this(sp_bitmap_new(width, height)) {}
 
+        /// <summary>
+        ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `width`: size in pixels in x-direction
+        ///  - `height`: size in pixels in y-direction
+        ///
+        ///  returns: [SPBitmap] that contains a copy of the provided data. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `data` is NULL
+        ///  - when the dimensions and data size do not match exactly.
+        ///  - when the width is not dividable by 8
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory location of at least `data_length` bytes in size.
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitmap_free`.
+        /// </summary>
         public static Bitmap Load(nuint width, nuint height, byte* data, nuint data_length)
         {
             return new Bitmap(Bitmap.sp_bitmap_load(width, height, data, data_length));
         }
 
+        /// <summary>
+        ///  Clones a [SPBitmap].
+        ///
+        ///  Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitmap_free`.
+        /// </summary>
         public Bitmap Clone()
         {
             return new Bitmap(Bitmap.sp_bitmap_clone(Instance));
         }
 
+        /// <summary>
+        ///  Gets the current value at the specified position in the [SPBitmap].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to read from
+        ///  - `x` and `y`: position of the cell to read
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///  - when accessing `x` or `y` out of bounds
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to concurrently
+        /// </summary>
         public bool Get(nuint x, nuint y)
         {
             return Bitmap.sp_bitmap_get(Instance, x, y);
         }
 
+        /// <summary>
+        ///  Sets the value of the specified position in the [SPBitmap].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to write to
+        ///  - `x` and `y`: position of the cell
+        ///  - `value`: the value to write to the cell
+        ///
+        ///  returns: old value of the cell
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///  - when accessing `x` or `y` out of bounds
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to or read from concurrently
+        /// </summary>
         public void Set(nuint x, nuint y, bool value)
         {
             Bitmap.sp_bitmap_set(Instance, x, y, value);
         }
 
+        /// <summary>
+        ///  Sets the state of all pixels in the [SPBitmap].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to write to
+        ///  - `value`: the value to set all pixels to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - `bitmap` is not written to or read from concurrently
+        /// </summary>
         public void Fill(bool value)
         {
             Bitmap.sp_bitmap_fill(Instance, value);
         }
 
+        /// <summary>
+        ///  Gets the width in pixels of the [SPBitmap] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to read from
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        /// </summary>
         public nuint Width()
         {
             return Bitmap.sp_bitmap_width(Instance);
         }
 
+        /// <summary>
+        ///  Gets the height in pixels of the [SPBitmap] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `bitmap`: instance to read from
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        /// </summary>
         public nuint Height()
         {
             return Bitmap.sp_bitmap_height(Instance);
         }
 
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the [SPBitmap] instance.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `bitmap` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `bitmap` points to a valid [SPBitmap]
+        ///  - the returned memory range is never accessed after the passed [SPBitmap] has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
+        /// </summary>
         public SPByteSlice UnsafeDataRef()
         {
             return Bitmap.sp_bitmap_unsafe_data_ref(Instance);
@@ -97,223 +271,34 @@ namespace ServicePoint
             
         const string __DllName = "servicepoint_binding_c";
 #nullable restore
-        /// <summary>
-        ///  Creates a new [SPBitmap] with the specified dimensions.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `width`: size in pixels in x-direction
-        ///  - `height`: size in pixels in y-direction
-        ///
-        ///  returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when the width is not dividable by 8
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitmap* sp_bitmap_new(nuint width, nuint height);
 
-        /// <summary>
-        ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `width`: size in pixels in x-direction
-        ///  - `height`: size in pixels in y-direction
-        ///
-        ///  returns: [SPBitmap] that contains a copy of the provided data. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `data` is NULL
-        ///  - when the dimensions and data size do not match exactly.
-        ///  - when the width is not dividable by 8
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `data` points to a valid memory location of at least `data_length` bytes in size.
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
 
-        /// <summary>
-        ///  Clones a [SPBitmap].
-        ///
-        ///  Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to concurrently
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_bitmap_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitmap* sp_bitmap_clone(SPBitmap* bitmap);
 
-        /// <summary>
-        ///  Deallocates a [SPBitmap].
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not used concurrently or after bitmap call
-        ///  - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_bitmap_free(SPBitmap* bitmap);
 
-        /// <summary>
-        ///  Gets the current value at the specified position in the [SPBitmap].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to read from
-        ///  - `x` and `y`: position of the cell to read
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///  - when accessing `x` or `y` out of bounds
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
         private static extern bool sp_bitmap_get(SPBitmap* bitmap, nuint x, nuint y);
 
-        /// <summary>
-        ///  Sets the value of the specified position in the [SPBitmap].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to write to
-        ///  - `x` and `y`: position of the cell
-        ///  - `value`: the value to write to the cell
-        ///
-        ///  returns: old value of the cell
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///  - when accessing `x` or `y` out of bounds
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to or read from concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_bitmap_set(SPBitmap* bitmap, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
 
-        /// <summary>
-        ///  Sets the state of all pixels in the [SPBitmap].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to write to
-        ///  - `value`: the value to set all pixels to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - `bitmap` is not written to or read from concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_bitmap_fill(SPBitmap* bitmap, [MarshalAs(UnmanagedType.U1)] bool value);
 
-        /// <summary>
-        ///  Gets the width in pixels of the [SPBitmap] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to read from
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern nuint sp_bitmap_width(SPBitmap* bitmap);
 
-        /// <summary>
-        ///  Gets the height in pixels of the [SPBitmap] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `bitmap`: instance to read from
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern nuint sp_bitmap_height(SPBitmap* bitmap);
 
-        /// <summary>
-        ///  Gets an unsafe reference to the data of the [SPBitmap] instance.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `bitmap` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `bitmap` points to a valid [SPBitmap]
-        ///  - the returned memory range is never accessed after the passed [SPBitmap] has been freed
-        ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPByteSlice sp_bitmap_unsafe_data_ref(SPBitmap* bitmap);
 

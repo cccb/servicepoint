@@ -25,43 +25,221 @@ namespace ServicePoint
     public unsafe sealed partial class BrightnessGrid: IDisposable
     {
 #nullable enable
+        /// <summary>
+        ///  Creates a new [SPBrightnessGrid] with the specified dimensions.
+        ///
+        ///  returns: [SPBrightnessGrid] initialized to 0. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_brightness_grid_free`.
+        /// </summary>
         public BrightnessGrid(nuint width, nuint height) : this(sp_brightness_grid_new(width, height)) {}
 
+        /// <summary>
+        ///  Loads a [SPBrightnessGrid] with the specified dimensions from the provided data.
+        ///
+        ///  returns: new [SPBrightnessGrid] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `data` is NULL
+        ///  - when the provided `data_length` does not match `height` and `width`
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `data` points to a valid memory location of at least `data_length`
+        ///    bytes in size.
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_brightness_grid_free`.
+        /// </summary>
         public static BrightnessGrid Load(nuint width, nuint height, byte* data, nuint data_length)
         {
             return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_load(width, height, data, data_length));
         }
 
+        /// <summary>
+        ///  Clones a [SPBrightnessGrid].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  returns: new [SPBrightnessGrid] instance. Will never return NULL.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `brightness_grid` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
+        ///  - `brightness_grid` is not written to concurrently
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_brightness_grid_free`.
+        /// </summary>
         public BrightnessGrid Clone()
         {
             return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_clone(Instance));
         }
 
+        /// <summary>
+        ///  Gets the current value at the specified position.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///  - `x` and `y`: position of the cell to read
+        ///
+        ///  returns: value at position
+        ///
+        ///  # Panics
+        ///
+        ///  - when `brightness_grid` is NULL
+        ///  - When accessing `x` or `y` out of bounds.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
+        ///  - `brightness_grid` is not written to concurrently
+        /// </summary>
         public byte Get(nuint x, nuint y)
         {
             return BrightnessGrid.sp_brightness_grid_get(Instance, x, y);
         }
 
+        /// <summary>
+        ///  Sets the value of the specified position in the [SPBrightnessGrid].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to write to
+        ///  - `x` and `y`: position of the cell
+        ///  - `value`: the value to write to the cell
+        ///
+        ///  returns: old value of the cell
+        ///
+        ///  # Panics
+        ///
+        ///  - when `brightness_grid` is NULL
+        ///  - When accessing `x` or `y` out of bounds.
+        ///  - When providing an invalid brightness value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid [SPBitVec]
+        ///  - `brightness_grid` is not written to or read from concurrently
+        /// </summary>
         public void Set(nuint x, nuint y, byte value)
         {
             BrightnessGrid.sp_brightness_grid_set(Instance, x, y, value);
         }
 
+        /// <summary>
+        ///  Sets the value of all cells in the [SPBrightnessGrid].
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to write to
+        ///  - `value`: the value to set all cells to
+        ///
+        ///  # Panics
+        ///
+        ///  - when `brightness_grid` is NULL
+        ///  - When providing an invalid brightness value
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
+        ///  - `brightness_grid` is not written to or read from concurrently
+        /// </summary>
         public void Fill(byte value)
         {
             BrightnessGrid.sp_brightness_grid_fill(Instance, value);
         }
 
+        /// <summary>
+        ///  Gets the width of the [SPBrightnessGrid] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  returns: width
+        ///
+        ///  # Panics
+        ///
+        ///  - when `brightness_grid` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
+        /// </summary>
         public nuint Width()
         {
             return BrightnessGrid.sp_brightness_grid_width(Instance);
         }
 
+        /// <summary>
+        ///  Gets the height of the [SPBrightnessGrid] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  returns: height
+        ///
+        ///  # Panics
+        ///
+        ///  - when `brightness_grid` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
+        /// </summary>
         public nuint Height()
         {
             return BrightnessGrid.sp_brightness_grid_height(Instance);
         }
 
+        /// <summary>
+        ///  Gets an unsafe reference to the data of the [SPBrightnessGrid] instance.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `brightness_grid`: instance to read from
+        ///
+        ///  returns: slice of bytes underlying the `brightness_grid`.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `brightness_grid` is NULL
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
+        ///  - the returned memory range is never accessed after the passed [SPBrightnessGrid] has been freed
+        ///  - the returned memory range is never accessed concurrently, either via the [SPBrightnessGrid] or directly
+        /// </summary>
         public SPByteSlice UnsafeDataRef()
         {
             return BrightnessGrid.sp_brightness_grid_unsafe_data_ref(Instance);
@@ -108,230 +286,33 @@ namespace ServicePoint
             
         const string __DllName = "servicepoint_binding_c";
 #nullable restore
-        /// <summary>
-        ///  Creates a new [SPBrightnessGrid] with the specified dimensions.
-        ///
-        ///  returns: [SPBrightnessGrid] initialized to 0. Will never return NULL.
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_brightness_grid_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBrightnessGrid* sp_brightness_grid_new(nuint width, nuint height);
 
-        /// <summary>
-        ///  Loads a [SPBrightnessGrid] with the specified dimensions from the provided data.
-        ///
-        ///  returns: new [SPBrightnessGrid] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `data` is NULL
-        ///  - when the provided `data_length` does not match `height` and `width`
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `data` points to a valid memory location of at least `data_length`
-        ///    bytes in size.
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_brightness_grid_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBrightnessGrid* sp_brightness_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
-        /// <summary>
-        ///  Clones a [SPBrightnessGrid].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `brightness_grid`: instance to read from
-        ///
-        ///  returns: new [SPBrightnessGrid] instance. Will never return NULL.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `brightness_grid` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
-        ///  - `brightness_grid` is not written to concurrently
-        ///  - the returned instance is freed in some way, either by using a consuming function or
-        ///    by explicitly calling `sp_brightness_grid_free`.
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBrightnessGrid* sp_brightness_grid_clone(SPBrightnessGrid* brightness_grid);
 
-        /// <summary>
-        ///  Deallocates a [SPBrightnessGrid].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `brightness_grid`: instance to read from
-        ///
-        ///  # Panics
-        ///
-        ///  - when `brightness_grid` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
-        ///  - `brightness_grid` is not used concurrently or after this call
-        ///  - `brightness_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_brightness_grid_free(SPBrightnessGrid* brightness_grid);
 
-        /// <summary>
-        ///  Gets the current value at the specified position.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `brightness_grid`: instance to read from
-        ///  - `x` and `y`: position of the cell to read
-        ///
-        ///  returns: value at position
-        ///
-        ///  # Panics
-        ///
-        ///  - when `brightness_grid` is NULL
-        ///  - When accessing `x` or `y` out of bounds.
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
-        ///  - `brightness_grid` is not written to concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern byte sp_brightness_grid_get(SPBrightnessGrid* brightness_grid, nuint x, nuint y);
 
-        /// <summary>
-        ///  Sets the value of the specified position in the [SPBrightnessGrid].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `brightness_grid`: instance to write to
-        ///  - `x` and `y`: position of the cell
-        ///  - `value`: the value to write to the cell
-        ///
-        ///  returns: old value of the cell
-        ///
-        ///  # Panics
-        ///
-        ///  - when `brightness_grid` is NULL
-        ///  - When accessing `x` or `y` out of bounds.
-        ///  - When providing an invalid brightness value
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `brightness_grid` points to a valid [SPBitVec]
-        ///  - `brightness_grid` is not written to or read from concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_brightness_grid_set(SPBrightnessGrid* brightness_grid, nuint x, nuint y, byte value);
 
-        /// <summary>
-        ///  Sets the value of all cells in the [SPBrightnessGrid].
-        ///
-        ///  # Arguments
-        ///
-        ///  - `brightness_grid`: instance to write to
-        ///  - `value`: the value to set all cells to
-        ///
-        ///  # Panics
-        ///
-        ///  - when `brightness_grid` is NULL
-        ///  - When providing an invalid brightness value
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
-        ///  - `brightness_grid` is not written to or read from concurrently
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void sp_brightness_grid_fill(SPBrightnessGrid* brightness_grid, byte value);
 
-        /// <summary>
-        ///  Gets the width of the [SPBrightnessGrid] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `brightness_grid`: instance to read from
-        ///
-        ///  returns: width
-        ///
-        ///  # Panics
-        ///
-        ///  - when `brightness_grid` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern nuint sp_brightness_grid_width(SPBrightnessGrid* brightness_grid);
 
-        /// <summary>
-        ///  Gets the height of the [SPBrightnessGrid] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `brightness_grid`: instance to read from
-        ///
-        ///  returns: height
-        ///
-        ///  # Panics
-        ///
-        ///  - when `brightness_grid` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern nuint sp_brightness_grid_height(SPBrightnessGrid* brightness_grid);
 
-        /// <summary>
-        ///  Gets an unsafe reference to the data of the [SPBrightnessGrid] instance.
-        ///
-        ///  # Arguments
-        ///
-        ///  - `brightness_grid`: instance to read from
-        ///
-        ///  returns: slice of bytes underlying the `brightness_grid`.
-        ///
-        ///  # Panics
-        ///
-        ///  - when `brightness_grid` is NULL
-        ///
-        ///  # Safety
-        ///
-        ///  The caller has to make sure that:
-        ///
-        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
-        ///  - the returned memory range is never accessed after the passed [SPBrightnessGrid] has been freed
-        ///  - the returned memory range is never accessed concurrently, either via the [SPBrightnessGrid] or directly
-        /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPByteSlice sp_brightness_grid_unsafe_data_ref(SPBrightnessGrid* brightness_grid);
 
