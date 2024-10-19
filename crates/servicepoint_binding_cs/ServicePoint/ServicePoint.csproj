@@ -52,11 +52,6 @@
         </Content>
     </ItemGroup>
 
-    <!--additional csbindgen code generators-->
-    <ItemGroup>
-        <PackageReference Include="csbindgen" Version="1.9.3" PrivateAssets="All"/>
-    </ItemGroup>
-
     <ItemGroup>
         <!-- include link to source code at revision -->
         <None Include="../README.md" Pack="true" PackagePath="\"/>

@@ -8,14 +8,69 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint.BindGen
+namespace ServicePoint
 {
-    public static unsafe partial class PacketNative
+
+    public unsafe sealed partial class Packet: IDisposable
     {
+#nullable enable
+        public static Packet FromCommand(Command command)
+        {
+            return new Packet(Packet.sp_packet_from_command(command.Instance));
+        }
+
+        public static Packet? TryLoad(byte* data, nuint length)
+        {
+            var native = Packet.sp_packet_try_load(data, length);
+            return native == null ? null : new Packet(native);
+        }
+
+        public Packet Clone()
+        {
+            return new Packet(Packet.sp_packet_clone(Instance));
+        }
+
+
+        private SPPacket* _instance;
+        internal SPPacket* Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    throw new NullReferenceException("instance is null");
+                return _instance;
+            }
+        }
+
+        private Packet(SPPacket* instance)
+        {
+            ArgumentNullException.ThrowIfNull(instance);
+            _instance = instance;
+        }
+
+        internal SPPacket* Into()
+        {
+            var instance = Instance;
+            _instance = null;
+            return instance;
+        }
+
+        private void Free()
+        {
+            if (_instance != null)
+                Packet.sp_packet_free(Into());
+        }
+
+        public void Dispose()
+        {
+            Free();
+            GC.SuppressFinalize(this);
+        }
+
+        ~Packet() => Free();
+            
         const string __DllName = "servicepoint_binding_c";
-
-
-
+#nullable restore
         /// <summary>
         ///  Turns a [SPCommand] into a [SPPacket].
         ///  The [SPCommand] gets consumed.
@@ -36,7 +91,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_packet_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_from_command(Command* command);
+        private static extern SPPacket* sp_packet_from_command(SPCommand* command);
 
         /// <summary>
         ///  Tries to load a [SPPacket] from the passed array with the specified length.
@@ -57,7 +112,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_packet_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_try_load(byte* data, nuint length);
+        private static extern SPPacket* sp_packet_try_load(byte* data, nuint length);
 
         /// <summary>
         ///  Clones a [SPPacket].
@@ -78,7 +133,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_packet_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Packet* sp_packet_clone(Packet* packet);
+        private static extern SPPacket* sp_packet_clone(SPPacket* packet);
 
         /// <summary>
         ///  Deallocates a [SPPacket].
@@ -95,13 +150,13 @@ namespace ServicePoint.BindGen
         ///  - `packet` is not used concurrently or after this call
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_packet_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_packet_free(Packet* packet);
+        private static extern void sp_packet_free(SPPacket* packet);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Packet
+    public unsafe partial struct SPPacket
     {
     }
 

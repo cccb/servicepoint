@@ -8,14 +8,95 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint.BindGen
+namespace ServicePoint
 {
-    public static unsafe partial class Cp437GridNative
+
+    public unsafe sealed partial class Cp437Grid: IDisposable
     {
+#nullable enable
+        public Cp437Grid(nuint width, nuint height) : this(sp_cp437_grid_new(width, height)) {}
+
+        public static Cp437Grid Load(nuint width, nuint height, byte* data, nuint data_length)
+        {
+            return new Cp437Grid(Cp437Grid.sp_cp437_grid_load(width, height, data, data_length));
+        }
+
+        public Cp437Grid Clone()
+        {
+            return new Cp437Grid(Cp437Grid.sp_cp437_grid_clone(Instance));
+        }
+
+        public byte Get(nuint x, nuint y)
+        {
+            return Cp437Grid.sp_cp437_grid_get(Instance, x, y);
+        }
+
+        public void Set(nuint x, nuint y, byte value)
+        {
+            Cp437Grid.sp_cp437_grid_set(Instance, x, y, value);
+        }
+
+        public void Fill(byte value)
+        {
+            Cp437Grid.sp_cp437_grid_fill(Instance, value);
+        }
+
+        public nuint Width()
+        {
+            return Cp437Grid.sp_cp437_grid_width(Instance);
+        }
+
+        public nuint Height()
+        {
+            return Cp437Grid.sp_cp437_grid_height(Instance);
+        }
+
+        public SPByteSlice UnsafeDataRef()
+        {
+            return Cp437Grid.sp_cp437_grid_unsafe_data_ref(Instance);
+        }
+
+
+        private SPCp437Grid* _instance;
+        internal SPCp437Grid* Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    throw new NullReferenceException("instance is null");
+                return _instance;
+            }
+        }
+
+        private Cp437Grid(SPCp437Grid* instance)
+        {
+            ArgumentNullException.ThrowIfNull(instance);
+            _instance = instance;
+        }
+
+        internal SPCp437Grid* Into()
+        {
+            var instance = Instance;
+            _instance = null;
+            return instance;
+        }
+
+        private void Free()
+        {
+            if (_instance != null)
+                Cp437Grid.sp_cp437_grid_free(Into());
+        }
+
+        public void Dispose()
+        {
+            Free();
+            GC.SuppressFinalize(this);
+        }
+
+        ~Cp437Grid() => Free();
+            
         const string __DllName = "servicepoint_binding_c";
-
-
-
+#nullable restore
         /// <summary>
         ///  Creates a new [SPCp437Grid] with the specified dimensions.
         ///
@@ -29,7 +110,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Cp437Grid* sp_cp437_grid_new(nuint width, nuint height);
+        private static extern SPCp437Grid* sp_cp437_grid_new(nuint width, nuint height);
 
         /// <summary>
         ///  Loads a [SPCp437Grid] with the specified dimensions from the provided data.
@@ -51,7 +132,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Cp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        private static extern SPCp437Grid* sp_cp437_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
         ///  Clones a [SPCp437Grid].
@@ -72,7 +153,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Cp437Grid* sp_cp437_grid_clone(Cp437Grid* cp437_grid);
+        private static extern SPCp437Grid* sp_cp437_grid_clone(SPCp437Grid* cp437_grid);
 
         /// <summary>
         ///  Deallocates a [SPCp437Grid].
@@ -90,7 +171,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_free(Cp437Grid* cp437_grid);
+        private static extern void sp_cp437_grid_free(SPCp437Grid* cp437_grid);
 
         /// <summary>
         ///  Gets the current value at the specified position.
@@ -113,7 +194,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` is not written to concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_cp437_grid_get(Cp437Grid* cp437_grid, nuint x, nuint y);
+        private static extern byte sp_cp437_grid_get(SPCp437Grid* cp437_grid, nuint x, nuint y);
 
         /// <summary>
         ///  Sets the value of the specified position in the [SPCp437Grid].
@@ -139,7 +220,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_set(Cp437Grid* cp437_grid, nuint x, nuint y, byte value);
+        private static extern void sp_cp437_grid_set(SPCp437Grid* cp437_grid, nuint x, nuint y, byte value);
 
         /// <summary>
         ///  Sets the value of all cells in the [SPCp437Grid].
@@ -161,7 +242,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_cp437_grid_fill(Cp437Grid* cp437_grid, byte value);
+        private static extern void sp_cp437_grid_fill(SPCp437Grid* cp437_grid, byte value);
 
         /// <summary>
         ///  Gets the width of the [SPCp437Grid] instance.
@@ -181,7 +262,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_width(Cp437Grid* cp437_grid);
+        private static extern nuint sp_cp437_grid_width(SPCp437Grid* cp437_grid);
 
         /// <summary>
         ///  Gets the height of the [SPCp437Grid] instance.
@@ -201,7 +282,7 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_cp437_grid_height(Cp437Grid* cp437_grid);
+        private static extern nuint sp_cp437_grid_height(SPCp437Grid* cp437_grid);
 
         /// <summary>
         ///  Gets an unsafe reference to the data of the [SPCp437Grid] instance.
@@ -221,13 +302,13 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed concurrently, either via the [SPCp437Grid] or directly
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_cp437_grid_unsafe_data_ref(Cp437Grid* cp437_grid);
+        private static extern SPByteSlice sp_cp437_grid_unsafe_data_ref(SPCp437Grid* cp437_grid);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Cp437Grid
+    public unsafe partial struct SPCp437Grid
     {
     }
 

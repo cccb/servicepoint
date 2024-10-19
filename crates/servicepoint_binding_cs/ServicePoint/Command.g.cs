@@ -8,14 +8,119 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint.BindGen
+namespace ServicePoint
 {
-    public static unsafe partial class CommandNative
+
+    public unsafe sealed partial class Command: IDisposable
     {
+#nullable enable
+        public static Command? TryFromPacket(Packet packet)
+        {
+            var native = Command.sp_command_try_from_packet(packet.Instance);
+            return native == null ? null : new Command(native);
+        }
+
+        public Command Clone()
+        {
+            return new Command(Command.sp_command_clone(Instance));
+        }
+
+        public static Command Clear()
+        {
+            return new Command(Command.sp_command_clear());
+        }
+
+        public static Command HardReset()
+        {
+            return new Command(Command.sp_command_hard_reset());
+        }
+
+        public static Command FadeOut()
+        {
+            return new Command(Command.sp_command_fade_out());
+        }
+
+        public static Command Brightness(byte brightness)
+        {
+            return new Command(Command.sp_command_brightness(brightness));
+        }
+
+        public static Command CharBrightness(nuint x, nuint y, BrightnessGrid grid)
+        {
+            return new Command(Command.sp_command_char_brightness(x, y, grid.Instance));
+        }
+
+        public static Command BitmapLinear(nuint offset, BitVec bit_vec, CompressionCode compression)
+        {
+            return new Command(Command.sp_command_bitmap_linear(offset, bit_vec.Instance, compression));
+        }
+
+        public static Command BitmapLinearAnd(nuint offset, BitVec bit_vec, CompressionCode compression)
+        {
+            return new Command(Command.sp_command_bitmap_linear_and(offset, bit_vec.Instance, compression));
+        }
+
+        public static Command BitmapLinearOr(nuint offset, BitVec bit_vec, CompressionCode compression)
+        {
+            return new Command(Command.sp_command_bitmap_linear_or(offset, bit_vec.Instance, compression));
+        }
+
+        public static Command BitmapLinearXor(nuint offset, BitVec bit_vec, CompressionCode compression)
+        {
+            return new Command(Command.sp_command_bitmap_linear_xor(offset, bit_vec.Instance, compression));
+        }
+
+        public static Command Cp437Data(nuint x, nuint y, Cp437Grid grid)
+        {
+            return new Command(Command.sp_command_cp437_data(x, y, grid.Instance));
+        }
+
+        public static Command BitmapLinearWin(nuint x, nuint y, Bitmap bitmap, CompressionCode compression_code)
+        {
+            return new Command(Command.sp_command_bitmap_linear_win(x, y, bitmap.Instance, compression_code));
+        }
+
+
+        private SPCommand* _instance;
+        internal SPCommand* Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    throw new NullReferenceException("instance is null");
+                return _instance;
+            }
+        }
+
+        private Command(SPCommand* instance)
+        {
+            ArgumentNullException.ThrowIfNull(instance);
+            _instance = instance;
+        }
+
+        internal SPCommand* Into()
+        {
+            var instance = Instance;
+            _instance = null;
+            return instance;
+        }
+
+        private void Free()
+        {
+            if (_instance != null)
+                Command.sp_command_free(Into());
+        }
+
+        public void Dispose()
+        {
+            Free();
+            GC.SuppressFinalize(this);
+        }
+
+        ~Command() => Free();
+            
         const string __DllName = "servicepoint_binding_c";
-
-
-
+#nullable restore
         /// <summary>
         ///  Tries to turn a [SPPacket] into a [SPCommand].
         ///
@@ -38,7 +143,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_try_from_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_try_from_packet(Packet* packet);
+        private static extern SPCommand* sp_command_try_from_packet(SPPacket* packet);
 
         /// <summary>
         ///  Clones a [SPCommand] instance.
@@ -59,7 +164,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_clone(Command* command);
+        private static extern SPCommand* sp_command_clone(SPCommand* command);
 
         /// <summary>
         ///  Set all pixels to the off state.
@@ -82,7 +187,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_clear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_clear();
+        private static extern SPCommand* sp_command_clear();
 
         /// <summary>
         ///  Kills the udp daemon on the display, which usually results in a restart.
@@ -99,7 +204,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_hard_reset", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_hard_reset();
+        private static extern SPCommand* sp_command_hard_reset();
 
         /// <summary>
         ///  A yet-to-be-tested command.
@@ -114,7 +219,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_fade_out", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_fade_out();
+        private static extern SPCommand* sp_command_fade_out();
 
         /// <summary>
         ///  Set the brightness of all tiles to the same value.
@@ -133,7 +238,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_brightness(byte brightness);
+        private static extern SPCommand* sp_command_brightness(byte brightness);
 
         /// <summary>
         ///  Set the brightness of individual tiles in a rectangular area of the display.
@@ -156,7 +261,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_char_brightness", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_char_brightness(nuint x, nuint y, BrightnessGrid* grid);
+        private static extern SPCommand* sp_command_char_brightness(nuint x, nuint y, SPBrightnessGrid* grid);
 
         /// <summary>
         ///  Set pixel data starting at the pixel offset on screen.
@@ -186,7 +291,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear(nuint offset, BitVec* bit_vec, CompressionCode compression);
+        private static extern SPCommand* sp_command_bitmap_linear(nuint offset, SPBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Set pixel data according to an and-mask starting at the offset.
@@ -216,7 +321,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_and", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_and(nuint offset, BitVec* bit_vec, CompressionCode compression);
+        private static extern SPCommand* sp_command_bitmap_linear_and(nuint offset, SPBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Set pixel data according to an or-mask starting at the offset.
@@ -246,7 +351,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_or", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_or(nuint offset, BitVec* bit_vec, CompressionCode compression);
+        private static extern SPCommand* sp_command_bitmap_linear_or(nuint offset, SPBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Set pixel data according to a xor-mask starting at the offset.
@@ -276,7 +381,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_xor", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_xor(nuint offset, BitVec* bit_vec, CompressionCode compression);
+        private static extern SPCommand* sp_command_bitmap_linear_xor(nuint offset, SPBitVec* bit_vec, CompressionCode compression);
 
         /// <summary>
         ///  Show text on the screen.
@@ -299,7 +404,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_cp437_data", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_cp437_data(nuint x, nuint y, Cp437Grid* grid);
+        private static extern SPCommand* sp_command_cp437_data(nuint x, nuint y, SPCp437Grid* grid);
 
         /// <summary>
         ///  Sets a window of pixels to the specified values.
@@ -324,7 +429,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_bitmap_linear_win", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Command* sp_command_bitmap_linear_win(nuint x, nuint y, Bitmap* bitmap, CompressionCode compression_code);
+        private static extern SPCommand* sp_command_bitmap_linear_win(nuint x, nuint y, SPBitmap* bitmap, CompressionCode compression_code);
 
         /// <summary>
         ///  Deallocates a [SPCommand].
@@ -349,13 +454,13 @@ namespace ServicePoint.BindGen
         ///  - `command` was not passed to another consuming function, e.g. to create a [SPPacket]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_command_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_command_free(Command* command);
+        private static extern void sp_command_free(SPCommand* command);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Command
+    public unsafe partial struct SPCommand
     {
     }
 

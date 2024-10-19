@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using ServicePoint.BindGen;
 
 namespace ServicePoint;
 
@@ -15,7 +14,7 @@ public static class ServicePointExtensions
         return Command.TryFromPacket(packet, out command);
     }
 
-    public unsafe static Span<byte> AsSpan(this ByteSlice slice)
+    public unsafe static Span<byte> AsSpan(this SPByteSlice slice)
     {
         return new Span<byte>(slice.start, (int)slice.length);
     }

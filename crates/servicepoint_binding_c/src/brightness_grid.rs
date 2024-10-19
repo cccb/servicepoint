@@ -48,9 +48,9 @@ pub unsafe extern "C" fn sp_brightness_grid_new(
     width: usize,
     height: usize,
 ) -> NonNull<SPBrightnessGrid> {
-    let result = Box::new(SPBrightnessGrid(
-        servicepoint::BrightnessGrid::new(width, height),
-    ));
+    let result = Box::new(SPBrightnessGrid(servicepoint::BrightnessGrid::new(
+        width, height,
+    )));
     NonNull::from(Box::leak(result))
 }
 

@@ -1,5 +1,3 @@
-using ServicePoint.BindGen;
-
 namespace ServicePoint;
 
 public static class Constants

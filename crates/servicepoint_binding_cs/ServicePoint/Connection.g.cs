@@ -8,14 +8,69 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint.BindGen
+namespace ServicePoint
 {
-    public static unsafe partial class ConnectionNative
+
+    public unsafe sealed partial class Connection: IDisposable
     {
+#nullable enable
+        public static Connection? Open(byte* host)
+        {
+            var native = Connection.sp_connection_open(host);
+            return native == null ? null : new Connection(native);
+        }
+
+        public bool SendPacket(Packet packet)
+        {
+            return Connection.sp_connection_send_packet(Instance, packet.Instance);
+        }
+
+        public bool SendCommand(Command command)
+        {
+            return Connection.sp_connection_send_command(Instance, command.Instance);
+        }
+
+
+        private SPConnection* _instance;
+        internal SPConnection* Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    throw new NullReferenceException("instance is null");
+                return _instance;
+            }
+        }
+
+        private Connection(SPConnection* instance)
+        {
+            ArgumentNullException.ThrowIfNull(instance);
+            _instance = instance;
+        }
+
+        internal SPConnection* Into()
+        {
+            var instance = Instance;
+            _instance = null;
+            return instance;
+        }
+
+        private void Free()
+        {
+            if (_instance != null)
+                Connection.sp_connection_free(Into());
+        }
+
+        public void Dispose()
+        {
+            Free();
+            GC.SuppressFinalize(this);
+        }
+
+        ~Connection() => Free();
+            
         const string __DllName = "servicepoint_binding_c";
-
-
-
+#nullable restore
         /// <summary>
         ///  Creates a new instance of [SPConnection].
         ///
@@ -33,7 +88,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_connection_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Connection* sp_connection_open(byte* host);
+        private static extern SPConnection* sp_connection_open(byte* host);
 
         /// <summary>
         ///  Sends a [SPPacket] to the display using the [SPConnection].
@@ -57,7 +112,7 @@ namespace ServicePoint.BindGen
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send_packet(Connection* connection, Packet* packet);
+        private static extern bool sp_connection_send_packet(SPConnection* connection, SPPacket* packet);
 
         /// <summary>
         ///  Sends a [SPCommand] to the display using the [SPConnection].
@@ -81,7 +136,7 @@ namespace ServicePoint.BindGen
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_send_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_connection_send_command(Connection* connection, Command* command);
+        private static extern bool sp_connection_send_command(SPConnection* connection, SPCommand* command);
 
         /// <summary>
         ///  Closes and deallocates a [SPConnection].
@@ -98,13 +153,13 @@ namespace ServicePoint.BindGen
         ///  - `connection` is not used concurrently or after this call
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_connection_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_connection_free(Connection* connection);
+        private static extern void sp_connection_free(SPConnection* connection);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Connection
+    public unsafe partial struct SPConnection
     {
     }
 

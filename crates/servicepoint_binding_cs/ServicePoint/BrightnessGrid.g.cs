@@ -8,7 +8,7 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint.BindGen
+namespace ServicePoint
 {
     public static unsafe partial class BrightnessGridNative
     {
@@ -19,6 +19,95 @@ namespace ServicePoint.BindGen
         public const byte SP_BRIGHTNESS_LEVELS = 12;
 
 
+
+    }
+
+    public unsafe sealed partial class BrightnessGrid: IDisposable
+    {
+#nullable enable
+        public BrightnessGrid(nuint width, nuint height) : this(sp_brightness_grid_new(width, height)) {}
+
+        public static BrightnessGrid Load(nuint width, nuint height, byte* data, nuint data_length)
+        {
+            return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_load(width, height, data, data_length));
+        }
+
+        public BrightnessGrid Clone()
+        {
+            return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_clone(Instance));
+        }
+
+        public byte Get(nuint x, nuint y)
+        {
+            return BrightnessGrid.sp_brightness_grid_get(Instance, x, y);
+        }
+
+        public void Set(nuint x, nuint y, byte value)
+        {
+            BrightnessGrid.sp_brightness_grid_set(Instance, x, y, value);
+        }
+
+        public void Fill(byte value)
+        {
+            BrightnessGrid.sp_brightness_grid_fill(Instance, value);
+        }
+
+        public nuint Width()
+        {
+            return BrightnessGrid.sp_brightness_grid_width(Instance);
+        }
+
+        public nuint Height()
+        {
+            return BrightnessGrid.sp_brightness_grid_height(Instance);
+        }
+
+        public SPByteSlice UnsafeDataRef()
+        {
+            return BrightnessGrid.sp_brightness_grid_unsafe_data_ref(Instance);
+        }
+
+
+        private SPBrightnessGrid* _instance;
+        internal SPBrightnessGrid* Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    throw new NullReferenceException("instance is null");
+                return _instance;
+            }
+        }
+
+        private BrightnessGrid(SPBrightnessGrid* instance)
+        {
+            ArgumentNullException.ThrowIfNull(instance);
+            _instance = instance;
+        }
+
+        internal SPBrightnessGrid* Into()
+        {
+            var instance = Instance;
+            _instance = null;
+            return instance;
+        }
+
+        private void Free()
+        {
+            if (_instance != null)
+                BrightnessGrid.sp_brightness_grid_free(Into());
+        }
+
+        public void Dispose()
+        {
+            Free();
+            GC.SuppressFinalize(this);
+        }
+
+        ~BrightnessGrid() => Free();
+            
+        const string __DllName = "servicepoint_binding_c";
+#nullable restore
         /// <summary>
         ///  Creates a new [SPBrightnessGrid] with the specified dimensions.
         ///
@@ -32,7 +121,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_brightness_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BrightnessGrid* sp_brightness_grid_new(nuint width, nuint height);
+        private static extern SPBrightnessGrid* sp_brightness_grid_new(nuint width, nuint height);
 
         /// <summary>
         ///  Loads a [SPBrightnessGrid] with the specified dimensions from the provided data.
@@ -54,7 +143,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_brightness_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BrightnessGrid* sp_brightness_grid_load(nuint width, nuint height, byte* data, nuint data_length);
+        private static extern SPBrightnessGrid* sp_brightness_grid_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
         ///  Clones a [SPBrightnessGrid].
@@ -79,7 +168,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_brightness_grid_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern BrightnessGrid* sp_brightness_grid_clone(BrightnessGrid* brightness_grid);
+        private static extern SPBrightnessGrid* sp_brightness_grid_clone(SPBrightnessGrid* brightness_grid);
 
         /// <summary>
         ///  Deallocates a [SPBrightnessGrid].
@@ -101,7 +190,7 @@ namespace ServicePoint.BindGen
         ///  - `brightness_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_free(BrightnessGrid* brightness_grid);
+        private static extern void sp_brightness_grid_free(SPBrightnessGrid* brightness_grid);
 
         /// <summary>
         ///  Gets the current value at the specified position.
@@ -126,7 +215,7 @@ namespace ServicePoint.BindGen
         ///  - `brightness_grid` is not written to concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern byte sp_brightness_grid_get(BrightnessGrid* brightness_grid, nuint x, nuint y);
+        private static extern byte sp_brightness_grid_get(SPBrightnessGrid* brightness_grid, nuint x, nuint y);
 
         /// <summary>
         ///  Sets the value of the specified position in the [SPBrightnessGrid].
@@ -153,7 +242,7 @@ namespace ServicePoint.BindGen
         ///  - `brightness_grid` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_set(BrightnessGrid* brightness_grid, nuint x, nuint y, byte value);
+        private static extern void sp_brightness_grid_set(SPBrightnessGrid* brightness_grid, nuint x, nuint y, byte value);
 
         /// <summary>
         ///  Sets the value of all cells in the [SPBrightnessGrid].
@@ -176,7 +265,7 @@ namespace ServicePoint.BindGen
         ///  - `brightness_grid` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_brightness_grid_fill(BrightnessGrid* brightness_grid, byte value);
+        private static extern void sp_brightness_grid_fill(SPBrightnessGrid* brightness_grid, byte value);
 
         /// <summary>
         ///  Gets the width of the [SPBrightnessGrid] instance.
@@ -198,7 +287,7 @@ namespace ServicePoint.BindGen
         ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_brightness_grid_width(BrightnessGrid* brightness_grid);
+        private static extern nuint sp_brightness_grid_width(SPBrightnessGrid* brightness_grid);
 
         /// <summary>
         ///  Gets the height of the [SPBrightnessGrid] instance.
@@ -220,7 +309,7 @@ namespace ServicePoint.BindGen
         ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_brightness_grid_height(BrightnessGrid* brightness_grid);
+        private static extern nuint sp_brightness_grid_height(SPBrightnessGrid* brightness_grid);
 
         /// <summary>
         ///  Gets an unsafe reference to the data of the [SPBrightnessGrid] instance.
@@ -244,13 +333,13 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed concurrently, either via the [SPBrightnessGrid] or directly
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_brightness_grid_unsafe_data_ref(BrightnessGrid* brightness_grid);
+        private static extern SPByteSlice sp_brightness_grid_unsafe_data_ref(SPBrightnessGrid* brightness_grid);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct BrightnessGrid
+    public unsafe partial struct SPBrightnessGrid
     {
     }
 

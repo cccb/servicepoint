@@ -8,12 +8,12 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint.BindGen
+namespace ServicePoint
 {
-    
+
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct ByteSlice
+    public unsafe partial struct SPByteSlice
     {
         public byte* start;
         public nuint length;

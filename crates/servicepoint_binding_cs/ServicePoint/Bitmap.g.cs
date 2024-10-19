@@ -8,14 +8,95 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint.BindGen
+namespace ServicePoint
 {
-    public static unsafe partial class BitmapNative
+
+    public unsafe sealed partial class Bitmap: IDisposable
     {
+#nullable enable
+        public Bitmap(nuint width, nuint height) : this(sp_bitmap_new(width, height)) {}
+
+        public static Bitmap Load(nuint width, nuint height, byte* data, nuint data_length)
+        {
+            return new Bitmap(Bitmap.sp_bitmap_load(width, height, data, data_length));
+        }
+
+        public Bitmap Clone()
+        {
+            return new Bitmap(Bitmap.sp_bitmap_clone(Instance));
+        }
+
+        public bool Get(nuint x, nuint y)
+        {
+            return Bitmap.sp_bitmap_get(Instance, x, y);
+        }
+
+        public void Set(nuint x, nuint y, bool value)
+        {
+            Bitmap.sp_bitmap_set(Instance, x, y, value);
+        }
+
+        public void Fill(bool value)
+        {
+            Bitmap.sp_bitmap_fill(Instance, value);
+        }
+
+        public nuint Width()
+        {
+            return Bitmap.sp_bitmap_width(Instance);
+        }
+
+        public nuint Height()
+        {
+            return Bitmap.sp_bitmap_height(Instance);
+        }
+
+        public SPByteSlice UnsafeDataRef()
+        {
+            return Bitmap.sp_bitmap_unsafe_data_ref(Instance);
+        }
+
+
+        private SPBitmap* _instance;
+        internal SPBitmap* Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    throw new NullReferenceException("instance is null");
+                return _instance;
+            }
+        }
+
+        private Bitmap(SPBitmap* instance)
+        {
+            ArgumentNullException.ThrowIfNull(instance);
+            _instance = instance;
+        }
+
+        internal SPBitmap* Into()
+        {
+            var instance = Instance;
+            _instance = null;
+            return instance;
+        }
+
+        private void Free()
+        {
+            if (_instance != null)
+                Bitmap.sp_bitmap_free(Into());
+        }
+
+        public void Dispose()
+        {
+            Free();
+            GC.SuppressFinalize(this);
+        }
+
+        ~Bitmap() => Free();
+            
         const string __DllName = "servicepoint_binding_c";
-
-
-
+#nullable restore
         /// <summary>
         ///  Creates a new [SPBitmap] with the specified dimensions.
         ///
@@ -38,7 +119,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_new(nuint width, nuint height);
+        private static extern SPBitmap* sp_bitmap_new(nuint width, nuint height);
 
         /// <summary>
         ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
@@ -65,7 +146,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
+        private static extern SPBitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
 
         /// <summary>
         ///  Clones a [SPBitmap].
@@ -86,7 +167,7 @@ namespace ServicePoint.BindGen
         ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_clone", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern Bitmap* sp_bitmap_clone(Bitmap* bitmap);
+        private static extern SPBitmap* sp_bitmap_clone(SPBitmap* bitmap);
 
         /// <summary>
         ///  Deallocates a [SPBitmap].
@@ -104,7 +185,7 @@ namespace ServicePoint.BindGen
         ///  - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_free(Bitmap* bitmap);
+        private static extern void sp_bitmap_free(SPBitmap* bitmap);
 
         /// <summary>
         ///  Gets the current value at the specified position in the [SPBitmap].
@@ -128,7 +209,7 @@ namespace ServicePoint.BindGen
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_get", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]
-        public static extern bool sp_bitmap_get(Bitmap* bitmap, nuint x, nuint y);
+        private static extern bool sp_bitmap_get(SPBitmap* bitmap, nuint x, nuint y);
 
         /// <summary>
         ///  Sets the value of the specified position in the [SPBitmap].
@@ -154,7 +235,7 @@ namespace ServicePoint.BindGen
         ///  - `bitmap` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_set(Bitmap* bitmap, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
+        private static extern void sp_bitmap_set(SPBitmap* bitmap, nuint x, nuint y, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
         ///  Sets the state of all pixels in the [SPBitmap].
@@ -176,7 +257,7 @@ namespace ServicePoint.BindGen
         ///  - `bitmap` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_fill", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sp_bitmap_fill(Bitmap* bitmap, [MarshalAs(UnmanagedType.U1)] bool value);
+        private static extern void sp_bitmap_fill(SPBitmap* bitmap, [MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
         ///  Gets the width in pixels of the [SPBitmap] instance.
@@ -196,7 +277,7 @@ namespace ServicePoint.BindGen
         ///  - `bitmap` points to a valid [SPBitmap]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_width", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bitmap_width(Bitmap* bitmap);
+        private static extern nuint sp_bitmap_width(SPBitmap* bitmap);
 
         /// <summary>
         ///  Gets the height in pixels of the [SPBitmap] instance.
@@ -216,7 +297,7 @@ namespace ServicePoint.BindGen
         ///  - `bitmap` points to a valid [SPBitmap]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_height", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint sp_bitmap_height(Bitmap* bitmap);
+        private static extern nuint sp_bitmap_height(SPBitmap* bitmap);
 
         /// <summary>
         ///  Gets an unsafe reference to the data of the [SPBitmap] instance.
@@ -234,13 +315,13 @@ namespace ServicePoint.BindGen
         ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_unsafe_data_ref", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern ByteSlice sp_bitmap_unsafe_data_ref(Bitmap* bitmap);
+        private static extern SPByteSlice sp_bitmap_unsafe_data_ref(SPBitmap* bitmap);
 
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe partial struct Bitmap
+    public unsafe partial struct SPBitmap
     {
     }
 

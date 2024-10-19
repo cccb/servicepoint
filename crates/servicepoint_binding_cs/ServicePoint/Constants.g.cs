@@ -8,7 +8,7 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace ServicePoint.BindGen
+namespace ServicePoint
 {
     public static unsafe partial class ConstantsNative
     {
@@ -21,6 +21,7 @@ namespace ServicePoint.BindGen
 
 
     }
+
 
 
     public enum CompressionCode : ushort

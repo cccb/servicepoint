@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 test = false
 
 [build-dependencies]
-csbindgen = "1.9.3"
+csbindgen = { path = "../servicepoint_csbindgen/csbindgen" }
 convert_case = "0.6.0"
 
 [dependencies]

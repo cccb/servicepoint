@@ -31,11 +31,8 @@ fn main() {
         let mut filled_grid = Bitmap::max_sized();
         filled_grid.fill(true);
 
-        let command = BitmapLinearWin(
-            Origin::ZERO,
-            filled_grid,
-            CompressionCode::Lzma,
-        );
+        let command =
+            BitmapLinearWin(Origin::ZERO, filled_grid, CompressionCode::Lzma);
         connection.send(command).expect("send failed");
     }
 
