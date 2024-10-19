@@ -61,6 +61,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Bitmap Load(nuint width, nuint height, byte* data, nuint data_length)
         {
             return new Bitmap(Bitmap.sp_bitmap_load(width, height, data, data_length));
@@ -84,6 +85,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_bitmap_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Bitmap Clone()
         {
             return new Bitmap(Bitmap.sp_bitmap_clone(this.Instance));
@@ -109,6 +111,7 @@ namespace ServicePoint
         ///  - `bitmap` points to a valid [SPBitmap]
         ///  - `bitmap` is not written to concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool Get(nuint x, nuint y)
         {
             return Bitmap.sp_bitmap_get(this.Instance, x, y);
@@ -137,6 +140,7 @@ namespace ServicePoint
         ///  - `bitmap` points to a valid [SPBitmap]
         ///  - `bitmap` is not written to or read from concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Set(nuint x, nuint y, bool value)
         {
             Bitmap.sp_bitmap_set(this.Instance, x, y, value);
@@ -161,6 +165,7 @@ namespace ServicePoint
         ///  - `bitmap` points to a valid [SPBitmap]
         ///  - `bitmap` is not written to or read from concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Fill(bool value)
         {
             Bitmap.sp_bitmap_fill(this.Instance, value);
@@ -183,6 +188,7 @@ namespace ServicePoint
         ///
         ///  - `bitmap` points to a valid [SPBitmap]
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Width()
         {
             return Bitmap.sp_bitmap_width(this.Instance);
@@ -205,6 +211,7 @@ namespace ServicePoint
         ///
         ///  - `bitmap` points to a valid [SPBitmap]
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Height()
         {
             return Bitmap.sp_bitmap_height(this.Instance);
@@ -225,6 +232,7 @@ namespace ServicePoint
         ///  - the returned memory range is never accessed after the passed [SPBitmap] has been freed
         ///  - the returned memory range is never accessed concurrently, either via the [SPBitmap] or directly
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public SPByteSlice UnsafeDataRef()
         {
             return Bitmap.sp_bitmap_unsafe_data_ref(this.Instance);

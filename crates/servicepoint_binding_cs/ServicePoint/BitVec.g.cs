@@ -54,6 +54,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_bitvec_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static BitVec Load(byte* data, nuint data_length)
         {
             return new BitVec(BitVec.sp_bitvec_load(data, data_length));
@@ -77,6 +78,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_bitvec_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public BitVec Clone()
         {
             return new BitVec(BitVec.sp_bitvec_clone(this.Instance));
@@ -104,6 +106,7 @@ namespace ServicePoint
         ///  - `bit_vec` points to a valid [SPBitVec]
         ///  - `bit_vec` is not written to concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool Get(nuint index)
         {
             return BitVec.sp_bitvec_get(this.Instance, index);
@@ -130,6 +133,7 @@ namespace ServicePoint
         ///  - `bit_vec` points to a valid [SPBitVec]
         ///  - `bit_vec` is not written to or read from concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Set(nuint index, bool value)
         {
             BitVec.sp_bitvec_set(this.Instance, index, value);
@@ -154,6 +158,7 @@ namespace ServicePoint
         ///  - `bit_vec` points to a valid [SPBitVec]
         ///  - `bit_vec` is not written to or read from concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Fill(bool value)
         {
             BitVec.sp_bitvec_fill(this.Instance, value);
@@ -176,6 +181,7 @@ namespace ServicePoint
         ///
         ///  - `bit_vec` points to a valid [SPBitVec]
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Len()
         {
             return BitVec.sp_bitvec_len(this.Instance);
@@ -198,6 +204,7 @@ namespace ServicePoint
         ///
         ///  - `bit_vec` points to a valid [SPBitVec]
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool IsEmpty()
         {
             return BitVec.sp_bitvec_is_empty(this.Instance);
@@ -222,6 +229,7 @@ namespace ServicePoint
         ///  - the returned memory range is never accessed after the passed [SPBitVec] has been freed
         ///  - the returned memory range is never accessed concurrently, either via the [SPBitVec] or directly
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public SPByteSlice UnsafeDataRef()
         {
             return BitVec.sp_bitvec_unsafe_data_ref(this.Instance);

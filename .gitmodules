@@ -1,3 +1,4 @@
 [submodule "crates/servicepoint_csbindgen"]
 	path = crates/servicepoint_csbindgen
 	url = https://github.com/kaesaecracker/servicepoint_csbindgen.git
+	branch = "main"

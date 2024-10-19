@@ -30,6 +30,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_connection_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Connection? Open(byte* host)
         {
             var native = Connection.sp_connection_open(host);
@@ -58,6 +59,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: packet
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool SendPacket(Packet packet)
         {
             return Connection.sp_connection_send_packet(this.Instance, packet.Into());
@@ -85,6 +87,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: packet
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool SendCommand(Command command)
         {
             return Connection.sp_connection_send_command(this.Instance, command.Instance);

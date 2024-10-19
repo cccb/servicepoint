@@ -47,6 +47,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Cp437Grid Load(nuint width, nuint height, byte* data, nuint data_length)
         {
             return new Cp437Grid(Cp437Grid.sp_cp437_grid_load(width, height, data, data_length));
@@ -70,6 +71,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_cp437_grid_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Cp437Grid Clone()
         {
             return new Cp437Grid(Cp437Grid.sp_cp437_grid_clone(this.Instance));
@@ -95,6 +97,7 @@ namespace ServicePoint
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         ///  - `cp437_grid` is not written to concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public byte Get(nuint x, nuint y)
         {
             return Cp437Grid.sp_cp437_grid_get(this.Instance, x, y);
@@ -123,6 +126,7 @@ namespace ServicePoint
         ///  - `cp437_grid` points to a valid [SPBitVec]
         ///  - `cp437_grid` is not written to or read from concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Set(nuint x, nuint y, byte value)
         {
             Cp437Grid.sp_cp437_grid_set(this.Instance, x, y, value);
@@ -147,6 +151,7 @@ namespace ServicePoint
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         ///  - `cp437_grid` is not written to or read from concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Fill(byte value)
         {
             Cp437Grid.sp_cp437_grid_fill(this.Instance, value);
@@ -169,6 +174,7 @@ namespace ServicePoint
         ///
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Width()
         {
             return Cp437Grid.sp_cp437_grid_width(this.Instance);
@@ -191,6 +197,7 @@ namespace ServicePoint
         ///
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Height()
         {
             return Cp437Grid.sp_cp437_grid_height(this.Instance);
@@ -213,6 +220,7 @@ namespace ServicePoint
         ///  - the returned memory range is never accessed after the passed [SPCp437Grid] has been freed
         ///  - the returned memory range is never accessed concurrently, either via the [SPCp437Grid] or directly
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public SPByteSlice UnsafeDataRef()
         {
             return Cp437Grid.sp_cp437_grid_unsafe_data_ref(this.Instance);

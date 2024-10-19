@@ -47,6 +47,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_brightness_grid_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static BrightnessGrid Load(nuint width, nuint height, byte* data, nuint data_length)
         {
             return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_load(width, height, data, data_length));
@@ -74,6 +75,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_brightness_grid_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public BrightnessGrid Clone()
         {
             return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_clone(this.Instance));
@@ -101,6 +103,7 @@ namespace ServicePoint
         ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
         ///  - `brightness_grid` is not written to concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public byte Get(nuint x, nuint y)
         {
             return BrightnessGrid.sp_brightness_grid_get(this.Instance, x, y);
@@ -130,6 +133,7 @@ namespace ServicePoint
         ///  - `brightness_grid` points to a valid [SPBitVec]
         ///  - `brightness_grid` is not written to or read from concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Set(nuint x, nuint y, byte value)
         {
             BrightnessGrid.sp_brightness_grid_set(this.Instance, x, y, value);
@@ -155,6 +159,7 @@ namespace ServicePoint
         ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
         ///  - `brightness_grid` is not written to or read from concurrently
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Fill(byte value)
         {
             BrightnessGrid.sp_brightness_grid_fill(this.Instance, value);
@@ -179,6 +184,7 @@ namespace ServicePoint
         ///
         ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Width()
         {
             return BrightnessGrid.sp_brightness_grid_width(this.Instance);
@@ -203,6 +209,7 @@ namespace ServicePoint
         ///
         ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Height()
         {
             return BrightnessGrid.sp_brightness_grid_height(this.Instance);
@@ -229,6 +236,7 @@ namespace ServicePoint
         ///  - the returned memory range is never accessed after the passed [SPBrightnessGrid] has been freed
         ///  - the returned memory range is never accessed concurrently, either via the [SPBrightnessGrid] or directly
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public SPByteSlice UnsafeDataRef()
         {
             return BrightnessGrid.sp_brightness_grid_unsafe_data_ref(this.Instance);

@@ -37,6 +37,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: packet
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command? TryFromPacket(Packet packet)
         {
             var native = Command.sp_command_try_from_packet(packet.Into());
@@ -61,6 +62,7 @@ namespace ServicePoint
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Command Clone()
         {
             return new Command(Command.sp_command_clone(this.Instance));
@@ -86,6 +88,7 @@ namespace ServicePoint
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command Clear()
         {
             return new Command(Command.sp_command_clear());
@@ -105,6 +108,7 @@ namespace ServicePoint
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command HardReset()
         {
             return new Command(Command.sp_command_hard_reset());
@@ -122,6 +126,7 @@ namespace ServicePoint
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command FadeOut()
         {
             return new Command(Command.sp_command_fade_out());
@@ -143,6 +148,7 @@ namespace ServicePoint
         ///  - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_command_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command Brightness(byte brightness)
         {
             return new Command(Command.sp_command_brightness(brightness));
@@ -170,6 +176,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: grid
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command CharBrightness(nuint x, nuint y, BrightnessGrid grid)
         {
             return new Command(Command.sp_command_char_brightness(x, y, grid.Into()));
@@ -204,6 +211,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: bit_vec
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinear(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
             return new Command(Command.sp_command_bitmap_linear(offset, bit_vec.Into(), compression));
@@ -238,6 +246,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: bit_vec
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinearAnd(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
             return new Command(Command.sp_command_bitmap_linear_and(offset, bit_vec.Into(), compression));
@@ -272,6 +281,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: bit_vec
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinearOr(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
             return new Command(Command.sp_command_bitmap_linear_or(offset, bit_vec.Into(), compression));
@@ -306,6 +316,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: bit_vec
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinearXor(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
             return new Command(Command.sp_command_bitmap_linear_xor(offset, bit_vec.Into(), compression));
@@ -333,6 +344,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: grid
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command Cp437Data(nuint x, nuint y, Cp437Grid grid)
         {
             return new Command(Command.sp_command_cp437_data(x, y, grid.Into()));
@@ -362,6 +374,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: bitmap
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinearWin(nuint x, nuint y, Bitmap bitmap, CompressionCode compression_code)
         {
             return new Command(Command.sp_command_bitmap_linear_win(x, y, bitmap.Into(), compression_code));

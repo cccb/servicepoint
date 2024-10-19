@@ -35,6 +35,7 @@ namespace ServicePoint
         ///
         ///  servicepoint_csbindgen_consumes: command
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Packet FromCommand(Command command)
         {
             return new Packet(Packet.sp_packet_from_command(command.Into()));
@@ -58,6 +59,7 @@ namespace ServicePoint
         ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_packet_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Packet? TryLoad(byte* data, nuint length)
         {
             var native = Packet.sp_packet_try_load(data, length);
@@ -82,6 +84,7 @@ namespace ServicePoint
         ///  - the returned instance is freed in some way, either by using a consuming function or
         ///    by explicitly calling `sp_packet_free`.
         /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Packet Clone()
         {
             return new Packet(Packet.sp_packet_clone(this.Instance));
