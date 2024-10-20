@@ -40,7 +40,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command? TryFromPacket(Packet packet)
         {
-            var native = Command.sp_command_try_from_packet(packet.Into());
+            var native = Command.sp_command_try_from_packet(packet.__Into());
             return native == null ? null : new Command(native);
         }
 
@@ -65,7 +65,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Command Clone()
         {
-            return new Command(Command.sp_command_clone(this.Instance));
+            return new Command(Command.sp_command_clone(this.__Instance));
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command CharBrightness(nuint x, nuint y, BrightnessGrid grid)
         {
-            return new Command(Command.sp_command_char_brightness(x, y, grid.Into()));
+            return new Command(Command.sp_command_char_brightness(x, y, grid.__Into()));
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinear(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
-            return new Command(Command.sp_command_bitmap_linear(offset, bit_vec.Into(), compression));
+            return new Command(Command.sp_command_bitmap_linear(offset, bit_vec.__Into(), compression));
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinearAnd(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
-            return new Command(Command.sp_command_bitmap_linear_and(offset, bit_vec.Into(), compression));
+            return new Command(Command.sp_command_bitmap_linear_and(offset, bit_vec.__Into(), compression));
         }
 
         /// <summary>
@@ -284,7 +284,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinearOr(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
-            return new Command(Command.sp_command_bitmap_linear_or(offset, bit_vec.Into(), compression));
+            return new Command(Command.sp_command_bitmap_linear_or(offset, bit_vec.__Into(), compression));
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinearXor(nuint offset, BitVec bit_vec, CompressionCode compression)
         {
-            return new Command(Command.sp_command_bitmap_linear_xor(offset, bit_vec.Into(), compression));
+            return new Command(Command.sp_command_bitmap_linear_xor(offset, bit_vec.__Into(), compression));
         }
 
         /// <summary>
@@ -347,7 +347,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command Cp437Data(nuint x, nuint y, Cp437Grid grid)
         {
-            return new Command(Command.sp_command_cp437_data(x, y, grid.Into()));
+            return new Command(Command.sp_command_cp437_data(x, y, grid.__Into()));
         }
 
         /// <summary>
@@ -377,13 +377,13 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Command BitmapLinearWin(nuint x, nuint y, Bitmap bitmap, CompressionCode compression_code)
         {
-            return new Command(Command.sp_command_bitmap_linear_win(x, y, bitmap.Into(), compression_code));
+            return new Command(Command.sp_command_bitmap_linear_win(x, y, bitmap.__Into(), compression_code));
         }
 
 
 #region internal machinery
         private SPCommand* _instance;
-        internal SPCommand* Instance
+        internal SPCommand* __Instance
         {
             get
             {
@@ -399,26 +399,26 @@ namespace ServicePoint
             _instance = instance;
         }
 
-        internal SPCommand* Into()
+        internal SPCommand* __Into()
         {
-            var instance = Instance;
+            var instance = __Instance;
             _instance = null;
             return instance;
         }
 
-        private void Free()
+        private void __Free()
         {
             if (_instance != null)
-                Command.sp_command_free(Into());
+                Command.sp_command_free(__Into());
         }
 
         public void Dispose()
         {
-            Free();
+            __Free();
             GC.SuppressFinalize(this);
         }
 
-        ~Command() => Free();
+        ~Command() => __Free();
             
 #endregion
 

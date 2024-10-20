@@ -3,7 +3,7 @@
 //! prefix `sp_connection_`
 
 use std::ffi::{c_char, CStr};
-use std::ptr::null_mut;
+use std::ptr::{null_mut, NonNull};
 
 use crate::{SPCommand, SPPacket};
 
@@ -18,7 +18,7 @@ use crate::{SPCommand, SPPacket};
 /// ```
 pub struct SPConnection(pub(crate) servicepoint::Connection);
 
-/// Creates a new instance of [SPConnection].
+/// Creates a new instance of [SPConnection] that uses UDP to send.
 ///
 /// returns: NULL if connection fails, or connected instance
 ///
@@ -96,7 +96,7 @@ pub unsafe extern "C" fn sp_connection_send_packet(
 /// - `command` points to a valid instance of [SPPacket]
 /// - `command` is not used concurrently or after this call
 ///
-/// servicepoint_csbindgen_consumes: packet
+/// servicepoint_csbindgen_consumes: command
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send_command(
     connection: *const SPConnection,

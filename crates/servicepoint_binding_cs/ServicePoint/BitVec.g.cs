@@ -81,7 +81,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public BitVec Clone()
         {
-            return new BitVec(BitVec.sp_bitvec_clone(this.Instance));
+            return new BitVec(BitVec.sp_bitvec_clone(this.__Instance));
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool Get(nuint index)
         {
-            return BitVec.sp_bitvec_get(this.Instance, index);
+            return BitVec.sp_bitvec_get(this.__Instance, index);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Set(nuint index, bool value)
         {
-            BitVec.sp_bitvec_set(this.Instance, index, value);
+            BitVec.sp_bitvec_set(this.__Instance, index, value);
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Fill(bool value)
         {
-            BitVec.sp_bitvec_fill(this.Instance, value);
+            BitVec.sp_bitvec_fill(this.__Instance, value);
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Len()
         {
-            return BitVec.sp_bitvec_len(this.Instance);
+            return BitVec.sp_bitvec_len(this.__Instance);
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool IsEmpty()
         {
-            return BitVec.sp_bitvec_is_empty(this.Instance);
+            return BitVec.sp_bitvec_is_empty(this.__Instance);
         }
 
         /// <summary>
@@ -232,13 +232,13 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public SPByteSlice UnsafeDataRef()
         {
-            return BitVec.sp_bitvec_unsafe_data_ref(this.Instance);
+            return BitVec.sp_bitvec_unsafe_data_ref(this.__Instance);
         }
 
 
 #region internal machinery
         private SPBitVec* _instance;
-        internal SPBitVec* Instance
+        internal SPBitVec* __Instance
         {
             get
             {
@@ -254,26 +254,26 @@ namespace ServicePoint
             _instance = instance;
         }
 
-        internal SPBitVec* Into()
+        internal SPBitVec* __Into()
         {
-            var instance = Instance;
+            var instance = __Instance;
             _instance = null;
             return instance;
         }
 
-        private void Free()
+        private void __Free()
         {
             if (_instance != null)
-                BitVec.sp_bitvec_free(Into());
+                BitVec.sp_bitvec_free(__Into());
         }
 
         public void Dispose()
         {
-            Free();
+            __Free();
             GC.SuppressFinalize(this);
         }
 
-        ~BitVec() => Free();
+        ~BitVec() => __Free();
             
 #endregion
 

@@ -38,7 +38,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public static Packet FromCommand(Command command)
         {
-            return new Packet(Packet.sp_packet_from_command(command.Into()));
+            return new Packet(Packet.sp_packet_from_command(command.__Into()));
         }
 
         /// <summary>
@@ -87,13 +87,13 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Packet Clone()
         {
-            return new Packet(Packet.sp_packet_clone(this.Instance));
+            return new Packet(Packet.sp_packet_clone(this.__Instance));
         }
 
 
 #region internal machinery
         private SPPacket* _instance;
-        internal SPPacket* Instance
+        internal SPPacket* __Instance
         {
             get
             {
@@ -109,26 +109,26 @@ namespace ServicePoint
             _instance = instance;
         }
 
-        internal SPPacket* Into()
+        internal SPPacket* __Into()
         {
-            var instance = Instance;
+            var instance = __Instance;
             _instance = null;
             return instance;
         }
 
-        private void Free()
+        private void __Free()
         {
             if (_instance != null)
-                Packet.sp_packet_free(Into());
+                Packet.sp_packet_free(__Into());
         }
 
         public void Dispose()
         {
-            Free();
+            __Free();
             GC.SuppressFinalize(this);
         }
 
-        ~Packet() => Free();
+        ~Packet() => __Free();
             
 #endregion
 

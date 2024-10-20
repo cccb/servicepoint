@@ -78,7 +78,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public BrightnessGrid Clone()
         {
-            return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_clone(this.Instance));
+            return new BrightnessGrid(BrightnessGrid.sp_brightness_grid_clone(this.__Instance));
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public byte Get(nuint x, nuint y)
         {
-            return BrightnessGrid.sp_brightness_grid_get(this.Instance, x, y);
+            return BrightnessGrid.sp_brightness_grid_get(this.__Instance, x, y);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Set(nuint x, nuint y, byte value)
         {
-            BrightnessGrid.sp_brightness_grid_set(this.Instance, x, y, value);
+            BrightnessGrid.sp_brightness_grid_set(this.__Instance, x, y, value);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Fill(byte value)
         {
-            BrightnessGrid.sp_brightness_grid_fill(this.Instance, value);
+            BrightnessGrid.sp_brightness_grid_fill(this.__Instance, value);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Width()
         {
-            return BrightnessGrid.sp_brightness_grid_width(this.Instance);
+            return BrightnessGrid.sp_brightness_grid_width(this.__Instance);
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Height()
         {
-            return BrightnessGrid.sp_brightness_grid_height(this.Instance);
+            return BrightnessGrid.sp_brightness_grid_height(this.__Instance);
         }
 
         /// <summary>
@@ -239,13 +239,13 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public SPByteSlice UnsafeDataRef()
         {
-            return BrightnessGrid.sp_brightness_grid_unsafe_data_ref(this.Instance);
+            return BrightnessGrid.sp_brightness_grid_unsafe_data_ref(this.__Instance);
         }
 
 
 #region internal machinery
         private SPBrightnessGrid* _instance;
-        internal SPBrightnessGrid* Instance
+        internal SPBrightnessGrid* __Instance
         {
             get
             {
@@ -261,26 +261,26 @@ namespace ServicePoint
             _instance = instance;
         }
 
-        internal SPBrightnessGrid* Into()
+        internal SPBrightnessGrid* __Into()
         {
-            var instance = Instance;
+            var instance = __Instance;
             _instance = null;
             return instance;
         }
 
-        private void Free()
+        private void __Free()
         {
             if (_instance != null)
-                BrightnessGrid.sp_brightness_grid_free(Into());
+                BrightnessGrid.sp_brightness_grid_free(__Into());
         }
 
         public void Dispose()
         {
-            Free();
+            __Free();
             GC.SuppressFinalize(this);
         }
 
-        ~BrightnessGrid() => Free();
+        ~BrightnessGrid() => __Free();
             
 #endregion
 

@@ -88,7 +88,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Bitmap Clone()
         {
-            return new Bitmap(Bitmap.sp_bitmap_clone(this.Instance));
+            return new Bitmap(Bitmap.sp_bitmap_clone(this.__Instance));
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool Get(nuint x, nuint y)
         {
-            return Bitmap.sp_bitmap_get(this.Instance, x, y);
+            return Bitmap.sp_bitmap_get(this.__Instance, x, y);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Set(nuint x, nuint y, bool value)
         {
-            Bitmap.sp_bitmap_set(this.Instance, x, y, value);
+            Bitmap.sp_bitmap_set(this.__Instance, x, y, value);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Fill(bool value)
         {
-            Bitmap.sp_bitmap_fill(this.Instance, value);
+            Bitmap.sp_bitmap_fill(this.__Instance, value);
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Width()
         {
-            return Bitmap.sp_bitmap_width(this.Instance);
+            return Bitmap.sp_bitmap_width(this.__Instance);
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Height()
         {
-            return Bitmap.sp_bitmap_height(this.Instance);
+            return Bitmap.sp_bitmap_height(this.__Instance);
         }
 
         /// <summary>
@@ -235,13 +235,13 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public SPByteSlice UnsafeDataRef()
         {
-            return Bitmap.sp_bitmap_unsafe_data_ref(this.Instance);
+            return Bitmap.sp_bitmap_unsafe_data_ref(this.__Instance);
         }
 
 
 #region internal machinery
         private SPBitmap* _instance;
-        internal SPBitmap* Instance
+        internal SPBitmap* __Instance
         {
             get
             {
@@ -257,26 +257,26 @@ namespace ServicePoint
             _instance = instance;
         }
 
-        internal SPBitmap* Into()
+        internal SPBitmap* __Into()
         {
-            var instance = Instance;
+            var instance = __Instance;
             _instance = null;
             return instance;
         }
 
-        private void Free()
+        private void __Free()
         {
             if (_instance != null)
-                Bitmap.sp_bitmap_free(Into());
+                Bitmap.sp_bitmap_free(__Into());
         }
 
         public void Dispose()
         {
-            Free();
+            __Free();
             GC.SuppressFinalize(this);
         }
 
-        ~Bitmap() => Free();
+        ~Bitmap() => __Free();
             
 #endregion
 

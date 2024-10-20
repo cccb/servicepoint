@@ -15,7 +15,7 @@ namespace ServicePoint
     {
 #nullable enable
         /// <summary>
-        ///  Creates a new instance of [SPConnection].
+        ///  Creates a new instance of [SPConnection] that uses UDP to send.
         ///
         ///  returns: NULL if connection fails, or connected instance
         ///
@@ -62,7 +62,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool SendPacket(Packet packet)
         {
-            return Connection.sp_connection_send_packet(this.Instance, packet.Into());
+            return Connection.sp_connection_send_packet(this.__Instance, packet.__Into());
         }
 
         /// <summary>
@@ -85,18 +85,18 @@ namespace ServicePoint
         ///  - `command` points to a valid instance of [SPPacket]
         ///  - `command` is not used concurrently or after this call
         ///
-        ///  servicepoint_csbindgen_consumes: packet
+        ///  servicepoint_csbindgen_consumes: command
         /// </summary>
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public bool SendCommand(Command command)
         {
-            return Connection.sp_connection_send_command(this.Instance, command.Instance);
+            return Connection.sp_connection_send_command(this.__Instance, command.__Into());
         }
 
 
 #region internal machinery
         private SPConnection* _instance;
-        internal SPConnection* Instance
+        internal SPConnection* __Instance
         {
             get
             {
@@ -112,26 +112,26 @@ namespace ServicePoint
             _instance = instance;
         }
 
-        internal SPConnection* Into()
+        internal SPConnection* __Into()
         {
-            var instance = Instance;
+            var instance = __Instance;
             _instance = null;
             return instance;
         }
 
-        private void Free()
+        private void __Free()
         {
             if (_instance != null)
-                Connection.sp_connection_free(Into());
+                Connection.sp_connection_free(__Into());
         }
 
         public void Dispose()
         {
-            Free();
+            __Free();
             GC.SuppressFinalize(this);
         }
 
-        ~Connection() => Free();
+        ~Connection() => __Free();
             
 #endregion
 

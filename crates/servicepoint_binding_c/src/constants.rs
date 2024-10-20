@@ -1,6 +1,6 @@
 //! re-exported constants for use in C
 
-use servicepoint::{CompressionCode};
+use servicepoint::CompressionCode;
 use std::time::Duration;
 
 /// size of a single tile in one dimension

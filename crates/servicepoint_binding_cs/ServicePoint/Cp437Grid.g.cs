@@ -74,7 +74,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Cp437Grid Clone()
         {
-            return new Cp437Grid(Cp437Grid.sp_cp437_grid_clone(this.Instance));
+            return new Cp437Grid(Cp437Grid.sp_cp437_grid_clone(this.__Instance));
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public byte Get(nuint x, nuint y)
         {
-            return Cp437Grid.sp_cp437_grid_get(this.Instance, x, y);
+            return Cp437Grid.sp_cp437_grid_get(this.__Instance, x, y);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Set(nuint x, nuint y, byte value)
         {
-            Cp437Grid.sp_cp437_grid_set(this.Instance, x, y, value);
+            Cp437Grid.sp_cp437_grid_set(this.__Instance, x, y, value);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public void Fill(byte value)
         {
-            Cp437Grid.sp_cp437_grid_fill(this.Instance, value);
+            Cp437Grid.sp_cp437_grid_fill(this.__Instance, value);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Width()
         {
-            return Cp437Grid.sp_cp437_grid_width(this.Instance);
+            return Cp437Grid.sp_cp437_grid_width(this.__Instance);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public nuint Height()
         {
-            return Cp437Grid.sp_cp437_grid_height(this.Instance);
+            return Cp437Grid.sp_cp437_grid_height(this.__Instance);
         }
 
         /// <summary>
@@ -223,13 +223,13 @@ namespace ServicePoint
         [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public SPByteSlice UnsafeDataRef()
         {
-            return Cp437Grid.sp_cp437_grid_unsafe_data_ref(this.Instance);
+            return Cp437Grid.sp_cp437_grid_unsafe_data_ref(this.__Instance);
         }
 
 
 #region internal machinery
         private SPCp437Grid* _instance;
-        internal SPCp437Grid* Instance
+        internal SPCp437Grid* __Instance
         {
             get
             {
@@ -245,26 +245,26 @@ namespace ServicePoint
             _instance = instance;
         }
 
-        internal SPCp437Grid* Into()
+        internal SPCp437Grid* __Into()
         {
-            var instance = Instance;
+            var instance = __Instance;
             _instance = null;
             return instance;
         }
 
-        private void Free()
+        private void __Free()
         {
             if (_instance != null)
-                Cp437Grid.sp_cp437_grid_free(Into());
+                Cp437Grid.sp_cp437_grid_free(__Into());
         }
 
         public void Dispose()
         {
-            Free();
+            __Free();
             GC.SuppressFinalize(this);
         }
 
-        ~Cp437Grid() => Free();
+        ~Cp437Grid() => __Free();
             
 #endregion
 
