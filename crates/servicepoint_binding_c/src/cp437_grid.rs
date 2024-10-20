@@ -70,7 +70,7 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
     data: *const u8,
     data_length: usize,
 ) -> NonNull<SPCp437Grid> {
-    assert!(data.is_null());
+    assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
     let result = Box::new(SPCp437Grid(servicepoint::Cp437Grid::load(
         width, height, data,
