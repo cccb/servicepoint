@@ -42,6 +42,38 @@ namespace ServicePoint
         }
 
         /// <summary>
+        ///  Creates a raw [SPPacket] from parts.
+        ///
+        ///  # Arguments
+        ///
+        ///  - `command_code` specifies which command this packet contains
+        ///  - `a`, `b`, `c` and `d` are command-specific header values
+        ///  - `payload` is the optional data that is part of the command
+        ///  - `payload_len` is the size of the payload
+        ///
+        ///  returns: new instance. Will never return null.
+        ///
+        ///  # Panics
+        ///
+        ///  - when `payload` is null, but `payload_len` is not zero
+        ///  - when `payload_len` is zero, but `payload` is nonnull
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - `payload` points to a valid memory region of at least `payload_len` bytes
+        ///  - `payload` is not written to concurrently
+        ///  - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_packet_free`.
+        /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static Packet FromParts(ushort command_code, ushort a, ushort b, ushort c, ushort d, byte* payload, nuint payload_len)
+        {
+            return new Packet(Packet.sp_packet_from_parts(command_code, a, b, c, d, payload, payload_len));
+        }
+
+        /// <summary>
         ///  Tries to load a [SPPacket] from the passed array with the specified length.
         ///
         ///  returns: NULL in case of an error, pointer to the allocated packet otherwise
@@ -137,6 +169,9 @@ namespace ServicePoint
         const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_packet_from_command", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPPacket* sp_packet_from_command(SPCommand* command);
+
+        [DllImport(__DllName, EntryPoint = "sp_packet_from_parts", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private static extern SPPacket* sp_packet_from_parts(ushort command_code, ushort a, ushort b, ushort c, ushort d, byte* payload, nuint payload_len);
 
         [DllImport(__DllName, EntryPoint = "sp_packet_try_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPPacket* sp_packet_try_load(byte* data, nuint length);

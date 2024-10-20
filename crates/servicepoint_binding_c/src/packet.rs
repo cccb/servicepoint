@@ -38,6 +38,63 @@ pub unsafe extern "C" fn sp_packet_from_command(
     NonNull::from(Box::leak(result))
 }
 
+/// Creates a raw [SPPacket] from parts.
+///
+/// # Arguments
+///
+/// - `command_code` specifies which command this packet contains
+/// - `a`, `b`, `c` and `d` are command-specific header values
+/// - `payload` is the optional data that is part of the command
+/// - `payload_len` is the size of the payload
+///
+/// returns: new instance. Will never return null.
+///
+/// # Panics
+///
+/// - when `payload` is null, but `payload_len` is not zero
+/// - when `payload_len` is zero, but `payload` is nonnull
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `payload` points to a valid memory region of at least `payload_len` bytes
+/// - `payload` is not written to concurrently
+/// - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_packet_free`.
+#[no_mangle]
+pub unsafe extern "C" fn sp_packet_from_parts(
+    command_code: u16,
+    a: u16,
+    b: u16,
+    c: u16,
+    d: u16,
+    payload: *const u8,
+    payload_len: usize,
+) -> NonNull<SPPacket> {
+    assert_eq!(payload.is_null(), payload_len == 0);
+
+    let payload = if payload.is_null() {
+        vec![]
+    } else {
+        let payload = std::slice::from_raw_parts(payload, payload_len);
+        Vec::from(payload)
+    };
+
+    let packet = servicepoint::packet::Packet {
+        header: servicepoint::packet::Header {
+            command_code,
+            a,
+            b,
+            c,
+            d,
+        },
+        payload,
+    };
+    let result = Box::new(SPPacket(packet));
+    NonNull::from(Box::leak(result))
+}
+
 /// Tries to load a [SPPacket] from the passed array with the specified length.
 ///
 /// returns: NULL in case of an error, pointer to the allocated packet otherwise
