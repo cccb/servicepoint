@@ -38,6 +38,24 @@ namespace ServicePoint
         }
 
         /// <summary>
+        ///  Creates a new instance of [SPConnection] for testing that does not actually send anything.
+        ///
+        ///  returns: a new instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_connection_free`.
+        /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static Connection Fake()
+        {
+            return new Connection(Connection.sp_connection_fake());
+        }
+
+        /// <summary>
         ///  Sends a [SPPacket] to the display using the [SPConnection].
         ///
         ///  The passed `packet` gets consumed.
@@ -140,6 +158,9 @@ namespace ServicePoint
         const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_connection_open", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPConnection* sp_connection_open(byte* host);
+
+        [DllImport(__DllName, EntryPoint = "sp_connection_fake", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private static extern SPConnection* sp_connection_fake();
 
         [DllImport(__DllName, EntryPoint = "sp_connection_send_packet", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U1)]

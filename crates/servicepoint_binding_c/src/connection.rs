@@ -46,6 +46,22 @@ pub unsafe extern "C" fn sp_connection_open(
     Box::into_raw(Box::new(SPConnection(connection)))
 }
 
+/// Creates a new instance of [SPConnection] for testing that does not actually send anything.
+///
+/// returns: a new instance. Will never return NULL.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_connection_free`.
+#[no_mangle]
+pub unsafe extern "C" fn sp_connection_fake() -> NonNull<SPConnection> {
+    let result = Box::new(SPConnection(servicepoint::Connection::Fake));
+    NonNull::from(Box::leak(result))
+}
+
 /// Sends a [SPPacket] to the display using the [SPConnection].
 ///
 /// The passed `packet` gets consumed.
