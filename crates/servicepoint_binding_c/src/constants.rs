@@ -24,6 +24,13 @@ pub const SP_PIXEL_COUNT: usize = SP_PIXEL_WIDTH * SP_PIXEL_HEIGHT;
 /// Actual hardware limit is around 28-29ms/frame. Rounded up for less dropped packets.
 pub const SP_FRAME_PACING_MS: u128 = Duration::from_millis(30).as_millis();
 
+/// see [Brightness::MIN]
+pub const SP_BRIGHTNESS_MIN: u8 = 0;
+/// see [Brightness::MAX]
+pub const SP_BRIGHTNESS_MAX: u8 = 11;
+/// Count of possible brightness values
+pub const SP_BRIGHTNESS_LEVELS: u8 = 12;
+
 /// Specifies the kind of compression to use.
 #[repr(u16)]
 pub enum SPCompressionCode {

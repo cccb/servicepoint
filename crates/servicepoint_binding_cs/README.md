@@ -9,9 +9,8 @@ This crate contains C# bindings for the `servicepoint` library, enabling users t
 ```csharp
 using ServicePoint;
 
-// using statement calls Dispose() on scope exit, which frees unmanaged instances
 using var connection = Connection.Open("127.0.0.1:2342");
-using var pixels = Bitmap.New(Constants.PixelWidth, Constants.PixelHeight);
+using var pixels = new Bitmap(Constants.PixelWidth, Constants.PixelHeight);
 
 while (true)
 {
@@ -20,17 +19,14 @@ while (true)
     Thread.Sleep(5000);
 
     pixels.Fill(false);
-    connection.Send(Command.BitmapLinearWin(0, 0, pixels.Clone()));
+    connection.Send(Command.BitmapLinearWin(0, 0, pixels));
     Thread.Sleep(5000);
 }
 ```
 
-A full example including project files is available as part of this crate.
+An example including project files is available as part of this crate.
 
-## Note on stability
-
-This library is still in early development.
-You can absolutely use it, and it works, but expect minor breaking changes with every version bump.
+You can also check out the unit tests for usage examples for some things.
 
 ## Installation
 
@@ -43,22 +39,39 @@ git submodule add https://github.com/cccb/servicepoint.git
 git commit -m "add servicepoint submodule"
 ```
 
-You can now reference `servicepoint-bindings-cs/src/ServicePoint.csproj` in your project.
+You can now reference `servicepoint_binding_cs/src/ServicePoint.csproj` in your project.
 The rust library will automatically be built.
 
 Please provide more information in the form of an issue if you need the build to copy a different library file for your platform.
 
-## Notes on differences to rust library
+## Note on stability
 
-Uses C bindings internally to provide a similar API to rust. Things to keep in mind:
+This library is still in early development.
+You can absolutely use it, and it works, but expect minor breaking changes with every version bump.
 
-- You will get a `NullPointerException` when trying to call a method where the native instance has been consumed already (e.g. when `Send`ing a command instance twice). Send a clone instead of the original if you want to keep using it.
-- Some lower-level APIs _will_ panic in native code when used improperly.
-  Example: manipulating the `Span<byte>` of an object after freeing the instance.
-- C# specifics are documented in the library. Use the rust documentation for everything else. Naming and semantics are the same apart from CamelCase instead of kebab_case.
-- You will only get rust backtraces in debug builds of the native code.
-- F# is not explicitly tested. If there are usability or functionality problems, please open an issue.
-- Reading and writing to instances concurrently is not safe. Only reading concurrently is safe.
+## Documentation
+
+There are multiple suboptimal ways to read the documentation for this.
+
+You can read the [rust docs](https://docs.rs/servicepoint/latest/servicepoint/), as the types and methods in C# should have the same names as those in rust.
+
+You can also read the documentation comments on each method. 
+Those are copied from the C API, which means they will include the `this` parameter in the description.
+They are markdown formatted and may render in one line in your IDE - this is a known [issue](https://github.com/cccb/servicepoint/issues/17).
+
+### Differences to other supported languages
+
+C# does have some differences, especially regarding safety.
+In rust, the compiler will tell you when trying to use an object that has already been dropped or moved.
+In the C API, the user promises to keep things like that in mind, 
+and will get assertion failures or segmentation faults if you are lucky when doing something wrong.
+
+The C# compiler will not help you to keep track of the lifetime of rust objects, but you also do not have to worry about
+unnoticed memory corruption in most cases, as the library knows when you pass objects to methods that consume them and
+raises a `NullReferenceException` instead.
+When objects are garbage collected on the C# side, the rust object is freed as well.
+
+Currently, lifetime tracking may not work reliably in multithreaded code. You should prevent concurrent write access.
 
 ## Everything else
 

@@ -266,6 +266,8 @@ void sp_bitmap_fill(SPBitmap *bitmap, bool value);
  * - `bitmap` points to a valid [SPBitmap]
  * - `bitmap` is not used concurrently or after bitmap call
  * - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
+ *
+ * servicepoint_csbindgen_consumes: bitmap
  */
 void sp_bitmap_free(SPBitmap *bitmap);
 
@@ -362,6 +364,20 @@ SPBitmap *sp_bitmap_load(size_t width,
  */
 SPBitmap *sp_bitmap_new(size_t width,
                         size_t height);
+
+/**
+ * Creates a new [SPBitmap] with a size matching the screen.
+ *
+ * returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_bitmap_free`.
+ */
+SPBitmap *sp_bitmap_new_screen_sized(void);
 
 /**
  * Sets the value of the specified position in the [SPBitmap].
@@ -695,6 +711,8 @@ void sp_brightness_grid_fill(SPBrightnessGrid *brightness_grid, uint8_t value);
  * - `brightness_grid` points to a valid [SPBrightnessGrid]
  * - `brightness_grid` is not used concurrently or after this call
  * - `brightness_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+ *
+ * servicepoint_csbindgen_consumes: brightness_grid
  */
 void sp_brightness_grid_free(SPBrightnessGrid *brightness_grid);
 
@@ -883,6 +901,8 @@ size_t sp_brightness_grid_width(const SPBrightnessGrid *brightness_grid);
  * - `compression` matches one of the allowed enum values
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
+ *
+ * servicepoint_csbindgen_consumes: bit_vec
  */
 SPCommand *sp_command_bitmap_linear(size_t offset,
                                     SPBitVec *bit_vec,
@@ -914,6 +934,8 @@ SPCommand *sp_command_bitmap_linear(size_t offset,
  * - `compression` matches one of the allowed enum values
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
+ *
+ * servicepoint_csbindgen_consumes: bit_vec
  */
 SPCommand *sp_command_bitmap_linear_and(size_t offset,
                                         SPBitVec *bit_vec,
@@ -945,6 +967,8 @@ SPCommand *sp_command_bitmap_linear_and(size_t offset,
  * - `compression` matches one of the allowed enum values
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
+ *
+ * servicepoint_csbindgen_consumes: bit_vec
  */
 SPCommand *sp_command_bitmap_linear_or(size_t offset,
                                        SPBitVec *bit_vec,
@@ -971,6 +995,8 @@ SPCommand *sp_command_bitmap_linear_or(size_t offset,
  * - `compression` matches one of the allowed enum values
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
+ *
+ * servicepoint_csbindgen_consumes: bitmap
  */
 SPCommand *sp_command_bitmap_linear_win(size_t x,
                                         size_t y,
@@ -1003,6 +1029,8 @@ SPCommand *sp_command_bitmap_linear_win(size_t x,
  * - `compression` matches one of the allowed enum values
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
+ *
+ * servicepoint_csbindgen_consumes: bit_vec
  */
 SPCommand *sp_command_bitmap_linear_xor(size_t offset,
                                         SPBitVec *bit_vec,
@@ -1045,6 +1073,8 @@ SPCommand *sp_command_brightness(uint8_t brightness);
  * - `grid` is not used concurrently or after this call
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
+ *
+ * servicepoint_csbindgen_consumes: grid
  */
 SPCommand *sp_command_char_brightness(size_t x,
                                       size_t y,
@@ -1111,6 +1141,8 @@ SPCommand *sp_command_clone(const SPCommand *command);
  * - `grid` is not used concurrently or after this call
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
+ *
+ * servicepoint_csbindgen_consumes: grid
  */
 SPCommand *sp_command_cp437_data(size_t x,
                                  size_t y,
@@ -1151,6 +1183,8 @@ SPCommand *sp_command_fade_out(void);
  * - `command` points to a valid [SPCommand]
  * - `command` is not used concurrently or after this call
  * - `command` was not passed to another consuming function, e.g. to create a [SPPacket]
+ *
+ * servicepoint_csbindgen_consumes: command
  */
 void sp_command_free(SPCommand *command);
 
@@ -1190,8 +1224,24 @@ SPCommand *sp_command_hard_reset(void);
  * - the result is checked for NULL
  * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_command_free`.
+ *
+ * servicepoint_csbindgen_consumes: packet
  */
 SPCommand *sp_command_try_from_packet(SPPacket *packet);
+
+/**
+ * Creates a new instance of [SPConnection] for testing that does not actually send anything.
+ *
+ * returns: a new instance. Will never return NULL.
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_connection_free`.
+ */
+SPConnection *sp_connection_fake(void);
 
 /**
  * Closes and deallocates a [SPConnection].
@@ -1206,11 +1256,13 @@ SPCommand *sp_command_try_from_packet(SPPacket *packet);
  *
  * - `connection` points to a valid [SPConnection]
  * - `connection` is not used concurrently or after this call
+ *
+ * servicepoint_csbindgen_consumes: connection
  */
 void sp_connection_free(SPConnection *connection);
 
 /**
- * Creates a new instance of [SPConnection].
+ * Creates a new instance of [SPConnection] that uses UDP to send.
  *
  * returns: NULL if connection fails, or connected instance
  *
@@ -1246,6 +1298,8 @@ SPConnection *sp_connection_open(const char *host);
  * - `connection` points to a valid instance of [SPConnection]
  * - `command` points to a valid instance of [SPPacket]
  * - `command` is not used concurrently or after this call
+ *
+ * servicepoint_csbindgen_consumes: command
  */
 bool sp_connection_send_command(const SPConnection *connection,
                                 SPCommand *command);
@@ -1269,6 +1323,8 @@ bool sp_connection_send_command(const SPConnection *connection,
  * - `connection` points to a valid instance of [SPConnection]
  * - `packet` points to a valid instance of [SPPacket]
  * - `packet` is not used concurrently or after this call
+ *
+ * servicepoint_csbindgen_consumes: packet
  */
 bool sp_connection_send_packet(const SPConnection *connection,
                                SPPacket *packet);
@@ -1328,6 +1384,8 @@ void sp_cp437_grid_fill(SPCp437Grid *cp437_grid, uint8_t value);
  * - `cp437_grid` points to a valid [SPCp437Grid]
  * - `cp437_grid` is not used concurrently or after cp437_grid call
  * - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+ *
+ * servicepoint_csbindgen_consumes: cp437_grid
  */
 void sp_cp437_grid_free(SPCp437Grid *cp437_grid);
 
@@ -1502,7 +1560,7 @@ SPPacket *sp_packet_clone(const SPPacket *packet);
  *
  * # Panics
  *
- * - when `sp_packet_free` is NULL
+ * - when `packet` is NULL
  *
  * # Safety
  *
@@ -1510,6 +1568,8 @@ SPPacket *sp_packet_clone(const SPPacket *packet);
  *
  * - `packet` points to a valid [SPPacket]
  * - `packet` is not used concurrently or after this call
+ *
+ * servicepoint_csbindgen_consumes: packet
  */
 void sp_packet_free(SPPacket *packet);
 
@@ -1531,8 +1591,44 @@ void sp_packet_free(SPPacket *packet);
  * - [SPCommand] is not used concurrently or after this call
  * - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
  *   by explicitly calling `sp_packet_free`.
+ *
+ * servicepoint_csbindgen_consumes: command
  */
 SPPacket *sp_packet_from_command(SPCommand *command);
+
+/**
+ * Creates a raw [SPPacket] from parts.
+ *
+ * # Arguments
+ *
+ * - `command_code` specifies which command this packet contains
+ * - `a`, `b`, `c` and `d` are command-specific header values
+ * - `payload` is the optional data that is part of the command
+ * - `payload_len` is the size of the payload
+ *
+ * returns: new instance. Will never return null.
+ *
+ * # Panics
+ *
+ * - when `payload` is null, but `payload_len` is not zero
+ * - when `payload_len` is zero, but `payload` is nonnull
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `payload` points to a valid memory region of at least `payload_len` bytes
+ * - `payload` is not written to concurrently
+ * - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_packet_free`.
+ */
+SPPacket *sp_packet_from_parts(uint16_t command_code,
+                               uint16_t a,
+                               uint16_t b,
+                               uint16_t c,
+                               uint16_t d,
+                               const uint8_t *payload,
+                               size_t payload_len);
 
 /**
  * Tries to load a [SPPacket] from the passed array with the specified length.

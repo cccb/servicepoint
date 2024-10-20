@@ -1,17 +1,15 @@
-using ServicePoint.BindGen;
-
 namespace ServicePoint;
 
 public static class Constants
 {
     /// size of a single tile in one dimension
-    public const nuint TileSize = NativeMethods.SP_TILE_SIZE;
+    public const nuint TileSize = ConstantsNative.SP_TILE_SIZE;
 
     /// tile count in the x-direction
-    public const nuint TileWidth = NativeMethods.SP_TILE_WIDTH;
+    public const nuint TileWidth = ConstantsNative.SP_TILE_WIDTH;
 
     /// tile count in the y-direction
-    public const nuint TileHeight = NativeMethods.SP_TILE_SIZE;
+    public const nuint TileHeight = ConstantsNative.SP_TILE_SIZE;
 
     /// screen width in pixels
     public const nuint PixelWidth = TileWidth * TileSize;
@@ -21,4 +19,8 @@ public static class Constants
 
     /// pixel count on whole screen
     public const nuint PixelCount = PixelWidth * PixelHeight;
+
+    public const byte MinBrightness = ConstantsNative.SP_BRIGHTNESS_MIN;
+    public const byte MaxBrightness = ConstantsNative.SP_BRIGHTNESS_MAX;
+    public const byte BrightnessLevels = ConstantsNative.SP_BRIGHTNESS_LEVELS;
 }

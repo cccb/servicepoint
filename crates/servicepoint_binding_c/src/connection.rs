@@ -3,7 +3,7 @@
 //! prefix `sp_connection_`
 
 use std::ffi::{c_char, CStr};
-use std::ptr::null_mut;
+use std::ptr::{null_mut, NonNull};
 
 use crate::{SPCommand, SPPacket};
 
@@ -18,7 +18,7 @@ use crate::{SPCommand, SPPacket};
 /// ```
 pub struct SPConnection(pub(crate) servicepoint::Connection);
 
-/// Creates a new instance of [SPConnection].
+/// Creates a new instance of [SPConnection] that uses UDP to send.
 ///
 /// returns: NULL if connection fails, or connected instance
 ///
@@ -46,6 +46,22 @@ pub unsafe extern "C" fn sp_connection_open(
     Box::into_raw(Box::new(SPConnection(connection)))
 }
 
+/// Creates a new instance of [SPConnection] for testing that does not actually send anything.
+///
+/// returns: a new instance. Will never return NULL.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_connection_free`.
+#[no_mangle]
+pub unsafe extern "C" fn sp_connection_fake() -> NonNull<SPConnection> {
+    let result = Box::new(SPConnection(servicepoint::Connection::Fake));
+    NonNull::from(Box::leak(result))
+}
+
 /// Sends a [SPPacket] to the display using the [SPConnection].
 ///
 /// The passed `packet` gets consumed.
@@ -64,6 +80,8 @@ pub unsafe extern "C" fn sp_connection_open(
 /// - `connection` points to a valid instance of [SPConnection]
 /// - `packet` points to a valid instance of [SPPacket]
 /// - `packet` is not used concurrently or after this call
+///
+/// servicepoint_csbindgen_consumes: packet
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send_packet(
     connection: *const SPConnection,
@@ -93,6 +111,8 @@ pub unsafe extern "C" fn sp_connection_send_packet(
 /// - `connection` points to a valid instance of [SPConnection]
 /// - `command` points to a valid instance of [SPPacket]
 /// - `command` is not used concurrently or after this call
+///
+/// servicepoint_csbindgen_consumes: command
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_send_command(
     connection: *const SPConnection,
@@ -116,6 +136,8 @@ pub unsafe extern "C" fn sp_connection_send_command(
 ///
 /// - `connection` points to a valid [SPConnection]
 /// - `connection` is not used concurrently or after this call
+///
+/// servicepoint_csbindgen_consumes: connection
 #[no_mangle]
 pub unsafe extern "C" fn sp_connection_free(connection: *mut SPConnection) {
     assert!(!connection.is_null());

@@ -2,9 +2,9 @@
 //!
 //! prefix `sp_cp437_grid_`
 
-use std::ptr::NonNull;
 use crate::SPByteSlice;
 use servicepoint::{DataRef, Grid};
+use std::ptr::NonNull;
 
 /// A C-wrapper for grid containing codepage 437 characters.
 ///
@@ -41,9 +41,8 @@ pub unsafe extern "C" fn sp_cp437_grid_new(
     width: usize,
     height: usize,
 ) -> NonNull<SPCp437Grid> {
-    let result = Box::new(SPCp437Grid(
-        servicepoint::Cp437Grid::new(width, height),
-    ));
+    let result =
+        Box::new(SPCp437Grid(servicepoint::Cp437Grid::new(width, height)));
     NonNull::from(Box::leak(result))
 }
 
@@ -71,11 +70,11 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
     data: *const u8,
     data_length: usize,
 ) -> NonNull<SPCp437Grid> {
-    assert!(data.is_null());
+    assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let result = Box::new(SPCp437Grid(
-        servicepoint::Cp437Grid::load(width, height, data),
-    ));
+    let result = Box::new(SPCp437Grid(servicepoint::Cp437Grid::load(
+        width, height, data,
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -117,6 +116,8 @@ pub unsafe extern "C" fn sp_cp437_grid_clone(
 /// - `cp437_grid` points to a valid [SPCp437Grid]
 /// - `cp437_grid` is not used concurrently or after cp437_grid call
 /// - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+///
+/// servicepoint_csbindgen_consumes: cp437_grid
 #[no_mangle]
 pub unsafe extern "C" fn sp_cp437_grid_free(cp437_grid: *mut SPCp437Grid) {
     assert!(!cp437_grid.is_null());

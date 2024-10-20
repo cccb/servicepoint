@@ -50,6 +50,8 @@ impl Clone for SPCommand {
 /// - the result is checked for NULL
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: packet
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_try_from_packet(
     packet: *mut SPPacket,
@@ -164,9 +166,8 @@ pub unsafe extern "C" fn sp_command_brightness(
 ) -> NonNull<SPCommand> {
     let brightness =
         Brightness::try_from(brightness).expect("invalid brightness");
-    let result = Box::new(SPCommand(
-        servicepoint::Command::Brightness(brightness),
-    ));
+    let result =
+        Box::new(SPCommand(servicepoint::Command::Brightness(brightness)));
     NonNull::from(Box::leak(result))
 }
 
@@ -188,6 +189,8 @@ pub unsafe extern "C" fn sp_command_brightness(
 /// - `grid` is not used concurrently or after this call
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: grid
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_char_brightness(
     x: usize,
@@ -196,9 +199,10 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 ) -> NonNull<SPCommand> {
     assert!(!grid.is_null());
     let byte_grid = *Box::from_raw(grid);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::CharBrightness(Origin::new(x, y), byte_grid.0),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::CharBrightness(
+        Origin::new(x, y),
+        byte_grid.0,
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -227,6 +231,8 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bit_vec
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear(
     offset: usize,
@@ -235,13 +241,11 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 ) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinear(
-            offset,
-            bit_vec.into(),
-            compression.try_into().expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinear(
+        offset,
+        bit_vec.into(),
+        compression.try_into().expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -270,6 +274,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bit_vec
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_and(
     offset: usize,
@@ -278,13 +284,11 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 ) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinearAnd(
-            offset,
-            bit_vec.into(),
-            compression.try_into().expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinearAnd(
+        offset,
+        bit_vec.into(),
+        compression.try_into().expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -313,6 +317,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bit_vec
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_or(
     offset: usize,
@@ -321,13 +327,11 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 ) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinearOr(
-            offset,
-            bit_vec.into(),
-            compression.try_into().expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinearOr(
+        offset,
+        bit_vec.into(),
+        compression.try_into().expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -356,6 +360,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bit_vec
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
     offset: usize,
@@ -364,13 +370,11 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 ) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinearXor(
-            offset,
-            bit_vec.into(),
-            compression.try_into().expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinearXor(
+        offset,
+        bit_vec.into(),
+        compression.try_into().expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -392,6 +396,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 /// - `grid` is not used concurrently or after this call
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: grid
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_cp437_data(
     x: usize,
@@ -400,9 +406,10 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 ) -> NonNull<SPCommand> {
     assert!(!grid.is_null());
     let grid = *Box::from_raw(grid);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::Cp437Data(Origin::new(x, y), grid.0),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::Cp437Data(
+        Origin::new(x, y),
+        grid.0,
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -426,6 +433,8 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 /// - `compression` matches one of the allowed enum values
 /// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
 ///   by explicitly calling `sp_command_free`.
+///
+/// servicepoint_csbindgen_consumes: bitmap
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_bitmap_linear_win(
     x: usize,
@@ -435,15 +444,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 ) -> NonNull<SPCommand> {
     assert!(!bitmap.is_null());
     let byte_grid = (*Box::from_raw(bitmap)).0;
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinearWin(
-            Origin::new(x, y),
-            byte_grid,
-            compression_code
-                .try_into()
-                .expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinearWin(
+        Origin::new(x, y),
+        byte_grid,
+        compression_code
+            .try_into()
+            .expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -467,6 +474,8 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 /// - `command` points to a valid [SPCommand]
 /// - `command` is not used concurrently or after this call
 /// - `command` was not passed to another consuming function, e.g. to create a [SPPacket]
+///
+/// servicepoint_csbindgen_consumes: command
 #[no_mangle]
 pub unsafe extern "C" fn sp_command_free(command: *mut SPCommand) {
     assert!(!command.is_null());

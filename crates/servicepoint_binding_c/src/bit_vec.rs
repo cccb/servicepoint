@@ -2,9 +2,9 @@
 //!
 //! prefix `sp_bitvec_`
 
-use std::ptr::NonNull;
 use crate::SPByteSlice;
 use servicepoint::bitvec::prelude::{BitVec, Msb0};
+use std::ptr::NonNull;
 
 /// A vector of bits
 ///
