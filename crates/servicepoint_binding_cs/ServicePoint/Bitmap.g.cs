@@ -38,6 +38,24 @@ namespace ServicePoint
         public Bitmap(nuint width, nuint height) : this(sp_bitmap_new(width, height)) {}
 
         /// <summary>
+        ///  Creates a new [SPBitmap] with a size matching the screen.
+        ///
+        ///  returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_bitmap_free`.
+        /// </summary>
+        [System.Runtime.CompilerServices.MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public static Bitmap NewScreenSized()
+        {
+            return new Bitmap(Bitmap.sp_bitmap_new_screen_sized());
+        }
+
+        /// <summary>
         ///  Loads a [SPBitmap] with the specified dimensions from the provided data.
         ///
         ///  # Arguments
@@ -285,6 +303,9 @@ namespace ServicePoint
         const string __DllName = "servicepoint_binding_c";
         [DllImport(__DllName, EntryPoint = "sp_bitmap_new", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitmap* sp_bitmap_new(nuint width, nuint height);
+
+        [DllImport(__DllName, EntryPoint = "sp_bitmap_new_screen_sized", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private static extern SPBitmap* sp_bitmap_new_screen_sized();
 
         [DllImport(__DllName, EntryPoint = "sp_bitmap_load", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern SPBitmap* sp_bitmap_load(nuint width, nuint height, byte* data, nuint data_length);
