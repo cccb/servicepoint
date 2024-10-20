@@ -2,7 +2,7 @@ namespace ServicePoint;
 
 public sealed partial class BitVec
 {
-    public static BitVec Load(Span<byte> bytes)
+    public static BitVec Load(ReadOnlySpan<byte> bytes)
     {
         unsafe
         {

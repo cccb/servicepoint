@@ -4,7 +4,7 @@ namespace ServicePoint;
 
 public sealed partial class Packet
 {
-    public static bool TryLoad(Span<byte> bytes, [MaybeNullWhen(false)] out Packet packet)
+    public static bool TryLoad(ReadOnlySpan<byte> bytes, [MaybeNullWhen(false)] out Packet packet)
     {
         unsafe
         {

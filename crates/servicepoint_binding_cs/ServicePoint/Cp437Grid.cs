@@ -4,7 +4,7 @@ namespace ServicePoint;
 
 public sealed partial class Cp437Grid
 {
-    public static Cp437Grid Load(nuint width, nuint height, Span<byte> bytes)
+    public static Cp437Grid Load(nuint width, nuint height, ReadOnlySpan<byte> bytes)
     {
         unsafe
         {

@@ -2,7 +2,7 @@ namespace ServicePoint;
 
 public sealed partial class Bitmap
 {
-    public static Bitmap Load(nuint width, nuint height, Span<byte> bytes)
+    public static Bitmap Load(nuint width, nuint height, ReadOnlySpan<byte> bytes)
     {
         unsafe
         {

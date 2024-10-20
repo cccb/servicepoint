@@ -2,7 +2,7 @@ namespace ServicePoint;
 
 public sealed partial class BrightnessGrid
 {
-    public static BrightnessGrid Load(nuint width, nuint height, Span<byte> bytes)
+    public static BrightnessGrid Load(nuint width, nuint height, ReadOnlySpan<byte> bytes)
     {
         unsafe
         {
