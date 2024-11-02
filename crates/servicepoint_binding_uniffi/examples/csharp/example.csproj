@@ -3,14 +3,13 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>lang_cs</RootNamespace>
+        <RootNamespace>csharp</RootNamespace>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="../../../generated/servicepoint_binding_uniffi.cs"/>
+        <ProjectReference Include="../../libraries/csharp/ServicePoint.csproj"/>
     </ItemGroup>
 
 </Project>

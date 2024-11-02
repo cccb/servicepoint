@@ -1,4 +1,4 @@
-﻿using uniffi.servicepoint_binding_uniffi;
+﻿using ServicePoint;
 
 var connection = new Connection("");
 

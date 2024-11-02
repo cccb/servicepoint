@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-namespace uniffi.servicepoint_binding_uniffi;
+namespace ServicePoint;
 
 
 
@@ -172,38 +172,38 @@ struct RustCallStatus {
 }
 
 // Base class for all uniffi exceptions
-internal class UniffiException: Exception {
+public class UniffiException: Exception {
     public UniffiException(): base() {}
     public UniffiException(string message): base(message) {}
 }
 
-internal class UndeclaredErrorException: UniffiException {
+public class UndeclaredErrorException: UniffiException {
     public UndeclaredErrorException(string message): base(message) {}
 }
 
-internal class PanicException: UniffiException {
+public class PanicException: UniffiException {
     public PanicException(string message): base(message) {}
 }
 
-internal class AllocationException: UniffiException {
+public class AllocationException: UniffiException {
     public AllocationException(string message): base(message) {}
 }
 
-internal class InternalException: UniffiException {
+public class InternalException: UniffiException {
     public InternalException(string message): base(message) {}
 }
 
-internal class InvalidEnumException: InternalException {
+public class InvalidEnumException: InternalException {
     public InvalidEnumException(string message): base(message) {
     }
 }
 
-internal class UniffiContractVersionException: UniffiException {
+public class UniffiContractVersionException: UniffiException {
     public UniffiContractVersionException(string message): base(message) {
     }
 }
 
-internal class UniffiContractChecksumException: UniffiException {
+public class UniffiContractChecksumException: UniffiException {
     public UniffiContractChecksumException(string message): base(message) {
     }
 }
@@ -696,7 +696,7 @@ static class _UniFFILib {
     static void uniffiCheckContractApiVersion() {
         var scaffolding_contract_version = _UniFFILib.ffi_servicepoint_binding_uniffi_uniffi_contract_version();
         if (24 != scaffolding_contract_version) {
-            throw new UniffiContractVersionException($"uniffi.servicepoint_binding_uniffi: uniffi bindings expected version `24`, library returned `{scaffolding_contract_version}`");
+            throw new UniffiContractVersionException($"ServicePoint: uniffi bindings expected version `24`, library returned `{scaffolding_contract_version}`");
         }
     }
 
@@ -704,13 +704,13 @@ static class _UniFFILib {
         {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new();
             if (checksum != 31583) {
-                throw new UniffiContractChecksumException($"uniffi.servicepoint_binding_uniffi: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new` checksum `31583`, library returned `{checksum}`");
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new` checksum `31583`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new();
             if (checksum != 43005) {
-                throw new UniffiContractChecksumException($"uniffi.servicepoint_binding_uniffi: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new` checksum `43005`, library returned `{checksum}`");
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new` checksum `43005`, library returned `{checksum}`");
             }
         }
     }
@@ -776,7 +776,7 @@ class FfiConverterString: FfiConverter<string, RustBuffer> {
 // https://github.com/mozilla/uniffi-rs/blob/0dc031132d9493ca812c3af6e7dd60ad2ea95bf0/uniffi_bindgen/src/bindings/kotlin/templates/ObjectRuntime.kt#L31
 // https://learn.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.criticalhandle
 
-internal abstract class FFIObject<THandle>: IDisposable where THandle : FFISafeHandle {
+public abstract class FFIObject<THandle>: IDisposable where THandle : FFISafeHandle {
     private THandle handle;
 
     public FFIObject(THandle handle) {
@@ -792,7 +792,7 @@ internal abstract class FFIObject<THandle>: IDisposable where THandle : FFISafeH
     }
 }
 
-internal abstract class FFISafeHandle: SafeHandle {
+public abstract class FFISafeHandle: SafeHandle {
     public FFISafeHandle(): base(new IntPtr(0), true) {
     }
 
@@ -855,11 +855,11 @@ static class FFIObjectUtil {
         }
     }
 }
-internal interface IClear {
+public interface IClear {
     
 }
 
-internal class ClearSafeHandle: FFISafeHandle {
+public class ClearSafeHandle: FFISafeHandle {
     public ClearSafeHandle(): base() {
     }
     public ClearSafeHandle(IntPtr pointer): base(pointer) {
@@ -871,7 +871,7 @@ internal class ClearSafeHandle: FFISafeHandle {
         return true;
     }
 }
-internal class Clear: FFIObject<ClearSafeHandle>, IClear {
+public class Clear: FFIObject<ClearSafeHandle>, IClear {
     public Clear(ClearSafeHandle pointer): base(pointer) {}
     public Clear() :
         this(
@@ -910,11 +910,11 @@ class FfiConverterTypeClear: FfiConverter<Clear, ClearSafeHandle> {
 
 
 
-internal interface ICommand {
+public interface ICommand {
     
 }
 
-internal class CommandSafeHandle: FFISafeHandle {
+public class CommandSafeHandle: FFISafeHandle {
     public CommandSafeHandle(): base() {
     }
     public CommandSafeHandle(IntPtr pointer): base(pointer) {
@@ -926,7 +926,7 @@ internal class CommandSafeHandle: FFISafeHandle {
         return true;
     }
 }
-internal class Command: FFIObject<CommandSafeHandle>, ICommand {
+public class Command: FFIObject<CommandSafeHandle>, ICommand {
     public Command(CommandSafeHandle pointer): base(pointer) {}
 
     
@@ -960,11 +960,11 @@ class FfiConverterTypeCommand: FfiConverter<Command, CommandSafeHandle> {
 
 
 
-internal interface IConnection {
+public interface IConnection {
     
 }
 
-internal class ConnectionSafeHandle: FFISafeHandle {
+public class ConnectionSafeHandle: FFISafeHandle {
     public ConnectionSafeHandle(): base() {
     }
     public ConnectionSafeHandle(IntPtr pointer): base(pointer) {
@@ -976,7 +976,7 @@ internal class ConnectionSafeHandle: FFISafeHandle {
         return true;
     }
 }
-internal class Connection: FFIObject<ConnectionSafeHandle>, IConnection {
+public class Connection: FFIObject<ConnectionSafeHandle>, IConnection {
     public Connection(ConnectionSafeHandle pointer): base(pointer) {}
     public Connection(String @host) :
         this(
@@ -1013,6 +1013,6 @@ class FfiConverterTypeConnection: FfiConverter<Connection, ConnectionSafeHandle>
     }
 }
 #pragma warning restore 8625
-internal static class ServicepointBindingUniffiMethods {
+public static class ServicepointBindingUniffiMethods {
 }
 
