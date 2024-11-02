@@ -3,7 +3,8 @@ resolver = "2"
 members = [
     "crates/servicepoint",
     "crates/servicepoint_binding_c",
-    "crates/servicepoint_binding_c/examples/lang_c"
+    "crates/servicepoint_binding_c/examples/lang_c",
+    "crates/servicepoint_binding_uniffi"
 ]
 
 [workspace.package]
