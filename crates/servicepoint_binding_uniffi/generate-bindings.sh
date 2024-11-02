@@ -4,7 +4,6 @@ set +x
 
 cargo build --release
 
-
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 TARGETPATH="$(realpath $SCRIPTPATH/../../target/release/)"
 SERVICEPOINT_SO="$TARGETPATH/libservicepoint_binding_uniffi.so"
