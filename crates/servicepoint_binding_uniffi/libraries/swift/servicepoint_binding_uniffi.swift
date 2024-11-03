@@ -482,8 +482,8 @@ public class Connection: ConnectionProtocol {
     required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
         self.pointer = pointer
     }
-    public convenience init(host: String)  {
-        self.init(unsafeFromRawPointer: try! rustCall() {
+    public convenience init(host: String) throws {
+        self.init(unsafeFromRawPointer: try rustCallWithError(FfiConverterTypeConnectionError.lift) {
     uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(
         FfiConverterString.lower(host),$0)
 })
@@ -538,6 +538,56 @@ public func FfiConverterTypeConnection_lower(_ value: Connection) -> UnsafeMutab
     return FfiConverterTypeConnection.lower(value)
 }
 
+public enum ConnectionError {
+
+    
+    
+    case IoError(error: String)
+
+    fileprivate static func uniffiErrorHandler(_ error: RustBuffer) throws -> Error {
+        return try FfiConverterTypeConnectionError.lift(error)
+    }
+}
+
+
+public struct FfiConverterTypeConnectionError: FfiConverterRustBuffer {
+    typealias SwiftType = ConnectionError
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ConnectionError {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+
+        
+
+        
+        case 1: return .IoError(
+            error: try FfiConverterString.read(from: &buf)
+            )
+
+         default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: ConnectionError, into buf: inout [UInt8]) {
+        switch value {
+
+        
+
+        
+        
+        case let .IoError(error):
+            writeInt(&buf, Int32(1))
+            FfiConverterString.write(error, into: &buf)
+            
+        }
+    }
+}
+
+
+extension ConnectionError: Equatable, Hashable {}
+
+extension ConnectionError: Error { }
+
 private enum InitializationResult {
     case ok
     case contractVersionMismatch
@@ -556,7 +606,7 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new() != 31583) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 43005) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 63821) {
         return InitializationResult.apiChecksumMismatch
     }
 

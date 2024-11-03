@@ -709,8 +709,8 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new();
-            if (checksum != 43005) {
-                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new` checksum `43005`, library returned `{checksum}`");
+            if (checksum != 63821) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new` checksum `63821`, library returned `{checksum}`");
             }
         }
     }
@@ -980,7 +980,7 @@ public class Connection: FFIObject<ConnectionSafeHandle>, IConnection {
     public Connection(ConnectionSafeHandle pointer): base(pointer) {}
     public Connection(String @host) :
         this(
-    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeConnectionException.INSTANCE, (ref RustCallStatus _status) =>
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(FfiConverterString.INSTANCE.Lower(@host), ref _status)
 )) {}
 
@@ -1010,6 +1010,65 @@ class FfiConverterTypeConnection: FfiConverter<Connection, ConnectionSafeHandle>
 
     public override void Write(Connection value, BigEndianStream stream) {
         stream.WriteLong(Lower(value).DangerousGetRawFfiValue().ToInt64());
+    }
+}
+
+
+
+
+
+public class ConnectionException: UniffiException {
+    // Each variant is a nested class
+    
+    
+    public class IoException : ConnectionException {
+        // Members
+        public String @error;
+
+        // Constructor
+        public IoException(
+                String @error) {
+            this.@error = @error;
+        }
+    }
+    
+
+    
+}
+
+class FfiConverterTypeConnectionException : FfiConverterRustBuffer<ConnectionException>, CallStatusErrorHandler<ConnectionException> {
+    public static FfiConverterTypeConnectionException INSTANCE = new FfiConverterTypeConnectionException();
+
+    public override ConnectionException Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new ConnectionException.IoException(
+                    FfiConverterString.INSTANCE.Read(stream));
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeConnectionException.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(ConnectionException value) {
+        switch (value) {
+            case ConnectionException.IoException variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@error);
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeConnectionException.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(ConnectionException value, BigEndianStream stream) {
+        switch (value) {
+            case ConnectionException.IoException variant_value:
+                stream.WriteInt(1);
+                FfiConverterString.INSTANCE.Write(variant_value.@error, stream);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeConnectionException.Write()", value));
+        }
     }
 }
 #pragma warning restore 8625

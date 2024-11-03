@@ -531,7 +531,7 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new() != 31583.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 43005.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 63821.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -883,7 +883,7 @@ class Connection(
 ) : FFIObject(pointer), ConnectionInterface {
     constructor(`host`: String) :
         this(
-    rustCall() { _status ->
+    rustCallWithError(ConnectionException) { _status ->
     _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(FfiConverterString.lower(`host`),_status)
 })
 
@@ -928,5 +928,61 @@ public object FfiConverterTypeConnection: FfiConverter<Connection, Pointer> {
         // and will fail to compile if they don't fit.
         buf.putLong(Pointer.nativeValue(lower(value)))
     }
+}
+
+
+
+
+
+sealed class ConnectionException: Exception() {
+    // Each variant is a nested class
+    
+    class IoException(
+        val `error`: String
+        ) : ConnectionException() {
+        override val message
+            get() = "error=${ `error` }"
+    }
+    
+
+    companion object ErrorHandler : CallStatusErrorHandler<ConnectionException> {
+        override fun lift(error_buf: RustBuffer.ByValue): ConnectionException = FfiConverterTypeConnectionError.lift(error_buf)
+    }
+
+    
+}
+
+public object FfiConverterTypeConnectionError : FfiConverterRustBuffer<ConnectionException> {
+    override fun read(buf: ByteBuffer): ConnectionException {
+        
+
+        return when(buf.getInt()) {
+            1 -> ConnectionException.IoException(
+                FfiConverterString.read(buf),
+                )
+            else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
+        }
+    }
+
+    override fun allocationSize(value: ConnectionException): Int {
+        return when(value) {
+            is ConnectionException.IoException -> (
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                4
+                + FfiConverterString.allocationSize(value.`error`)
+            )
+        }
+    }
+
+    override fun write(value: ConnectionException, buf: ByteBuffer) {
+        when(value) {
+            is ConnectionException.IoException -> {
+                buf.putInt(1)
+                FfiConverterString.write(value.`error`, buf)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
+    }
+
 }
 

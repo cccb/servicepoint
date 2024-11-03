@@ -506,7 +506,7 @@ def _uniffi_check_contract_api_version(lib):
 def _uniffi_check_api_checksums(lib):
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new() != 31583:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 43005:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 63821:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
 
 # A ctypes library to expose the extern-C FFI definitions.
@@ -941,7 +941,7 @@ class Connection:
     _pointer: ctypes.c_void_p
     def __init__(self, host: "str"):
         
-        self._pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new,
+        self._pointer = _rust_call_with_error(_UniffiConverterTypeConnectionError,_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new,
         _UniffiConverterString.lower(host))
 
     def __del__(self):
@@ -982,8 +982,52 @@ class _UniffiConverterTypeConnection:
     def lower(value):
         return value._pointer
 
+
+# ConnectionError
+# We want to define each variant as a nested class that's also a subclass,
+# which is tricky in Python.  To accomplish this we're going to create each
+# class separately, then manually add the child classes to the base class's
+# __dict__.  All of this happens in dummy class to avoid polluting the module
+# namespace.
+class ConnectionError(Exception):
+    pass
+
+_UniffiTempConnectionError = ConnectionError
+
+class ConnectionError:  # type: ignore
+    class IoError(_UniffiTempConnectionError):
+        def __init__(self, error):
+            super().__init__(", ".join([
+                "error={!r}".format(error),
+            ]))
+            self.error = error
+        def __repr__(self):
+            return "ConnectionError.IoError({})".format(str(self))
+    _UniffiTempConnectionError.IoError = IoError # type: ignore
+
+ConnectionError = _UniffiTempConnectionError # type: ignore
+del _UniffiTempConnectionError
+
+
+class _UniffiConverterTypeConnectionError(_UniffiConverterRustBuffer):
+    @staticmethod
+    def read(buf):
+        variant = buf.read_i32()
+        if variant == 1:
+            return ConnectionError.IoError(
+                error=_UniffiConverterString.read(buf),
+            )
+        raise InternalError("Raw enum value doesn't match any cases")
+
+    @staticmethod
+    def write(value, buf):
+        if isinstance(value, ConnectionError.IoError):
+            buf.write_i32(1)
+            _UniffiConverterString.write(value.error, buf)
+
 __all__ = [
     "InternalError",
+    "ConnectionError",
     "Clear",
     "Command",
     "Connection",

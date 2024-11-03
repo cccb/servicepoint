@@ -16,4 +16,4 @@ COMMON_ARGS="--library $SERVICEPOINT_SO"
 ${BINDGEN} generate $COMMON_ARGS --language python --out-dir libraries/python
 ${BINDGEN} generate $COMMON_ARGS --language kotlin --out-dir libraries/kotlin
 ${BINDGEN} generate $COMMON_ARGS --language swift --out-dir libraries/swift
-${BINDGEN_CS} $COMMON_ARGS --out-dir libraries/csharp
+${BINDGEN_CS} $COMMON_ARGS --out-dir libraries/csharp/ServicePoint

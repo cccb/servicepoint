@@ -17,12 +17,18 @@ uniffi = { version = "0.25.0" , features = [ "build" ] }
 
 [dependencies]
 uniffi = { version = "0.25.0" }
-uniffi-bindgen-cs = {git="https://github.com/NordSecurity/uniffi-bindgen-cs", tag="v0.8.3+v0.25.0", optional=true}
+thiserror = "1.0.66"
 
 [dependencies.servicepoint]
 version = "0.10.0"
 path = "../servicepoint"
 features = ["all_compressions"]
+
+[dependencies.uniffi-bindgen-cs]
+git="https://github.com/NordSecurity/uniffi-bindgen-cs"
+# tag="v0.8.3+v0.25.0"
+rev="f68639fbc720b50ebe561ba75c66c84dc456bdce"
+optional=true
 
 [lints]
 #workspace = true

@@ -23,6 +23,26 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
+    <!-- generate C# bindings -->
+    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Release'" BeforeTargets="PrepareForBuild">
+        <Exec Command="cargo build -p servicepoint_binding_uniffi --release"/>
+    </Target>
+    <Target Name="BuildBindings" Condition="'$(Configuration)'=='Debug'" BeforeTargets="PrepareForBuild">
+        <Exec Command="cargo build -p servicepoint_binding_uniffi"/>
+    </Target>
+
+    <!-- include native binary in output -->
+    <ItemGroup Condition="'$(Configuration)'=='Debug'">
+        <Content Include="../../../../../target/debug/libservicepoint_binding_uniffi.so" CopyToOutputDirectory="Always">
+            <Link>libservicepoint_binding_uniffi.so</Link>
+        </Content>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Configuration)'=='Release'">
+        <Content Include="../../../../../target/release/libservicepoint_binding_uniffi.so" CopyToOutputDirectory="Always">
+            <Link>libservicepoint_binding_uniffi.so</Link>
+        </Content>
+    </ItemGroup>
+
     <ItemGroup>
         <!-- add README.md to package -->
         <None Include="../README.md" Pack="true" PackagePath="\"/>

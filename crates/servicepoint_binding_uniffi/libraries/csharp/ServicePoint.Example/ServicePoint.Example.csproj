@@ -3,13 +3,13 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>csharp</RootNamespace>
+        <RootNamespace>ServicePoint.Example</RootNamespace>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../../libraries/csharp/ServicePoint.csproj"/>
+        <ProjectReference Include="../ServicePoint/ServicePoint.csproj"/>
     </ItemGroup>
 
 </Project>
