@@ -297,6 +297,19 @@ private func uniffiCheckCallStatus(
 // Public interface members begin here.
 
 
+fileprivate struct FfiConverterUInt8: FfiConverterPrimitive {
+    typealias FfiType = UInt8
+    typealias SwiftType = UInt8
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt8 {
+        return try lift(readInt(&buf))
+    }
+
+    public static func write(_ value: UInt8, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
 fileprivate struct FfiConverterString: FfiConverter {
     typealias SwiftType = String
     typealias FfiType = RustBuffer
@@ -336,75 +349,6 @@ fileprivate struct FfiConverterString: FfiConverter {
 }
 
 
-public protocol ClearProtocol {
-    
-}
-
-public class Clear: ClearProtocol {
-    fileprivate let pointer: UnsafeMutableRawPointer
-
-    // TODO: We'd like this to be `private` but for Swifty reasons,
-    // we can't implement `FfiConverter` without making this `required` and we can't
-    // make it `required` without making it `public`.
-    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
-        self.pointer = pointer
-    }
-    public convenience init()  {
-        self.init(unsafeFromRawPointer: try! rustCall() {
-    uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new($0)
-})
-    }
-
-    deinit {
-        try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_clear(pointer, $0) }
-    }
-
-    
-
-    
-    
-}
-
-public struct FfiConverterTypeClear: FfiConverter {
-    typealias FfiType = UnsafeMutableRawPointer
-    typealias SwiftType = Clear
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Clear {
-        let v: UInt64 = try readInt(&buf)
-        // The Rust code won't compile if a pointer won't fit in a UInt64.
-        // We have to go via `UInt` because that's the thing that's the size of a pointer.
-        let ptr = UnsafeMutableRawPointer(bitPattern: UInt(truncatingIfNeeded: v))
-        if (ptr == nil) {
-            throw UniffiInternalError.unexpectedNullPointer
-        }
-        return try lift(ptr!)
-    }
-
-    public static func write(_ value: Clear, into buf: inout [UInt8]) {
-        // This fiddling is because `Int` is the thing that's the same size as a pointer.
-        // The Rust code won't compile if a pointer won't fit in a `UInt64`.
-        writeInt(&buf, UInt64(bitPattern: Int64(Int(bitPattern: lower(value)))))
-    }
-
-    public static func lift(_ pointer: UnsafeMutableRawPointer) throws -> Clear {
-        return Clear(unsafeFromRawPointer: pointer)
-    }
-
-    public static func lower(_ value: Clear) -> UnsafeMutableRawPointer {
-        return value.pointer
-    }
-}
-
-
-public func FfiConverterTypeClear_lift(_ pointer: UnsafeMutableRawPointer) throws -> Clear {
-    return try FfiConverterTypeClear.lift(pointer)
-}
-
-public func FfiConverterTypeClear_lower(_ value: Clear) -> UnsafeMutableRawPointer {
-    return FfiConverterTypeClear.lower(value)
-}
-
-
 public protocol CommandProtocol {
     
 }
@@ -421,6 +365,39 @@ public class Command: CommandProtocol {
 
     deinit {
         try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_command(pointer, $0) }
+    }
+
+    
+
+    public static func brightness(brightness: UInt8) throws -> Command {
+        return Command(unsafeFromRawPointer: try rustCallWithError(FfiConverterTypeServicePointError.lift) {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(
+        FfiConverterUInt8.lower(brightness),$0)
+})
+    }
+
+    
+
+    public static func clear()  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear($0)
+})
+    }
+
+    
+
+    public static func fadeOut()  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out($0)
+})
+    }
+
+    
+
+    public static func hardReset()  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset($0)
+})
     }
 
     
@@ -470,6 +447,7 @@ public func FfiConverterTypeCommand_lower(_ value: Command) -> UnsafeMutableRawP
 
 
 public protocol ConnectionProtocol {
+    func send(command: Command)  throws
     
 }
 
@@ -483,7 +461,7 @@ public class Connection: ConnectionProtocol {
         self.pointer = pointer
     }
     public convenience init(host: String) throws {
-        self.init(unsafeFromRawPointer: try rustCallWithError(FfiConverterTypeConnectionError.lift) {
+        self.init(unsafeFromRawPointer: try rustCallWithError(FfiConverterTypeServicePointError.lift) {
     uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(
         FfiConverterString.lower(host),$0)
 })
@@ -497,6 +475,15 @@ public class Connection: ConnectionProtocol {
 
     
     
+
+    public func send(command: Command) throws {
+        try 
+    rustCallWithError(FfiConverterTypeServicePointError.lift) {
+    uniffi_servicepoint_binding_uniffi_fn_method_connection_send(self.pointer, 
+        FfiConverterTypeCommand.lower(command),$0
+    )
+}
+    }
 }
 
 public struct FfiConverterTypeConnection: FfiConverter {
@@ -538,22 +525,23 @@ public func FfiConverterTypeConnection_lower(_ value: Connection) -> UnsafeMutab
     return FfiConverterTypeConnection.lower(value)
 }
 
-public enum ConnectionError {
+public enum ServicePointError {
 
     
     
     case IoError(error: String)
+    case InvalidBrightness(value: UInt8)
 
     fileprivate static func uniffiErrorHandler(_ error: RustBuffer) throws -> Error {
-        return try FfiConverterTypeConnectionError.lift(error)
+        return try FfiConverterTypeServicePointError.lift(error)
     }
 }
 
 
-public struct FfiConverterTypeConnectionError: FfiConverterRustBuffer {
-    typealias SwiftType = ConnectionError
+public struct FfiConverterTypeServicePointError: FfiConverterRustBuffer {
+    typealias SwiftType = ServicePointError
 
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ConnectionError {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ServicePointError {
         let variant: Int32 = try readInt(&buf)
         switch variant {
 
@@ -563,12 +551,15 @@ public struct FfiConverterTypeConnectionError: FfiConverterRustBuffer {
         case 1: return .IoError(
             error: try FfiConverterString.read(from: &buf)
             )
+        case 2: return .InvalidBrightness(
+            value: try FfiConverterUInt8.read(from: &buf)
+            )
 
          default: throw UniffiInternalError.unexpectedEnumCase
         }
     }
 
-    public static func write(_ value: ConnectionError, into buf: inout [UInt8]) {
+    public static func write(_ value: ServicePointError, into buf: inout [UInt8]) {
         switch value {
 
         
@@ -579,14 +570,19 @@ public struct FfiConverterTypeConnectionError: FfiConverterRustBuffer {
             writeInt(&buf, Int32(1))
             FfiConverterString.write(error, into: &buf)
             
+        
+        case let .InvalidBrightness(value):
+            writeInt(&buf, Int32(2))
+            FfiConverterUInt8.write(value, into: &buf)
+            
         }
     }
 }
 
 
-extension ConnectionError: Equatable, Hashable {}
+extension ServicePointError: Equatable, Hashable {}
 
-extension ConnectionError: Error { }
+extension ServicePointError: Error { }
 
 private enum InitializationResult {
     case ok
@@ -603,10 +599,22 @@ private var initializationResult: InitializationResult {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new() != 31583) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 63821) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset() != 62130) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 30445) {
         return InitializationResult.apiChecksumMismatch
     }
 

@@ -504,29 +504,45 @@ def _uniffi_check_contract_api_version(lib):
         raise InternalError("UniFFI contract version mismatch: try cleaning and rebuilding your project")
 
 def _uniffi_check_api_checksums(lib):
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new() != 31583:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 63821:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset() != 62130:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 30445:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
 
 # A ctypes library to expose the extern-C FFI definitions.
 # This is an implementation detail which will be called internally by the public API.
 
 _UniffiLib = _uniffi_load_indirect()
-_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_clear.argtypes = (
-    ctypes.c_void_p,
-    ctypes.POINTER(_UniffiRustCallStatus),
-)
-_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_clear.restype = None
-_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new.argtypes = (
-    ctypes.POINTER(_UniffiRustCallStatus),
-)
-_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.argtypes = (
     ctypes.c_void_p,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness.argtypes = (
+    ctypes.c_uint8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear.argtypes = (
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out.argtypes = (
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset.argtypes = (
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_connection.argtypes = (
     ctypes.c_void_p,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -537,6 +553,12 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new.argt
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_connection_send.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_connection_send.restype = None
 _UniffiLib.ffi_servicepoint_binding_uniffi_rustbuffer_alloc.argtypes = (
     ctypes.c_int32,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -796,9 +818,21 @@ _UniffiLib.ffi_servicepoint_binding_uniffi_rust_future_complete_void.argtypes = 
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.ffi_servicepoint_binding_uniffi_rust_future_complete_void.restype = None
-_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new.argtypes = (
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.argtypes = (
 )
-_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new.restype = ctypes.c_uint16
@@ -812,6 +846,19 @@ _uniffi_check_api_checksums(_UniffiLib)
 
 # Public interface members begin here.
 
+
+class _UniffiConverterUInt8(_UniffiConverterPrimitiveInt):
+    CLASS_NAME = "u8"
+    VALUE_MIN = 0
+    VALUE_MAX = 2**8
+
+    @staticmethod
+    def read(buf):
+        return buf.read_u8()
+
+    @staticmethod
+    def write_unchecked(value, buf):
+        buf.write_u8(value)
 
 class _UniffiConverterString:
     @staticmethod
@@ -849,51 +896,6 @@ class _UniffiConverterString:
 
 
 
-class Clear:
-    _pointer: ctypes.c_void_p
-    def __init__(self, ):
-        self._pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new,)
-
-    def __del__(self):
-        # In case of partial initialization of instances.
-        pointer = getattr(self, "_pointer", None)
-        if pointer is not None:
-            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_clear, pointer)
-
-    # Used by alternative constructors or any methods which return this type.
-    @classmethod
-    def _make_instance_(cls, pointer):
-        # Lightly yucky way to bypass the usual __init__ logic
-        # and just create a new instance with the required pointer.
-        inst = cls.__new__(cls)
-        inst._pointer = pointer
-        return inst
-
-
-class _UniffiConverterTypeClear:
-    @classmethod
-    def read(cls, buf):
-        ptr = buf.read_u64()
-        if ptr == 0:
-            raise InternalError("Raw pointer value was null")
-        return cls.lift(ptr)
-
-    @classmethod
-    def write(cls, value, buf):
-        if not isinstance(value, Clear):
-            raise TypeError("Expected Clear instance, {} found".format(type(value).__name__))
-        buf.write_u64(cls.lower(value))
-
-    @staticmethod
-    def lift(value):
-        return Clear._make_instance_(value)
-
-    @staticmethod
-    def lower(value):
-        return value._pointer
-
-
-
 class Command:
     _pointer: ctypes.c_void_p
 
@@ -911,6 +913,36 @@ class Command:
         inst = cls.__new__(cls)
         inst._pointer = pointer
         return inst
+
+    @classmethod
+    def brightness(cls, brightness: "int"):
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call_with_error(_UniffiConverterTypeServicePointError,_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness,
+        _UniffiConverterUInt8.lower(brightness))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def clear(cls, ):
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear,)
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def fade_out(cls, ):
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out,)
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def hard_reset(cls, ):
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset,)
+        return cls._make_instance_(pointer)
+
 
 
 class _UniffiConverterTypeCommand:
@@ -941,7 +973,7 @@ class Connection:
     _pointer: ctypes.c_void_p
     def __init__(self, host: "str"):
         
-        self._pointer = _rust_call_with_error(_UniffiConverterTypeConnectionError,_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new,
+        self._pointer = _rust_call_with_error(_UniffiConverterTypeServicePointError,_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new,
         _UniffiConverterString.lower(host))
 
     def __del__(self):
@@ -958,6 +990,18 @@ class Connection:
         inst = cls.__new__(cls)
         inst._pointer = pointer
         return inst
+
+
+    def send(self, command: "Command"):
+        
+        _rust_call_with_error(
+    _UniffiConverterTypeServicePointError,_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_connection_send,self._pointer,
+        _UniffiConverterTypeCommand.lower(command))
+
+
+
+
+
 
 
 class _UniffiConverterTypeConnection:
@@ -983,52 +1027,67 @@ class _UniffiConverterTypeConnection:
         return value._pointer
 
 
-# ConnectionError
+# ServicePointError
 # We want to define each variant as a nested class that's also a subclass,
 # which is tricky in Python.  To accomplish this we're going to create each
 # class separately, then manually add the child classes to the base class's
 # __dict__.  All of this happens in dummy class to avoid polluting the module
 # namespace.
-class ConnectionError(Exception):
+class ServicePointError(Exception):
     pass
 
-_UniffiTempConnectionError = ConnectionError
+_UniffiTempServicePointError = ServicePointError
 
-class ConnectionError:  # type: ignore
-    class IoError(_UniffiTempConnectionError):
+class ServicePointError:  # type: ignore
+    class IoError(_UniffiTempServicePointError):
         def __init__(self, error):
             super().__init__(", ".join([
                 "error={!r}".format(error),
             ]))
             self.error = error
         def __repr__(self):
-            return "ConnectionError.IoError({})".format(str(self))
-    _UniffiTempConnectionError.IoError = IoError # type: ignore
+            return "ServicePointError.IoError({})".format(str(self))
+    _UniffiTempServicePointError.IoError = IoError # type: ignore
+    class InvalidBrightness(_UniffiTempServicePointError):
+        def __init__(self, value):
+            super().__init__(", ".join([
+                "value={!r}".format(value),
+            ]))
+            self.value = value
+        def __repr__(self):
+            return "ServicePointError.InvalidBrightness({})".format(str(self))
+    _UniffiTempServicePointError.InvalidBrightness = InvalidBrightness # type: ignore
 
-ConnectionError = _UniffiTempConnectionError # type: ignore
-del _UniffiTempConnectionError
+ServicePointError = _UniffiTempServicePointError # type: ignore
+del _UniffiTempServicePointError
 
 
-class _UniffiConverterTypeConnectionError(_UniffiConverterRustBuffer):
+class _UniffiConverterTypeServicePointError(_UniffiConverterRustBuffer):
     @staticmethod
     def read(buf):
         variant = buf.read_i32()
         if variant == 1:
-            return ConnectionError.IoError(
+            return ServicePointError.IoError(
                 error=_UniffiConverterString.read(buf),
+            )
+        if variant == 2:
+            return ServicePointError.InvalidBrightness(
+                value=_UniffiConverterUInt8.read(buf),
             )
         raise InternalError("Raw enum value doesn't match any cases")
 
     @staticmethod
     def write(value, buf):
-        if isinstance(value, ConnectionError.IoError):
+        if isinstance(value, ServicePointError.IoError):
             buf.write_i32(1)
             _UniffiConverterString.write(value.error, buf)
+        if isinstance(value, ServicePointError.InvalidBrightness):
+            buf.write_i32(2)
+            _UniffiConverterUInt8.write(value.value, buf)
 
 __all__ = [
     "InternalError",
-    "ConnectionError",
-    "Clear",
+    "ServicePointError",
     "Command",
     "Connection",
 ]

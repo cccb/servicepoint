@@ -63,16 +63,24 @@ typedef struct RustCallStatus {
 typedef void (*UniFfiRustFutureContinuation)(void * _Nonnull, int8_t);
 
 // Scaffolding functions
-void uniffi_servicepoint_binding_uniffi_fn_free_clear(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void uniffi_servicepoint_binding_uniffi_fn_free_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
-void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new(RustCallStatus *_Nonnull out_status
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(uint8_t brightness, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(RustCallStatus *_Nonnull out_status
     
 );
-void uniffi_servicepoint_binding_uniffi_fn_free_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(RustCallStatus *_Nonnull out_status
+    
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset(RustCallStatus *_Nonnull out_status
+    
 );
 void uniffi_servicepoint_binding_uniffi_fn_free_connection(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(RustBuffer host, RustCallStatus *_Nonnull out_status
+);
+void uniffi_servicepoint_binding_uniffi_fn_method_connection_send(void*_Nonnull ptr, void*_Nonnull command, RustCallStatus *_Nonnull out_status
 );
 RustBuffer ffi_servicepoint_binding_uniffi_rustbuffer_alloc(int32_t size, RustCallStatus *_Nonnull out_status
 );
@@ -188,7 +196,19 @@ void ffi_servicepoint_binding_uniffi_rust_future_free_void(void* _Nonnull handle
 );
 void ffi_servicepoint_binding_uniffi_rust_future_complete_void(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
 );
-uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new(void
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset(void
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(void

@@ -383,16 +383,22 @@ internal interface _UniFFILib : Library {
         }
     }
 
-    fun uniffi_servicepoint_binding_uniffi_fn_free_clear(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
-    ): Unit
-    fun uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new(_uniffi_out_err: RustCallStatus, 
-    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_free_command(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(`brightness`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset(_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_free_connection(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(`host`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_connection_send(`ptr`: Pointer,`command`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Unit
     fun ffi_servicepoint_binding_uniffi_rustbuffer_alloc(`size`: Int,_uniffi_out_err: RustCallStatus, 
     ): RustBuffer.ByValue
     fun ffi_servicepoint_binding_uniffi_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,_uniffi_out_err: RustCallStatus, 
@@ -507,7 +513,15 @@ internal interface _UniFFILib : Library {
     ): Unit
     fun ffi_servicepoint_binding_uniffi_rust_future_complete_void(`handle`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
-    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new(
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(
     ): Short
@@ -528,10 +542,22 @@ private fun uniffiCheckContractApiVersion(lib: _UniFFILib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new() != 31583.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 63821.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset() != 62130.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 30445.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -540,6 +566,26 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
 
 // Public interface members begin here.
 
+
+public object FfiConverterUByte: FfiConverter<UByte, Byte> {
+    override fun lift(value: Byte): UByte {
+        return value.toUByte()
+    }
+
+    override fun read(buf: ByteBuffer): UByte {
+        return lift(buf.get())
+    }
+
+    override fun lower(value: UByte): Byte {
+        return value.toByte()
+    }
+
+    override fun allocationSize(value: UByte) = 1
+
+    override fun write(value: UByte, buf: ByteBuffer) {
+        buf.put(value.toByte())
+    }
+}
 
 public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
     // Note: we don't inherit from FfiConverterRustBuffer, because we use a
@@ -758,66 +804,6 @@ abstract class FFIObject(
     }
 }
 
-public interface ClearInterface {
-    
-    companion object
-}
-
-class Clear(
-    pointer: Pointer
-) : FFIObject(pointer), ClearInterface {
-    constructor() :
-        this(
-    rustCall() { _status ->
-    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new(_status)
-})
-
-    /**
-     * Disconnect the object from the underlying Rust object.
-     *
-     * It can be called more than once, but once called, interacting with the object
-     * causes an `IllegalStateException`.
-     *
-     * Clients **must** call this method once done with the object, or cause a memory leak.
-     */
-    override protected fun freeRustArcPtr() {
-        rustCall() { status ->
-            _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_free_clear(this.pointer, status)
-        }
-    }
-
-    
-
-    
-    companion object
-    
-}
-
-public object FfiConverterTypeClear: FfiConverter<Clear, Pointer> {
-    override fun lower(value: Clear): Pointer = value.callWithPointer { it }
-
-    override fun lift(value: Pointer): Clear {
-        return Clear(value)
-    }
-
-    override fun read(buf: ByteBuffer): Clear {
-        // The Rust code always writes pointers as 8 bytes, and will
-        // fail to compile if they don't fit.
-        return lift(Pointer(buf.getLong()))
-    }
-
-    override fun allocationSize(value: Clear) = 8
-
-    override fun write(value: Clear, buf: ByteBuffer) {
-        // The Rust code always expects pointers written as 8 bytes,
-        // and will fail to compile if they don't fit.
-        buf.putLong(Pointer.nativeValue(lower(value)))
-    }
-}
-
-
-
-
 public interface CommandInterface {
     
     companion object
@@ -843,8 +829,29 @@ class Command(
 
     
 
-    
-    companion object
+    companion object {
+        fun `brightness`(`brightness`: UByte): Command =
+            Command(
+    rustCallWithError(ServicePointException) { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(FfiConverterUByte.lower(`brightness`),_status)
+})
+        fun `clear`(): Command =
+            Command(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(_status)
+})
+        fun `fadeOut`(): Command =
+            Command(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(_status)
+})
+        fun `hardReset`(): Command =
+            Command(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset(_status)
+})
+        
+    }
     
 }
 
@@ -874,7 +881,8 @@ public object FfiConverterTypeCommand: FfiConverter<Command, Pointer> {
 
 
 public interface ConnectionInterface {
-    
+    @Throws(ServicePointException::class)
+    fun `send`(`command`: Command)
     companion object
 }
 
@@ -883,7 +891,7 @@ class Connection(
 ) : FFIObject(pointer), ConnectionInterface {
     constructor(`host`: String) :
         this(
-    rustCallWithError(ConnectionException) { _status ->
+    rustCallWithError(ServicePointException) { _status ->
     _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(FfiConverterString.lower(`host`),_status)
 })
 
@@ -901,6 +909,17 @@ class Connection(
         }
     }
 
+    
+    @Throws(ServicePointException::class)override fun `send`(`command`: Command) =
+        callWithPointer {
+    rustCallWithError(ServicePointException) { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_connection_send(it,
+        FfiConverterTypeCommand.lower(`command`),
+        _status)
+}
+        }
+    
+    
     
 
     
@@ -934,51 +953,71 @@ public object FfiConverterTypeConnection: FfiConverter<Connection, Pointer> {
 
 
 
-sealed class ConnectionException: Exception() {
+sealed class ServicePointException: Exception() {
     // Each variant is a nested class
     
     class IoException(
         val `error`: String
-        ) : ConnectionException() {
+        ) : ServicePointException() {
         override val message
             get() = "error=${ `error` }"
     }
     
+    class InvalidBrightness(
+        val `value`: UByte
+        ) : ServicePointException() {
+        override val message
+            get() = "value=${ `value` }"
+    }
+    
 
-    companion object ErrorHandler : CallStatusErrorHandler<ConnectionException> {
-        override fun lift(error_buf: RustBuffer.ByValue): ConnectionException = FfiConverterTypeConnectionError.lift(error_buf)
+    companion object ErrorHandler : CallStatusErrorHandler<ServicePointException> {
+        override fun lift(error_buf: RustBuffer.ByValue): ServicePointException = FfiConverterTypeServicePointError.lift(error_buf)
     }
 
     
 }
 
-public object FfiConverterTypeConnectionError : FfiConverterRustBuffer<ConnectionException> {
-    override fun read(buf: ByteBuffer): ConnectionException {
+public object FfiConverterTypeServicePointError : FfiConverterRustBuffer<ServicePointException> {
+    override fun read(buf: ByteBuffer): ServicePointException {
         
 
         return when(buf.getInt()) {
-            1 -> ConnectionException.IoException(
+            1 -> ServicePointException.IoException(
                 FfiConverterString.read(buf),
+                )
+            2 -> ServicePointException.InvalidBrightness(
+                FfiConverterUByte.read(buf),
                 )
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
         }
     }
 
-    override fun allocationSize(value: ConnectionException): Int {
+    override fun allocationSize(value: ServicePointException): Int {
         return when(value) {
-            is ConnectionException.IoException -> (
+            is ServicePointException.IoException -> (
                 // Add the size for the Int that specifies the variant plus the size needed for all fields
                 4
                 + FfiConverterString.allocationSize(value.`error`)
             )
+            is ServicePointException.InvalidBrightness -> (
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                4
+                + FfiConverterUByte.allocationSize(value.`value`)
+            )
         }
     }
 
-    override fun write(value: ConnectionException, buf: ByteBuffer) {
+    override fun write(value: ServicePointException, buf: ByteBuffer) {
         when(value) {
-            is ConnectionException.IoException -> {
+            is ServicePointException.IoException -> {
                 buf.putInt(1)
                 FfiConverterString.write(value.`error`, buf)
+                Unit
+            }
+            is ServicePointException.InvalidBrightness -> {
+                buf.putInt(2)
+                FfiConverterUByte.write(value.`value`, buf)
                 Unit
             }
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }

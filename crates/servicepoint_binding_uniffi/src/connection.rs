@@ -1,23 +1,24 @@
-use std::{sync::Arc};
+use std::sync::Arc;
+
+use crate::command::Command;
+use crate::errors::ServicePointError;
 
 #[derive(uniffi::Object)]
 pub struct Connection {
     actual: servicepoint::Connection,
 }
 
-#[derive(uniffi::Error, thiserror::Error, Debug)]
-pub enum ConnectionError {
-    #[error("An IO error occured: {error}")]
-    IOError {
-        error: String}
-}
-
 #[uniffi::export]
 impl Connection {
     #[uniffi::constructor]
-    pub fn new(host: String) -> Result<Arc<Self>, ConnectionError> {
+    pub fn new(host: String) -> Result<Arc<Self>, ServicePointError> {
         servicepoint::Connection::open(host)
             .map(|actual|Arc::new(Connection { actual}) )
-            .map_err(|err| ConnectionError::IOError { error:  err.to_string()})
+            .map_err(|err| ServicePointError::IOError { error:  err.to_string()})
+    }
+
+    pub fn send(&self, command: Arc<Command>) -> Result<(), ServicePointError> {
+        self.actual.send(command.actual.clone())
+            .map_err(|err| ServicePointError::IOError { error: format!("{err:?}")})
     }
 }
