@@ -12,9 +12,11 @@ CONFIG_TOML="$(realpath $SCRIPTPATH/../uniffi.toml)"
 
 BINDGEN="cargo run --features=uniffi/cli --bin uniffi-bindgen -- "
 BINDGEN_CS="cargo run --features=cs --bin uniffi-bindgen-cs -- "
+BINDGEN_GO="cargo run --features=go --bin uniffi-bindgen-go -- "
 COMMON_ARGS="--library $SERVICEPOINT_SO"
 
 ${BINDGEN} generate $COMMON_ARGS --language python --out-dir libraries/python
 ${BINDGEN} generate $COMMON_ARGS --language kotlin --out-dir libraries/kotlin
 ${BINDGEN} generate $COMMON_ARGS --language swift --out-dir libraries/swift
 ${BINDGEN_CS} $COMMON_ARGS --out-dir libraries/csharp/ServicePoint
+${BINDGEN_GO} $COMMON_ARGS --out-dir libraries/go/
