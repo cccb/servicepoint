@@ -473,6 +473,14 @@ public class Connection: ConnectionProtocol {
 
     
 
+    public static func newFake()  -> Connection {
+        return Connection(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake($0)
+})
+    }
+
+    
+
     
     
 
@@ -615,6 +623,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 30445) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake() != 54331) {
         return InitializationResult.apiChecksumMismatch
     }
 

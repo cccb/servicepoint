@@ -516,6 +516,8 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 30445:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake() != 54331:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
 
 # A ctypes library to expose the extern-C FFI definitions.
 # This is an implementation detail which will be called internally by the public API.
@@ -553,6 +555,10 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new.argt
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake.argtypes = (
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_connection_send.argtypes = (
     ctypes.c_void_p,
     ctypes.c_void_p,
@@ -836,6 +842,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake.restype = ctypes.c_uint16
 _UniffiLib.ffi_servicepoint_binding_uniffi_uniffi_contract_version.argtypes = (
 )
 _UniffiLib.ffi_servicepoint_binding_uniffi_uniffi_contract_version.restype = ctypes.c_uint32
@@ -990,6 +999,13 @@ class Connection:
         inst = cls.__new__(cls)
         inst._pointer = pointer
         return inst
+
+    @classmethod
+    def new_fake(cls, ):
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake,)
+        return cls._make_instance_(pointer)
+
 
 
     def send(self, command: "Command"):

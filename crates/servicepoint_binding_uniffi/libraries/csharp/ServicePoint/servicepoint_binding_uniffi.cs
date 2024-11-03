@@ -459,6 +459,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ConnectionSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake(ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_method_connection_send(ConnectionSafeHandle @ptr,CommandSafeHandle @command,ref RustCallStatus _uniffi_out_err
     );
 
@@ -715,6 +719,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern uint ffi_servicepoint_binding_uniffi_uniffi_contract_version(
     );
 
@@ -762,6 +770,12 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new();
             if (checksum != 30445) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new` checksum `30445`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake();
+            if (checksum != 54331) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake` checksum `54331`, library returned `{checksum}`");
             }
         }
     }
@@ -1049,6 +1063,14 @@ public class Connection: FFIObject<ConnectionSafeHandle>, IConnection {
     
     
 
+    
+    public static Connection NewFake() {
+        return new Connection(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake( ref _status)
+));
+    }
+    
     
 }
 

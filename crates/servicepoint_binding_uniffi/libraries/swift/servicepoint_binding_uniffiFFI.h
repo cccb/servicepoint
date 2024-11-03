@@ -80,6 +80,9 @@ void uniffi_servicepoint_binding_uniffi_fn_free_connection(void*_Nonnull ptr, Ru
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(RustBuffer host, RustCallStatus *_Nonnull out_status
 );
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake(RustCallStatus *_Nonnull out_status
+    
+);
 void uniffi_servicepoint_binding_uniffi_fn_method_connection_send(void*_Nonnull ptr, void*_Nonnull command, RustCallStatus *_Nonnull out_status
 );
 RustBuffer ffi_servicepoint_binding_uniffi_rustbuffer_alloc(int32_t size, RustCallStatus *_Nonnull out_status
@@ -212,6 +215,9 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_re
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake(void
     
 );
 uint32_t ffi_servicepoint_binding_uniffi_uniffi_contract_version(void

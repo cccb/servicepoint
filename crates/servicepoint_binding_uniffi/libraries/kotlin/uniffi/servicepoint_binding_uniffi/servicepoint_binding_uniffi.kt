@@ -397,6 +397,8 @@ internal interface _UniFFILib : Library {
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(`host`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake(_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_method_connection_send(`ptr`: Pointer,`command`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun ffi_servicepoint_binding_uniffi_rustbuffer_alloc(`size`: Int,_uniffi_out_err: RustCallStatus, 
@@ -525,6 +527,8 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake(
+    ): Short
     fun ffi_servicepoint_binding_uniffi_uniffi_contract_version(
     ): Int
     
@@ -558,6 +562,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 30445.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake() != 54331.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -922,8 +929,14 @@ class Connection(
     
     
 
-    
-    companion object
+    companion object {
+        fun `newFake`(): Connection =
+            Connection(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake(_status)
+})
+        
+    }
     
 }
 
