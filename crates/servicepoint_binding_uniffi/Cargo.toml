@@ -13,7 +13,7 @@ repository = "https://github.com/cccb/servicepoint"
 crate-type = ["cdylib"]
 
 [build-dependencies]
-uniffi = { version = "0.25.0" , features = [ "build" ] }
+uniffi = { version = "0.25.0", features = ["build"] }
 
 [dependencies]
 uniffi = { version = "0.25.0" }
@@ -25,10 +25,16 @@ path = "../servicepoint"
 features = ["all_compressions"]
 
 [dependencies.uniffi-bindgen-cs]
-git="https://github.com/NordSecurity/uniffi-bindgen-cs"
+git = "https://github.com/NordSecurity/uniffi-bindgen-cs"
 # tag="v0.8.3+v0.25.0"
-rev="f68639fbc720b50ebe561ba75c66c84dc456bdce"
-optional=true
+rev = "f68639fbc720b50ebe561ba75c66c84dc456bdce"
+optional = true
+
+[dependencies.uniffi-bindgen-go]
+git = "https://github.com/NordSecurity/uniffi-bindgen-go.git"
+# tag = "0.2.1+v0.25.0"
+rev = "a77dc0462dc18d53846c758155ab4e0a42e5b240"
+optional = true
 
 [lints]
 #workspace = true
@@ -42,8 +48,13 @@ required-features = ["uniffi/cli"]
 
 [[bin]]
 name = "uniffi-bindgen-cs"
-required-features= ["cs"]
+required-features = ["cs"]
+
+[[bin]]
+name = "uniffi-bindgen-go"
+required-features = ["go"]
 
 [features]
 default = []
 cs = ["dep:uniffi-bindgen-cs"]
+go = ["dep:uniffi-bindgen-go"]
