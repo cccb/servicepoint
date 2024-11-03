@@ -429,17 +429,24 @@ static class _UniFFILib {
         }
 
     [DllImport("servicepoint_binding_uniffi")]
-    public static extern void uniffi_servicepoint_binding_uniffi_fn_free_clear(
-    IntPtr ptr,ref RustCallStatus _uniffi_out_err
-    );
-
-    [DllImport("servicepoint_binding_uniffi")]
-    public static extern ClearSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new(ref RustCallStatus _uniffi_out_err
-    );
-
-    [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_free_command(
     IntPtr ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(byte @brightness,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset(ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -449,6 +456,14 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern ConnectionSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(RustBuffer @host,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ConnectionSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake(ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_connection_send(ConnectionSafeHandle @ptr,CommandSafeHandle @command,ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -680,11 +695,31 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
-    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new(
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -702,15 +737,45 @@ static class _UniFFILib {
 
     static void uniffiCheckApiChecksums() {
         {
-            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new();
-            if (checksum != 31583) {
-                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_clear_new` checksum `31583`, library returned `{checksum}`");
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send();
+            if (checksum != 23796) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_connection_send` checksum `23796`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness();
+            if (checksum != 11291) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness` checksum `11291`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear();
+            if (checksum != 11035) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear` checksum `11035`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out();
+            if (checksum != 49231) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out` checksum `49231`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset();
+            if (checksum != 62130) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset` checksum `62130`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new();
-            if (checksum != 63821) {
-                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new` checksum `63821`, library returned `{checksum}`");
+            if (checksum != 30445) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new` checksum `30445`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake();
+            if (checksum != 54331) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake` checksum `54331`, library returned `{checksum}`");
             }
         }
     }
@@ -720,6 +785,32 @@ static class _UniFFILib {
 
 #pragma warning disable 8625
 
+
+
+
+class FfiConverterUInt8: FfiConverter<byte, byte> {
+    public static FfiConverterUInt8 INSTANCE = new FfiConverterUInt8();
+
+    public override byte Lift(byte value) {
+        return value;
+    }
+
+    public override byte Read(BigEndianStream stream) {
+        return stream.ReadByte();
+    }
+
+    public override byte Lower(byte value) {
+        return value;
+    }
+
+    public override int AllocationSize(byte value) {
+        return 1;
+    }
+
+    public override void Write(byte value, BigEndianStream stream) {
+        stream.WriteByte(value);
+    }
+}
 
 
 
@@ -855,61 +946,6 @@ static class FFIObjectUtil {
         }
     }
 }
-public interface IClear {
-    
-}
-
-public class ClearSafeHandle: FFISafeHandle {
-    public ClearSafeHandle(): base() {
-    }
-    public ClearSafeHandle(IntPtr pointer): base(pointer) {
-    }
-    override protected bool ReleaseHandle() {
-        _UniffiHelpers.RustCall((ref RustCallStatus status) => {
-            _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_free_clear(this.handle, ref status);
-        });
-        return true;
-    }
-}
-public class Clear: FFIObject<ClearSafeHandle>, IClear {
-    public Clear(ClearSafeHandle pointer): base(pointer) {}
-    public Clear() :
-        this(
-    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
-    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_clear_new( ref _status)
-)) {}
-
-    
-
-    
-}
-
-class FfiConverterTypeClear: FfiConverter<Clear, ClearSafeHandle> {
-    public static FfiConverterTypeClear INSTANCE = new FfiConverterTypeClear();
-
-    public override ClearSafeHandle Lower(Clear value) {
-        return value.GetHandle();
-    }
-
-    public override Clear Lift(ClearSafeHandle value) {
-        return new Clear(value);
-    }
-
-    public override Clear Read(BigEndianStream stream) {
-        return Lift(new ClearSafeHandle(new IntPtr(stream.ReadLong())));
-    }
-
-    public override int AllocationSize(Clear value) {
-        return 8;
-    }
-
-    public override void Write(Clear value, BigEndianStream stream) {
-        stream.WriteLong(Lower(value).DangerousGetRawFfiValue().ToInt64());
-    }
-}
-
-
-
 public interface ICommand {
     
 }
@@ -931,6 +967,36 @@ public class Command: FFIObject<CommandSafeHandle>, ICommand {
 
     
 
+    
+    /// <exception cref="ServicePointException"></exception>
+    public static Command Brightness(byte @brightness) {
+        return new Command(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeServicePointException.INSTANCE, (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(FfiConverterUInt8.INSTANCE.Lower(@brightness), ref _status)
+));
+    }
+    
+    public static Command Clear() {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear( ref _status)
+));
+    }
+    
+    public static Command FadeOut() {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out( ref _status)
+));
+    }
+    
+    public static Command HardReset() {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset( ref _status)
+));
+    }
+    
     
 }
 
@@ -962,6 +1028,9 @@ class FfiConverterTypeCommand: FfiConverter<Command, CommandSafeHandle> {
 
 public interface IConnection {
     
+    /// <exception cref="ServicePointException"></exception>
+    void Send(Command @command);
+    
 }
 
 public class ConnectionSafeHandle: FFISafeHandle {
@@ -980,12 +1049,28 @@ public class Connection: FFIObject<ConnectionSafeHandle>, IConnection {
     public Connection(ConnectionSafeHandle pointer): base(pointer) {}
     public Connection(String @host) :
         this(
-    _UniffiHelpers.RustCallWithError(FfiConverterTypeConnectionException.INSTANCE, (ref RustCallStatus _status) =>
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeServicePointException.INSTANCE, (ref RustCallStatus _status) =>
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(FfiConverterString.INSTANCE.Lower(@host), ref _status)
 )) {}
 
     
+    /// <exception cref="ServicePointException"></exception>
+    public void Send(Command @command) {
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeServicePointException.INSTANCE, (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_connection_send(this.GetHandle(), FfiConverterTypeCommand.INSTANCE.Lower(@command), ref _status)
+);
+    }
+    
+    
 
+    
+    public static Connection NewFake() {
+        return new Connection(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake( ref _status)
+));
+    }
+    
     
 }
 
@@ -1017,11 +1102,11 @@ class FfiConverterTypeConnection: FfiConverter<Connection, ConnectionSafeHandle>
 
 
 
-public class ConnectionException: UniffiException {
+public class ServicePointException: UniffiException {
     // Each variant is a nested class
     
     
-    public class IoException : ConnectionException {
+    public class IoException : ServicePointException {
         // Members
         public String @error;
 
@@ -1032,42 +1117,64 @@ public class ConnectionException: UniffiException {
         }
     }
     
+    
+    public class InvalidBrightness : ServicePointException {
+        // Members
+        public byte @value;
+
+        // Constructor
+        public InvalidBrightness(
+                byte @value) {
+            this.@value = @value;
+        }
+    }
+    
 
     
 }
 
-class FfiConverterTypeConnectionException : FfiConverterRustBuffer<ConnectionException>, CallStatusErrorHandler<ConnectionException> {
-    public static FfiConverterTypeConnectionException INSTANCE = new FfiConverterTypeConnectionException();
+class FfiConverterTypeServicePointException : FfiConverterRustBuffer<ServicePointException>, CallStatusErrorHandler<ServicePointException> {
+    public static FfiConverterTypeServicePointException INSTANCE = new FfiConverterTypeServicePointException();
 
-    public override ConnectionException Read(BigEndianStream stream) {
+    public override ServicePointException Read(BigEndianStream stream) {
         var value = stream.ReadInt();
         switch (value) {
             case 1:
-                return new ConnectionException.IoException(
+                return new ServicePointException.IoException(
                     FfiConverterString.INSTANCE.Read(stream));
+            case 2:
+                return new ServicePointException.InvalidBrightness(
+                    FfiConverterUInt8.INSTANCE.Read(stream));
             default:
-                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeConnectionException.Read()", value));
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeServicePointException.Read()", value));
         }
     }
 
-    public override int AllocationSize(ConnectionException value) {
+    public override int AllocationSize(ServicePointException value) {
         switch (value) {
-            case ConnectionException.IoException variant_value:
+            case ServicePointException.IoException variant_value:
                 return 4
                     + FfiConverterString.INSTANCE.AllocationSize(variant_value.@error);
+            case ServicePointException.InvalidBrightness variant_value:
+                return 4
+                    + FfiConverterUInt8.INSTANCE.AllocationSize(variant_value.@value);
             default:
-                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeConnectionException.AllocationSize()", value));
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeServicePointException.AllocationSize()", value));
         }
     }
 
-    public override void Write(ConnectionException value, BigEndianStream stream) {
+    public override void Write(ServicePointException value, BigEndianStream stream) {
         switch (value) {
-            case ConnectionException.IoException variant_value:
+            case ServicePointException.IoException variant_value:
                 stream.WriteInt(1);
                 FfiConverterString.INSTANCE.Write(variant_value.@error, stream);
                 break;
+            case ServicePointException.InvalidBrightness variant_value:
+                stream.WriteInt(2);
+                FfiConverterUInt8.INSTANCE.Write(variant_value.@value, stream);
+                break;
             default:
-                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeConnectionException.Write()", value));
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeServicePointException.Write()", value));
         }
     }
 }
