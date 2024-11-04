@@ -34,7 +34,7 @@ impl Bitmap {
         Self::internal_new(servicepoint::Bitmap::load(
             width as usize,
             height as usize,
-            &*data,
+            &data,
         ))
     }
 

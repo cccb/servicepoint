@@ -429,8 +429,41 @@ static class _UniFFILib {
         }
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_free_bitvec(
+    IntPtr ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern BitVecSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(RustBuffer @data,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern BitVecSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(ulong @size,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(BitVecSafeHandle @ptr,sbyte @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(BitVecSafeHandle @ptr,ulong @index,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ulong uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len(BitVecSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set(BitVecSafeHandle @ptr,ulong @index,sbyte @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_free_bitmap(
     IntPtr ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern BitmapSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(ulong @width,ulong @height,RustBuffer @data,ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -732,6 +765,22 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(
     );
 
@@ -753,6 +802,18 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -806,6 +867,30 @@ static class _UniFFILib {
 
     static void uniffiCheckApiChecksums() {
         {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill();
+            if (checksum != 12255) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill` checksum `12255`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get();
+            if (checksum != 43835) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get` checksum `43835`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len();
+            if (checksum != 22196) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len` checksum `22196`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set();
+            if (checksum != 16307) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set` checksum `16307`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill();
             if (checksum != 43887) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill` checksum `43887`, library returned `{checksum}`");
@@ -839,6 +924,24 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send();
             if (checksum != 23796) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_connection_send` checksum `23796`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load();
+            if (checksum != 48913) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load` checksum `48913`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new();
+            if (checksum != 11865) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new` checksum `11865`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load();
+            if (checksum != 24109) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load` checksum `24109`, library returned `{checksum}`");
             }
         }
         {
@@ -1031,6 +1134,27 @@ class FfiConverterString: FfiConverter<string, RustBuffer> {
 
 
 
+class FfiConverterByteArray: FfiConverterRustBuffer<byte[]> {
+    public static FfiConverterByteArray INSTANCE = new FfiConverterByteArray();
+
+    public override byte[] Read(BigEndianStream stream) {
+        var length = stream.ReadInt();
+        return stream.ReadBytes(length);
+    }
+
+    public override int AllocationSize(byte[] value) {
+        return 4 + value.Length;
+    }
+
+    public override void Write(byte[] value, BigEndianStream stream) {
+        stream.WriteInt(value.Length);
+        stream.WriteBytes(value);
+    }
+}
+
+
+
+
 // `SafeHandle` implements the semantics outlined below, i.e. its thread safe, and the dispose
 // method will only be called once, once all outstanding native calls have completed.
 // https://github.com/mozilla/uniffi-rs/blob/0dc031132d9493ca812c3af6e7dd60ad2ea95bf0/uniffi_bindgen/src/bindings/kotlin/templates/ObjectRuntime.kt#L31
@@ -1115,6 +1239,105 @@ static class FFIObjectUtil {
         }
     }
 }
+public interface IBitVec {
+    
+    void Fill(bool @value);
+    
+    bool Get(ulong @index);
+    
+    ulong Len();
+    
+    void Set(ulong @index, bool @value);
+    
+}
+
+public class BitVecSafeHandle: FFISafeHandle {
+    public BitVecSafeHandle(): base() {
+    }
+    public BitVecSafeHandle(IntPtr pointer): base(pointer) {
+    }
+    override protected bool ReleaseHandle() {
+        _UniffiHelpers.RustCall((ref RustCallStatus status) => {
+            _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_free_bitvec(this.handle, ref status);
+        });
+        return true;
+    }
+}
+public class BitVec: FFIObject<BitVecSafeHandle>, IBitVec {
+    public BitVec(BitVecSafeHandle pointer): base(pointer) {}
+    public BitVec(ulong @size) :
+        this(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(FfiConverterUInt64.INSTANCE.Lower(@size), ref _status)
+)) {}
+
+    
+    public void Fill(bool @value) {
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(this.GetHandle(), FfiConverterBoolean.INSTANCE.Lower(@value), ref _status)
+);
+    }
+    
+    
+    public bool Get(ulong @index) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@index), ref _status)
+));
+    }
+    
+    public ulong Len() {
+        return FfiConverterUInt64.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len(this.GetHandle(),  ref _status)
+));
+    }
+    
+    public void Set(ulong @index, bool @value) {
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@index), FfiConverterBoolean.INSTANCE.Lower(@value), ref _status)
+);
+    }
+    
+    
+
+    
+    public static BitVec Load(byte[] @data) {
+        return new BitVec(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(FfiConverterByteArray.INSTANCE.Lower(@data), ref _status)
+));
+    }
+    
+    
+}
+
+class FfiConverterTypeBitVec: FfiConverter<BitVec, BitVecSafeHandle> {
+    public static FfiConverterTypeBitVec INSTANCE = new FfiConverterTypeBitVec();
+
+    public override BitVecSafeHandle Lower(BitVec value) {
+        return value.GetHandle();
+    }
+
+    public override BitVec Lift(BitVecSafeHandle value) {
+        return new BitVec(value);
+    }
+
+    public override BitVec Read(BigEndianStream stream) {
+        return Lift(new BitVecSafeHandle(new IntPtr(stream.ReadLong())));
+    }
+
+    public override int AllocationSize(BitVec value) {
+        return 8;
+    }
+
+    public override void Write(BitVec value, BigEndianStream stream) {
+        stream.WriteLong(Lower(value).DangerousGetRawFfiValue().ToInt64());
+    }
+}
+
+
+
 public interface IBitmap {
     
     void Fill(bool @value);
@@ -1186,6 +1409,13 @@ public class Bitmap: FFIObject<BitmapSafeHandle>, IBitmap {
     }
     
 
+    
+    public static Bitmap Load(ulong @width, ulong @height, byte[] @data) {
+        return new Bitmap(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(FfiConverterUInt64.INSTANCE.Lower(@width), FfiConverterUInt64.INSTANCE.Lower(@height), FfiConverterByteArray.INSTANCE.Lower(@data), ref _status)
+));
+    }
     
     public static Bitmap NewMaxSized() {
         return new Bitmap(

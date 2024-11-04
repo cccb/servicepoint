@@ -63,7 +63,23 @@ typedef struct RustCallStatus {
 typedef void (*UniFfiRustFutureContinuation)(void * _Nonnull, int8_t);
 
 // Scaffolding functions
+void uniffi_servicepoint_binding_uniffi_fn_free_bitvec(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(RustBuffer data, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(uint64_t size, RustCallStatus *_Nonnull out_status
+);
+void uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(void*_Nonnull ptr, int8_t value, RustCallStatus *_Nonnull out_status
+);
+int8_t uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(void*_Nonnull ptr, uint64_t index, RustCallStatus *_Nonnull out_status
+);
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+void uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set(void*_Nonnull ptr, uint64_t index, int8_t value, RustCallStatus *_Nonnull out_status
+);
 void uniffi_servicepoint_binding_uniffi_fn_free_bitmap(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(uint64_t width, uint64_t height, RustBuffer data, RustCallStatus *_Nonnull out_status
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(uint64_t width, uint64_t height, RustCallStatus *_Nonnull out_status
 );
@@ -218,6 +234,18 @@ void ffi_servicepoint_binding_uniffi_rust_future_free_void(void* _Nonnull handle
 );
 void ffi_servicepoint_binding_uniffi_rust_future_complete_void(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
 );
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set(void
+    
+);
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(void
     
 );
@@ -234,6 +262,15 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(void
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load(void
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(void

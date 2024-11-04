@@ -504,6 +504,14 @@ def _uniffi_check_contract_api_version(lib):
         raise InternalError("UniFFI contract version mismatch: try cleaning and rebuilding your project")
 
 def _uniffi_check_api_checksums(lib):
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill() != 12255:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get() != 43835:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len() != 22196:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set() != 16307:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill() != 43887:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get() != 61136:
@@ -515,6 +523,12 @@ def _uniffi_check_api_checksums(lib):
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load() != 48913:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new() != 11865:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load() != 24109:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new() != 49832:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -539,11 +553,57 @@ def _uniffi_check_api_checksums(lib):
 # This is an implementation detail which will be called internally by the public API.
 
 _UniffiLib = _uniffi_load_indirect()
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitvec.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitvec.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load.argtypes = (
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new.argtypes = (
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_int8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get.restype = ctypes.c_int8
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len.restype = ctypes.c_uint64
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint64,
+    ctypes.c_int8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set.restype = None
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitmap.argtypes = (
     ctypes.c_void_p,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitmap.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new.argtypes = (
     ctypes.c_uint64,
     ctypes.c_uint64,
@@ -893,6 +953,18 @@ _UniffiLib.ffi_servicepoint_binding_uniffi_rust_future_complete_void.argtypes = 
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.ffi_servicepoint_binding_uniffi_rust_future_complete_void.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill.restype = ctypes.c_uint16
@@ -911,6 +983,15 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width.resty
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new.restype = ctypes.c_uint16
@@ -1026,6 +1107,125 @@ class _UniffiConverterString:
             builder.write(value.encode("utf-8"))
             return builder.finalize()
 
+class _UniffiConverterBytes(_UniffiConverterRustBuffer):
+    @staticmethod
+    def read(buf):
+        size = buf.read_i32()
+        if size < 0:
+            raise InternalError("Unexpected negative byte string length")
+        return buf.read(size)
+
+    @staticmethod
+    def write(value, buf):
+        try:
+            memoryview(value)
+        except TypeError:
+            raise TypeError("a bytes-like object is required, not {!r}".format(type(value).__name__))
+        buf.write_i32(len(value))
+        buf.write(value)
+
+
+
+class BitVec:
+    _pointer: ctypes.c_void_p
+    def __init__(self, size: "int"):
+        
+        self._pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new,
+        _UniffiConverterUInt64.lower(size))
+
+    def __del__(self):
+        # In case of partial initialization of instances.
+        pointer = getattr(self, "_pointer", None)
+        if pointer is not None:
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitvec, pointer)
+
+    # Used by alternative constructors or any methods which return this type.
+    @classmethod
+    def _make_instance_(cls, pointer):
+        # Lightly yucky way to bypass the usual __init__ logic
+        # and just create a new instance with the required pointer.
+        inst = cls.__new__(cls)
+        inst._pointer = pointer
+        return inst
+
+    @classmethod
+    def load(cls, data: "bytes"):
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load,
+        _UniffiConverterBytes.lower(data))
+        return cls._make_instance_(pointer)
+
+
+
+    def fill(self, value: "bool"):
+        
+        _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill,self._pointer,
+        _UniffiConverterBool.lower(value))
+
+
+
+
+
+
+
+    def get(self, index: "int") -> "bool":
+        
+        return _UniffiConverterBool.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get,self._pointer,
+        _UniffiConverterUInt64.lower(index))
+        )
+
+
+
+
+
+
+    def len(self, ) -> "int":
+        return _UniffiConverterUInt64.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len,self._pointer,)
+        )
+
+
+
+
+
+
+    def set(self, index: "int",value: "bool"):
+        
+        
+        _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set,self._pointer,
+        _UniffiConverterUInt64.lower(index),
+        _UniffiConverterBool.lower(value))
+
+
+
+
+
+
+
+class _UniffiConverterTypeBitVec:
+    @classmethod
+    def read(cls, buf):
+        ptr = buf.read_u64()
+        if ptr == 0:
+            raise InternalError("Raw pointer value was null")
+        return cls.lift(ptr)
+
+    @classmethod
+    def write(cls, value, buf):
+        if not isinstance(value, BitVec):
+            raise TypeError("Expected BitVec instance, {} found".format(type(value).__name__))
+        buf.write_u64(cls.lower(value))
+
+    @staticmethod
+    def lift(value):
+        return BitVec._make_instance_(value)
+
+    @staticmethod
+    def lower(value):
+        return value._pointer
+
 
 
 class Bitmap:
@@ -1051,6 +1251,19 @@ class Bitmap:
         inst = cls.__new__(cls)
         inst._pointer = pointer
         return inst
+
+    @classmethod
+    def load(cls, width: "int",height: "int",data: "bytes"):
+        
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load,
+        _UniffiConverterUInt64.lower(width),
+        _UniffiConverterUInt64.lower(height),
+        _UniffiConverterBytes.lower(data))
+        return cls._make_instance_(pointer)
+
 
     @classmethod
     def new_max_sized(cls, ):
@@ -1356,6 +1569,7 @@ class _UniffiConverterTypeServicePointError(_UniffiConverterRustBuffer):
 __all__ = [
     "InternalError",
     "ServicePointError",
+    "BitVec",
     "Bitmap",
     "Command",
     "Connection",

@@ -383,8 +383,24 @@ internal interface _UniFFILib : Library {
         }
     }
 
+    fun uniffi_servicepoint_binding_uniffi_fn_free_bitvec(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(`data`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(`size`: Long,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(`ptr`: Pointer,`value`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(`ptr`: Pointer,`index`: Long,_uniffi_out_err: RustCallStatus, 
+    ): Byte
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Long
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set(`ptr`: Pointer,`index`: Long,`value`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_free_bitmap(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(`width`: Long,`height`: Long,`data`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(`width`: Long,`height`: Long,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(_uniffi_out_err: RustCallStatus, 
@@ -533,6 +549,14 @@ internal interface _UniFFILib : Library {
     ): Unit
     fun ffi_servicepoint_binding_uniffi_rust_future_complete_void(`handle`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get(
@@ -544,6 +568,12 @@ internal interface _UniFFILib : Library {
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(
     ): Short
@@ -580,6 +610,18 @@ private fun uniffiCheckContractApiVersion(lib: _UniFFILib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill() != 12255.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get() != 43835.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len() != 22196.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set() != 16307.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill() != 43887.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -596,6 +638,15 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load() != 48913.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new() != 11865.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load() != 24109.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new() != 49832.toShort()) {
@@ -743,6 +794,22 @@ public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
         val byteBuf = toUtf8(value)
         buf.putInt(byteBuf.limit())
         buf.put(byteBuf)
+    }
+}
+
+public object FfiConverterByteArray: FfiConverterRustBuffer<ByteArray> {
+    override fun read(buf: ByteBuffer): ByteArray {
+        val len = buf.getInt()
+        val byteArr = ByteArray(len)
+        buf.get(byteArr)
+        return byteArr
+    }
+    override fun allocationSize(value: ByteArray): Int {
+        return 4 + value.size
+    }
+    override fun write(value: ByteArray, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        buf.put(value)
     }
 }
 
@@ -909,6 +976,118 @@ abstract class FFIObject(
     }
 }
 
+public interface BitVecInterface {
+    
+    fun `fill`(`value`: Boolean)
+    fun `get`(`index`: ULong): Boolean
+    fun `len`(): ULong
+    fun `set`(`index`: ULong, `value`: Boolean)
+    companion object
+}
+
+class BitVec(
+    pointer: Pointer
+) : FFIObject(pointer), BitVecInterface {
+    constructor(`size`: ULong) :
+        this(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(FfiConverterULong.lower(`size`),_status)
+})
+
+    /**
+     * Disconnect the object from the underlying Rust object.
+     *
+     * It can be called more than once, but once called, interacting with the object
+     * causes an `IllegalStateException`.
+     *
+     * Clients **must** call this method once done with the object, or cause a memory leak.
+     */
+    override protected fun freeRustArcPtr() {
+        rustCall() { status ->
+            _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_free_bitvec(this.pointer, status)
+        }
+    }
+
+    override fun `fill`(`value`: Boolean) =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(it,
+        FfiConverterBoolean.lower(`value`),
+        _status)
+}
+        }
+    
+    
+    override fun `get`(`index`: ULong): Boolean =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(it,
+        FfiConverterULong.lower(`index`),
+        _status)
+}
+        }.let {
+            FfiConverterBoolean.lift(it)
+        }
+    
+    override fun `len`(): ULong =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterULong.lift(it)
+        }
+    
+    override fun `set`(`index`: ULong, `value`: Boolean) =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set(it,
+        FfiConverterULong.lower(`index`),FfiConverterBoolean.lower(`value`),
+        _status)
+}
+        }
+    
+    
+    
+
+    companion object {
+        fun `load`(`data`: ByteArray): BitVec =
+            BitVec(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(FfiConverterByteArray.lower(`data`),_status)
+})
+        
+    }
+    
+}
+
+public object FfiConverterTypeBitVec: FfiConverter<BitVec, Pointer> {
+    override fun lower(value: BitVec): Pointer = value.callWithPointer { it }
+
+    override fun lift(value: Pointer): BitVec {
+        return BitVec(value)
+    }
+
+    override fun read(buf: ByteBuffer): BitVec {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: BitVec) = 8
+
+    override fun write(value: BitVec, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+
+
 public interface BitmapInterface {
     
     fun `fill`(`value`: Boolean)
@@ -998,6 +1177,11 @@ class Bitmap(
     
 
     companion object {
+        fun `load`(`width`: ULong, `height`: ULong, `data`: ByteArray): Bitmap =
+            Bitmap(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(FfiConverterULong.lower(`width`),FfiConverterULong.lower(`height`),FfiConverterByteArray.lower(`data`),_status)
+})
         fun `newMaxSized`(): Bitmap =
             Bitmap(
     rustCall() { _status ->

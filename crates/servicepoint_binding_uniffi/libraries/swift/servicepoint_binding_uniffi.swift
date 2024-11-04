@@ -382,6 +382,148 @@ fileprivate struct FfiConverterString: FfiConverter {
     }
 }
 
+fileprivate struct FfiConverterData: FfiConverterRustBuffer {
+    typealias SwiftType = Data
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Data {
+        let len: Int32 = try readInt(&buf)
+        return Data(try readBytes(&buf, count: Int(len)))
+    }
+
+    public static func write(_ value: Data, into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        writeBytes(&buf, value)
+    }
+}
+
+
+public protocol BitVecProtocol {
+    func fill(value: Bool)  
+    func get(index: UInt64)   -> Bool
+    func len()   -> UInt64
+    func set(index: UInt64, value: Bool)  
+    
+}
+
+public class BitVec: BitVecProtocol {
+    fileprivate let pointer: UnsafeMutableRawPointer
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        self.pointer = pointer
+    }
+    public convenience init(size: UInt64)  {
+        self.init(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(
+        FfiConverterUInt64.lower(size),$0)
+})
+    }
+
+    deinit {
+        try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_bitvec(pointer, $0) }
+    }
+
+    
+
+    public static func load(data: Data)  -> BitVec {
+        return BitVec(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(
+        FfiConverterData.lower(data),$0)
+})
+    }
+
+    
+
+    
+    
+
+    public func fill(value: Bool)  {
+        try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(self.pointer, 
+        FfiConverterBool.lower(value),$0
+    )
+}
+    }
+
+    public func get(index: UInt64)  -> Bool {
+        return try!  FfiConverterBool.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(self.pointer, 
+        FfiConverterUInt64.lower(index),$0
+    )
+}
+        )
+    }
+
+    public func len()  -> UInt64 {
+        return try!  FfiConverterUInt64.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len(self.pointer, $0
+    )
+}
+        )
+    }
+
+    public func set(index: UInt64, value: Bool)  {
+        try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set(self.pointer, 
+        FfiConverterUInt64.lower(index),
+        FfiConverterBool.lower(value),$0
+    )
+}
+    }
+}
+
+public struct FfiConverterTypeBitVec: FfiConverter {
+    typealias FfiType = UnsafeMutableRawPointer
+    typealias SwiftType = BitVec
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> BitVec {
+        let v: UInt64 = try readInt(&buf)
+        // The Rust code won't compile if a pointer won't fit in a UInt64.
+        // We have to go via `UInt` because that's the thing that's the size of a pointer.
+        let ptr = UnsafeMutableRawPointer(bitPattern: UInt(truncatingIfNeeded: v))
+        if (ptr == nil) {
+            throw UniffiInternalError.unexpectedNullPointer
+        }
+        return try lift(ptr!)
+    }
+
+    public static func write(_ value: BitVec, into buf: inout [UInt8]) {
+        // This fiddling is because `Int` is the thing that's the same size as a pointer.
+        // The Rust code won't compile if a pointer won't fit in a `UInt64`.
+        writeInt(&buf, UInt64(bitPattern: Int64(Int(bitPattern: lower(value)))))
+    }
+
+    public static func lift(_ pointer: UnsafeMutableRawPointer) throws -> BitVec {
+        return BitVec(unsafeFromRawPointer: pointer)
+    }
+
+    public static func lower(_ value: BitVec) -> UnsafeMutableRawPointer {
+        return value.pointer
+    }
+}
+
+
+public func FfiConverterTypeBitVec_lift(_ pointer: UnsafeMutableRawPointer) throws -> BitVec {
+    return try FfiConverterTypeBitVec.lift(pointer)
+}
+
+public func FfiConverterTypeBitVec_lower(_ value: BitVec) -> UnsafeMutableRawPointer {
+    return FfiConverterTypeBitVec.lower(value)
+}
+
 
 public protocol BitmapProtocol {
     func fill(value: Bool)  
@@ -411,6 +553,17 @@ public class Bitmap: BitmapProtocol {
 
     deinit {
         try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_bitmap(pointer, $0) }
+    }
+
+    
+
+    public static func load(width: UInt64, height: UInt64, data: Data)  -> Bitmap {
+        return Bitmap(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(
+        FfiConverterUInt64.lower(width),
+        FfiConverterUInt64.lower(height),
+        FfiConverterData.lower(data),$0)
+})
     }
 
     
@@ -793,6 +946,18 @@ private var initializationResult: InitializationResult {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill() != 12255) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get() != 43835) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len() != 22196) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set() != 16307) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill() != 43887) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -809,6 +974,15 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load() != 48913) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new() != 11865) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load() != 24109) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new() != 49832) {

@@ -357,6 +357,42 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill(uniffiStatus)
+	})
+	if checksum != 12255 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get(uniffiStatus)
+	})
+	if checksum != 43835 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len(uniffiStatus)
+	})
+	if checksum != 22196 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set(uniffiStatus)
+	})
+	if checksum != 16307 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(uniffiStatus)
 	})
 	if checksum != 43887 {
@@ -407,6 +443,33 @@ func uniffiCheckChecksums() {
 	if checksum != 23796 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_connection_send: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(uniffiStatus)
+	})
+	if checksum != 48913 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new(uniffiStatus)
+	})
+	if checksum != 11865 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load(uniffiStatus)
+	})
+	if checksum != 24109 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -628,6 +691,52 @@ type FfiDestroyerString struct {}
 func (FfiDestroyerString) Destroy(_ string) {}
 
 
+type FfiConverterBytes struct{}
+
+var FfiConverterBytesINSTANCE = FfiConverterBytes{}
+
+func (c FfiConverterBytes) Lower(value []byte) RustBuffer {
+	return LowerIntoRustBuffer[[]byte](c, value)
+}
+
+func (c FfiConverterBytes) Write(writer io.Writer, value []byte) {
+	if len(value) > math.MaxInt32 {
+		panic("[]byte is too large to fit into Int32")
+	}
+
+	writeInt32(writer, int32(len(value)))
+	write_length, err := writer.Write(value)
+	if err != nil {
+		panic(err)
+	}
+	if write_length != len(value) {
+		panic(fmt.Errorf("bad write length when writing []byte, expected %d, written %d", len(value), write_length))
+	}
+}
+
+func (c FfiConverterBytes) Lift(rb RustBufferI) []byte {
+	return LiftFromRustBuffer[[]byte](c, rb)
+}
+
+func (c FfiConverterBytes) Read(reader io.Reader) []byte {
+	length := readInt32(reader)
+	buffer := make([]byte, length)
+	read_length, err := reader.Read(buffer)
+	if err != nil {
+		panic(err)
+	}
+	if read_length != int(length) {
+		panic(fmt.Errorf("bad read length when reading []byte, expected %d, read %d", length, read_length))
+	}
+	return buffer
+}
+
+type FfiDestroyerBytes struct {}
+
+func (FfiDestroyerBytes) Destroy(_ []byte) {}
+
+
+
 
 // Below is an implementation of synchronization requirements outlined in the link.
 // https://github.com/mozilla/uniffi-rs/blob/0dc031132d9493ca812c3af6e7dd60ad2ea95bf0/uniffi_bindgen/src/bindings/kotlin/templates/ObjectRuntime.kt#L31
@@ -683,6 +792,112 @@ func (ffiObject *FfiObject)freeRustArcPtr() {
 		return 0
 	})
 }
+type BitVec struct {
+	ffiObject FfiObject
+}
+func NewBitVec(size uint64) *BitVec {
+	return FfiConverterBitVecINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(FfiConverterUint64INSTANCE.Lower(size), _uniffiStatus)
+	}))
+}
+
+
+func BitVecLoad(data []byte) *BitVec {
+	return FfiConverterBitVecINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(FfiConverterBytesINSTANCE.Lower(data), _uniffiStatus)
+	}))
+}
+
+
+
+func (_self *BitVec)Fill(value bool)  {
+	_pointer := _self.ffiObject.incrementPointer("*BitVec")
+	defer _self.ffiObject.decrementPointer()
+	rustCall(func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(
+		_pointer,FfiConverterBoolINSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+}
+
+
+func (_self *BitVec)Get(index uint64) bool {
+	_pointer := _self.ffiObject.incrementPointer("*BitVec")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(
+		_pointer,FfiConverterUint64INSTANCE.Lower(index), _uniffiStatus)
+	}))
+}
+
+
+func (_self *BitVec)Len() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*BitVec")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+func (_self *BitVec)Set(index uint64, value bool)  {
+	_pointer := _self.ffiObject.incrementPointer("*BitVec")
+	defer _self.ffiObject.decrementPointer()
+	rustCall(func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set(
+		_pointer,FfiConverterUint64INSTANCE.Lower(index), FfiConverterBoolINSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+}
+
+
+
+func (object *BitVec)Destroy() {
+	runtime.SetFinalizer(object, nil)
+	object.ffiObject.destroy()
+}
+
+type FfiConverterBitVec struct {}
+
+var FfiConverterBitVecINSTANCE = FfiConverterBitVec{}
+
+func (c FfiConverterBitVec) Lift(pointer unsafe.Pointer) *BitVec {
+	result := &BitVec {
+		newFfiObject(
+			pointer,
+			func(pointer unsafe.Pointer, status *C.RustCallStatus) {
+				C.uniffi_servicepoint_binding_uniffi_fn_free_bitvec(pointer, status)
+		}),
+	}
+	runtime.SetFinalizer(result, (*BitVec).Destroy)
+	return result
+}
+
+func (c FfiConverterBitVec) Read(reader io.Reader) *BitVec {
+	return c.Lift(unsafe.Pointer(uintptr(readUint64(reader))))
+}
+
+func (c FfiConverterBitVec) Lower(value *BitVec) unsafe.Pointer {
+	// TODO: this is bad - all synchronization from ObjectRuntime.go is discarded here,
+	// because the pointer will be decremented immediately after this function returns,
+	// and someone will be left holding onto a non-locked pointer.
+	pointer := value.ffiObject.incrementPointer("*BitVec")
+	defer value.ffiObject.decrementPointer()
+	return pointer
+}
+
+func (c FfiConverterBitVec) Write(writer io.Writer, value *BitVec) {
+	writeUint64(writer, uint64(uintptr(c.Lower(value))))
+}
+
+type FfiDestroyerBitVec struct {}
+
+func (_ FfiDestroyerBitVec) Destroy(value *BitVec) {
+	value.Destroy()
+}
+
+
 type Bitmap struct {
 	ffiObject FfiObject
 }
@@ -692,6 +907,12 @@ func NewBitmap(width uint64, height uint64) *Bitmap {
 	}))
 }
 
+
+func BitmapLoad(width uint64, height uint64, data []byte) *Bitmap {
+	return FfiConverterBitmapINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(FfiConverterUint64INSTANCE.Lower(width), FfiConverterUint64INSTANCE.Lower(height), FfiConverterBytesINSTANCE.Lower(data), _uniffiStatus)
+	}))
+}
 
 func BitmapNewMaxSized() *Bitmap {
 	return FfiConverterBitmapINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
