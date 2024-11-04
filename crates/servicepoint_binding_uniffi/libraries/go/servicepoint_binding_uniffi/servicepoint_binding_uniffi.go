@@ -438,6 +438,51 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill(uniffiStatus)
+	})
+	if checksum != 63376 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get(uniffiStatus)
+	})
+	if checksum != 28736 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height(uniffiStatus)
+	})
+	if checksum != 39528 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set(uniffiStatus)
+	})
+	if checksum != 6330 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width(uniffiStatus)
+	})
+	if checksum != 26384 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(uniffiStatus)
 	})
 	if checksum != 23796 {
@@ -492,6 +537,24 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load(uniffiStatus)
+	})
+	if checksum != 24788 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new(uniffiStatus)
+	})
+	if checksum != 4979 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear(uniffiStatus)
 	})
 	if checksum != 14881 {
@@ -542,6 +605,15 @@ func uniffiCheckChecksums() {
 	if checksum != 11291 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness(uniffiStatus)
+	})
+	if checksum != 29467 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -1056,6 +1128,122 @@ func (_ FfiDestroyerBitmap) Destroy(value *Bitmap) {
 }
 
 
+type BrightnessGrid struct {
+	ffiObject FfiObject
+}
+func NewBrightnessGrid(width uint64, height uint64) *BrightnessGrid {
+	return FfiConverterBrightnessGridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(FfiConverterUint64INSTANCE.Lower(width), FfiConverterUint64INSTANCE.Lower(height), _uniffiStatus)
+	}))
+}
+
+
+func BrightnessGridLoad(width uint64, height uint64, data []byte) *BrightnessGrid {
+	return FfiConverterBrightnessGridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load(FfiConverterUint64INSTANCE.Lower(width), FfiConverterUint64INSTANCE.Lower(height), FfiConverterBytesINSTANCE.Lower(data), _uniffiStatus)
+	}))
+}
+
+
+
+func (_self *BrightnessGrid)Fill(value uint8)  {
+	_pointer := _self.ffiObject.incrementPointer("*BrightnessGrid")
+	defer _self.ffiObject.decrementPointer()
+	rustCall(func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill(
+		_pointer,FfiConverterUint8INSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+}
+
+
+func (_self *BrightnessGrid)Get(x uint64, y uint64) uint8 {
+	_pointer := _self.ffiObject.incrementPointer("*BrightnessGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint8INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), _uniffiStatus)
+	}))
+}
+
+
+func (_self *BrightnessGrid)Height() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*BrightnessGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+func (_self *BrightnessGrid)Set(x uint64, y uint64, value uint8)  {
+	_pointer := _self.ffiObject.incrementPointer("*BrightnessGrid")
+	defer _self.ffiObject.decrementPointer()
+	rustCall(func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), FfiConverterUint8INSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+}
+
+
+func (_self *BrightnessGrid)Width() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*BrightnessGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+
+func (object *BrightnessGrid)Destroy() {
+	runtime.SetFinalizer(object, nil)
+	object.ffiObject.destroy()
+}
+
+type FfiConverterBrightnessGrid struct {}
+
+var FfiConverterBrightnessGridINSTANCE = FfiConverterBrightnessGrid{}
+
+func (c FfiConverterBrightnessGrid) Lift(pointer unsafe.Pointer) *BrightnessGrid {
+	result := &BrightnessGrid {
+		newFfiObject(
+			pointer,
+			func(pointer unsafe.Pointer, status *C.RustCallStatus) {
+				C.uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid(pointer, status)
+		}),
+	}
+	runtime.SetFinalizer(result, (*BrightnessGrid).Destroy)
+	return result
+}
+
+func (c FfiConverterBrightnessGrid) Read(reader io.Reader) *BrightnessGrid {
+	return c.Lift(unsafe.Pointer(uintptr(readUint64(reader))))
+}
+
+func (c FfiConverterBrightnessGrid) Lower(value *BrightnessGrid) unsafe.Pointer {
+	// TODO: this is bad - all synchronization from ObjectRuntime.go is discarded here,
+	// because the pointer will be decremented immediately after this function returns,
+	// and someone will be left holding onto a non-locked pointer.
+	pointer := value.ffiObject.incrementPointer("*BrightnessGrid")
+	defer value.ffiObject.decrementPointer()
+	return pointer
+}
+
+func (c FfiConverterBrightnessGrid) Write(writer io.Writer, value *BrightnessGrid) {
+	writeUint64(writer, uint64(uintptr(c.Lower(value))))
+}
+
+type FfiDestroyerBrightnessGrid struct {}
+
+func (_ FfiDestroyerBrightnessGrid) Destroy(value *BrightnessGrid) {
+	value.Destroy()
+}
+
+
 type Command struct {
 	ffiObject FfiObject
 }
@@ -1101,6 +1289,12 @@ func CommandBrightness(brightness uint8) (*Command, error) {
 		} else {
 			return FfiConverterCommandINSTANCE.Lift(_uniffiRV), _uniffiErr
 		}
+}
+
+func CommandCharBrightness(offsetX uint64, offsetY uint64, grid *BrightnessGrid) *Command {
+	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness(FfiConverterUint64INSTANCE.Lower(offsetX), FfiConverterUint64INSTANCE.Lower(offsetY), FfiConverterBrightnessGridINSTANCE.Lower(grid), _uniffiStatus)
+	}))
 }
 
 func CommandClear() *Command {

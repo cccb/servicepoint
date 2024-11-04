@@ -96,6 +96,22 @@ void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(void*_Nonnull ptr, 
 );
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+void uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load(uint64_t width, uint64_t height, RustBuffer data, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(uint64_t width, uint64_t height, RustCallStatus *_Nonnull out_status
+);
+void uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill(void*_Nonnull ptr, uint8_t value, RustCallStatus *_Nonnull out_status
+);
+uint8_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get(void*_Nonnull ptr, uint64_t x, uint64_t y, RustCallStatus *_Nonnull out_status
+);
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+void uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set(void*_Nonnull ptr, uint64_t x, uint64_t y, uint8_t value, RustCallStatus *_Nonnull out_status
+);
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
 void uniffi_servicepoint_binding_uniffi_fn_free_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(uint64_t offset, void*_Nonnull bitmap, RustCallStatus *_Nonnull out_status
@@ -109,6 +125,8 @@ void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_l
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(uint64_t offset, void*_Nonnull bitmap, RustCallStatus *_Nonnull out_status
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(uint8_t brightness, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness(uint64_t offset_x, uint64_t offset_y, void*_Nonnull grid, RustCallStatus *_Nonnull out_status
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(RustCallStatus *_Nonnull out_status
     
@@ -269,6 +287,21 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set(void
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(void
     
 );
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width(void
+    
+);
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(void
     
 );
@@ -287,6 +320,12 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(void
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(void
     
 );
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new(void
+    
+);
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear(void
     
 );
@@ -303,6 +342,9 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness(void
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear(void

@@ -415,6 +415,22 @@ internal interface _UniFFILib : Library {
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Long
+    fun uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load(`width`: Long,`height`: Long,`data`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(`width`: Long,`height`: Long,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill(`ptr`: Pointer,`value`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get(`ptr`: Pointer,`x`: Long,`y`: Long,_uniffi_out_err: RustCallStatus, 
+    ): Byte
+    fun uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Long
+    fun uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set(`ptr`: Pointer,`x`: Long,`y`: Long,`value`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Long
     fun uniffi_servicepoint_binding_uniffi_fn_free_command(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(`offset`: Long,`bitmap`: Pointer,_uniffi_out_err: RustCallStatus, 
@@ -428,6 +444,8 @@ internal interface _UniFFILib : Library {
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(`offset`: Long,`bitmap`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(`brightness`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness(`offsetX`: Long,`offsetY`: Long,`grid`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(_uniffi_out_err: RustCallStatus, 
     ): Pointer
@@ -575,6 +593,16 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(
@@ -587,6 +615,10 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and(
@@ -598,6 +630,8 @@ internal interface _UniFFILib : Library {
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear(
     ): Short
@@ -653,6 +687,21 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill() != 63376.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get() != 28736.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height() != 39528.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set() != 6330.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width() != 26384.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -671,6 +720,12 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load() != 24788.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new() != 4979.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 14881.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -687,6 +742,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness() != 29467.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035.toShort()) {
@@ -1245,6 +1303,130 @@ public object FfiConverterTypeBitmap: FfiConverter<Bitmap, Pointer> {
 
 
 
+public interface BrightnessGridInterface {
+    
+    fun `fill`(`value`: UByte)
+    fun `get`(`x`: ULong, `y`: ULong): UByte
+    fun `height`(): ULong
+    fun `set`(`x`: ULong, `y`: ULong, `value`: UByte)
+    fun `width`(): ULong
+    companion object
+}
+
+class BrightnessGrid(
+    pointer: Pointer
+) : FFIObject(pointer), BrightnessGridInterface {
+    constructor(`width`: ULong, `height`: ULong) :
+        this(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(FfiConverterULong.lower(`width`),FfiConverterULong.lower(`height`),_status)
+})
+
+    /**
+     * Disconnect the object from the underlying Rust object.
+     *
+     * It can be called more than once, but once called, interacting with the object
+     * causes an `IllegalStateException`.
+     *
+     * Clients **must** call this method once done with the object, or cause a memory leak.
+     */
+    override protected fun freeRustArcPtr() {
+        rustCall() { status ->
+            _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid(this.pointer, status)
+        }
+    }
+
+    override fun `fill`(`value`: UByte) =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill(it,
+        FfiConverterUByte.lower(`value`),
+        _status)
+}
+        }
+    
+    
+    override fun `get`(`x`: ULong, `y`: ULong): UByte =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get(it,
+        FfiConverterULong.lower(`x`),FfiConverterULong.lower(`y`),
+        _status)
+}
+        }.let {
+            FfiConverterUByte.lift(it)
+        }
+    
+    override fun `height`(): ULong =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterULong.lift(it)
+        }
+    
+    override fun `set`(`x`: ULong, `y`: ULong, `value`: UByte) =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set(it,
+        FfiConverterULong.lower(`x`),FfiConverterULong.lower(`y`),FfiConverterUByte.lower(`value`),
+        _status)
+}
+        }
+    
+    
+    override fun `width`(): ULong =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterULong.lift(it)
+        }
+    
+    
+
+    companion object {
+        fun `load`(`width`: ULong, `height`: ULong, `data`: ByteArray): BrightnessGrid =
+            BrightnessGrid(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load(FfiConverterULong.lower(`width`),FfiConverterULong.lower(`height`),FfiConverterByteArray.lower(`data`),_status)
+})
+        
+    }
+    
+}
+
+public object FfiConverterTypeBrightnessGrid: FfiConverter<BrightnessGrid, Pointer> {
+    override fun lower(value: BrightnessGrid): Pointer = value.callWithPointer { it }
+
+    override fun lift(value: Pointer): BrightnessGrid {
+        return BrightnessGrid(value)
+    }
+
+    override fun read(buf: ByteBuffer): BrightnessGrid {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: BrightnessGrid) = 8
+
+    override fun write(value: BrightnessGrid, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+
+
 public interface CommandInterface {
     
     companion object
@@ -1300,6 +1482,11 @@ class Command(
             Command(
     rustCallWithError(ServicePointException) { _status ->
     _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(FfiConverterUByte.lower(`brightness`),_status)
+})
+        fun `charBrightness`(`offsetX`: ULong, `offsetY`: ULong, `grid`: BrightnessGrid): Command =
+            Command(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness(FfiConverterULong.lower(`offsetX`),FfiConverterULong.lower(`offsetY`),FfiConverterTypeBrightnessGrid.lower(`grid`),_status)
 })
         fun `clear`(): Command =
             Command(

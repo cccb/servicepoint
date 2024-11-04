@@ -221,6 +221,13 @@ class RustBufferStream
     return Bitmap._uniffi_allocate(pointer)
   end
 
+  # The Object type BrightnessGrid.
+
+  def readTypeBrightnessGrid
+    pointer = FFI::Pointer.new unpack_from 8, 'Q>'
+    return BrightnessGrid._uniffi_allocate(pointer)
+  end
+
   # The Object type Command.
 
   def readTypeCommand
@@ -342,6 +349,13 @@ class RustBufferBuilder
 
   def write_TypeBitmap(obj)
     pointer = Bitmap._uniffi_lower obj
+    pack_into(8, 'Q>', pointer.address)
+  end
+
+  # The Object type BrightnessGrid.
+
+  def write_TypeBrightnessGrid(obj)
+    pointer = BrightnessGrid._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
@@ -561,6 +575,30 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width,
     [:pointer, RustCallStatus.by_ref],
     :uint64
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid,
+    [:pointer, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load,
+    [:uint64, :uint64, RustBuffer.by_value, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new,
+    [:uint64, :uint64, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill,
+    [:pointer, :uint8, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get,
+    [:pointer, :uint64, :uint64, RustCallStatus.by_ref],
+    :uint8
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height,
+    [:pointer, RustCallStatus.by_ref],
+    :uint64
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set,
+    [:pointer, :uint64, :uint64, :uint8, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width,
+    [:pointer, RustCallStatus.by_ref],
+    :uint64
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_command,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -581,6 +619,9 @@ module UniFFILib
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness,
     [:uint8, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness,
+    [:uint64, :uint64, :pointer, RustCallStatus.by_ref],
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear,
     [RustCallStatus.by_ref],
@@ -642,6 +683,21 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_connection_send,
     [RustCallStatus.by_ref],
     :uint16
@@ -660,6 +716,12 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear,
     [RustCallStatus.by_ref],
     :uint16
@@ -676,6 +738,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear,
@@ -866,6 +931,87 @@ end
   
 end
   
+  class BrightnessGrid
+
+  # A private helper for initializing instances of the class from a raw pointer,
+  # bypassing any initialization logic and ensuring they are GC'd properly.
+  def self._uniffi_allocate(pointer)
+    pointer.autorelease = false
+    inst = allocate
+    inst.instance_variable_set :@pointer, pointer
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    return inst
+  end
+
+  # A private helper for registering an object finalizer.
+  # N.B. it's important that this does not capture a reference
+  # to the actual instance, only its underlying pointer.
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
+    Proc.new do |_id|
+      ServicepointBindingUniffi.rust_call(
+        :uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid,
+        pointer
+      )
+    end
+  end
+
+  # A private helper for lowering instances into a raw pointer.
+  # This does an explicit typecheck, because accidentally lowering a different type of
+  # object in a place where this type is expected, could lead to memory unsafety.
+  def self._uniffi_lower(inst)
+    if not inst.is_a? self
+      raise TypeError.new "Expected a BrightnessGrid instance, got #{inst}"
+    end
+    return inst.instance_variable_get :@pointer
+  end
+  def initialize(width, height)
+        width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
+        height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
+    pointer = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new,width,height)
+    @pointer = pointer
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+  end
+
+  def self.load(width, height, data)
+        width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
+        height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
+        data = ServicepointBindingUniffi::uniffi_bytes(data)
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load,width,height,RustBuffer.allocFromBytes(data)))
+  end
+  
+
+  def fill(value)
+        value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill,@pointer,value)
+  end
+  
+  def get(x, y)
+        x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
+        y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get,@pointer,x,y)
+    return result.to_i
+  end
+  def height()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height,@pointer,)
+    return result.to_i
+  end
+  def set(x, y, value)
+        x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
+        y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
+        value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set,@pointer,x,y,value)
+  end
+  
+  def width()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width,@pointer,)
+    return result.to_i
+  end
+  
+end
+  
   class Command
 
   # A private helper for initializing instances of the class from a raw pointer,
@@ -947,6 +1093,15 @@ end
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
     return _uniffi_allocate(ServicepointBindingUniffi.rust_call_with_error(ServicePointError,:uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness,brightness))
+  end
+  def self.char_brightness(offset_x, offset_y, grid)
+        offset_x = ServicepointBindingUniffi::uniffi_in_range(offset_x, "u64", 0, 2**64)
+        offset_y = ServicepointBindingUniffi::uniffi_in_range(offset_y, "u64", 0, 2**64)
+        grid = grid
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness,offset_x,offset_y,(BrightnessGrid._uniffi_lower grid)))
   end
   def self.clear()
     # Call the (fallible) function before creating any half-baked object instances.

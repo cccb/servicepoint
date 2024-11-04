@@ -677,6 +677,150 @@ public func FfiConverterTypeBitmap_lower(_ value: Bitmap) -> UnsafeMutableRawPoi
 }
 
 
+public protocol BrightnessGridProtocol {
+    func fill(value: UInt8)  
+    func get(x: UInt64, y: UInt64)   -> UInt8
+    func height()   -> UInt64
+    func set(x: UInt64, y: UInt64, value: UInt8)  
+    func width()   -> UInt64
+    
+}
+
+public class BrightnessGrid: BrightnessGridProtocol {
+    fileprivate let pointer: UnsafeMutableRawPointer
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        self.pointer = pointer
+    }
+    public convenience init(width: UInt64, height: UInt64)  {
+        self.init(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(
+        FfiConverterUInt64.lower(width),
+        FfiConverterUInt64.lower(height),$0)
+})
+    }
+
+    deinit {
+        try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid(pointer, $0) }
+    }
+
+    
+
+    public static func load(width: UInt64, height: UInt64, data: Data)  -> BrightnessGrid {
+        return BrightnessGrid(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load(
+        FfiConverterUInt64.lower(width),
+        FfiConverterUInt64.lower(height),
+        FfiConverterData.lower(data),$0)
+})
+    }
+
+    
+
+    
+    
+
+    public func fill(value: UInt8)  {
+        try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill(self.pointer, 
+        FfiConverterUInt8.lower(value),$0
+    )
+}
+    }
+
+    public func get(x: UInt64, y: UInt64)  -> UInt8 {
+        return try!  FfiConverterUInt8.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get(self.pointer, 
+        FfiConverterUInt64.lower(x),
+        FfiConverterUInt64.lower(y),$0
+    )
+}
+        )
+    }
+
+    public func height()  -> UInt64 {
+        return try!  FfiConverterUInt64.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height(self.pointer, $0
+    )
+}
+        )
+    }
+
+    public func set(x: UInt64, y: UInt64, value: UInt8)  {
+        try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set(self.pointer, 
+        FfiConverterUInt64.lower(x),
+        FfiConverterUInt64.lower(y),
+        FfiConverterUInt8.lower(value),$0
+    )
+}
+    }
+
+    public func width()  -> UInt64 {
+        return try!  FfiConverterUInt64.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width(self.pointer, $0
+    )
+}
+        )
+    }
+}
+
+public struct FfiConverterTypeBrightnessGrid: FfiConverter {
+    typealias FfiType = UnsafeMutableRawPointer
+    typealias SwiftType = BrightnessGrid
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> BrightnessGrid {
+        let v: UInt64 = try readInt(&buf)
+        // The Rust code won't compile if a pointer won't fit in a UInt64.
+        // We have to go via `UInt` because that's the thing that's the size of a pointer.
+        let ptr = UnsafeMutableRawPointer(bitPattern: UInt(truncatingIfNeeded: v))
+        if (ptr == nil) {
+            throw UniffiInternalError.unexpectedNullPointer
+        }
+        return try lift(ptr!)
+    }
+
+    public static func write(_ value: BrightnessGrid, into buf: inout [UInt8]) {
+        // This fiddling is because `Int` is the thing that's the same size as a pointer.
+        // The Rust code won't compile if a pointer won't fit in a `UInt64`.
+        writeInt(&buf, UInt64(bitPattern: Int64(Int(bitPattern: lower(value)))))
+    }
+
+    public static func lift(_ pointer: UnsafeMutableRawPointer) throws -> BrightnessGrid {
+        return BrightnessGrid(unsafeFromRawPointer: pointer)
+    }
+
+    public static func lower(_ value: BrightnessGrid) -> UnsafeMutableRawPointer {
+        return value.pointer
+    }
+}
+
+
+public func FfiConverterTypeBrightnessGrid_lift(_ pointer: UnsafeMutableRawPointer) throws -> BrightnessGrid {
+    return try FfiConverterTypeBrightnessGrid.lift(pointer)
+}
+
+public func FfiConverterTypeBrightnessGrid_lower(_ value: BrightnessGrid) -> UnsafeMutableRawPointer {
+    return FfiConverterTypeBrightnessGrid.lower(value)
+}
+
+
 public protocol CommandProtocol {
     
 }
@@ -752,6 +896,17 @@ public class Command: CommandProtocol {
         return Command(unsafeFromRawPointer: try rustCallWithError(FfiConverterTypeServicePointError.lift) {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(
         FfiConverterUInt8.lower(brightness),$0)
+})
+    }
+
+    
+
+    public static func charBrightness(offsetX: UInt64, offsetY: UInt64, grid: BrightnessGrid)  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness(
+        FfiConverterUInt64.lower(offsetX),
+        FfiConverterUInt64.lower(offsetY),
+        FfiConverterTypeBrightnessGrid.lower(grid),$0)
 })
     }
 
@@ -1013,6 +1168,21 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill() != 63376) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get() != 28736) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height() != 39528) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set() != 6330) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width() != 26384) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -1031,6 +1201,12 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load() != 24788) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new() != 4979) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 14881) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -1047,6 +1223,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness() != 29467) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035) {

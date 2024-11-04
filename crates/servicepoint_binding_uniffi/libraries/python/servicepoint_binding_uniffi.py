@@ -522,6 +522,16 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill() != 63376:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get() != 28736:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height() != 39528:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set() != 6330:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width() != 26384:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load() != 48913:
@@ -534,6 +544,10 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load() != 24788:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new() != 4979:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 14881:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 7352:
@@ -545,6 +559,8 @@ def _uniffi_check_api_checksums(lib):
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54209:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness() != 29467:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -653,6 +669,55 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width.argtypes = 
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width.restype = ctypes.c_uint64
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get.restype = ctypes.c_uint8
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height.restype = ctypes.c_uint64
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.c_uint8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width.restype = ctypes.c_uint64
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.argtypes = (
     ctypes.c_void_p,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -694,6 +759,13 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness.
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
@@ -1012,6 +1084,21 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set.restype
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.restype = ctypes.c_uint16
@@ -1030,6 +1117,12 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new.re
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear.restype = ctypes.c_uint16
@@ -1048,6 +1141,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitma
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear.restype = ctypes.c_uint16
@@ -1401,6 +1497,128 @@ class _UniffiConverterTypeBitmap:
 
 
 
+class BrightnessGrid:
+    _pointer: ctypes.c_void_p
+    def __init__(self, width: "int",height: "int"):
+        
+        
+        self._pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new,
+        _UniffiConverterUInt64.lower(width),
+        _UniffiConverterUInt64.lower(height))
+
+    def __del__(self):
+        # In case of partial initialization of instances.
+        pointer = getattr(self, "_pointer", None)
+        if pointer is not None:
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid, pointer)
+
+    # Used by alternative constructors or any methods which return this type.
+    @classmethod
+    def _make_instance_(cls, pointer):
+        # Lightly yucky way to bypass the usual __init__ logic
+        # and just create a new instance with the required pointer.
+        inst = cls.__new__(cls)
+        inst._pointer = pointer
+        return inst
+
+    @classmethod
+    def load(cls, width: "int",height: "int",data: "bytes"):
+        
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load,
+        _UniffiConverterUInt64.lower(width),
+        _UniffiConverterUInt64.lower(height),
+        _UniffiConverterBytes.lower(data))
+        return cls._make_instance_(pointer)
+
+
+
+    def fill(self, value: "int"):
+        
+        _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill,self._pointer,
+        _UniffiConverterUInt8.lower(value))
+
+
+
+
+
+
+
+    def get(self, x: "int",y: "int") -> "int":
+        
+        
+        return _UniffiConverterUInt8.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get,self._pointer,
+        _UniffiConverterUInt64.lower(x),
+        _UniffiConverterUInt64.lower(y))
+        )
+
+
+
+
+
+
+    def height(self, ) -> "int":
+        return _UniffiConverterUInt64.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height,self._pointer,)
+        )
+
+
+
+
+
+
+    def set(self, x: "int",y: "int",value: "int"):
+        
+        
+        
+        _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set,self._pointer,
+        _UniffiConverterUInt64.lower(x),
+        _UniffiConverterUInt64.lower(y),
+        _UniffiConverterUInt8.lower(value))
+
+
+
+
+
+
+
+    def width(self, ) -> "int":
+        return _UniffiConverterUInt64.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width,self._pointer,)
+        )
+
+
+
+
+
+
+class _UniffiConverterTypeBrightnessGrid:
+    @classmethod
+    def read(cls, buf):
+        ptr = buf.read_u64()
+        if ptr == 0:
+            raise InternalError("Raw pointer value was null")
+        return cls.lift(ptr)
+
+    @classmethod
+    def write(cls, value, buf):
+        if not isinstance(value, BrightnessGrid):
+            raise TypeError("Expected BrightnessGrid instance, {} found".format(type(value).__name__))
+        buf.write_u64(cls.lower(value))
+
+    @staticmethod
+    def lift(value):
+        return BrightnessGrid._make_instance_(value)
+
+    @staticmethod
+    def lower(value):
+        return value._pointer
+
+
+
 class Command:
     _pointer: ctypes.c_void_p
 
@@ -1482,6 +1700,19 @@ class Command:
         # Call the (fallible) function before creating any half-baked object instances.
         pointer = _rust_call_with_error(_UniffiConverterTypeServicePointError,_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness,
         _UniffiConverterUInt8.lower(brightness))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def char_brightness(cls, offset_x: "int",offset_y: "int",grid: "BrightnessGrid"):
+        
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness,
+        _UniffiConverterUInt64.lower(offset_x),
+        _UniffiConverterUInt64.lower(offset_y),
+        _UniffiConverterTypeBrightnessGrid.lower(grid))
         return cls._make_instance_(pointer)
 
 
@@ -1659,6 +1890,7 @@ __all__ = [
     "ServicePointError",
     "BitVec",
     "Bitmap",
+    "BrightnessGrid",
     "Command",
     "Connection",
 ]
