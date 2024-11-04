@@ -25,20 +25,21 @@ impl BitVec {
     }
 
     pub fn set(&self, index: u64, value: bool) {
-        self.actual
-            .write()
-            .unwrap()
-            .set(index as usize, value)
+        self.actual.write().unwrap().set(index as usize, value)
     }
 
     pub fn get(&self, index: u64) -> bool {
-        self.actual.read().unwrap().get(index as usize).is_some_and(move |bit| *bit)
+        self.actual
+            .read()
+            .unwrap()
+            .get(index as usize)
+            .is_some_and(move |bit| *bit)
     }
 
     pub fn fill(&self, value: bool) {
         self.actual.write().unwrap().fill(value)
     }
-    
+
     pub fn len(&self) -> u64 {
         self.actual.read().unwrap().len() as u64
     }

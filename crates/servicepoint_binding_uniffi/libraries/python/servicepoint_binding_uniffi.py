@@ -534,7 +534,15 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 14881:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 7352:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or() != 7046:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 51700:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54209:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -650,6 +658,24 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win.argtypes = (
     ctypes.c_uint64,
     ctypes.c_uint64,
@@ -657,6 +683,12 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_line
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness.argtypes = (
     ctypes.c_uint8,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -998,9 +1030,21 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new.re
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.restype = ctypes.c_uint16
@@ -1376,6 +1420,39 @@ class Command:
         return inst
 
     @classmethod
+    def bitmap_linear(cls, offset: "int",bitmap: "BitVec"):
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,
+        _UniffiConverterUInt64.lower(offset),
+        _UniffiConverterTypeBitVec.lower(bitmap))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def bitmap_linear_and(cls, offset: "int",bitmap: "BitVec"):
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,
+        _UniffiConverterUInt64.lower(offset),
+        _UniffiConverterTypeBitVec.lower(bitmap))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def bitmap_linear_or(cls, offset: "int",bitmap: "BitVec"):
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,
+        _UniffiConverterUInt64.lower(offset),
+        _UniffiConverterTypeBitVec.lower(bitmap))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
     def bitmap_linear_win(cls, offset_x: "int",offset_y: "int",bitmap: "Bitmap"):
         
         
@@ -1385,6 +1462,17 @@ class Command:
         _UniffiConverterUInt64.lower(offset_x),
         _UniffiConverterUInt64.lower(offset_y),
         _UniffiConverterTypeBitmap.lower(bitmap))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def bitmap_linear_xor(cls, offset: "int",bitmap: "BitVec"):
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,
+        _UniffiConverterUInt64.lower(offset),
+        _UniffiConverterTypeBitVec.lower(bitmap))
         return cls._make_instance_(pointer)
 
 

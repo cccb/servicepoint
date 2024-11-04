@@ -500,7 +500,23 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(ulong @offset,BitVecSafeHandle @bitmap,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(ulong @offset,BitVecSafeHandle @bitmap,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(ulong @offset,BitVecSafeHandle @bitmap,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(ulong @offsetX,ulong @offsetY,BitmapSafeHandle @bitmap,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(ulong @offset,BitVecSafeHandle @bitmap,ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -825,7 +841,23 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -957,9 +989,33 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear();
+            if (checksum != 14881) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear` checksum `14881`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and();
+            if (checksum != 7352) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and` checksum `7352`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or();
+            if (checksum != 7046) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or` checksum `7046`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win();
             if (checksum != 51700) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win` checksum `51700`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor();
+            if (checksum != 54209) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor` checksum `54209`, library returned `{checksum}`");
             }
         }
         {
@@ -1475,10 +1531,38 @@ public class Command: FFIObject<CommandSafeHandle>, ICommand {
     
 
     
+    public static Command BitmapLinear(ulong @offset, BitVec @bitmap) {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(FfiConverterUInt64.INSTANCE.Lower(@offset), FfiConverterTypeBitVec.INSTANCE.Lower(@bitmap), ref _status)
+));
+    }
+    
+    public static Command BitmapLinearAnd(ulong @offset, BitVec @bitmap) {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(FfiConverterUInt64.INSTANCE.Lower(@offset), FfiConverterTypeBitVec.INSTANCE.Lower(@bitmap), ref _status)
+));
+    }
+    
+    public static Command BitmapLinearOr(ulong @offset, BitVec @bitmap) {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(FfiConverterUInt64.INSTANCE.Lower(@offset), FfiConverterTypeBitVec.INSTANCE.Lower(@bitmap), ref _status)
+));
+    }
+    
     public static Command BitmapLinearWin(ulong @offsetX, ulong @offsetY, Bitmap @bitmap) {
         return new Command(
     _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(FfiConverterUInt64.INSTANCE.Lower(@offsetX), FfiConverterUInt64.INSTANCE.Lower(@offsetY), FfiConverterTypeBitmap.INSTANCE.Lower(@bitmap), ref _status)
+));
+    }
+    
+    public static Command BitmapLinearXor(ulong @offset, BitVec @bitmap) {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(FfiConverterUInt64.INSTANCE.Lower(@offset), FfiConverterTypeBitVec.INSTANCE.Lower(@bitmap), ref _status)
 ));
     }
     

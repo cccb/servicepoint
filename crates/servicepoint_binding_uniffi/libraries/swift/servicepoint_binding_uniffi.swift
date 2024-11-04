@@ -697,12 +697,52 @@ public class Command: CommandProtocol {
 
     
 
+    public static func bitmapLinear(offset: UInt64, bitmap: BitVec)  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(
+        FfiConverterUInt64.lower(offset),
+        FfiConverterTypeBitVec.lower(bitmap),$0)
+})
+    }
+
+    
+
+    public static func bitmapLinearAnd(offset: UInt64, bitmap: BitVec)  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(
+        FfiConverterUInt64.lower(offset),
+        FfiConverterTypeBitVec.lower(bitmap),$0)
+})
+    }
+
+    
+
+    public static func bitmapLinearOr(offset: UInt64, bitmap: BitVec)  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(
+        FfiConverterUInt64.lower(offset),
+        FfiConverterTypeBitVec.lower(bitmap),$0)
+})
+    }
+
+    
+
     public static func bitmapLinearWin(offsetX: UInt64, offsetY: UInt64, bitmap: Bitmap)  -> Command {
         return Command(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(
         FfiConverterUInt64.lower(offsetX),
         FfiConverterUInt64.lower(offsetY),
         FfiConverterTypeBitmap.lower(bitmap),$0)
+})
+    }
+
+    
+
+    public static func bitmapLinearXor(offset: UInt64, bitmap: BitVec)  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(
+        FfiConverterUInt64.lower(offset),
+        FfiConverterTypeBitVec.lower(bitmap),$0)
 })
     }
 
@@ -991,7 +1031,19 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 14881) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 7352) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or() != 7046) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 51700) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54209) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291) {

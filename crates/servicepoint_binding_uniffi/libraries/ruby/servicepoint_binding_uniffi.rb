@@ -564,8 +564,20 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_command,
     [:pointer, RustCallStatus.by_ref],
     :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,
+    [:uint64, :pointer, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,
+    [:uint64, :pointer, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,
+    [:uint64, :pointer, RustCallStatus.by_ref],
+    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,
     [:uint64, :uint64, :pointer, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,
+    [:uint64, :pointer, RustCallStatus.by_ref],
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness,
     [:uint8, RustCallStatus.by_ref],
@@ -648,7 +660,19 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness,
@@ -876,6 +900,30 @@ end
     return inst.instance_variable_get :@pointer
   end
 
+  def self.bitmap_linear(offset, bitmap)
+        offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
+        bitmap = bitmap
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,offset,(BitVec._uniffi_lower bitmap)))
+  end
+  def self.bitmap_linear_and(offset, bitmap)
+        offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
+        bitmap = bitmap
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,offset,(BitVec._uniffi_lower bitmap)))
+  end
+  def self.bitmap_linear_or(offset, bitmap)
+        offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
+        bitmap = bitmap
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,offset,(BitVec._uniffi_lower bitmap)))
+  end
   def self.bitmap_linear_win(offset_x, offset_y, bitmap)
         offset_x = ServicepointBindingUniffi::uniffi_in_range(offset_x, "u64", 0, 2**64)
         offset_y = ServicepointBindingUniffi::uniffi_in_range(offset_y, "u64", 0, 2**64)
@@ -884,6 +932,14 @@ end
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
     return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,offset_x,offset_y,(Bitmap._uniffi_lower bitmap)))
+  end
+  def self.bitmap_linear_xor(offset, bitmap)
+        offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
+        bitmap = bitmap
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,offset,(BitVec._uniffi_lower bitmap)))
   end
   def self.brightness(brightness)
         brightness = ServicepointBindingUniffi::uniffi_in_range(brightness, "u8", 0, 2**8)

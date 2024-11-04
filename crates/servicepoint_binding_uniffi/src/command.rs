@@ -1,4 +1,5 @@
 use crate::bitmap::Bitmap;
+use crate::bitvec::BitVec;
 use crate::errors::ServicePointError;
 use servicepoint::{CompressionCode, Origin};
 use std::sync::Arc;
@@ -52,6 +53,53 @@ impl Command {
         // TODO: compression codes
         let actual = servicepoint::Command::BitmapLinearWin(
             origin,
+            bitmap,
+            CompressionCode::Uncompressed,
+        );
+        Self::internal_new(actual)
+    }
+
+    #[uniffi::constructor]
+    pub fn bitmap_linear(offset: u64, bitmap: &Arc<BitVec>) -> Arc<Self> {
+        let bitmap = bitmap.actual.read().unwrap().clone();
+        // TODO: compression codes
+        let actual = servicepoint::Command::BitmapLinear(
+            offset as usize,
+            bitmap,
+            CompressionCode::Uncompressed,
+        );
+        Self::internal_new(actual)
+    }
+
+    #[uniffi::constructor]
+    pub fn bitmap_linear_and(offset: u64, bitmap: &Arc<BitVec>) -> Arc<Self> {
+        let bitmap = bitmap.actual.read().unwrap().clone();
+        // TODO: compression codes
+        let actual = servicepoint::Command::BitmapLinearAnd(
+            offset as usize,
+            bitmap,
+            CompressionCode::Uncompressed,
+        );
+        Self::internal_new(actual)
+    }
+
+    #[uniffi::constructor]
+    pub fn bitmap_linear_or(offset: u64, bitmap: &Arc<BitVec>) -> Arc<Self> {
+        let bitmap = bitmap.actual.read().unwrap().clone();
+        // TODO: compression codes
+        let actual = servicepoint::Command::BitmapLinearOr(
+            offset as usize,
+            bitmap,
+            CompressionCode::Uncompressed,
+        );
+        Self::internal_new(actual)
+    }
+    #[uniffi::constructor]
+    pub fn bitmap_linear_xor(offset: u64, bitmap: &Arc<BitVec>) -> Arc<Self> {
+        let bitmap = bitmap.actual.read().unwrap().clone();
+        // TODO: compression codes
+        let actual = servicepoint::Command::BitmapLinearXor(
+            offset as usize,
             bitmap,
             CompressionCode::Uncompressed,
         );

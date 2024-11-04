@@ -165,9 +165,33 @@ void uniffi_servicepoint_binding_uniffi_fn_free_command(
 	RustCallStatus* out_status
 );
 
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(
+	uint64_t offset,
+	void* bitmap,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(
+	uint64_t offset,
+	void* bitmap,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(
+	uint64_t offset,
+	void* bitmap,
+	RustCallStatus* out_status
+);
+
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(
 	uint64_t offset_x,
 	uint64_t offset_y,
+	void* bitmap,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(
+	uint64_t offset,
 	void* bitmap,
 	RustCallStatus* out_status
 );
@@ -568,7 +592,23 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_
 	RustCallStatus* out_status
 );
 
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or(
+	RustCallStatus* out_status
+);
+
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor(
 	RustCallStatus* out_status
 );
 
