@@ -357,11 +357,74 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(uniffiStatus)
+	})
+	if checksum != 43887 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get(uniffiStatus)
+	})
+	if checksum != 61136 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height(uniffiStatus)
+	})
+	if checksum != 44991 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set(uniffiStatus)
+	})
+	if checksum != 25290 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(uniffiStatus)
+	})
+	if checksum != 30837 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(uniffiStatus)
 	})
 	if checksum != 23796 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_connection_send: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(uniffiStatus)
+	})
+	if checksum != 49832 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(uniffiStatus)
+	})
+	if checksum != 63762 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -446,6 +509,63 @@ func (FfiConverterUint8) Read(reader io.Reader) uint8 {
 type FfiDestroyerUint8 struct {}
 
 func (FfiDestroyerUint8) Destroy(_ uint8) {}
+
+
+type FfiConverterUint64 struct{}
+
+var FfiConverterUint64INSTANCE = FfiConverterUint64{}
+
+func (FfiConverterUint64) Lower(value uint64) C.uint64_t {
+	return C.uint64_t(value)
+}
+
+func (FfiConverterUint64) Write(writer io.Writer, value uint64) {
+	writeUint64(writer, value)
+}
+
+func (FfiConverterUint64) Lift(value C.uint64_t) uint64 {
+	return uint64(value)
+}
+
+func (FfiConverterUint64) Read(reader io.Reader) uint64 {
+	return readUint64(reader)
+}
+
+type FfiDestroyerUint64 struct {}
+
+func (FfiDestroyerUint64) Destroy(_ uint64) {}
+
+
+type FfiConverterBool struct{}
+
+var FfiConverterBoolINSTANCE = FfiConverterBool{}
+
+func (FfiConverterBool) Lower(value bool) C.int8_t {
+	if value {
+		return C.int8_t(1)
+	}
+	return C.int8_t(0)
+}
+
+func (FfiConverterBool) Write(writer io.Writer, value bool) {
+	if value {
+		writeInt8(writer, 1)
+	} else {
+		writeInt8(writer, 0)
+	}
+}
+
+func (FfiConverterBool) Lift(value C.int8_t) bool {
+	return value != 0
+}
+
+func (FfiConverterBool) Read(reader io.Reader) bool {
+	return readInt8(reader) != 0
+}
+
+type FfiDestroyerBool struct {}
+
+func (FfiDestroyerBool) Destroy(_ bool) {}
 
 
 type FfiConverterString struct{}
@@ -554,6 +674,122 @@ func (ffiObject *FfiObject)freeRustArcPtr() {
 		return 0
 	})
 }
+type Bitmap struct {
+	ffiObject FfiObject
+}
+func NewBitmap(width uint64, height uint64) *Bitmap {
+	return FfiConverterBitmapINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(FfiConverterUint64INSTANCE.Lower(width), FfiConverterUint64INSTANCE.Lower(height), _uniffiStatus)
+	}))
+}
+
+
+func BitmapNewMaxSized() *Bitmap {
+	return FfiConverterBitmapINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized( _uniffiStatus)
+	}))
+}
+
+
+
+func (_self *Bitmap)Fill(value bool)  {
+	_pointer := _self.ffiObject.incrementPointer("*Bitmap")
+	defer _self.ffiObject.decrementPointer()
+	rustCall(func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(
+		_pointer,FfiConverterBoolINSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+}
+
+
+func (_self *Bitmap)Get(x uint64, y uint64) bool {
+	_pointer := _self.ffiObject.incrementPointer("*Bitmap")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), _uniffiStatus)
+	}))
+}
+
+
+func (_self *Bitmap)Height() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*Bitmap")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+func (_self *Bitmap)Set(x uint64, y uint64, value bool)  {
+	_pointer := _self.ffiObject.incrementPointer("*Bitmap")
+	defer _self.ffiObject.decrementPointer()
+	rustCall(func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), FfiConverterBoolINSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+}
+
+
+func (_self *Bitmap)Width() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*Bitmap")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+
+func (object *Bitmap)Destroy() {
+	runtime.SetFinalizer(object, nil)
+	object.ffiObject.destroy()
+}
+
+type FfiConverterBitmap struct {}
+
+var FfiConverterBitmapINSTANCE = FfiConverterBitmap{}
+
+func (c FfiConverterBitmap) Lift(pointer unsafe.Pointer) *Bitmap {
+	result := &Bitmap {
+		newFfiObject(
+			pointer,
+			func(pointer unsafe.Pointer, status *C.RustCallStatus) {
+				C.uniffi_servicepoint_binding_uniffi_fn_free_bitmap(pointer, status)
+		}),
+	}
+	runtime.SetFinalizer(result, (*Bitmap).Destroy)
+	return result
+}
+
+func (c FfiConverterBitmap) Read(reader io.Reader) *Bitmap {
+	return c.Lift(unsafe.Pointer(uintptr(readUint64(reader))))
+}
+
+func (c FfiConverterBitmap) Lower(value *Bitmap) unsafe.Pointer {
+	// TODO: this is bad - all synchronization from ObjectRuntime.go is discarded here,
+	// because the pointer will be decremented immediately after this function returns,
+	// and someone will be left holding onto a non-locked pointer.
+	pointer := value.ffiObject.incrementPointer("*Bitmap")
+	defer value.ffiObject.decrementPointer()
+	return pointer
+}
+
+func (c FfiConverterBitmap) Write(writer io.Writer, value *Bitmap) {
+	writeUint64(writer, uint64(uintptr(c.Lower(value))))
+}
+
+type FfiDestroyerBitmap struct {}
+
+func (_ FfiDestroyerBitmap) Destroy(value *Bitmap) {
+	value.Destroy()
+}
+
+
 type Command struct {
 	ffiObject FfiObject
 }

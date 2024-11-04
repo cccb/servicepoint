@@ -429,6 +429,39 @@ static class _UniFFILib {
         }
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_free_bitmap(
+    IntPtr ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern BitmapSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(ulong @width,ulong @height,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern BitmapSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(BitmapSafeHandle @ptr,sbyte @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(BitmapSafeHandle @ptr,ulong @x,ulong @y,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ulong uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(BitmapSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(BitmapSafeHandle @ptr,ulong @x,ulong @y,sbyte @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ulong uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(BitmapSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_free_command(
     IntPtr ptr,ref RustCallStatus _uniffi_out_err
     );
@@ -695,7 +728,35 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -737,9 +798,51 @@ static class _UniFFILib {
 
     static void uniffiCheckApiChecksums() {
         {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill();
+            if (checksum != 43887) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill` checksum `43887`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get();
+            if (checksum != 61136) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get` checksum `61136`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height();
+            if (checksum != 44991) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height` checksum `44991`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set();
+            if (checksum != 25290) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set` checksum `25290`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width();
+            if (checksum != 30837) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width` checksum `30837`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send();
             if (checksum != 23796) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_connection_send` checksum `23796`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new();
+            if (checksum != 49832) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new` checksum `49832`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized();
+            if (checksum != 63762) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized` checksum `63762`, library returned `{checksum}`");
             }
         }
         {
@@ -809,6 +912,58 @@ class FfiConverterUInt8: FfiConverter<byte, byte> {
 
     public override void Write(byte value, BigEndianStream stream) {
         stream.WriteByte(value);
+    }
+}
+
+
+
+class FfiConverterUInt64: FfiConverter<ulong, ulong> {
+    public static FfiConverterUInt64 INSTANCE = new FfiConverterUInt64();
+
+    public override ulong Lift(ulong value) {
+        return value;
+    }
+
+    public override ulong Read(BigEndianStream stream) {
+        return stream.ReadULong();
+    }
+
+    public override ulong Lower(ulong value) {
+        return value;
+    }
+
+    public override int AllocationSize(ulong value) {
+        return 8;
+    }
+
+    public override void Write(ulong value, BigEndianStream stream) {
+        stream.WriteULong(value);
+    }
+}
+
+
+
+class FfiConverterBoolean: FfiConverter<bool, sbyte> {
+    public static FfiConverterBoolean INSTANCE = new FfiConverterBoolean();
+
+    public override bool Lift(sbyte value) {
+        return value != 0;
+    }
+
+    public override bool Read(BigEndianStream stream) {
+        return Lift(stream.ReadSByte());
+    }
+
+    public override sbyte Lower(bool value) {
+        return value ? (sbyte)1 : (sbyte)0;
+    }
+
+    public override int AllocationSize(bool value) {
+        return (sbyte)1;
+    }
+
+    public override void Write(bool value, BigEndianStream stream) {
+        stream.WriteSByte(Lower(value));
     }
 }
 
@@ -946,6 +1101,114 @@ static class FFIObjectUtil {
         }
     }
 }
+public interface IBitmap {
+    
+    void Fill(bool @value);
+    
+    bool Get(ulong @x, ulong @y);
+    
+    ulong Height();
+    
+    void Set(ulong @x, ulong @y, bool @value);
+    
+    ulong Width();
+    
+}
+
+public class BitmapSafeHandle: FFISafeHandle {
+    public BitmapSafeHandle(): base() {
+    }
+    public BitmapSafeHandle(IntPtr pointer): base(pointer) {
+    }
+    override protected bool ReleaseHandle() {
+        _UniffiHelpers.RustCall((ref RustCallStatus status) => {
+            _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_free_bitmap(this.handle, ref status);
+        });
+        return true;
+    }
+}
+public class Bitmap: FFIObject<BitmapSafeHandle>, IBitmap {
+    public Bitmap(BitmapSafeHandle pointer): base(pointer) {}
+    public Bitmap(ulong @width, ulong @height) :
+        this(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(FfiConverterUInt64.INSTANCE.Lower(@width), FfiConverterUInt64.INSTANCE.Lower(@height), ref _status)
+)) {}
+
+    
+    public void Fill(bool @value) {
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(this.GetHandle(), FfiConverterBoolean.INSTANCE.Lower(@value), ref _status)
+);
+    }
+    
+    
+    public bool Get(ulong @x, ulong @y) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), FfiConverterUInt64.INSTANCE.Lower(@y), ref _status)
+));
+    }
+    
+    public ulong Height() {
+        return FfiConverterUInt64.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(this.GetHandle(),  ref _status)
+));
+    }
+    
+    public void Set(ulong @x, ulong @y, bool @value) {
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), FfiConverterUInt64.INSTANCE.Lower(@y), FfiConverterBoolean.INSTANCE.Lower(@value), ref _status)
+);
+    }
+    
+    
+    public ulong Width() {
+        return FfiConverterUInt64.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(this.GetHandle(),  ref _status)
+));
+    }
+    
+
+    
+    public static Bitmap NewMaxSized() {
+        return new Bitmap(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized( ref _status)
+));
+    }
+    
+    
+}
+
+class FfiConverterTypeBitmap: FfiConverter<Bitmap, BitmapSafeHandle> {
+    public static FfiConverterTypeBitmap INSTANCE = new FfiConverterTypeBitmap();
+
+    public override BitmapSafeHandle Lower(Bitmap value) {
+        return value.GetHandle();
+    }
+
+    public override Bitmap Lift(BitmapSafeHandle value) {
+        return new Bitmap(value);
+    }
+
+    public override Bitmap Read(BigEndianStream stream) {
+        return Lift(new BitmapSafeHandle(new IntPtr(stream.ReadLong())));
+    }
+
+    public override int AllocationSize(Bitmap value) {
+        return 8;
+    }
+
+    public override void Write(Bitmap value, BigEndianStream stream) {
+        stream.WriteLong(Lower(value).DangerousGetRawFfiValue().ToInt64());
+    }
+}
+
+
+
 public interface ICommand {
     
 }

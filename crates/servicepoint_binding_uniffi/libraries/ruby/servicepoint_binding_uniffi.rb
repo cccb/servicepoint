@@ -163,12 +163,32 @@ class RustBufferStream
     unpack_from 1, 'c'
   end
 
+  def readU64
+    unpack_from 8, 'Q>'
+  end
+
+  def readBool
+    v = unpack_from 1, 'c'
+
+    return false if v == 0
+    return true if v == 1
+
+    raise InternalError, 'Unexpected byte for Boolean type'
+  end
+
   def readString
     size = unpack_from 4, 'l>'
 
     raise InternalError, 'Unexpected negative string length' if size.negative?
 
     read(size).force_encoding(Encoding::UTF_8)
+  end
+
+  # The Object type Bitmap.
+
+  def readTypeBitmap
+    pointer = FFI::Pointer.new unpack_from 8, 'Q>'
+    return Bitmap._uniffi_allocate(pointer)
   end
 
   # The Object type Command.
@@ -260,10 +280,26 @@ class RustBufferBuilder
     pack_into(1, 'c', v)
   end
 
+  def write_U64(v)
+    v = ServicepointBindingUniffi::uniffi_in_range(v, "u64", 0, 2**64)
+    pack_into(8, 'Q>', v)
+  end
+
+  def write_Bool(v)
+    pack_into(1, 'c', v ? 1 : 0)
+  end
+
   def write_String(v)
     v = ServicepointBindingUniffi::uniffi_utf8(v)
     pack_into 4, 'l>', v.bytes.size
     write v
+  end
+
+  # The Object type Bitmap.
+
+  def write_TypeBitmap(obj)
+    pointer = Bitmap._uniffi_lower obj
+    pack_into(8, 'Q>', pointer.address)
   end
 
   # The Object type Command.
@@ -434,6 +470,30 @@ module UniFFILib
   ffi_lib 'servicepoint_binding_uniffi'
   
 
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_free_bitmap,
+    [:pointer, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new,
+    [:uint64, :uint64, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized,
+    [RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill,
+    [:pointer, :int8, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get,
+    [:pointer, :uint64, :uint64, RustCallStatus.by_ref],
+    :int8
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height,
+    [:pointer, RustCallStatus.by_ref],
+    :uint64
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set,
+    [:pointer, :uint64, :uint64, :int8, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width,
+    [:pointer, RustCallStatus.by_ref],
+    :uint64
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_command,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -473,7 +533,28 @@ module UniFFILib
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_reserve,
     [RustBuffer.by_value, :int32, RustCallStatus.by_ref],
     RustBuffer.by_value
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_connection_send,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness,
@@ -507,6 +588,84 @@ end
 
   
 
+  
+  class Bitmap
+
+  # A private helper for initializing instances of the class from a raw pointer,
+  # bypassing any initialization logic and ensuring they are GC'd properly.
+  def self._uniffi_allocate(pointer)
+    pointer.autorelease = false
+    inst = allocate
+    inst.instance_variable_set :@pointer, pointer
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    return inst
+  end
+
+  # A private helper for registering an object finalizer.
+  # N.B. it's important that this does not capture a reference
+  # to the actual instance, only its underlying pointer.
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
+    Proc.new do |_id|
+      ServicepointBindingUniffi.rust_call(
+        :uniffi_servicepoint_binding_uniffi_fn_free_bitmap,
+        pointer
+      )
+    end
+  end
+
+  # A private helper for lowering instances into a raw pointer.
+  # This does an explicit typecheck, because accidentally lowering a different type of
+  # object in a place where this type is expected, could lead to memory unsafety.
+  def self._uniffi_lower(inst)
+    if not inst.is_a? self
+      raise TypeError.new "Expected a Bitmap instance, got #{inst}"
+    end
+    return inst.instance_variable_get :@pointer
+  end
+  def initialize(width, height)
+        width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
+        height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
+    pointer = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new,width,height)
+    @pointer = pointer
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+  end
+
+  def self.new_max_sized()
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized,))
+  end
+  
+
+  def fill(value)
+        value = value ? true : false
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill,@pointer,(value ? 1 : 0))
+  end
+  
+  def get(x, y)
+        x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
+        y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get,@pointer,x,y)
+    return 1 == result
+  end
+  def height()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height,@pointer,)
+    return result.to_i
+  end
+  def set(x, y, value)
+        x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
+        y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
+        value = value ? true : false
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set,@pointer,x,y,(value ? 1 : 0))
+  end
+  
+  def width()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width,@pointer,)
+    return result.to_i
+  end
+  
+end
   
   class Command
 

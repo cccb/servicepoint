@@ -14,7 +14,7 @@ impl Connection {
     pub fn new(host: String) -> Result<Arc<Self>, ServicePointError> {
         servicepoint::Connection::open(host)
             .map(|actual| Arc::new(Connection { actual }))
-            .map_err(|err| ServicePointError::IOError { error: err.to_string() })
+            .map_err(|err| ServicePointError::IoError { error: err.to_string() })
     }
 
     #[uniffi::constructor]
@@ -24,6 +24,6 @@ impl Connection {
 
     pub fn send(&self, command: Arc<Command>) -> Result<(), ServicePointError> {
         self.actual.send(command.actual.clone())
-            .map_err(|err| ServicePointError::IOError { error: format!("{err:?}") })
+            .map_err(|err| ServicePointError::IoError { error: format!("{err:?}") })
     }
 }

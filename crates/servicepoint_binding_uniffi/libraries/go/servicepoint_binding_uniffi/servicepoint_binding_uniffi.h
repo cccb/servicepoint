@@ -68,6 +68,52 @@ int8_t uniffiForeignExecutorCallbackservicepoint_binding_uniffi(uint64_t, uint32
 
 void uniffiFutureContinuationCallbackservicepoint_binding_uniffi(void*, int8_t);
 
+void uniffi_servicepoint_binding_uniffi_fn_free_bitmap(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(
+	uint64_t width,
+	uint64_t height,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(
+	void* ptr,
+	int8_t value,
+	RustCallStatus* out_status
+);
+
+int8_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(
+	void* ptr,
+	uint64_t x,
+	uint64_t y,
+	RustCallStatus* out_status
+);
+
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(
+	void* ptr,
+	uint64_t x,
+	uint64_t y,
+	int8_t value,
+	RustCallStatus* out_status
+);
+
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
 void uniffi_servicepoint_binding_uniffi_fn_free_command(
 	void* ptr,
 	RustCallStatus* out_status
@@ -409,7 +455,35 @@ void ffi_servicepoint_binding_uniffi_rust_future_complete_void(
 	RustCallStatus* out_status
 );
 
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(
+	RustCallStatus* out_status
+);
+
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(
 	RustCallStatus* out_status
 );
 

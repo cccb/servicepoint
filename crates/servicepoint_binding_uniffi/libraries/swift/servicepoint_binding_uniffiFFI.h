@@ -63,6 +63,23 @@ typedef struct RustCallStatus {
 typedef void (*UniFfiRustFutureContinuation)(void * _Nonnull, int8_t);
 
 // Scaffolding functions
+void uniffi_servicepoint_binding_uniffi_fn_free_bitmap(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(uint64_t width, uint64_t height, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(RustCallStatus *_Nonnull out_status
+    
+);
+void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(void*_Nonnull ptr, int8_t value, RustCallStatus *_Nonnull out_status
+);
+int8_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(void*_Nonnull ptr, uint64_t x, uint64_t y, RustCallStatus *_Nonnull out_status
+);
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(void*_Nonnull ptr, uint64_t x, uint64_t y, int8_t value, RustCallStatus *_Nonnull out_status
+);
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
 void uniffi_servicepoint_binding_uniffi_fn_free_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(uint8_t brightness, RustCallStatus *_Nonnull out_status
@@ -199,7 +216,28 @@ void ffi_servicepoint_binding_uniffi_rust_future_free_void(void* _Nonnull handle
 );
 void ffi_servicepoint_binding_uniffi_rust_future_complete_void(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
 );
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(void
+    
+);
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(void
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(void

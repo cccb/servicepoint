@@ -383,6 +383,22 @@ internal interface _UniFFILib : Library {
         }
     }
 
+    fun uniffi_servicepoint_binding_uniffi_fn_free_bitmap(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(`width`: Long,`height`: Long,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(`ptr`: Pointer,`value`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(`ptr`: Pointer,`x`: Long,`y`: Long,_uniffi_out_err: RustCallStatus, 
+    ): Byte
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Long
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(`ptr`: Pointer,`x`: Long,`y`: Long,`value`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Long
     fun uniffi_servicepoint_binding_uniffi_fn_free_command(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(`brightness`: Byte,_uniffi_out_err: RustCallStatus, 
@@ -515,7 +531,21 @@ internal interface _UniFFILib : Library {
     ): Unit
     fun ffi_servicepoint_binding_uniffi_rust_future_complete_void(`handle`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(
     ): Short
@@ -546,7 +576,28 @@ private fun uniffiCheckContractApiVersion(lib: _UniFFILib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill() != 43887.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get() != 61136.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height() != 44991.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set() != 25290.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new() != 49832.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291.toShort()) {
@@ -591,6 +642,46 @@ public object FfiConverterUByte: FfiConverter<UByte, Byte> {
 
     override fun write(value: UByte, buf: ByteBuffer) {
         buf.put(value.toByte())
+    }
+}
+
+public object FfiConverterULong: FfiConverter<ULong, Long> {
+    override fun lift(value: Long): ULong {
+        return value.toULong()
+    }
+
+    override fun read(buf: ByteBuffer): ULong {
+        return lift(buf.getLong())
+    }
+
+    override fun lower(value: ULong): Long {
+        return value.toLong()
+    }
+
+    override fun allocationSize(value: ULong) = 8
+
+    override fun write(value: ULong, buf: ByteBuffer) {
+        buf.putLong(value.toLong())
+    }
+}
+
+public object FfiConverterBoolean: FfiConverter<Boolean, Byte> {
+    override fun lift(value: Byte): Boolean {
+        return value.toInt() != 0
+    }
+
+    override fun read(buf: ByteBuffer): Boolean {
+        return lift(buf.get())
+    }
+
+    override fun lower(value: Boolean): Byte {
+        return if (value) 1.toByte() else 0.toByte()
+    }
+
+    override fun allocationSize(value: Boolean) = 1
+
+    override fun write(value: Boolean, buf: ByteBuffer) {
+        buf.put(lower(value))
     }
 }
 
@@ -810,6 +901,130 @@ abstract class FFIObject(
         }
     }
 }
+
+public interface BitmapInterface {
+    
+    fun `fill`(`value`: Boolean)
+    fun `get`(`x`: ULong, `y`: ULong): Boolean
+    fun `height`(): ULong
+    fun `set`(`x`: ULong, `y`: ULong, `value`: Boolean)
+    fun `width`(): ULong
+    companion object
+}
+
+class Bitmap(
+    pointer: Pointer
+) : FFIObject(pointer), BitmapInterface {
+    constructor(`width`: ULong, `height`: ULong) :
+        this(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(FfiConverterULong.lower(`width`),FfiConverterULong.lower(`height`),_status)
+})
+
+    /**
+     * Disconnect the object from the underlying Rust object.
+     *
+     * It can be called more than once, but once called, interacting with the object
+     * causes an `IllegalStateException`.
+     *
+     * Clients **must** call this method once done with the object, or cause a memory leak.
+     */
+    override protected fun freeRustArcPtr() {
+        rustCall() { status ->
+            _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_free_bitmap(this.pointer, status)
+        }
+    }
+
+    override fun `fill`(`value`: Boolean) =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(it,
+        FfiConverterBoolean.lower(`value`),
+        _status)
+}
+        }
+    
+    
+    override fun `get`(`x`: ULong, `y`: ULong): Boolean =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(it,
+        FfiConverterULong.lower(`x`),FfiConverterULong.lower(`y`),
+        _status)
+}
+        }.let {
+            FfiConverterBoolean.lift(it)
+        }
+    
+    override fun `height`(): ULong =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterULong.lift(it)
+        }
+    
+    override fun `set`(`x`: ULong, `y`: ULong, `value`: Boolean) =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(it,
+        FfiConverterULong.lower(`x`),FfiConverterULong.lower(`y`),FfiConverterBoolean.lower(`value`),
+        _status)
+}
+        }
+    
+    
+    override fun `width`(): ULong =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterULong.lift(it)
+        }
+    
+    
+
+    companion object {
+        fun `newMaxSized`(): Bitmap =
+            Bitmap(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(_status)
+})
+        
+    }
+    
+}
+
+public object FfiConverterTypeBitmap: FfiConverter<Bitmap, Pointer> {
+    override fun lower(value: Bitmap): Pointer = value.callWithPointer { it }
+
+    override fun lift(value: Pointer): Bitmap {
+        return Bitmap(value)
+    }
+
+    override fun read(buf: ByteBuffer): Bitmap {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: Bitmap) = 8
+
+    override fun write(value: Bitmap, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+
 
 public interface CommandInterface {
     

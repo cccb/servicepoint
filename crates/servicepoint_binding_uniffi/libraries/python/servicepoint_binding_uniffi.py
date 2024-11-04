@@ -504,7 +504,21 @@ def _uniffi_check_contract_api_version(lib):
         raise InternalError("UniFFI contract version mismatch: try cleaning and rebuilding your project")
 
 def _uniffi_check_api_checksums(lib):
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill() != 43887:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get() != 61136:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height() != 44991:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set() != 25290:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new() != 49832:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -523,6 +537,52 @@ def _uniffi_check_api_checksums(lib):
 # This is an implementation detail which will be called internally by the public API.
 
 _UniffiLib = _uniffi_load_indirect()
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitmap.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitmap.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized.argtypes = (
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_int8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get.restype = ctypes.c_int8
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height.restype = ctypes.c_uint64
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.c_int8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width.restype = ctypes.c_uint64
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.argtypes = (
     ctypes.c_void_p,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -824,9 +884,30 @@ _UniffiLib.ffi_servicepoint_binding_uniffi_rust_future_complete_void.argtypes = 
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.ffi_servicepoint_binding_uniffi_rust_future_complete_void.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.restype = ctypes.c_uint16
@@ -869,6 +950,36 @@ class _UniffiConverterUInt8(_UniffiConverterPrimitiveInt):
     def write_unchecked(value, buf):
         buf.write_u8(value)
 
+class _UniffiConverterUInt64(_UniffiConverterPrimitiveInt):
+    CLASS_NAME = "u64"
+    VALUE_MIN = 0
+    VALUE_MAX = 2**64
+
+    @staticmethod
+    def read(buf):
+        return buf.read_u64()
+
+    @staticmethod
+    def write_unchecked(value, buf):
+        buf.write_u64(value)
+
+class _UniffiConverterBool(_UniffiConverterPrimitive):
+    @classmethod
+    def check(cls, value):
+        return not not value
+
+    @classmethod
+    def read(cls, buf):
+        return cls.lift(buf.read_u8())
+
+    @classmethod
+    def write_unchecked(cls, value, buf):
+        buf.write_u8(value)
+
+    @staticmethod
+    def lift(value):
+        return value != 0
+
 class _UniffiConverterString:
     @staticmethod
     def check(value):
@@ -902,6 +1013,122 @@ class _UniffiConverterString:
         with _UniffiRustBuffer.alloc_with_builder() as builder:
             builder.write(value.encode("utf-8"))
             return builder.finalize()
+
+
+
+class Bitmap:
+    _pointer: ctypes.c_void_p
+    def __init__(self, width: "int",height: "int"):
+        
+        
+        self._pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new,
+        _UniffiConverterUInt64.lower(width),
+        _UniffiConverterUInt64.lower(height))
+
+    def __del__(self):
+        # In case of partial initialization of instances.
+        pointer = getattr(self, "_pointer", None)
+        if pointer is not None:
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitmap, pointer)
+
+    # Used by alternative constructors or any methods which return this type.
+    @classmethod
+    def _make_instance_(cls, pointer):
+        # Lightly yucky way to bypass the usual __init__ logic
+        # and just create a new instance with the required pointer.
+        inst = cls.__new__(cls)
+        inst._pointer = pointer
+        return inst
+
+    @classmethod
+    def new_max_sized(cls, ):
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized,)
+        return cls._make_instance_(pointer)
+
+
+
+    def fill(self, value: "bool"):
+        
+        _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill,self._pointer,
+        _UniffiConverterBool.lower(value))
+
+
+
+
+
+
+
+    def get(self, x: "int",y: "int") -> "bool":
+        
+        
+        return _UniffiConverterBool.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get,self._pointer,
+        _UniffiConverterUInt64.lower(x),
+        _UniffiConverterUInt64.lower(y))
+        )
+
+
+
+
+
+
+    def height(self, ) -> "int":
+        return _UniffiConverterUInt64.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height,self._pointer,)
+        )
+
+
+
+
+
+
+    def set(self, x: "int",y: "int",value: "bool"):
+        
+        
+        
+        _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set,self._pointer,
+        _UniffiConverterUInt64.lower(x),
+        _UniffiConverterUInt64.lower(y),
+        _UniffiConverterBool.lower(value))
+
+
+
+
+
+
+
+    def width(self, ) -> "int":
+        return _UniffiConverterUInt64.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width,self._pointer,)
+        )
+
+
+
+
+
+
+class _UniffiConverterTypeBitmap:
+    @classmethod
+    def read(cls, buf):
+        ptr = buf.read_u64()
+        if ptr == 0:
+            raise InternalError("Raw pointer value was null")
+        return cls.lift(ptr)
+
+    @classmethod
+    def write(cls, value, buf):
+        if not isinstance(value, Bitmap):
+            raise TypeError("Expected Bitmap instance, {} found".format(type(value).__name__))
+        buf.write_u64(cls.lower(value))
+
+    @staticmethod
+    def lift(value):
+        return Bitmap._make_instance_(value)
+
+    @staticmethod
+    def lower(value):
+        return value._pointer
 
 
 
@@ -1104,6 +1331,7 @@ class _UniffiConverterTypeServicePointError(_UniffiConverterRustBuffer):
 __all__ = [
     "InternalError",
     "ServicePointError",
+    "Bitmap",
     "Command",
     "Connection",
 ]

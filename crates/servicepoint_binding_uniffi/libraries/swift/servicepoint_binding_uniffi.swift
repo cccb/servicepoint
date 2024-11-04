@@ -310,6 +310,40 @@ fileprivate struct FfiConverterUInt8: FfiConverterPrimitive {
     }
 }
 
+fileprivate struct FfiConverterUInt64: FfiConverterPrimitive {
+    typealias FfiType = UInt64
+    typealias SwiftType = UInt64
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UInt64 {
+        return try lift(readInt(&buf))
+    }
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
+fileprivate struct FfiConverterBool : FfiConverter {
+    typealias FfiType = Int8
+    typealias SwiftType = Bool
+
+    public static func lift(_ value: Int8) throws -> Bool {
+        return value != 0
+    }
+
+    public static func lower(_ value: Bool) -> Int8 {
+        return value ? 1 : 0
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Bool {
+        return try lift(readInt(&buf))
+    }
+
+    public static func write(_ value: Bool, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
 fileprivate struct FfiConverterString: FfiConverter {
     typealias SwiftType = String
     typealias FfiType = RustBuffer
@@ -346,6 +380,147 @@ fileprivate struct FfiConverterString: FfiConverter {
         writeInt(&buf, len)
         writeBytes(&buf, value.utf8)
     }
+}
+
+
+public protocol BitmapProtocol {
+    func fill(value: Bool)  
+    func get(x: UInt64, y: UInt64)   -> Bool
+    func height()   -> UInt64
+    func set(x: UInt64, y: UInt64, value: Bool)  
+    func width()   -> UInt64
+    
+}
+
+public class Bitmap: BitmapProtocol {
+    fileprivate let pointer: UnsafeMutableRawPointer
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        self.pointer = pointer
+    }
+    public convenience init(width: UInt64, height: UInt64)  {
+        self.init(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(
+        FfiConverterUInt64.lower(width),
+        FfiConverterUInt64.lower(height),$0)
+})
+    }
+
+    deinit {
+        try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_bitmap(pointer, $0) }
+    }
+
+    
+
+    public static func newMaxSized()  -> Bitmap {
+        return Bitmap(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized($0)
+})
+    }
+
+    
+
+    
+    
+
+    public func fill(value: Bool)  {
+        try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(self.pointer, 
+        FfiConverterBool.lower(value),$0
+    )
+}
+    }
+
+    public func get(x: UInt64, y: UInt64)  -> Bool {
+        return try!  FfiConverterBool.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(self.pointer, 
+        FfiConverterUInt64.lower(x),
+        FfiConverterUInt64.lower(y),$0
+    )
+}
+        )
+    }
+
+    public func height()  -> UInt64 {
+        return try!  FfiConverterUInt64.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(self.pointer, $0
+    )
+}
+        )
+    }
+
+    public func set(x: UInt64, y: UInt64, value: Bool)  {
+        try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(self.pointer, 
+        FfiConverterUInt64.lower(x),
+        FfiConverterUInt64.lower(y),
+        FfiConverterBool.lower(value),$0
+    )
+}
+    }
+
+    public func width()  -> UInt64 {
+        return try!  FfiConverterUInt64.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(self.pointer, $0
+    )
+}
+        )
+    }
+}
+
+public struct FfiConverterTypeBitmap: FfiConverter {
+    typealias FfiType = UnsafeMutableRawPointer
+    typealias SwiftType = Bitmap
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Bitmap {
+        let v: UInt64 = try readInt(&buf)
+        // The Rust code won't compile if a pointer won't fit in a UInt64.
+        // We have to go via `UInt` because that's the thing that's the size of a pointer.
+        let ptr = UnsafeMutableRawPointer(bitPattern: UInt(truncatingIfNeeded: v))
+        if (ptr == nil) {
+            throw UniffiInternalError.unexpectedNullPointer
+        }
+        return try lift(ptr!)
+    }
+
+    public static func write(_ value: Bitmap, into buf: inout [UInt8]) {
+        // This fiddling is because `Int` is the thing that's the same size as a pointer.
+        // The Rust code won't compile if a pointer won't fit in a `UInt64`.
+        writeInt(&buf, UInt64(bitPattern: Int64(Int(bitPattern: lower(value)))))
+    }
+
+    public static func lift(_ pointer: UnsafeMutableRawPointer) throws -> Bitmap {
+        return Bitmap(unsafeFromRawPointer: pointer)
+    }
+
+    public static func lower(_ value: Bitmap) -> UnsafeMutableRawPointer {
+        return value.pointer
+    }
+}
+
+
+public func FfiConverterTypeBitmap_lift(_ pointer: UnsafeMutableRawPointer) throws -> Bitmap {
+    return try FfiConverterTypeBitmap.lift(pointer)
+}
+
+public func FfiConverterTypeBitmap_lower(_ value: Bitmap) -> UnsafeMutableRawPointer {
+    return FfiConverterTypeBitmap.lower(value)
 }
 
 
@@ -607,7 +782,28 @@ private var initializationResult: InitializationResult {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill() != 43887) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get() != 61136) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height() != 44991) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set() != 25290) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new() != 49832) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291) {
