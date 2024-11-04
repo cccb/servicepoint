@@ -33,4 +33,10 @@ public class CommandTests
     {
         _connection.Send(Command.HardReset());
     }
+
+    [Fact]
+    public void BitmapLinearWinSendable()
+    {
+        _connection.Send(Command.BitmapLinearWin(0, 0, Bitmap.NewMaxSized()));
+    }
 }
