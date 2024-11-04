@@ -38,6 +38,11 @@ impl Bitmap {
         ))
     }
 
+    #[uniffi::constructor]
+    pub fn clone(other: &Arc<Self>) -> Arc<Self> {
+        Self::internal_new(other.actual.read().unwrap().clone())
+    }
+
     pub fn set(&self, x: u64, y: u64, value: bool) {
         self.actual
             .write()

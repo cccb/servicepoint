@@ -24,6 +24,11 @@ impl BitVec {
         Self::internal_new(servicepoint::BitVec::from_slice(&data))
     }
 
+    #[uniffi::constructor]
+    pub fn clone(other: &Arc<Self>) -> Arc<Self> {
+        Self::internal_new(other.actual.read().unwrap().clone())
+    }
+
     pub fn set(&self, index: u64, value: bool) {
         self.actual.write().unwrap().set(index as usize, value)
     }
