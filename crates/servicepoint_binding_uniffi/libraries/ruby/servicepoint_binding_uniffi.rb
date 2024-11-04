@@ -126,6 +126,22 @@ end
     end
   end
 
+  # The Enum type CompressionCode.
+
+  def self.alloc_from_TypeCompressionCode(v)
+    RustBuffer.allocWithBuilder do |builder|
+      builder.write_TypeCompressionCode(v)
+      return builder.finalize
+    end
+  end
+
+  def consumeIntoTypeCompressionCode
+    consumeWithStream do |stream|
+      return stream.readTypeCompressionCode
+    end
+  end
+  
+
   
 
   
@@ -241,6 +257,34 @@ class RustBufferStream
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
     return Connection._uniffi_allocate(pointer)
   end
+
+  
+  
+  # The Enum type CompressionCode.
+
+  def readTypeCompressionCode
+    variant = unpack_from 4, 'l>'
+    
+    if variant == 1
+      return CompressionCode::UNCOMPRESSED
+    end
+    if variant == 2
+      return CompressionCode::ZLIB
+    end
+    if variant == 3
+      return CompressionCode::BZIP2
+    end
+    if variant == 4
+      return CompressionCode::LZMA
+    end
+    if variant == 5
+      return CompressionCode::ZSTD
+    end
+
+    raise InternalError, 'Unexpected variant tag for TypeCompressionCode'
+  end
+
+  
 
   
 
@@ -373,6 +417,13 @@ class RustBufferBuilder
     pack_into(8, 'Q>', pointer.address)
   end
 
+  # The Enum type CompressionCode.
+
+  def write_TypeCompressionCode(v)
+    pack_into(4, 'l>', v)
+ end
+   
+
   
 
   
@@ -422,6 +473,7 @@ CALL_ERROR = 1
 CALL_PANIC = 2
 
 
+
 module ServicePointError
   class IoError < StandardError
     def initialize(error)
@@ -455,6 +507,7 @@ end
 
 # Map error modules to the RustBuffer method name that reads them
 ERROR_MODULE_TO_READER_METHOD = {
+
 
   ServicePointError => :readTypeServicePointError,
 
@@ -603,19 +656,19 @@ module UniFFILib
     [:pointer, RustCallStatus.by_ref],
     :void
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,
-    [:uint64, :pointer, RustCallStatus.by_ref],
+    [:uint64, :pointer, RustBuffer.by_value, RustCallStatus.by_ref],
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,
-    [:uint64, :pointer, RustCallStatus.by_ref],
+    [:uint64, :pointer, RustBuffer.by_value, RustCallStatus.by_ref],
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,
-    [:uint64, :pointer, RustCallStatus.by_ref],
+    [:uint64, :pointer, RustBuffer.by_value, RustCallStatus.by_ref],
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,
-    [:uint64, :uint64, :pointer, RustCallStatus.by_ref],
+    [:uint64, :uint64, :pointer, RustBuffer.by_value, RustCallStatus.by_ref],
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,
-    [:uint64, :pointer, RustCallStatus.by_ref],
+    [:uint64, :pointer, RustBuffer.by_value, RustCallStatus.by_ref],
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness,
     [:uint8, RustCallStatus.by_ref],
@@ -765,6 +818,20 @@ module UniFFILib
 end
 
   # Public interface members begin here.
+
+  
+  
+  
+
+class CompressionCode
+  UNCOMPRESSED = 1
+  ZLIB = 2
+  BZIP2 = 3
+  LZMA = 4
+  ZSTD = 5
+  
+end
+
 
   
   
@@ -1046,46 +1113,51 @@ end
     return inst.instance_variable_get :@pointer
   end
 
-  def self.bitmap_linear(offset, bitmap)
+  def self.bitmap_linear(offset, bitmap, compression)
         offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
         bitmap = bitmap
+        compression = compression
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,offset,(BitVec._uniffi_lower bitmap)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,offset,(BitVec._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
-  def self.bitmap_linear_and(offset, bitmap)
+  def self.bitmap_linear_and(offset, bitmap, compression)
         offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
         bitmap = bitmap
+        compression = compression
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,offset,(BitVec._uniffi_lower bitmap)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,offset,(BitVec._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
-  def self.bitmap_linear_or(offset, bitmap)
+  def self.bitmap_linear_or(offset, bitmap, compression)
         offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
         bitmap = bitmap
+        compression = compression
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,offset,(BitVec._uniffi_lower bitmap)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,offset,(BitVec._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
-  def self.bitmap_linear_win(offset_x, offset_y, bitmap)
+  def self.bitmap_linear_win(offset_x, offset_y, bitmap, compression)
         offset_x = ServicepointBindingUniffi::uniffi_in_range(offset_x, "u64", 0, 2**64)
         offset_y = ServicepointBindingUniffi::uniffi_in_range(offset_y, "u64", 0, 2**64)
         bitmap = bitmap
+        compression = compression
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,offset_x,offset_y,(Bitmap._uniffi_lower bitmap)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,offset_x,offset_y,(Bitmap._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
-  def self.bitmap_linear_xor(offset, bitmap)
+  def self.bitmap_linear_xor(offset, bitmap, compression)
         offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
         bitmap = bitmap
+        compression = compression
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,offset,(BitVec._uniffi_lower bitmap)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,offset,(BitVec._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
   def self.brightness(brightness)
         brightness = ServicepointBindingUniffi::uniffi_in_range(brightness, "u8", 0, 2**8)

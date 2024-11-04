@@ -217,18 +217,21 @@ void uniffi_servicepoint_binding_uniffi_fn_free_command(
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(
 	uint64_t offset,
 	void* bitmap,
+	RustBuffer compression,
 	RustCallStatus* out_status
 );
 
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(
 	uint64_t offset,
 	void* bitmap,
+	RustBuffer compression,
 	RustCallStatus* out_status
 );
 
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(
 	uint64_t offset,
 	void* bitmap,
+	RustBuffer compression,
 	RustCallStatus* out_status
 );
 
@@ -236,12 +239,14 @@ void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_wi
 	uint64_t offset_x,
 	uint64_t offset_y,
 	void* bitmap,
+	RustBuffer compression,
 	RustCallStatus* out_status
 );
 
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(
 	uint64_t offset,
 	void* bitmap,
+	RustBuffer compression,
 	RustCallStatus* out_status
 );
 

@@ -557,7 +557,7 @@ func uniffiCheckChecksums() {
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear(uniffiStatus)
 	})
-	if checksum != 14881 {
+	if checksum != 18079 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear: UniFFI API checksum mismatch")
 	}
@@ -566,7 +566,7 @@ func uniffiCheckChecksums() {
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and(uniffiStatus)
 	})
-	if checksum != 7352 {
+	if checksum != 18147 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and: UniFFI API checksum mismatch")
 	}
@@ -575,7 +575,7 @@ func uniffiCheckChecksums() {
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or(uniffiStatus)
 	})
-	if checksum != 7046 {
+	if checksum != 44912 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or: UniFFI API checksum mismatch")
 	}
@@ -584,7 +584,7 @@ func uniffiCheckChecksums() {
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win(uniffiStatus)
 	})
-	if checksum != 51700 {
+	if checksum != 24563 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win: UniFFI API checksum mismatch")
 	}
@@ -593,7 +593,7 @@ func uniffiCheckChecksums() {
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor(uniffiStatus)
 	})
-	if checksum != 54209 {
+	if checksum != 54278 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor: UniFFI API checksum mismatch")
 	}
@@ -1249,33 +1249,33 @@ type Command struct {
 }
 
 
-func CommandBitmapLinear(offset uint64, bitmap *BitVec) *Command {
+func CommandBitmapLinear(offset uint64, bitmap *BitVec, compression CompressionCode) *Command {
 	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
-		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(FfiConverterUint64INSTANCE.Lower(offset), FfiConverterBitVecINSTANCE.Lower(bitmap), _uniffiStatus)
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(FfiConverterUint64INSTANCE.Lower(offset), FfiConverterBitVecINSTANCE.Lower(bitmap), FfiConverterTypeCompressionCodeINSTANCE.Lower(compression), _uniffiStatus)
 	}))
 }
 
-func CommandBitmapLinearAnd(offset uint64, bitmap *BitVec) *Command {
+func CommandBitmapLinearAnd(offset uint64, bitmap *BitVec, compression CompressionCode) *Command {
 	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
-		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(FfiConverterUint64INSTANCE.Lower(offset), FfiConverterBitVecINSTANCE.Lower(bitmap), _uniffiStatus)
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(FfiConverterUint64INSTANCE.Lower(offset), FfiConverterBitVecINSTANCE.Lower(bitmap), FfiConverterTypeCompressionCodeINSTANCE.Lower(compression), _uniffiStatus)
 	}))
 }
 
-func CommandBitmapLinearOr(offset uint64, bitmap *BitVec) *Command {
+func CommandBitmapLinearOr(offset uint64, bitmap *BitVec, compression CompressionCode) *Command {
 	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
-		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(FfiConverterUint64INSTANCE.Lower(offset), FfiConverterBitVecINSTANCE.Lower(bitmap), _uniffiStatus)
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(FfiConverterUint64INSTANCE.Lower(offset), FfiConverterBitVecINSTANCE.Lower(bitmap), FfiConverterTypeCompressionCodeINSTANCE.Lower(compression), _uniffiStatus)
 	}))
 }
 
-func CommandBitmapLinearWin(offsetX uint64, offsetY uint64, bitmap *Bitmap) *Command {
+func CommandBitmapLinearWin(offsetX uint64, offsetY uint64, bitmap *Bitmap, compression CompressionCode) *Command {
 	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
-		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(FfiConverterUint64INSTANCE.Lower(offsetX), FfiConverterUint64INSTANCE.Lower(offsetY), FfiConverterBitmapINSTANCE.Lower(bitmap), _uniffiStatus)
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(FfiConverterUint64INSTANCE.Lower(offsetX), FfiConverterUint64INSTANCE.Lower(offsetY), FfiConverterBitmapINSTANCE.Lower(bitmap), FfiConverterTypeCompressionCodeINSTANCE.Lower(compression), _uniffiStatus)
 	}))
 }
 
-func CommandBitmapLinearXor(offset uint64, bitmap *BitVec) *Command {
+func CommandBitmapLinearXor(offset uint64, bitmap *BitVec, compression CompressionCode) *Command {
 	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
-		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(FfiConverterUint64INSTANCE.Lower(offset), FfiConverterBitVecINSTANCE.Lower(bitmap), _uniffiStatus)
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(FfiConverterUint64INSTANCE.Lower(offset), FfiConverterBitVecINSTANCE.Lower(bitmap), FfiConverterTypeCompressionCodeINSTANCE.Lower(compression), _uniffiStatus)
 	}))
 }
 
@@ -1443,6 +1443,44 @@ type FfiDestroyerConnection struct {}
 func (_ FfiDestroyerConnection) Destroy(value *Connection) {
 	value.Destroy()
 }
+
+
+
+type CompressionCode uint
+
+const (
+	CompressionCodeUncompressed CompressionCode = 1
+	CompressionCodeZlib CompressionCode = 2
+	CompressionCodeBzip2 CompressionCode = 3
+	CompressionCodeLzma CompressionCode = 4
+	CompressionCodeZstd CompressionCode = 5
+)
+
+type FfiConverterTypeCompressionCode struct {}
+
+var FfiConverterTypeCompressionCodeINSTANCE = FfiConverterTypeCompressionCode{}
+
+func (c FfiConverterTypeCompressionCode) Lift(rb RustBufferI) CompressionCode {
+	return LiftFromRustBuffer[CompressionCode](c, rb)
+}
+
+func (c FfiConverterTypeCompressionCode) Lower(value CompressionCode) RustBuffer {
+	return LowerIntoRustBuffer[CompressionCode](c, value)
+}
+func (FfiConverterTypeCompressionCode) Read(reader io.Reader) CompressionCode {
+	id := readInt32(reader)
+	return CompressionCode(id)
+}
+
+func (FfiConverterTypeCompressionCode) Write(writer io.Writer, value CompressionCode) {
+	writeInt32(writer, int32(value))
+}
+
+type FfiDestroyerTypeCompressionCode struct {}
+
+func (_ FfiDestroyerTypeCompressionCode) Destroy(value CompressionCode) {
+}
+
 
 type ServicePointError struct {
 	err error

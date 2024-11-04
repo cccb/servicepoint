@@ -433,15 +433,15 @@ internal interface _UniFFILib : Library {
     ): Long
     fun uniffi_servicepoint_binding_uniffi_fn_free_command(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
-    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(`offset`: Long,`bitmap`: Pointer,_uniffi_out_err: RustCallStatus, 
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(`offset`: Long,`bitmap`: Pointer,`compression`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
-    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(`offset`: Long,`bitmap`: Pointer,_uniffi_out_err: RustCallStatus, 
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(`offset`: Long,`bitmap`: Pointer,`compression`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
-    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(`offset`: Long,`bitmap`: Pointer,_uniffi_out_err: RustCallStatus, 
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(`offset`: Long,`bitmap`: Pointer,`compression`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
-    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(`offsetX`: Long,`offsetY`: Long,`bitmap`: Pointer,_uniffi_out_err: RustCallStatus, 
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(`offsetX`: Long,`offsetY`: Long,`bitmap`: Pointer,`compression`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
-    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(`offset`: Long,`bitmap`: Pointer,_uniffi_out_err: RustCallStatus, 
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(`offset`: Long,`bitmap`: Pointer,`compression`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(`brightness`: Byte,_uniffi_out_err: RustCallStatus, 
     ): Pointer
@@ -726,19 +726,19 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new() != 4979.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 14881.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 18079.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 7352.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 18147.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or() != 7046.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or() != 44912.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 51700.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 24563.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54209.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54278.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291.toShort()) {
@@ -1453,30 +1453,30 @@ class Command(
     
 
     companion object {
-        fun `bitmapLinear`(`offset`: ULong, `bitmap`: BitVec): Command =
+        fun `bitmapLinear`(`offset`: ULong, `bitmap`: BitVec, `compression`: CompressionCode): Command =
             Command(
     rustCall() { _status ->
-    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(FfiConverterULong.lower(`offset`),FfiConverterTypeBitVec.lower(`bitmap`),_status)
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(FfiConverterULong.lower(`offset`),FfiConverterTypeBitVec.lower(`bitmap`),FfiConverterTypeCompressionCode.lower(`compression`),_status)
 })
-        fun `bitmapLinearAnd`(`offset`: ULong, `bitmap`: BitVec): Command =
+        fun `bitmapLinearAnd`(`offset`: ULong, `bitmap`: BitVec, `compression`: CompressionCode): Command =
             Command(
     rustCall() { _status ->
-    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(FfiConverterULong.lower(`offset`),FfiConverterTypeBitVec.lower(`bitmap`),_status)
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(FfiConverterULong.lower(`offset`),FfiConverterTypeBitVec.lower(`bitmap`),FfiConverterTypeCompressionCode.lower(`compression`),_status)
 })
-        fun `bitmapLinearOr`(`offset`: ULong, `bitmap`: BitVec): Command =
+        fun `bitmapLinearOr`(`offset`: ULong, `bitmap`: BitVec, `compression`: CompressionCode): Command =
             Command(
     rustCall() { _status ->
-    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(FfiConverterULong.lower(`offset`),FfiConverterTypeBitVec.lower(`bitmap`),_status)
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(FfiConverterULong.lower(`offset`),FfiConverterTypeBitVec.lower(`bitmap`),FfiConverterTypeCompressionCode.lower(`compression`),_status)
 })
-        fun `bitmapLinearWin`(`offsetX`: ULong, `offsetY`: ULong, `bitmap`: Bitmap): Command =
+        fun `bitmapLinearWin`(`offsetX`: ULong, `offsetY`: ULong, `bitmap`: Bitmap, `compression`: CompressionCode): Command =
             Command(
     rustCall() { _status ->
-    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(FfiConverterULong.lower(`offsetX`),FfiConverterULong.lower(`offsetY`),FfiConverterTypeBitmap.lower(`bitmap`),_status)
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(FfiConverterULong.lower(`offsetX`),FfiConverterULong.lower(`offsetY`),FfiConverterTypeBitmap.lower(`bitmap`),FfiConverterTypeCompressionCode.lower(`compression`),_status)
 })
-        fun `bitmapLinearXor`(`offset`: ULong, `bitmap`: BitVec): Command =
+        fun `bitmapLinearXor`(`offset`: ULong, `bitmap`: BitVec, `compression`: CompressionCode): Command =
             Command(
     rustCall() { _status ->
-    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(FfiConverterULong.lower(`offset`),FfiConverterTypeBitVec.lower(`bitmap`),_status)
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(FfiConverterULong.lower(`offset`),FfiConverterTypeBitVec.lower(`bitmap`),FfiConverterTypeCompressionCode.lower(`compression`),_status)
 })
         fun `brightness`(`brightness`: UByte): Command =
             Command(
@@ -1607,6 +1607,30 @@ public object FfiConverterTypeConnection: FfiConverter<Connection, Pointer> {
         buf.putLong(Pointer.nativeValue(lower(value)))
     }
 }
+
+
+
+
+enum class CompressionCode {
+    UNCOMPRESSED,ZLIB,BZIP2,LZMA,ZSTD;
+    companion object
+}
+
+public object FfiConverterTypeCompressionCode: FfiConverterRustBuffer<CompressionCode> {
+    override fun read(buf: ByteBuffer) = try {
+        CompressionCode.values()[buf.getInt() - 1]
+    } catch (e: IndexOutOfBoundsException) {
+        throw RuntimeException("invalid enum value, something is very wrong!!", e)
+    }
+
+    override fun allocationSize(value: CompressionCode) = 4
+
+    override fun write(value: CompressionCode, buf: ByteBuffer) {
+        buf.putInt(value.ordinal + 1)
+    }
+}
+
+
 
 
 

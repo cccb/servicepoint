@@ -841,52 +841,57 @@ public class Command: CommandProtocol {
 
     
 
-    public static func bitmapLinear(offset: UInt64, bitmap: BitVec)  -> Command {
+    public static func bitmapLinear(offset: UInt64, bitmap: BitVec, compression: CompressionCode)  -> Command {
         return Command(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(
         FfiConverterUInt64.lower(offset),
-        FfiConverterTypeBitVec.lower(bitmap),$0)
+        FfiConverterTypeBitVec.lower(bitmap),
+        FfiConverterTypeCompressionCode.lower(compression),$0)
 })
     }
 
     
 
-    public static func bitmapLinearAnd(offset: UInt64, bitmap: BitVec)  -> Command {
+    public static func bitmapLinearAnd(offset: UInt64, bitmap: BitVec, compression: CompressionCode)  -> Command {
         return Command(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(
         FfiConverterUInt64.lower(offset),
-        FfiConverterTypeBitVec.lower(bitmap),$0)
+        FfiConverterTypeBitVec.lower(bitmap),
+        FfiConverterTypeCompressionCode.lower(compression),$0)
 })
     }
 
     
 
-    public static func bitmapLinearOr(offset: UInt64, bitmap: BitVec)  -> Command {
+    public static func bitmapLinearOr(offset: UInt64, bitmap: BitVec, compression: CompressionCode)  -> Command {
         return Command(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(
         FfiConverterUInt64.lower(offset),
-        FfiConverterTypeBitVec.lower(bitmap),$0)
+        FfiConverterTypeBitVec.lower(bitmap),
+        FfiConverterTypeCompressionCode.lower(compression),$0)
 })
     }
 
     
 
-    public static func bitmapLinearWin(offsetX: UInt64, offsetY: UInt64, bitmap: Bitmap)  -> Command {
+    public static func bitmapLinearWin(offsetX: UInt64, offsetY: UInt64, bitmap: Bitmap, compression: CompressionCode)  -> Command {
         return Command(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(
         FfiConverterUInt64.lower(offsetX),
         FfiConverterUInt64.lower(offsetY),
-        FfiConverterTypeBitmap.lower(bitmap),$0)
+        FfiConverterTypeBitmap.lower(bitmap),
+        FfiConverterTypeCompressionCode.lower(compression),$0)
 })
     }
 
     
 
-    public static func bitmapLinearXor(offset: UInt64, bitmap: BitVec)  -> Command {
+    public static func bitmapLinearXor(offset: UInt64, bitmap: BitVec, compression: CompressionCode)  -> Command {
         return Command(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(
         FfiConverterUInt64.lower(offset),
-        FfiConverterTypeBitVec.lower(bitmap),$0)
+        FfiConverterTypeBitVec.lower(bitmap),
+        FfiConverterTypeCompressionCode.lower(compression),$0)
 })
     }
 
@@ -1067,6 +1072,79 @@ public func FfiConverterTypeConnection_lower(_ value: Connection) -> UnsafeMutab
     return FfiConverterTypeConnection.lower(value)
 }
 
+// Note that we don't yet support `indirect` for enums.
+// See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
+public enum CompressionCode {
+    
+    case uncompressed
+    case zlib
+    case bzip2
+    case lzma
+    case zstd
+}
+
+public struct FfiConverterTypeCompressionCode: FfiConverterRustBuffer {
+    typealias SwiftType = CompressionCode
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> CompressionCode {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .uncompressed
+        
+        case 2: return .zlib
+        
+        case 3: return .bzip2
+        
+        case 4: return .lzma
+        
+        case 5: return .zstd
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: CompressionCode, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .uncompressed:
+            writeInt(&buf, Int32(1))
+        
+        
+        case .zlib:
+            writeInt(&buf, Int32(2))
+        
+        
+        case .bzip2:
+            writeInt(&buf, Int32(3))
+        
+        
+        case .lzma:
+            writeInt(&buf, Int32(4))
+        
+        
+        case .zstd:
+            writeInt(&buf, Int32(5))
+        
+        }
+    }
+}
+
+
+public func FfiConverterTypeCompressionCode_lift(_ buf: RustBuffer) throws -> CompressionCode {
+    return try FfiConverterTypeCompressionCode.lift(buf)
+}
+
+public func FfiConverterTypeCompressionCode_lower(_ value: CompressionCode) -> RustBuffer {
+    return FfiConverterTypeCompressionCode.lower(value)
+}
+
+
+extension CompressionCode: Equatable, Hashable {}
+
+
+
 public enum ServicePointError {
 
     
@@ -1207,19 +1285,19 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new() != 4979) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 14881) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 18079) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 7352) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 18147) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or() != 7046) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or() != 44912) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 51700) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 24563) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54209) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54278) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291) {

@@ -548,15 +548,15 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new() != 4979:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 14881:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear() != 18079:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 7352:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and() != 18147:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or() != 7046:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or() != 44912:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 51700:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 24563:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54209:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor() != 54278:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -726,18 +726,21 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.restype = None
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear.argtypes = (
     ctypes.c_uint64,
     ctypes.c_void_p,
+    _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and.argtypes = (
     ctypes.c_uint64,
     ctypes.c_void_p,
+    _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or.argtypes = (
     ctypes.c_uint64,
     ctypes.c_void_p,
+    _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or.restype = ctypes.c_void_p
@@ -745,12 +748,14 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_line
     ctypes.c_uint64,
     ctypes.c_uint64,
     ctypes.c_void_p,
+    _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor.argtypes = (
     ctypes.c_uint64,
     ctypes.c_void_p,
+    _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor.restype = ctypes.c_void_p
@@ -1638,40 +1643,47 @@ class Command:
         return inst
 
     @classmethod
-    def bitmap_linear(cls, offset: "int",bitmap: "BitVec"):
+    def bitmap_linear(cls, offset: "int",bitmap: "BitVec",compression: "CompressionCode"):
+        
         
         
         # Call the (fallible) function before creating any half-baked object instances.
         pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,
         _UniffiConverterUInt64.lower(offset),
-        _UniffiConverterTypeBitVec.lower(bitmap))
+        _UniffiConverterTypeBitVec.lower(bitmap),
+        _UniffiConverterTypeCompressionCode.lower(compression))
         return cls._make_instance_(pointer)
 
 
     @classmethod
-    def bitmap_linear_and(cls, offset: "int",bitmap: "BitVec"):
+    def bitmap_linear_and(cls, offset: "int",bitmap: "BitVec",compression: "CompressionCode"):
+        
         
         
         # Call the (fallible) function before creating any half-baked object instances.
         pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,
         _UniffiConverterUInt64.lower(offset),
-        _UniffiConverterTypeBitVec.lower(bitmap))
+        _UniffiConverterTypeBitVec.lower(bitmap),
+        _UniffiConverterTypeCompressionCode.lower(compression))
         return cls._make_instance_(pointer)
 
 
     @classmethod
-    def bitmap_linear_or(cls, offset: "int",bitmap: "BitVec"):
+    def bitmap_linear_or(cls, offset: "int",bitmap: "BitVec",compression: "CompressionCode"):
+        
         
         
         # Call the (fallible) function before creating any half-baked object instances.
         pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,
         _UniffiConverterUInt64.lower(offset),
-        _UniffiConverterTypeBitVec.lower(bitmap))
+        _UniffiConverterTypeBitVec.lower(bitmap),
+        _UniffiConverterTypeCompressionCode.lower(compression))
         return cls._make_instance_(pointer)
 
 
     @classmethod
-    def bitmap_linear_win(cls, offset_x: "int",offset_y: "int",bitmap: "Bitmap"):
+    def bitmap_linear_win(cls, offset_x: "int",offset_y: "int",bitmap: "Bitmap",compression: "CompressionCode"):
+        
         
         
         
@@ -1679,18 +1691,21 @@ class Command:
         pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,
         _UniffiConverterUInt64.lower(offset_x),
         _UniffiConverterUInt64.lower(offset_y),
-        _UniffiConverterTypeBitmap.lower(bitmap))
+        _UniffiConverterTypeBitmap.lower(bitmap),
+        _UniffiConverterTypeCompressionCode.lower(compression))
         return cls._make_instance_(pointer)
 
 
     @classmethod
-    def bitmap_linear_xor(cls, offset: "int",bitmap: "BitVec"):
+    def bitmap_linear_xor(cls, offset: "int",bitmap: "BitVec",compression: "CompressionCode"):
+        
         
         
         # Call the (fallible) function before creating any half-baked object instances.
         pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,
         _UniffiConverterUInt64.lower(offset),
-        _UniffiConverterTypeBitVec.lower(bitmap))
+        _UniffiConverterTypeBitVec.lower(bitmap),
+        _UniffiConverterTypeCompressionCode.lower(compression))
         return cls._make_instance_(pointer)
 
 
@@ -1827,6 +1842,49 @@ class _UniffiConverterTypeConnection:
         return value._pointer
 
 
+
+
+
+class CompressionCode(enum.Enum):
+    UNCOMPRESSED = 1
+    ZLIB = 2
+    BZIP2 = 3
+    LZMA = 4
+    ZSTD = 5
+    
+
+
+class _UniffiConverterTypeCompressionCode(_UniffiConverterRustBuffer):
+    @staticmethod
+    def read(buf):
+        variant = buf.read_i32()
+        if variant == 1:
+            return CompressionCode.UNCOMPRESSED
+        if variant == 2:
+            return CompressionCode.ZLIB
+        if variant == 3:
+            return CompressionCode.BZIP2
+        if variant == 4:
+            return CompressionCode.LZMA
+        if variant == 5:
+            return CompressionCode.ZSTD
+        raise InternalError("Raw enum value doesn't match any cases")
+
+    def write(value, buf):
+        if value == CompressionCode.UNCOMPRESSED:
+            buf.write_i32(1)
+        if value == CompressionCode.ZLIB:
+            buf.write_i32(2)
+        if value == CompressionCode.BZIP2:
+            buf.write_i32(3)
+        if value == CompressionCode.LZMA:
+            buf.write_i32(4)
+        if value == CompressionCode.ZSTD:
+            buf.write_i32(5)
+
+
+
+
 # ServicePointError
 # We want to define each variant as a nested class that's also a subclass,
 # which is tricky in Python.  To accomplish this we're going to create each
@@ -1887,6 +1945,7 @@ class _UniffiConverterTypeServicePointError(_UniffiConverterRustBuffer):
 
 __all__ = [
     "InternalError",
+    "CompressionCode",
     "ServicePointError",
     "BitVec",
     "Bitmap",

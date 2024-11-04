@@ -114,15 +114,15 @@ uint64_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width(void*
 );
 void uniffi_servicepoint_binding_uniffi_fn_free_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
-void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(uint64_t offset, void*_Nonnull bitmap, RustCallStatus *_Nonnull out_status
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(uint64_t offset, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
-void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(uint64_t offset, void*_Nonnull bitmap, RustCallStatus *_Nonnull out_status
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(uint64_t offset, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
-void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(uint64_t offset, void*_Nonnull bitmap, RustCallStatus *_Nonnull out_status
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(uint64_t offset, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
-void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(uint64_t offset_x, uint64_t offset_y, void*_Nonnull bitmap, RustCallStatus *_Nonnull out_status
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(uint64_t offset_x, uint64_t offset_y, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
-void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(uint64_t offset, void*_Nonnull bitmap, RustCallStatus *_Nonnull out_status
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(uint64_t offset, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(uint8_t brightness, RustCallStatus *_Nonnull out_status
 );
