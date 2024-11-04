@@ -401,6 +401,8 @@ internal interface _UniFFILib : Library {
     ): Long
     fun uniffi_servicepoint_binding_uniffi_fn_free_command(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(`offsetX`: Long,`offsetY`: Long,`bitmap`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(`brightness`: Byte,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(_uniffi_out_err: RustCallStatus, 
@@ -547,6 +549,8 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear(
@@ -598,6 +602,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 51700.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291.toShort()) {
@@ -1052,6 +1059,11 @@ class Command(
     
 
     companion object {
+        fun `bitmapLinearWin`(`offsetX`: ULong, `offsetY`: ULong, `bitmap`: Bitmap): Command =
+            Command(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(FfiConverterULong.lower(`offsetX`),FfiConverterULong.lower(`offsetY`),FfiConverterTypeBitmap.lower(`bitmap`),_status)
+})
         fun `brightness`(`brightness`: UByte): Command =
             Command(
     rustCallWithError(ServicePointException) { _status ->

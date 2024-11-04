@@ -82,6 +82,8 @@ uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(void*_Nonnull
 );
 void uniffi_servicepoint_binding_uniffi_fn_free_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(uint64_t offset_x, uint64_t offset_y, void*_Nonnull bitmap, RustCallStatus *_Nonnull out_status
+);
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(uint8_t brightness, RustCallStatus *_Nonnull out_status
 );
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(RustCallStatus *_Nonnull out_status
@@ -238,6 +240,9 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(void
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win(void
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(void

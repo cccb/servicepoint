@@ -544,6 +544,17 @@ public class Command: CommandProtocol {
 
     
 
+    public static func bitmapLinearWin(offsetX: UInt64, offsetY: UInt64, bitmap: Bitmap)  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(
+        FfiConverterUInt64.lower(offsetX),
+        FfiConverterUInt64.lower(offsetY),
+        FfiConverterTypeBitmap.lower(bitmap),$0)
+})
+    }
+
+    
+
     public static func brightness(brightness: UInt8) throws -> Command {
         return Command(unsafeFromRawPointer: try rustCallWithError(FfiConverterTypeServicePointError.lift) {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(
@@ -804,6 +815,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 51700) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291) {

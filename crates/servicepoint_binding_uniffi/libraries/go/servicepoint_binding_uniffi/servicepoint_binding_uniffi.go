@@ -429,6 +429,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win(uniffiStatus)
+	})
+	if checksum != 51700 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(uniffiStatus)
 	})
 	if checksum != 11291 {
@@ -794,6 +803,12 @@ type Command struct {
 	ffiObject FfiObject
 }
 
+
+func CommandBitmapLinearWin(offsetX uint64, offsetY uint64, bitmap *Bitmap) *Command {
+	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(FfiConverterUint64INSTANCE.Lower(offsetX), FfiConverterUint64INSTANCE.Lower(offsetY), FfiConverterBitmapINSTANCE.Lower(bitmap), _uniffiStatus)
+	}))
+}
 
 func CommandBrightness(brightness uint8) (*Command, error) {
 	_uniffiRV, _uniffiErr := rustCallWithError(FfiConverterTypeServicePointError{},func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {

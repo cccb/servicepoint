@@ -467,6 +467,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(ulong @offsetX,ulong @offsetY,BitmapSafeHandle @bitmap,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(byte @brightness,ref RustCallStatus _uniffi_out_err
     );
 
@@ -760,6 +764,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(
     );
 
@@ -843,6 +851,12 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized();
             if (checksum != 63762) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized` checksum `63762`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win();
+            if (checksum != 51700) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win` checksum `51700`, library returned `{checksum}`");
             }
         }
         {
@@ -1230,6 +1244,13 @@ public class Command: FFIObject<CommandSafeHandle>, ICommand {
 
     
 
+    
+    public static Command BitmapLinearWin(ulong @offsetX, ulong @offsetY, Bitmap @bitmap) {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(FfiConverterUInt64.INSTANCE.Lower(@offsetX), FfiConverterUInt64.INSTANCE.Lower(@offsetY), FfiConverterTypeBitmap.INSTANCE.Lower(@bitmap), ref _status)
+));
+    }
     
     /// <exception cref="ServicePointException"></exception>
     public static Command Brightness(byte @brightness) {

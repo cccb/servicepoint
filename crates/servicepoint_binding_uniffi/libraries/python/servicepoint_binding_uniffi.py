@@ -520,6 +520,8 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win() != 51700:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness() != 11291:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035:
@@ -588,6 +590,13 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_command.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness.argtypes = (
     ctypes.c_uint8,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -908,6 +917,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new.re
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness.restype = ctypes.c_uint16
@@ -1149,6 +1161,19 @@ class Command:
         inst = cls.__new__(cls)
         inst._pointer = pointer
         return inst
+
+    @classmethod
+    def bitmap_linear_win(cls, offset_x: "int",offset_y: "int",bitmap: "Bitmap"):
+        
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,
+        _UniffiConverterUInt64.lower(offset_x),
+        _UniffiConverterUInt64.lower(offset_y),
+        _UniffiConverterTypeBitmap.lower(bitmap))
+        return cls._make_instance_(pointer)
+
 
     @classmethod
     def brightness(cls, brightness: "int"):
