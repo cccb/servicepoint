@@ -1202,6 +1202,20 @@ SPCommand *sp_command_hard_reset(void);
 SPCommand *sp_command_try_from_packet(SPPacket *packet);
 
 /**
+ * Creates a new instance of [SPConnection] for testing that does not actually send anything.
+ *
+ * returns: a new instance. Will never return NULL.
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_connection_free`.
+ */
+SPConnection *sp_connection_fake(void);
+
+/**
  * Closes and deallocates a [SPConnection].
  *
  * # Panics
