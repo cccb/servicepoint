@@ -1,5 +1,6 @@
 use crate::bitmap::Bitmap;
 use crate::bitvec::BitVec;
+use crate::brightness_grid::BrightnessGrid;
 use crate::errors::ServicePointError;
 use servicepoint::{CompressionCode, Origin};
 use std::sync::Arc;
@@ -60,6 +61,18 @@ impl Command {
     }
 
     #[uniffi::constructor]
+    pub fn char_brightness(
+        offset_x: u64,
+        offset_y: u64,
+        grid: &Arc<BrightnessGrid>,
+    ) -> Arc<Self> {
+        let origin = Origin::new(offset_x as usize, offset_y as usize);
+        let grid = grid.actual.read().unwrap().clone();
+        let actual = servicepoint::Command::CharBrightness(origin, grid);
+        Self::internal_new(actual)
+    }
+
+    #[uniffi::constructor]
     pub fn bitmap_linear(offset: u64, bitmap: &Arc<BitVec>) -> Arc<Self> {
         let bitmap = bitmap.actual.read().unwrap().clone();
         // TODO: compression codes
@@ -94,6 +107,7 @@ impl Command {
         );
         Self::internal_new(actual)
     }
+
     #[uniffi::constructor]
     pub fn bitmap_linear_xor(offset: u64, bitmap: &Arc<BitVec>) -> Arc<Self> {
         let bitmap = bitmap.actual.read().unwrap().clone();
