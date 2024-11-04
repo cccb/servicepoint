@@ -1048,6 +1048,21 @@ namespace ServicePoint.BindGen
         public static extern Connection* sp_connection_open(byte* host);
 
         /// <summary>
+        ///  Creates a new instance of [SPConnection] for testing that does not actually send anything.
+        ///
+        ///  returns: a new instance. Will never return NULL.
+        ///
+        ///  # Safety
+        ///
+        ///  The caller has to make sure that:
+        ///
+        ///  - the returned instance is freed in some way, either by using a consuming function or
+        ///    by explicitly calling `sp_connection_free`.
+        /// </summary>
+        [DllImport(__DllName, EntryPoint = "sp_connection_fake", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern Connection* sp_connection_fake();
+
+        /// <summary>
         ///  Sends a [SPPacket] to the display using the [SPConnection].
         ///
         ///  The passed `packet` gets consumed.
