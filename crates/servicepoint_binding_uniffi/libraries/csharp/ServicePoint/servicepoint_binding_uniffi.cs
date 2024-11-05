@@ -446,6 +446,14 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw(BitVecSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals(BitVecSafeHandle @ptr,BitVecSafeHandle @other,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(BitVecSafeHandle @ptr,sbyte @value,ref RustCallStatus _uniffi_out_err
     );
 
@@ -483,6 +491,14 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw(BitmapSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals(BitmapSafeHandle @ptr,BitmapSafeHandle @other,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(BitmapSafeHandle @ptr,sbyte @value,ref RustCallStatus _uniffi_out_err
     );
 
@@ -517,6 +533,14 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern BrightnessGridSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(ulong @width,ulong @height,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw(BrightnessGridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals(BrightnessGridSafeHandle @ptr,BrightnessGridSafeHandle @other,ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -581,11 +605,19 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data(ulong @offsetX,ulong @offsetY,Cp437GridSafeHandle @grid,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset(ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_command_equals(CommandSafeHandle @ptr,CommandSafeHandle @other,ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -603,6 +635,51 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_method_connection_send(ConnectionSafeHandle @ptr,CommandSafeHandle @command,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_free_cp437grid(
+    IntPtr ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern Cp437GridSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone(Cp437GridSafeHandle @other,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern Cp437GridSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(ulong @width,ulong @height,RustBuffer @data,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern Cp437GridSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(ulong @width,ulong @height,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw(Cp437GridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals(Cp437GridSafeHandle @ptr,Cp437GridSafeHandle @other,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(Cp437GridSafeHandle @ptr,byte @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern byte uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(Cp437GridSafeHandle @ptr,ulong @x,ulong @y,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ulong uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(Cp437GridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(Cp437GridSafeHandle @ptr,ulong @x,ulong @y,byte @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ulong uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(Cp437GridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -834,6 +911,14 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill(
     );
 
@@ -847,6 +932,14 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -870,6 +963,14 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill(
     );
 
@@ -890,7 +991,39 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -970,6 +1103,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(
     );
 
@@ -986,6 +1123,18 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern uint ffi_servicepoint_binding_uniffi_uniffi_contract_version(
     );
 
@@ -999,6 +1148,18 @@ static class _UniFFILib {
     }
 
     static void uniffiCheckApiChecksums() {
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw();
+            if (checksum != 12617) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw` checksum `12617`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals();
+            if (checksum != 1191) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals` checksum `1191`, library returned `{checksum}`");
+            }
+        }
         {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill();
             if (checksum != 12255) {
@@ -1021,6 +1182,18 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set();
             if (checksum != 16307) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set` checksum `16307`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw();
+            if (checksum != 3467) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw` checksum `3467`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals();
+            if (checksum != 420) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals` checksum `420`, library returned `{checksum}`");
             }
         }
         {
@@ -1054,6 +1227,18 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw();
+            if (checksum != 28155) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw` checksum `28155`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals();
+            if (checksum != 13314) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals` checksum `13314`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill();
             if (checksum != 63376) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill` checksum `63376`, library returned `{checksum}`");
@@ -1084,9 +1269,57 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_command_equals();
+            if (checksum != 20763) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_command_equals` checksum `20763`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send();
             if (checksum != 23796) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_connection_send` checksum `23796`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw();
+            if (checksum != 50937) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw` checksum `50937`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals();
+            if (checksum != 21544) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals` checksum `21544`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill();
+            if (checksum != 46422) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill` checksum `46422`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get();
+            if (checksum != 1945) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get` checksum `1945`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height();
+            if (checksum != 45951) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height` checksum `45951`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set();
+            if (checksum != 8371) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set` checksum `8371`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width();
+            if (checksum != 36872) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width` checksum `36872`, library returned `{checksum}`");
             }
         }
         {
@@ -1204,6 +1437,12 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data();
+            if (checksum != 33157) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data` checksum `33157`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out();
             if (checksum != 49231) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out` checksum `49231`, library returned `{checksum}`");
@@ -1225,6 +1464,24 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake();
             if (checksum != 54331) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake` checksum `54331`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone();
+            if (checksum != 28173) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone` checksum `28173`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load();
+            if (checksum != 62136) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load` checksum `62136`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new();
+            if (checksum != 17350) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new` checksum `17350`, library returned `{checksum}`");
             }
         }
     }
@@ -1470,6 +1727,10 @@ static class FFIObjectUtil {
 }
 public interface IBitVec {
     
+    byte[] CopyRaw();
+    
+    bool Equals(BitVec @other);
+    
     void Fill(bool @value);
     
     bool Get(ulong @index);
@@ -1500,6 +1761,20 @@ public class BitVec: FFIObject<BitVecSafeHandle>, IBitVec {
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(FfiConverterUInt64.INSTANCE.Lower(@size), ref _status)
 )) {}
 
+    
+    public byte[] CopyRaw() {
+        return FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw(this.GetHandle(),  ref _status)
+));
+    }
+    
+    public bool Equals(BitVec @other) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals(this.GetHandle(), FfiConverterTypeBitVec.INSTANCE.Lower(@other), ref _status)
+));
+    }
     
     public void Fill(bool @value) {
     _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
@@ -1576,6 +1851,10 @@ class FfiConverterTypeBitVec: FfiConverter<BitVec, BitVecSafeHandle> {
 
 public interface IBitmap {
     
+    byte[] CopyRaw();
+    
+    bool Equals(Bitmap @other);
+    
     void Fill(bool @value);
     
     bool Get(ulong @x, ulong @y);
@@ -1608,6 +1887,20 @@ public class Bitmap: FFIObject<BitmapSafeHandle>, IBitmap {
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(FfiConverterUInt64.INSTANCE.Lower(@width), FfiConverterUInt64.INSTANCE.Lower(@height), ref _status)
 )) {}
 
+    
+    public byte[] CopyRaw() {
+        return FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw(this.GetHandle(),  ref _status)
+));
+    }
+    
+    public bool Equals(Bitmap @other) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals(this.GetHandle(), FfiConverterTypeBitmap.INSTANCE.Lower(@other), ref _status)
+));
+    }
     
     public void Fill(bool @value) {
     _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
@@ -1698,6 +1991,10 @@ class FfiConverterTypeBitmap: FfiConverter<Bitmap, BitmapSafeHandle> {
 
 public interface IBrightnessGrid {
     
+    byte[] CopyRaw();
+    
+    bool Equals(BrightnessGrid @other);
+    
     void Fill(byte @value);
     
     byte Get(ulong @x, ulong @y);
@@ -1730,6 +2027,20 @@ public class BrightnessGrid: FFIObject<BrightnessGridSafeHandle>, IBrightnessGri
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(FfiConverterUInt64.INSTANCE.Lower(@width), FfiConverterUInt64.INSTANCE.Lower(@height), ref _status)
 )) {}
 
+    
+    public byte[] CopyRaw() {
+        return FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw(this.GetHandle(),  ref _status)
+));
+    }
+    
+    public bool Equals(BrightnessGrid @other) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals(this.GetHandle(), FfiConverterTypeBrightnessGrid.INSTANCE.Lower(@other), ref _status)
+));
+    }
     
     public void Fill(byte @value) {
     _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
@@ -1813,6 +2124,8 @@ class FfiConverterTypeBrightnessGrid: FfiConverter<BrightnessGrid, BrightnessGri
 
 public interface ICommand {
     
+    bool Equals(Command @other);
+    
 }
 
 public class CommandSafeHandle: FFISafeHandle {
@@ -1830,6 +2143,13 @@ public class CommandSafeHandle: FFISafeHandle {
 public class Command: FFIObject<CommandSafeHandle>, ICommand {
     public Command(CommandSafeHandle pointer): base(pointer) {}
 
+    
+    public bool Equals(Command @other) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_command_equals(this.GetHandle(), FfiConverterTypeCommand.INSTANCE.Lower(@other), ref _status)
+));
+    }
     
 
     
@@ -1894,6 +2214,13 @@ public class Command: FFIObject<CommandSafeHandle>, ICommand {
         return new Command(
     _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(FfiConverterTypeCommand.INSTANCE.Lower(@other), ref _status)
+));
+    }
+    
+    public static Command Cp437Data(ulong @offsetX, ulong @offsetY, Cp437Grid @grid) {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data(FfiConverterUInt64.INSTANCE.Lower(@offsetX), FfiConverterUInt64.INSTANCE.Lower(@offsetY), FfiConverterTypeCp437Grid.INSTANCE.Lower(@grid), ref _status)
 ));
     }
     
@@ -2008,6 +2335,139 @@ class FfiConverterTypeConnection: FfiConverter<Connection, ConnectionSafeHandle>
     }
 
     public override void Write(Connection value, BigEndianStream stream) {
+        stream.WriteLong(Lower(value).DangerousGetRawFfiValue().ToInt64());
+    }
+}
+
+
+
+public interface ICp437Grid {
+    
+    byte[] CopyRaw();
+    
+    bool Equals(Cp437Grid @other);
+    
+    void Fill(byte @value);
+    
+    byte Get(ulong @x, ulong @y);
+    
+    ulong Height();
+    
+    void Set(ulong @x, ulong @y, byte @value);
+    
+    ulong Width();
+    
+}
+
+public class Cp437GridSafeHandle: FFISafeHandle {
+    public Cp437GridSafeHandle(): base() {
+    }
+    public Cp437GridSafeHandle(IntPtr pointer): base(pointer) {
+    }
+    override protected bool ReleaseHandle() {
+        _UniffiHelpers.RustCall((ref RustCallStatus status) => {
+            _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_free_cp437grid(this.handle, ref status);
+        });
+        return true;
+    }
+}
+public class Cp437Grid: FFIObject<Cp437GridSafeHandle>, ICp437Grid {
+    public Cp437Grid(Cp437GridSafeHandle pointer): base(pointer) {}
+    public Cp437Grid(ulong @width, ulong @height) :
+        this(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(FfiConverterUInt64.INSTANCE.Lower(@width), FfiConverterUInt64.INSTANCE.Lower(@height), ref _status)
+)) {}
+
+    
+    public byte[] CopyRaw() {
+        return FfiConverterByteArray.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw(this.GetHandle(),  ref _status)
+));
+    }
+    
+    public bool Equals(Cp437Grid @other) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals(this.GetHandle(), FfiConverterTypeCp437Grid.INSTANCE.Lower(@other), ref _status)
+));
+    }
+    
+    public void Fill(byte @value) {
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(this.GetHandle(), FfiConverterUInt8.INSTANCE.Lower(@value), ref _status)
+);
+    }
+    
+    
+    public byte Get(ulong @x, ulong @y) {
+        return FfiConverterUInt8.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), FfiConverterUInt64.INSTANCE.Lower(@y), ref _status)
+));
+    }
+    
+    public ulong Height() {
+        return FfiConverterUInt64.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(this.GetHandle(),  ref _status)
+));
+    }
+    
+    public void Set(ulong @x, ulong @y, byte @value) {
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), FfiConverterUInt64.INSTANCE.Lower(@y), FfiConverterUInt8.INSTANCE.Lower(@value), ref _status)
+);
+    }
+    
+    
+    public ulong Width() {
+        return FfiConverterUInt64.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(this.GetHandle(),  ref _status)
+));
+    }
+    
+
+    
+    public static Cp437Grid Clone(Cp437Grid @other) {
+        return new Cp437Grid(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone(FfiConverterTypeCp437Grid.INSTANCE.Lower(@other), ref _status)
+));
+    }
+    
+    public static Cp437Grid Load(ulong @width, ulong @height, byte[] @data) {
+        return new Cp437Grid(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(FfiConverterUInt64.INSTANCE.Lower(@width), FfiConverterUInt64.INSTANCE.Lower(@height), FfiConverterByteArray.INSTANCE.Lower(@data), ref _status)
+));
+    }
+    
+    
+}
+
+class FfiConverterTypeCp437Grid: FfiConverter<Cp437Grid, Cp437GridSafeHandle> {
+    public static FfiConverterTypeCp437Grid INSTANCE = new FfiConverterTypeCp437Grid();
+
+    public override Cp437GridSafeHandle Lower(Cp437Grid value) {
+        return value.GetHandle();
+    }
+
+    public override Cp437Grid Lift(Cp437GridSafeHandle value) {
+        return new Cp437Grid(value);
+    }
+
+    public override Cp437Grid Read(BigEndianStream stream) {
+        return Lift(new Cp437GridSafeHandle(new IntPtr(stream.ReadLong())));
+    }
+
+    public override int AllocationSize(Cp437Grid value) {
+        return 8;
+    }
+
+    public override void Write(Cp437Grid value, BigEndianStream stream) {
         stream.WriteLong(Lower(value).DangerousGetRawFfiValue().ToInt64());
     }
 }
