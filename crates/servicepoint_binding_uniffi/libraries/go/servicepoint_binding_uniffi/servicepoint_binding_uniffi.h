@@ -286,6 +286,13 @@ void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(
 	RustCallStatus* out_status
 );
 
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data(
+	uint64_t offset_x,
+	uint64_t offset_y,
+	void* grid,
+	RustCallStatus* out_status
+);
+
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(
 	RustCallStatus* out_status
 );
@@ -311,6 +318,60 @@ void* uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake(
 void uniffi_servicepoint_binding_uniffi_fn_method_connection_send(
 	void* ptr,
 	void* command,
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_free_cp437grid(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone(
+	void* other,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(
+	uint64_t width,
+	uint64_t height,
+	RustBuffer data,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(
+	uint64_t width,
+	uint64_t height,
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(
+	void* ptr,
+	uint8_t value,
+	RustCallStatus* out_status
+);
+
+uint8_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(
+	void* ptr,
+	uint64_t x,
+	uint64_t y,
+	RustCallStatus* out_status
+);
+
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(
+	void* ptr,
+	uint64_t x,
+	uint64_t y,
+	uint8_t value,
+	RustCallStatus* out_status
+);
+
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(
+	void* ptr,
 	RustCallStatus* out_status
 );
 
@@ -673,6 +734,26 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
 	RustCallStatus* out_status
 );
 
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width(
+	RustCallStatus* out_status
+);
+
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone(
 	RustCallStatus* out_status
 );
@@ -749,6 +830,10 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone(
 	RustCallStatus* out_status
 );
 
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data(
+	RustCallStatus* out_status
+);
+
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(
 	RustCallStatus* out_status
 );
@@ -762,6 +847,18 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(
 );
 
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new(
 	RustCallStatus* out_status
 );
 

@@ -534,6 +534,16 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill() != 46422:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get() != 1945:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height() != 45951:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set() != 8371:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width() != 36872:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone() != 123:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load() != 48913:
@@ -572,6 +582,8 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone() != 42249:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data() != 33157:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset() != 62130:
@@ -579,6 +591,12 @@ def _uniffi_check_api_checksums(lib):
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new() != 30445:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake() != 54331:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone() != 28173:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load() != 62136:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new() != 17350:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
 
 # A ctypes library to expose the extern-C FFI definitions.
@@ -803,6 +821,13 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone.argty
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
@@ -831,6 +856,60 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_connection_send.argtypes
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_connection_send.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_cp437grid.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_cp437grid.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new.argtypes = (
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get.restype = ctypes.c_uint8
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height.restype = ctypes.c_uint64
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_uint64,
+    ctypes.c_uint64,
+    ctypes.c_uint8,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width.restype = ctypes.c_uint64
 _UniffiLib.ffi_servicepoint_binding_uniffi_rustbuffer_alloc.argtypes = (
     ctypes.c_int32,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -1135,6 +1214,21 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_wid
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone.restype = ctypes.c_uint16
@@ -1192,6 +1286,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out.restype = ctypes.c_uint16
@@ -1204,6 +1301,15 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_ne
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new.restype = ctypes.c_uint16
 _UniffiLib.ffi_servicepoint_binding_uniffi_uniffi_contract_version.argtypes = (
 )
 _UniffiLib.ffi_servicepoint_binding_uniffi_uniffi_contract_version.restype = ctypes.c_uint32
@@ -1815,6 +1921,19 @@ class Command:
 
 
     @classmethod
+    def cp437_data(cls, offset_x: "int",offset_y: "int",grid: "Cp437Grid"):
+        
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data,
+        _UniffiConverterUInt64.lower(offset_x),
+        _UniffiConverterUInt64.lower(offset_y),
+        _UniffiConverterTypeCp437Grid.lower(grid))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
     def fade_out(cls, ):
         # Call the (fallible) function before creating any half-baked object instances.
         pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out,)
@@ -1912,6 +2031,137 @@ class _UniffiConverterTypeConnection:
     @staticmethod
     def lift(value):
         return Connection._make_instance_(value)
+
+    @staticmethod
+    def lower(value):
+        return value._pointer
+
+
+
+class Cp437Grid:
+    _pointer: ctypes.c_void_p
+    def __init__(self, width: "int",height: "int"):
+        
+        
+        self._pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new,
+        _UniffiConverterUInt64.lower(width),
+        _UniffiConverterUInt64.lower(height))
+
+    def __del__(self):
+        # In case of partial initialization of instances.
+        pointer = getattr(self, "_pointer", None)
+        if pointer is not None:
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_cp437grid, pointer)
+
+    # Used by alternative constructors or any methods which return this type.
+    @classmethod
+    def _make_instance_(cls, pointer):
+        # Lightly yucky way to bypass the usual __init__ logic
+        # and just create a new instance with the required pointer.
+        inst = cls.__new__(cls)
+        inst._pointer = pointer
+        return inst
+
+    @classmethod
+    def clone(cls, other: "Cp437Grid"):
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone,
+        _UniffiConverterTypeCp437Grid.lower(other))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def load(cls, width: "int",height: "int",data: "bytes"):
+        
+        
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load,
+        _UniffiConverterUInt64.lower(width),
+        _UniffiConverterUInt64.lower(height),
+        _UniffiConverterBytes.lower(data))
+        return cls._make_instance_(pointer)
+
+
+
+    def fill(self, value: "int"):
+        
+        _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill,self._pointer,
+        _UniffiConverterUInt8.lower(value))
+
+
+
+
+
+
+
+    def get(self, x: "int",y: "int") -> "int":
+        
+        
+        return _UniffiConverterUInt8.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get,self._pointer,
+        _UniffiConverterUInt64.lower(x),
+        _UniffiConverterUInt64.lower(y))
+        )
+
+
+
+
+
+
+    def height(self, ) -> "int":
+        return _UniffiConverterUInt64.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height,self._pointer,)
+        )
+
+
+
+
+
+
+    def set(self, x: "int",y: "int",value: "int"):
+        
+        
+        
+        _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set,self._pointer,
+        _UniffiConverterUInt64.lower(x),
+        _UniffiConverterUInt64.lower(y),
+        _UniffiConverterUInt8.lower(value))
+
+
+
+
+
+
+
+    def width(self, ) -> "int":
+        return _UniffiConverterUInt64.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width,self._pointer,)
+        )
+
+
+
+
+
+
+class _UniffiConverterTypeCp437Grid:
+    @classmethod
+    def read(cls, buf):
+        ptr = buf.read_u64()
+        if ptr == 0:
+            raise InternalError("Raw pointer value was null")
+        return cls.lift(ptr)
+
+    @classmethod
+    def write(cls, value, buf):
+        if not isinstance(value, Cp437Grid):
+            raise TypeError("Expected Cp437Grid instance, {} found".format(type(value).__name__))
+        buf.write_u64(cls.lower(value))
+
+    @staticmethod
+    def lift(value):
+        return Cp437Grid._make_instance_(value)
 
     @staticmethod
     def lower(value):
@@ -2028,5 +2278,6 @@ __all__ = [
     "BrightnessGrid",
     "Command",
     "Connection",
+    "Cp437Grid",
 ]
 

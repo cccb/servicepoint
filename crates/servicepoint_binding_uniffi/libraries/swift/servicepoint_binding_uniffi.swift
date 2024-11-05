@@ -961,6 +961,17 @@ public class Command: CommandProtocol {
 
     
 
+    public static func cp437Data(offsetX: UInt64, offsetY: UInt64, grid: Cp437Grid)  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data(
+        FfiConverterUInt64.lower(offsetX),
+        FfiConverterUInt64.lower(offsetY),
+        FfiConverterTypeCp437Grid.lower(grid),$0)
+})
+    }
+
+    
+
     public static func fadeOut()  -> Command {
         return Command(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out($0)
@@ -1106,6 +1117,159 @@ public func FfiConverterTypeConnection_lift(_ pointer: UnsafeMutableRawPointer) 
 
 public func FfiConverterTypeConnection_lower(_ value: Connection) -> UnsafeMutableRawPointer {
     return FfiConverterTypeConnection.lower(value)
+}
+
+
+public protocol Cp437GridProtocol {
+    func fill(value: UInt8)  
+    func get(x: UInt64, y: UInt64)   -> UInt8
+    func height()   -> UInt64
+    func set(x: UInt64, y: UInt64, value: UInt8)  
+    func width()   -> UInt64
+    
+}
+
+public class Cp437Grid: Cp437GridProtocol {
+    fileprivate let pointer: UnsafeMutableRawPointer
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+    required init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        self.pointer = pointer
+    }
+    public convenience init(width: UInt64, height: UInt64)  {
+        self.init(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(
+        FfiConverterUInt64.lower(width),
+        FfiConverterUInt64.lower(height),$0)
+})
+    }
+
+    deinit {
+        try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_cp437grid(pointer, $0) }
+    }
+
+    
+
+    public static func clone(other: Cp437Grid)  -> Cp437Grid {
+        return Cp437Grid(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone(
+        FfiConverterTypeCp437Grid.lower(other),$0)
+})
+    }
+
+    
+
+    public static func load(width: UInt64, height: UInt64, data: Data)  -> Cp437Grid {
+        return Cp437Grid(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(
+        FfiConverterUInt64.lower(width),
+        FfiConverterUInt64.lower(height),
+        FfiConverterData.lower(data),$0)
+})
+    }
+
+    
+
+    
+    
+
+    public func fill(value: UInt8)  {
+        try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(self.pointer, 
+        FfiConverterUInt8.lower(value),$0
+    )
+}
+    }
+
+    public func get(x: UInt64, y: UInt64)  -> UInt8 {
+        return try!  FfiConverterUInt8.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(self.pointer, 
+        FfiConverterUInt64.lower(x),
+        FfiConverterUInt64.lower(y),$0
+    )
+}
+        )
+    }
+
+    public func height()  -> UInt64 {
+        return try!  FfiConverterUInt64.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(self.pointer, $0
+    )
+}
+        )
+    }
+
+    public func set(x: UInt64, y: UInt64, value: UInt8)  {
+        try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(self.pointer, 
+        FfiConverterUInt64.lower(x),
+        FfiConverterUInt64.lower(y),
+        FfiConverterUInt8.lower(value),$0
+    )
+}
+    }
+
+    public func width()  -> UInt64 {
+        return try!  FfiConverterUInt64.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(self.pointer, $0
+    )
+}
+        )
+    }
+}
+
+public struct FfiConverterTypeCp437Grid: FfiConverter {
+    typealias FfiType = UnsafeMutableRawPointer
+    typealias SwiftType = Cp437Grid
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Cp437Grid {
+        let v: UInt64 = try readInt(&buf)
+        // The Rust code won't compile if a pointer won't fit in a UInt64.
+        // We have to go via `UInt` because that's the thing that's the size of a pointer.
+        let ptr = UnsafeMutableRawPointer(bitPattern: UInt(truncatingIfNeeded: v))
+        if (ptr == nil) {
+            throw UniffiInternalError.unexpectedNullPointer
+        }
+        return try lift(ptr!)
+    }
+
+    public static func write(_ value: Cp437Grid, into buf: inout [UInt8]) {
+        // This fiddling is because `Int` is the thing that's the same size as a pointer.
+        // The Rust code won't compile if a pointer won't fit in a `UInt64`.
+        writeInt(&buf, UInt64(bitPattern: Int64(Int(bitPattern: lower(value)))))
+    }
+
+    public static func lift(_ pointer: UnsafeMutableRawPointer) throws -> Cp437Grid {
+        return Cp437Grid(unsafeFromRawPointer: pointer)
+    }
+
+    public static func lower(_ value: Cp437Grid) -> UnsafeMutableRawPointer {
+        return value.pointer
+    }
+}
+
+
+public func FfiConverterTypeCp437Grid_lift(_ pointer: UnsafeMutableRawPointer) throws -> Cp437Grid {
+    return try FfiConverterTypeCp437Grid.lift(pointer)
+}
+
+public func FfiConverterTypeCp437Grid_lower(_ value: Cp437Grid) -> UnsafeMutableRawPointer {
+    return FfiConverterTypeCp437Grid.lower(value)
 }
 
 // Note that we don't yet support `indirect` for enums.
@@ -1300,6 +1464,21 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill() != 46422) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get() != 1945) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height() != 45951) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set() != 8371) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width() != 36872) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone() != 123) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -1357,6 +1536,9 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone() != 42249) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data() != 33157) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -1367,6 +1549,15 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake() != 54331) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone() != 28173) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load() != 62136) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new() != 17350) {
         return InitializationResult.apiChecksumMismatch
     }
 

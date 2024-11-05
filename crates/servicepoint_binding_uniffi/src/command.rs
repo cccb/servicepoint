@@ -2,6 +2,7 @@ use crate::bitmap::Bitmap;
 use crate::bitvec::BitVec;
 use crate::brightness_grid::BrightnessGrid;
 use crate::compression_code::CompressionCode;
+use crate::cp437_grid::Cp437Grid;
 use crate::errors::ServicePointError;
 use servicepoint::Origin;
 use std::sync::Arc;
@@ -135,6 +136,18 @@ impl Command {
             servicepoint::CompressionCode::try_from(compression as u16)
                 .unwrap(),
         );
+        Self::internal_new(actual)
+    }
+
+    #[uniffi::constructor]
+    pub fn cp437_data(
+        offset_x: u64,
+        offset_y: u64,
+        grid: &Arc<Cp437Grid>,
+    ) -> Arc<Self> {
+        let origin = Origin::new(offset_x as usize, offset_y as usize);
+        let grid = grid.actual.read().unwrap().clone();
+        let actual = servicepoint::Command::Cp437Data(origin, grid);
         Self::internal_new(actual)
     }
 

@@ -457,6 +457,8 @@ internal interface _UniFFILib : Library {
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(`other`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data(`offsetX`: Long,`offsetY`: Long,`grid`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset(_uniffi_out_err: RustCallStatus, 
@@ -469,6 +471,24 @@ internal interface _UniFFILib : Library {
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_method_connection_send(`ptr`: Pointer,`command`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_free_cp437grid(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone(`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(`width`: Long,`height`: Long,`data`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(`width`: Long,`height`: Long,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(`ptr`: Pointer,`value`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(`ptr`: Pointer,`x`: Long,`y`: Long,_uniffi_out_err: RustCallStatus, 
+    ): Byte
+    fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Long
+    fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(`ptr`: Pointer,`x`: Long,`y`: Long,`value`: Byte,_uniffi_out_err: RustCallStatus, 
+    ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Long
     fun ffi_servicepoint_binding_uniffi_rustbuffer_alloc(`size`: Int,_uniffi_out_err: RustCallStatus, 
     ): RustBuffer.ByValue
     fun ffi_servicepoint_binding_uniffi_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,_uniffi_out_err: RustCallStatus, 
@@ -613,6 +633,16 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(
@@ -651,6 +681,8 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset(
@@ -658,6 +690,12 @@ internal interface _UniFFILib : Library {
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new(
     ): Short
     fun ffi_servicepoint_binding_uniffi_uniffi_contract_version(
     ): Int
@@ -721,6 +759,21 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill() != 46422.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get() != 1945.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height() != 45951.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set() != 8371.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width() != 36872.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone() != 123.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -778,6 +831,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone() != 42249.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data() != 33157.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -788,6 +844,15 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake() != 54331.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone() != 28173.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load() != 62136.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new() != 17350.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1541,6 +1606,11 @@ class Command(
     rustCall() { _status ->
     _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(FfiConverterTypeCommand.lower(`other`),_status)
 })
+        fun `cp437Data`(`offsetX`: ULong, `offsetY`: ULong, `grid`: Cp437Grid): Command =
+            Command(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data(FfiConverterULong.lower(`offsetX`),FfiConverterULong.lower(`offsetY`),FfiConverterTypeCp437Grid.lower(`grid`),_status)
+})
         fun `fadeOut`(): Command =
             Command(
     rustCall() { _status ->
@@ -1650,6 +1720,135 @@ public object FfiConverterTypeConnection: FfiConverter<Connection, Pointer> {
     override fun allocationSize(value: Connection) = 8
 
     override fun write(value: Connection, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+
+
+public interface Cp437GridInterface {
+    
+    fun `fill`(`value`: UByte)
+    fun `get`(`x`: ULong, `y`: ULong): UByte
+    fun `height`(): ULong
+    fun `set`(`x`: ULong, `y`: ULong, `value`: UByte)
+    fun `width`(): ULong
+    companion object
+}
+
+class Cp437Grid(
+    pointer: Pointer
+) : FFIObject(pointer), Cp437GridInterface {
+    constructor(`width`: ULong, `height`: ULong) :
+        this(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(FfiConverterULong.lower(`width`),FfiConverterULong.lower(`height`),_status)
+})
+
+    /**
+     * Disconnect the object from the underlying Rust object.
+     *
+     * It can be called more than once, but once called, interacting with the object
+     * causes an `IllegalStateException`.
+     *
+     * Clients **must** call this method once done with the object, or cause a memory leak.
+     */
+    override protected fun freeRustArcPtr() {
+        rustCall() { status ->
+            _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_free_cp437grid(this.pointer, status)
+        }
+    }
+
+    override fun `fill`(`value`: UByte) =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(it,
+        FfiConverterUByte.lower(`value`),
+        _status)
+}
+        }
+    
+    
+    override fun `get`(`x`: ULong, `y`: ULong): UByte =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(it,
+        FfiConverterULong.lower(`x`),FfiConverterULong.lower(`y`),
+        _status)
+}
+        }.let {
+            FfiConverterUByte.lift(it)
+        }
+    
+    override fun `height`(): ULong =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterULong.lift(it)
+        }
+    
+    override fun `set`(`x`: ULong, `y`: ULong, `value`: UByte) =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(it,
+        FfiConverterULong.lower(`x`),FfiConverterULong.lower(`y`),FfiConverterUByte.lower(`value`),
+        _status)
+}
+        }
+    
+    
+    override fun `width`(): ULong =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterULong.lift(it)
+        }
+    
+    
+
+    companion object {
+        fun `clone`(`other`: Cp437Grid): Cp437Grid =
+            Cp437Grid(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone(FfiConverterTypeCp437Grid.lower(`other`),_status)
+})
+        fun `load`(`width`: ULong, `height`: ULong, `data`: ByteArray): Cp437Grid =
+            Cp437Grid(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(FfiConverterULong.lower(`width`),FfiConverterULong.lower(`height`),FfiConverterByteArray.lower(`data`),_status)
+})
+        
+    }
+    
+}
+
+public object FfiConverterTypeCp437Grid: FfiConverter<Cp437Grid, Pointer> {
+    override fun lower(value: Cp437Grid): Pointer = value.callWithPointer { it }
+
+    override fun lift(value: Pointer): Cp437Grid {
+        return Cp437Grid(value)
+    }
+
+    override fun read(buf: ByteBuffer): Cp437Grid {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: Cp437Grid) = 8
+
+    override fun write(value: Cp437Grid, buf: ByteBuffer) {
         // The Rust code always expects pointers written as 8 bytes,
         // and will fail to compile if they don't fit.
         buf.putLong(Pointer.nativeValue(lower(value)))

@@ -258,6 +258,13 @@ class RustBufferStream
     return Connection._uniffi_allocate(pointer)
   end
 
+  # The Object type Cp437Grid.
+
+  def readTypeCp437Grid
+    pointer = FFI::Pointer.new unpack_from 8, 'Q>'
+    return Cp437Grid._uniffi_allocate(pointer)
+  end
+
   
   
   # The Enum type CompressionCode.
@@ -414,6 +421,13 @@ class RustBufferBuilder
 
   def write_TypeConnection(obj)
     pointer = Connection._uniffi_lower obj
+    pack_into(8, 'Q>', pointer.address)
+  end
+
+  # The Object type Cp437Grid.
+
+  def write_TypeCp437Grid(obj)
+    pointer = Cp437Grid._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
@@ -691,6 +705,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone,
     [:pointer, RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data,
+    [:uint64, :uint64, :pointer, RustCallStatus.by_ref],
+    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out,
     [RustCallStatus.by_ref],
     :pointer
@@ -709,6 +726,33 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_connection_send,
     [:pointer, :pointer, RustCallStatus.by_ref],
     :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_free_cp437grid,
+    [:pointer, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone,
+    [:pointer, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load,
+    [:uint64, :uint64, RustBuffer.by_value, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new,
+    [:uint64, :uint64, RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill,
+    [:pointer, :uint8, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get,
+    [:pointer, :uint64, :uint64, RustCallStatus.by_ref],
+    :uint8
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height,
+    [:pointer, RustCallStatus.by_ref],
+    :uint64
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set,
+    [:pointer, :uint64, :uint64, :uint8, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width,
+    [:pointer, RustCallStatus.by_ref],
+    :uint64
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_alloc,
     [:int32, RustCallStatus.by_ref],
     RustBuffer.by_value
@@ -764,6 +808,21 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_connection_send,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone,
@@ -823,6 +882,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out,
     [RustCallStatus.by_ref],
     :uint16
@@ -833,6 +895,15 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :ffi_servicepoint_binding_uniffi_uniffi_contract_version,
@@ -1233,6 +1304,15 @@ end
     # and just create a new instance with the required pointer.
     return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone,(Command._uniffi_lower other)))
   end
+  def self.cp437_data(offset_x, offset_y, grid)
+        offset_x = ServicepointBindingUniffi::uniffi_in_range(offset_x, "u64", 0, 2**64)
+        offset_y = ServicepointBindingUniffi::uniffi_in_range(offset_y, "u64", 0, 2**64)
+        grid = grid
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data,offset_x,offset_y,(Cp437Grid._uniffi_lower grid)))
+  end
   def self.fade_out()
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
@@ -1303,6 +1383,94 @@ end
       ServicepointBindingUniffi.rust_call_with_error(ServicePointError,:uniffi_servicepoint_binding_uniffi_fn_method_connection_send,@pointer,(Command._uniffi_lower command))
   end
   
+  
+end
+  
+  class Cp437Grid
+
+  # A private helper for initializing instances of the class from a raw pointer,
+  # bypassing any initialization logic and ensuring they are GC'd properly.
+  def self._uniffi_allocate(pointer)
+    pointer.autorelease = false
+    inst = allocate
+    inst.instance_variable_set :@pointer, pointer
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    return inst
+  end
+
+  # A private helper for registering an object finalizer.
+  # N.B. it's important that this does not capture a reference
+  # to the actual instance, only its underlying pointer.
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
+    Proc.new do |_id|
+      ServicepointBindingUniffi.rust_call(
+        :uniffi_servicepoint_binding_uniffi_fn_free_cp437grid,
+        pointer
+      )
+    end
+  end
+
+  # A private helper for lowering instances into a raw pointer.
+  # This does an explicit typecheck, because accidentally lowering a different type of
+  # object in a place where this type is expected, could lead to memory unsafety.
+  def self._uniffi_lower(inst)
+    if not inst.is_a? self
+      raise TypeError.new "Expected a Cp437Grid instance, got #{inst}"
+    end
+    return inst.instance_variable_get :@pointer
+  end
+  def initialize(width, height)
+        width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
+        height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
+    pointer = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new,width,height)
+    @pointer = pointer
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+  end
+
+  def self.clone(other)
+        other = other
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone,(Cp437Grid._uniffi_lower other)))
+  end
+  def self.load(width, height, data)
+        width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
+        height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
+        data = ServicepointBindingUniffi::uniffi_bytes(data)
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load,width,height,RustBuffer.allocFromBytes(data)))
+  end
+  
+
+  def fill(value)
+        value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill,@pointer,value)
+  end
+  
+  def get(x, y)
+        x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
+        y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get,@pointer,x,y)
+    return result.to_i
+  end
+  def height()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height,@pointer,)
+    return result.to_i
+  end
+  def set(x, y, value)
+        x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
+        y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
+        value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set,@pointer,x,y,value)
+  end
+  
+  def width()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width,@pointer,)
+    return result.to_i
+  end
   
 end
   

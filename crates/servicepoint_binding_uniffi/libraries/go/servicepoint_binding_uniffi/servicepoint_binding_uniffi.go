@@ -492,6 +492,51 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill(uniffiStatus)
+	})
+	if checksum != 46422 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get(uniffiStatus)
+	})
+	if checksum != 1945 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height(uniffiStatus)
+	})
+	if checksum != 45951 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(uniffiStatus)
+	})
+	if checksum != 8371 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width(uniffiStatus)
+	})
+	if checksum != 36872 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone(uniffiStatus)
 	})
 	if checksum != 123 {
@@ -663,6 +708,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data(uniffiStatus)
+	})
+	if checksum != 33157 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(uniffiStatus)
 	})
 	if checksum != 49231 {
@@ -695,6 +749,33 @@ func uniffiCheckChecksums() {
 	if checksum != 54331 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone(uniffiStatus)
+	})
+	if checksum != 28173 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load(uniffiStatus)
+	})
+	if checksum != 62136 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new(uniffiStatus)
+	})
+	if checksum != 17350 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new: UniFFI API checksum mismatch")
 	}
 	}
 }
@@ -1363,6 +1444,12 @@ func CommandClone(other *Command) *Command {
 	}))
 }
 
+func CommandCp437Data(offsetX uint64, offsetY uint64, grid *Cp437Grid) *Command {
+	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data(FfiConverterUint64INSTANCE.Lower(offsetX), FfiConverterUint64INSTANCE.Lower(offsetY), FfiConverterCp437GridINSTANCE.Lower(grid), _uniffiStatus)
+	}))
+}
+
 func CommandFadeOut() *Command {
 	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
 		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out( _uniffiStatus)
@@ -1501,6 +1588,128 @@ func (c FfiConverterConnection) Write(writer io.Writer, value *Connection) {
 type FfiDestroyerConnection struct {}
 
 func (_ FfiDestroyerConnection) Destroy(value *Connection) {
+	value.Destroy()
+}
+
+
+type Cp437Grid struct {
+	ffiObject FfiObject
+}
+func NewCp437Grid(width uint64, height uint64) *Cp437Grid {
+	return FfiConverterCp437GridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(FfiConverterUint64INSTANCE.Lower(width), FfiConverterUint64INSTANCE.Lower(height), _uniffiStatus)
+	}))
+}
+
+
+func Cp437GridClone(other *Cp437Grid) *Cp437Grid {
+	return FfiConverterCp437GridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone(FfiConverterCp437GridINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
+
+func Cp437GridLoad(width uint64, height uint64, data []byte) *Cp437Grid {
+	return FfiConverterCp437GridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(FfiConverterUint64INSTANCE.Lower(width), FfiConverterUint64INSTANCE.Lower(height), FfiConverterBytesINSTANCE.Lower(data), _uniffiStatus)
+	}))
+}
+
+
+
+func (_self *Cp437Grid)Fill(value uint8)  {
+	_pointer := _self.ffiObject.incrementPointer("*Cp437Grid")
+	defer _self.ffiObject.decrementPointer()
+	rustCall(func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(
+		_pointer,FfiConverterUint8INSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+}
+
+
+func (_self *Cp437Grid)Get(x uint64, y uint64) uint8 {
+	_pointer := _self.ffiObject.incrementPointer("*Cp437Grid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint8INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), _uniffiStatus)
+	}))
+}
+
+
+func (_self *Cp437Grid)Height() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*Cp437Grid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+func (_self *Cp437Grid)Set(x uint64, y uint64, value uint8)  {
+	_pointer := _self.ffiObject.incrementPointer("*Cp437Grid")
+	defer _self.ffiObject.decrementPointer()
+	rustCall(func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), FfiConverterUint8INSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+}
+
+
+func (_self *Cp437Grid)Width() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*Cp437Grid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+
+func (object *Cp437Grid)Destroy() {
+	runtime.SetFinalizer(object, nil)
+	object.ffiObject.destroy()
+}
+
+type FfiConverterCp437Grid struct {}
+
+var FfiConverterCp437GridINSTANCE = FfiConverterCp437Grid{}
+
+func (c FfiConverterCp437Grid) Lift(pointer unsafe.Pointer) *Cp437Grid {
+	result := &Cp437Grid {
+		newFfiObject(
+			pointer,
+			func(pointer unsafe.Pointer, status *C.RustCallStatus) {
+				C.uniffi_servicepoint_binding_uniffi_fn_free_cp437grid(pointer, status)
+		}),
+	}
+	runtime.SetFinalizer(result, (*Cp437Grid).Destroy)
+	return result
+}
+
+func (c FfiConverterCp437Grid) Read(reader io.Reader) *Cp437Grid {
+	return c.Lift(unsafe.Pointer(uintptr(readUint64(reader))))
+}
+
+func (c FfiConverterCp437Grid) Lower(value *Cp437Grid) unsafe.Pointer {
+	// TODO: this is bad - all synchronization from ObjectRuntime.go is discarded here,
+	// because the pointer will be decremented immediately after this function returns,
+	// and someone will be left holding onto a non-locked pointer.
+	pointer := value.ffiObject.incrementPointer("*Cp437Grid")
+	defer value.ffiObject.decrementPointer()
+	return pointer
+}
+
+func (c FfiConverterCp437Grid) Write(writer io.Writer, value *Cp437Grid) {
+	writeUint64(writer, uint64(uintptr(c.Lower(value))))
+}
+
+type FfiDestroyerCp437Grid struct {}
+
+func (_ FfiDestroyerCp437Grid) Destroy(value *Cp437Grid) {
 	value.Destroy()
 }
 
