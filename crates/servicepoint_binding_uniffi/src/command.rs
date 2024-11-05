@@ -137,4 +137,9 @@ impl Command {
         );
         Self::internal_new(actual)
     }
+
+    #[uniffi::constructor]
+    pub fn clone(other: &Arc<Self>) -> Arc<Self> {
+        Self::internal_new(other.actual.clone())
+    }
 }

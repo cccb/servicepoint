@@ -583,6 +583,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_bitvec,
     [:pointer, RustCallStatus.by_ref],
     :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone,
+    [:pointer, RustCallStatus.by_ref],
+    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load,
     [RustBuffer.by_value, RustCallStatus.by_ref],
     :pointer
@@ -604,6 +607,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_bitmap,
     [:pointer, RustCallStatus.by_ref],
     :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone,
+    [:pointer, RustCallStatus.by_ref],
+    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load,
     [:uint64, :uint64, RustBuffer.by_value, RustCallStatus.by_ref],
     :pointer
@@ -631,6 +637,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid,
     [:pointer, RustCallStatus.by_ref],
     :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone,
+    [:pointer, RustCallStatus.by_ref],
+    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load,
     [:uint64, :uint64, RustBuffer.by_value, RustCallStatus.by_ref],
     :pointer
@@ -678,6 +687,9 @@ module UniFFILib
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear,
     [RustCallStatus.by_ref],
+    :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone,
+    [:pointer, RustCallStatus.by_ref],
     :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out,
     [RustCallStatus.by_ref],
@@ -754,10 +766,16 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_connection_send,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load,
@@ -767,6 +785,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load,
@@ -797,6 +818,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out,
@@ -879,6 +903,13 @@ end
     ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
+  def self.clone(other)
+        other = other
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone,(BitVec._uniffi_lower other)))
+  end
   def self.load(data)
         data = ServicepointBindingUniffi::uniffi_bytes(data)
     # Call the (fallible) function before creating any half-baked object instances.
@@ -952,6 +983,13 @@ end
     ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
+  def self.clone(other)
+        other = other
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone,(Bitmap._uniffi_lower other)))
+  end
   def self.load(width, height, data)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
@@ -1039,6 +1077,13 @@ end
     ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
+  def self.clone(other)
+        other = other
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone,(BrightnessGrid._uniffi_lower other)))
+  end
   def self.load(width, height, data)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
@@ -1180,6 +1225,13 @@ end
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
     return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear,))
+  end
+  def self.clone(other)
+        other = other
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone,(Command._uniffi_lower other)))
   end
   def self.fade_out()
     # Call the (fallible) function before creating any half-baked object instances.

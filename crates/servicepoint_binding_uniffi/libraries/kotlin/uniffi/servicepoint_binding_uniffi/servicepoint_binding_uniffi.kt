@@ -385,6 +385,8 @@ internal interface _UniFFILib : Library {
 
     fun uniffi_servicepoint_binding_uniffi_fn_free_bitvec(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone(`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(`data`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(`size`: Long,_uniffi_out_err: RustCallStatus, 
@@ -399,6 +401,8 @@ internal interface _UniFFILib : Library {
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_free_bitmap(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone(`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(`width`: Long,`height`: Long,`data`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(`width`: Long,`height`: Long,_uniffi_out_err: RustCallStatus, 
@@ -417,6 +421,8 @@ internal interface _UniFFILib : Library {
     ): Long
     fun uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone(`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load(`width`: Long,`height`: Long,`data`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(`width`: Long,`height`: Long,_uniffi_out_err: RustCallStatus, 
@@ -448,6 +454,8 @@ internal interface _UniFFILib : Library {
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness(`offsetX`: Long,`offsetY`: Long,`grid`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(_uniffi_out_err: RustCallStatus, 
+    ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(`other`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(_uniffi_out_err: RustCallStatus, 
     ): Pointer
@@ -605,15 +613,21 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load(
     ): Short
@@ -634,6 +648,8 @@ internal interface _UniFFILib : Library {
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(
     ): Short
@@ -705,10 +721,16 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone() != 123.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load() != 48913.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new() != 11865.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone() != 57298.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load() != 24109.toShort()) {
@@ -718,6 +740,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone() != 33422.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load() != 24788.toShort()) {
@@ -748,6 +773,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone() != 42249.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231.toShort()) {
@@ -1139,6 +1167,11 @@ class BitVec(
     
 
     companion object {
+        fun `clone`(`other`: BitVec): BitVec =
+            BitVec(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone(FfiConverterTypeBitVec.lower(`other`),_status)
+})
         fun `load`(`data`: ByteArray): BitVec =
             BitVec(
     rustCall() { _status ->
@@ -1263,6 +1296,11 @@ class Bitmap(
     
 
     companion object {
+        fun `clone`(`other`: Bitmap): Bitmap =
+            Bitmap(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone(FfiConverterTypeBitmap.lower(`other`),_status)
+})
         fun `load`(`width`: ULong, `height`: ULong, `data`: ByteArray): Bitmap =
             Bitmap(
     rustCall() { _status ->
@@ -1392,6 +1430,11 @@ class BrightnessGrid(
     
 
     companion object {
+        fun `clone`(`other`: BrightnessGrid): BrightnessGrid =
+            BrightnessGrid(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone(FfiConverterTypeBrightnessGrid.lower(`other`),_status)
+})
         fun `load`(`width`: ULong, `height`: ULong, `data`: ByteArray): BrightnessGrid =
             BrightnessGrid(
     rustCall() { _status ->
@@ -1492,6 +1535,11 @@ class Command(
             Command(
     rustCall() { _status ->
     _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(_status)
+})
+        fun `clone`(`other`: Command): Command =
+            Command(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(FfiConverterTypeCommand.lower(`other`),_status)
 })
         fun `fadeOut`(): Command =
             Command(

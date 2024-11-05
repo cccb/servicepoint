@@ -428,6 +428,15 @@ public class BitVec: BitVecProtocol {
 
     
 
+    public static func clone(other: BitVec)  -> BitVec {
+        return BitVec(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone(
+        FfiConverterTypeBitVec.lower(other),$0)
+})
+    }
+
+    
+
     public static func load(data: Data)  -> BitVec {
         return BitVec(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(
@@ -553,6 +562,15 @@ public class Bitmap: BitmapProtocol {
 
     deinit {
         try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_bitmap(pointer, $0) }
+    }
+
+    
+
+    public static func clone(other: Bitmap)  -> Bitmap {
+        return Bitmap(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone(
+        FfiConverterTypeBitmap.lower(other),$0)
+})
     }
 
     
@@ -705,6 +723,15 @@ public class BrightnessGrid: BrightnessGridProtocol {
 
     deinit {
         try! rustCall { uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid(pointer, $0) }
+    }
+
+    
+
+    public static func clone(other: BrightnessGrid)  -> BrightnessGrid {
+        return BrightnessGrid(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone(
+        FfiConverterTypeBrightnessGrid.lower(other),$0)
+})
     }
 
     
@@ -920,6 +947,15 @@ public class Command: CommandProtocol {
     public static func clear()  -> Command {
         return Command(unsafeFromRawPointer: try! rustCall() {
     uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear($0)
+})
+    }
+
+    
+
+    public static func clone(other: Command)  -> Command {
+        return Command(unsafeFromRawPointer: try! rustCall() {
+    uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(
+        FfiConverterTypeCommand.lower(other),$0)
 })
     }
 
@@ -1264,10 +1300,16 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone() != 123) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load() != 48913) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new() != 11865) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone() != 57298) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load() != 24109) {
@@ -1277,6 +1319,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone() != 33422) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load() != 24788) {
@@ -1307,6 +1352,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone() != 42249) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231) {

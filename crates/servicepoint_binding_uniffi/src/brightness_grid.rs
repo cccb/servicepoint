@@ -33,6 +33,11 @@ impl BrightnessGrid {
         ))
     }
 
+    #[uniffi::constructor]
+    pub fn clone(other: &Arc<Self>) -> Arc<Self> {
+        Self::internal_new(other.actual.read().unwrap().clone())
+    }
+
     pub fn set(&self, x: u64, y: u64, value: u8) {
         self.actual.write().unwrap().set(
             x as usize,

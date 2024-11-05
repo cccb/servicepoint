@@ -492,6 +492,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone(uniffiStatus)
+	})
+	if checksum != 123 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(uniffiStatus)
 	})
 	if checksum != 48913 {
@@ -506,6 +515,15 @@ func uniffiCheckChecksums() {
 	if checksum != 11865 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone(uniffiStatus)
+	})
+	if checksum != 57298 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -533,6 +551,15 @@ func uniffiCheckChecksums() {
 	if checksum != 63762 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone(uniffiStatus)
+	})
+	if checksum != 33422 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -623,6 +650,15 @@ func uniffiCheckChecksums() {
 	if checksum != 11035 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone(uniffiStatus)
+	})
+	if checksum != 42249 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -910,6 +946,12 @@ func NewBitVec(size uint64) *BitVec {
 }
 
 
+func BitVecClone(other *BitVec) *BitVec {
+	return FfiConverterBitVecINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone(FfiConverterBitVecINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
+
 func BitVecLoad(data []byte) *BitVec {
 	return FfiConverterBitVecINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
 		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(FfiConverterBytesINSTANCE.Lower(data), _uniffiStatus)
@@ -1015,6 +1057,12 @@ func NewBitmap(width uint64, height uint64) *Bitmap {
 	}))
 }
 
+
+func BitmapClone(other *Bitmap) *Bitmap {
+	return FfiConverterBitmapINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone(FfiConverterBitmapINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
 
 func BitmapLoad(width uint64, height uint64, data []byte) *Bitmap {
 	return FfiConverterBitmapINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
@@ -1137,6 +1185,12 @@ func NewBrightnessGrid(width uint64, height uint64) *BrightnessGrid {
 	}))
 }
 
+
+func BrightnessGridClone(other *BrightnessGrid) *BrightnessGrid {
+	return FfiConverterBrightnessGridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone(FfiConverterBrightnessGridINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
 
 func BrightnessGridLoad(width uint64, height uint64, data []byte) *BrightnessGrid {
 	return FfiConverterBrightnessGridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
@@ -1300,6 +1354,12 @@ func CommandCharBrightness(offsetX uint64, offsetY uint64, grid *BrightnessGrid)
 func CommandClear() *Command {
 	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
 		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear( _uniffiStatus)
+	}))
+}
+
+func CommandClone(other *Command) *Command {
+	return FfiConverterCommandINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(FfiConverterCommandINSTANCE.Lower(other), _uniffiStatus)
 	}))
 }
 

@@ -534,15 +534,21 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone() != 123:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load() != 48913:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new() != 11865:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone() != 57298:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load() != 24109:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new() != 49832:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized() != 63762:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone() != 33422:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load() != 24788:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -564,6 +570,8 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear() != 11035:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone() != 42249:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out() != 49231:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset() != 62130:
@@ -582,6 +590,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitvec.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitvec.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load.argtypes = (
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -621,6 +634,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitmap.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_bitmap.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load.argtypes = (
     ctypes.c_uint64,
     ctypes.c_uint64,
@@ -674,6 +692,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid.argtypes = 
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load.argtypes = (
     ctypes.c_uint64,
     ctypes.c_uint64,
@@ -775,6 +798,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear.argty
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
@@ -1107,12 +1135,18 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_wid
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load.restype = ctypes.c_uint16
@@ -1122,6 +1156,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new.re
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load.restype = ctypes.c_uint16
@@ -1152,6 +1189,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out.restype = ctypes.c_uint16
@@ -1294,6 +1334,15 @@ class BitVec:
         return inst
 
     @classmethod
+    def clone(cls, other: "BitVec"):
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone,
+        _UniffiConverterTypeBitVec.lower(other))
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
     def load(cls, data: "bytes"):
         
         # Call the (fallible) function before creating any half-baked object instances.
@@ -1396,6 +1445,15 @@ class Bitmap:
         inst = cls.__new__(cls)
         inst._pointer = pointer
         return inst
+
+    @classmethod
+    def clone(cls, other: "Bitmap"):
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone,
+        _UniffiConverterTypeBitmap.lower(other))
+        return cls._make_instance_(pointer)
+
 
     @classmethod
     def load(cls, width: "int",height: "int",data: "bytes"):
@@ -1525,6 +1583,15 @@ class BrightnessGrid:
         inst = cls.__new__(cls)
         inst._pointer = pointer
         return inst
+
+    @classmethod
+    def clone(cls, other: "BrightnessGrid"):
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone,
+        _UniffiConverterTypeBrightnessGrid.lower(other))
+        return cls._make_instance_(pointer)
+
 
     @classmethod
     def load(cls, width: "int",height: "int",data: "bytes"):
@@ -1735,6 +1802,15 @@ class Command:
     def clear(cls, ):
         # Call the (fallible) function before creating any half-baked object instances.
         pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear,)
+        return cls._make_instance_(pointer)
+
+
+    @classmethod
+    def clone(cls, other: "Command"):
+        
+        # Call the (fallible) function before creating any half-baked object instances.
+        pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone,
+        _UniffiConverterTypeCommand.lower(other))
         return cls._make_instance_(pointer)
 
 
