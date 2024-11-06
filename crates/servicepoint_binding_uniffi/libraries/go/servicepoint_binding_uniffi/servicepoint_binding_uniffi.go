@@ -357,6 +357,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw(uniffiStatus)
+	})
+	if checksum != 12617 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals(uniffiStatus)
 	})
 	if checksum != 1191 {
@@ -398,6 +407,15 @@ func uniffiCheckChecksums() {
 	if checksum != 16307 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw(uniffiStatus)
+	})
+	if checksum != 3467 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -452,6 +470,15 @@ func uniffiCheckChecksums() {
 	if checksum != 30837 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw(uniffiStatus)
+	})
+	if checksum != 28155 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -524,6 +551,15 @@ func uniffiCheckChecksums() {
 	if checksum != 23796 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_connection_send: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw(uniffiStatus)
+	})
+	if checksum != 50937 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -1086,6 +1122,16 @@ func BitVecLoad(data []byte) *BitVec {
 
 
 
+func (_self *BitVec)CopyRaw() []byte {
+	_pointer := _self.ffiObject.incrementPointer("*BitVec")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBytesINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
 func (_self *BitVec)Equals(other *BitVec) bool {
 	_pointer := _self.ffiObject.incrementPointer("*BitVec")
 	defer _self.ffiObject.decrementPointer()
@@ -1212,6 +1258,16 @@ func BitmapNewMaxSized() *Bitmap {
 	}))
 }
 
+
+
+func (_self *Bitmap)CopyRaw() []byte {
+	_pointer := _self.ffiObject.incrementPointer("*Bitmap")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBytesINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw(
+		_pointer, _uniffiStatus)
+	}))
+}
 
 
 func (_self *Bitmap)Equals(other *Bitmap) bool {
@@ -1344,6 +1400,16 @@ func BrightnessGridLoad(width uint64, height uint64, data []byte) *BrightnessGri
 	}))
 }
 
+
+
+func (_self *BrightnessGrid)CopyRaw() []byte {
+	_pointer := _self.ffiObject.incrementPointer("*BrightnessGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBytesINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw(
+		_pointer, _uniffiStatus)
+	}))
+}
 
 
 func (_self *BrightnessGrid)Equals(other *BrightnessGrid) bool {
@@ -1699,6 +1765,16 @@ func Cp437GridLoad(width uint64, height uint64, data []byte) *Cp437Grid {
 	}))
 }
 
+
+
+func (_self *Cp437Grid)CopyRaw() []byte {
+	_pointer := _self.ffiObject.incrementPointer("*Cp437Grid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBytesINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw(
+		_pointer, _uniffiStatus)
+	}))
+}
 
 
 func (_self *Cp437Grid)Equals(other *Cp437Grid) bool {

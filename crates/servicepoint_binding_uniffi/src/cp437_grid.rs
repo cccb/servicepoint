@@ -1,4 +1,4 @@
-use servicepoint::Grid;
+use servicepoint::{DataRef, Grid};
 use std::sync::{Arc, RwLock};
 
 #[derive(uniffi::Object)]
@@ -68,5 +68,9 @@ impl Cp437Grid {
         let a = self.actual.read().unwrap();
         let b = other.actual.read().unwrap();
         *a == *b
+    }
+
+    pub fn copy_raw(&self) -> Vec<u8> {
+        self.actual.read().unwrap().data_ref().to_vec()
     }
 }

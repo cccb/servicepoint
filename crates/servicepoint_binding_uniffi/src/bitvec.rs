@@ -54,4 +54,8 @@ impl BitVec {
         let b = other.actual.read().unwrap();
         *a == *b
     }
+
+    pub fn copy_raw(&self) -> Vec<u8> {
+        self.actual.read().unwrap().clone().into_vec()
+    }
 }

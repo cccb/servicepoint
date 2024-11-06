@@ -504,6 +504,8 @@ def _uniffi_check_contract_api_version(lib):
         raise InternalError("UniFFI contract version mismatch: try cleaning and rebuilding your project")
 
 def _uniffi_check_api_checksums(lib):
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw() != 12617:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals() != 1191:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill() != 12255:
@@ -513,6 +515,8 @@ def _uniffi_check_api_checksums(lib):
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len() != 22196:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set() != 16307:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw() != 3467:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals() != 420:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -525,6 +529,8 @@ def _uniffi_check_api_checksums(lib):
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set() != 25290:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw() != 28155:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals() != 13314:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -541,6 +547,8 @@ def _uniffi_check_api_checksums(lib):
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_command_equals() != 20763:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw() != 50937:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals() != 21544:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -633,6 +641,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new.argtypes
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw.restype = _UniffiRustBuffer
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals.argtypes = (
     ctypes.c_void_p,
     ctypes.c_void_p,
@@ -690,6 +703,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_size
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw.restype = _UniffiRustBuffer
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals.argtypes = (
     ctypes.c_void_p,
     ctypes.c_void_p,
@@ -750,6 +768,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new.
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw.restype = _UniffiRustBuffer
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals.argtypes = (
     ctypes.c_void_p,
     ctypes.c_void_p,
@@ -913,6 +936,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new.argty
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new.restype = ctypes.c_void_p
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw.restype = _UniffiRustBuffer
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals.argtypes = (
     ctypes.c_void_p,
     ctypes.c_void_p,
@@ -1209,6 +1237,9 @@ _UniffiLib.ffi_servicepoint_binding_uniffi_rust_future_complete_void.argtypes = 
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.ffi_servicepoint_binding_uniffi_rust_future_complete_void.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals.restype = ctypes.c_uint16
@@ -1224,6 +1255,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len.restype
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals.restype = ctypes.c_uint16
@@ -1242,6 +1276,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set.restype
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals.restype = ctypes.c_uint16
@@ -1266,6 +1303,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_command_equals.res
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals.restype = ctypes.c_uint16
@@ -1513,6 +1553,16 @@ class BitVec:
 
 
 
+    def copy_raw(self, ) -> "bytes":
+        return _UniffiConverterBytes.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw,self._pointer,)
+        )
+
+
+
+
+
+
     def equals(self, other: "BitVec") -> "bool":
         
         return _UniffiConverterBool.lift(
@@ -1646,6 +1696,16 @@ class Bitmap:
         # Call the (fallible) function before creating any half-baked object instances.
         pointer = _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized,)
         return cls._make_instance_(pointer)
+
+
+
+    def copy_raw(self, ) -> "bytes":
+        return _UniffiConverterBytes.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw,self._pointer,)
+        )
+
+
+
 
 
 
@@ -1789,6 +1849,16 @@ class BrightnessGrid:
         _UniffiConverterUInt64.lower(height),
         _UniffiConverterBytes.lower(data))
         return cls._make_instance_(pointer)
+
+
+
+    def copy_raw(self, ) -> "bytes":
+        return _UniffiConverterBytes.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw,self._pointer,)
+        )
+
+
+
 
 
 
@@ -2185,6 +2255,16 @@ class Cp437Grid:
         _UniffiConverterUInt64.lower(height),
         _UniffiConverterBytes.lower(data))
         return cls._make_instance_(pointer)
+
+
+
+    def copy_raw(self, ) -> "bytes":
+        return _UniffiConverterBytes.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw,self._pointer,)
+        )
+
+
+
 
 
 

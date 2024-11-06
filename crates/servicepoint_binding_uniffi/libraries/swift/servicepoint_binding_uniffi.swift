@@ -399,6 +399,7 @@ fileprivate struct FfiConverterData: FfiConverterRustBuffer {
 
 
 public protocol BitVecProtocol {
+    func copyRaw()   -> Data
     func equals(other: BitVec)   -> Bool
     func fill(value: Bool)  
     func get(index: UInt64)   -> Bool
@@ -449,6 +450,17 @@ public class BitVec: BitVecProtocol {
 
     
     
+
+    public func copyRaw()  -> Data {
+        return try!  FfiConverterData.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw(self.pointer, $0
+    )
+}
+        )
+    }
 
     public func equals(other: BitVec)  -> Bool {
         return try!  FfiConverterBool.lift(
@@ -548,6 +560,7 @@ public func FfiConverterTypeBitVec_lower(_ value: BitVec) -> UnsafeMutableRawPoi
 
 
 public protocol BitmapProtocol {
+    func copyRaw()   -> Data
     func equals(other: Bitmap)   -> Bool
     func fill(value: Bool)  
     func get(x: UInt64, y: UInt64)   -> Bool
@@ -610,6 +623,17 @@ public class Bitmap: BitmapProtocol {
 
     
     
+
+    public func copyRaw()  -> Data {
+        return try!  FfiConverterData.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw(self.pointer, $0
+    )
+}
+        )
+    }
 
     public func equals(other: Bitmap)  -> Bool {
         return try!  FfiConverterBool.lift(
@@ -722,6 +746,7 @@ public func FfiConverterTypeBitmap_lower(_ value: Bitmap) -> UnsafeMutableRawPoi
 
 
 public protocol BrightnessGridProtocol {
+    func copyRaw()   -> Data
     func equals(other: BrightnessGrid)   -> Bool
     func fill(value: UInt8)  
     func get(x: UInt64, y: UInt64)   -> UInt8
@@ -776,6 +801,17 @@ public class BrightnessGrid: BrightnessGridProtocol {
 
     
     
+
+    public func copyRaw()  -> Data {
+        return try!  FfiConverterData.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw(self.pointer, $0
+    )
+}
+        )
+    }
 
     public func equals(other: BrightnessGrid)  -> Bool {
         return try!  FfiConverterBool.lift(
@@ -1173,6 +1209,7 @@ public func FfiConverterTypeConnection_lower(_ value: Connection) -> UnsafeMutab
 
 
 public protocol Cp437GridProtocol {
+    func copyRaw()   -> Data
     func equals(other: Cp437Grid)   -> Bool
     func fill(value: UInt8)  
     func get(x: UInt64, y: UInt64)   -> UInt8
@@ -1227,6 +1264,17 @@ public class Cp437Grid: Cp437GridProtocol {
 
     
     
+
+    public func copyRaw()  -> Data {
+        return try!  FfiConverterData.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw(self.pointer, $0
+    )
+}
+        )
+    }
 
     public func equals(other: Cp437Grid)  -> Bool {
         return try!  FfiConverterBool.lift(
@@ -1484,6 +1532,9 @@ private var initializationResult: InitializationResult {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw() != 12617) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals() != 1191) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -1497,6 +1548,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set() != 16307) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw() != 3467) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals() != 420) {
@@ -1515,6 +1569,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw() != 28155) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals() != 13314) {
@@ -1539,6 +1596,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw() != 50937) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals() != 21544) {

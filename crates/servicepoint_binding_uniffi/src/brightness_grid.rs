@@ -1,4 +1,4 @@
-use servicepoint::{Brightness, Grid};
+use servicepoint::{Brightness, DataRef, Grid};
 use std::sync::{Arc, RwLock};
 
 #[derive(uniffi::Object)]
@@ -72,5 +72,9 @@ impl BrightnessGrid {
         let a = self.actual.read().unwrap();
         let b = other.actual.read().unwrap();
         *a == *b
+    }
+
+    pub fn copy_raw(&self) -> Vec<u8> {
+        self.actual.read().unwrap().data_ref().iter().map(u8::from).collect()
     }
 }

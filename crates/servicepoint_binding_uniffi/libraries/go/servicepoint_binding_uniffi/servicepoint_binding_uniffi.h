@@ -88,6 +88,11 @@ void* uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(
 	RustCallStatus* out_status
 );
 
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
 int8_t uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals(
 	void* ptr,
 	void* other,
@@ -142,6 +147,11 @@ void* uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(
 );
 
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(
+	RustCallStatus* out_status
+);
+
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw(
+	void* ptr,
 	RustCallStatus* out_status
 );
 
@@ -202,6 +212,11 @@ void* uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load(
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(
 	uint64_t width,
 	uint64_t height,
+	RustCallStatus* out_status
+);
+
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw(
+	void* ptr,
 	RustCallStatus* out_status
 );
 
@@ -365,6 +380,11 @@ void* uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(
 void* uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(
 	uint64_t width,
 	uint64_t height,
+	RustCallStatus* out_status
+);
+
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw(
+	void* ptr,
 	RustCallStatus* out_status
 );
 
@@ -704,6 +724,10 @@ void ffi_servicepoint_binding_uniffi_rust_future_complete_void(
 	RustCallStatus* out_status
 );
 
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw(
+	RustCallStatus* out_status
+);
+
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals(
 	RustCallStatus* out_status
 );
@@ -721,6 +745,10 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len(
 );
 
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw(
 	RustCallStatus* out_status
 );
 
@@ -745,6 +773,10 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set(
 );
 
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw(
 	RustCallStatus* out_status
 );
 
@@ -777,6 +809,10 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(
 );
 
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw(
 	RustCallStatus* out_status
 );
 

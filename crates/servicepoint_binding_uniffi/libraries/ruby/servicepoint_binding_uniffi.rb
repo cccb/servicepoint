@@ -606,6 +606,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new,
     [:uint64, RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw,
+    [:pointer, RustCallStatus.by_ref],
+    RustBuffer.by_value
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals,
     [:pointer, :pointer, RustCallStatus.by_ref],
     :int8
@@ -636,6 +639,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized,
     [RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw,
+    [:pointer, RustCallStatus.by_ref],
+    RustBuffer.by_value
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals,
     [:pointer, :pointer, RustCallStatus.by_ref],
     :int8
@@ -666,6 +672,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new,
     [:uint64, :uint64, RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw,
+    [:pointer, RustCallStatus.by_ref],
+    RustBuffer.by_value
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals,
     [:pointer, :pointer, RustCallStatus.by_ref],
     :int8
@@ -750,6 +759,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new,
     [:uint64, :uint64, RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw,
+    [:pointer, RustCallStatus.by_ref],
+    RustBuffer.by_value
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals,
     [:pointer, :pointer, RustCallStatus.by_ref],
     :int8
@@ -780,6 +792,9 @@ module UniFFILib
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_reserve,
     [RustBuffer.by_value, :int32, RustCallStatus.by_ref],
     RustBuffer.by_value
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals,
     [RustCallStatus.by_ref],
     :uint16
@@ -793,6 +808,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals,
@@ -811,6 +829,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals,
@@ -835,6 +856,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_connection_send,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals,
@@ -1020,6 +1044,10 @@ end
   end
   
 
+  def copy_raw()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw,@pointer,)
+    return result.consumeIntoBytes
+  end
   def equals(other)
         other = other
     result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals,@pointer,(BitVec._uniffi_lower other))
@@ -1113,6 +1141,10 @@ end
   end
   
 
+  def copy_raw()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw,@pointer,)
+    return result.consumeIntoBytes
+  end
   def equals(other)
         other = other
     result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals,@pointer,(Bitmap._uniffi_lower other))
@@ -1206,6 +1238,10 @@ end
   end
   
 
+  def copy_raw()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw,@pointer,)
+    return result.consumeIntoBytes
+  end
   def equals(other)
         other = other
     result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals,@pointer,(BrightnessGrid._uniffi_lower other))
@@ -1495,6 +1531,10 @@ end
   end
   
 
+  def copy_raw()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw,@pointer,)
+    return result.consumeIntoBytes
+  end
   def equals(other)
         other = other
     result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals,@pointer,(Cp437Grid._uniffi_lower other))
