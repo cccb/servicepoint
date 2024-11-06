@@ -357,6 +357,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals(uniffiStatus)
+	})
+	if checksum != 1191 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill(uniffiStatus)
 	})
 	if checksum != 12255 {
@@ -389,6 +398,15 @@ func uniffiCheckChecksums() {
 	if checksum != 16307 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals(uniffiStatus)
+	})
+	if checksum != 420 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -438,6 +456,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals(uniffiStatus)
+	})
+	if checksum != 13314 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill(uniffiStatus)
 	})
 	if checksum != 63376 {
@@ -483,11 +510,29 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(uniffiStatus)
+	})
+	if checksum != 20763 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_command_equals: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(uniffiStatus)
 	})
 	if checksum != 23796 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_connection_send: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals(uniffiStatus)
+	})
+	if checksum != 21544 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -1041,6 +1086,16 @@ func BitVecLoad(data []byte) *BitVec {
 
 
 
+func (_self *BitVec)Equals(other *BitVec) bool {
+	_pointer := _self.ffiObject.incrementPointer("*BitVec")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals(
+		_pointer,FfiConverterBitVecINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
+
+
 func (_self *BitVec)Fill(value bool)  {
 	_pointer := _self.ffiObject.incrementPointer("*BitVec")
 	defer _self.ffiObject.decrementPointer()
@@ -1157,6 +1212,16 @@ func BitmapNewMaxSized() *Bitmap {
 	}))
 }
 
+
+
+func (_self *Bitmap)Equals(other *Bitmap) bool {
+	_pointer := _self.ffiObject.incrementPointer("*Bitmap")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals(
+		_pointer,FfiConverterBitmapINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
 
 
 func (_self *Bitmap)Fill(value bool)  {
@@ -1279,6 +1344,16 @@ func BrightnessGridLoad(width uint64, height uint64, data []byte) *BrightnessGri
 	}))
 }
 
+
+
+func (_self *BrightnessGrid)Equals(other *BrightnessGrid) bool {
+	_pointer := _self.ffiObject.incrementPointer("*BrightnessGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals(
+		_pointer,FfiConverterBrightnessGridINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
 
 
 func (_self *BrightnessGrid)Fill(value uint8)  {
@@ -1464,6 +1539,16 @@ func CommandHardReset() *Command {
 
 
 
+func (_self *Command)Equals(other *Command) bool {
+	_pointer := _self.ffiObject.incrementPointer("*Command")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_command_equals(
+		_pointer,FfiConverterCommandINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
+
+
 
 func (object *Command)Destroy() {
 	runtime.SetFinalizer(object, nil)
@@ -1614,6 +1699,16 @@ func Cp437GridLoad(width uint64, height uint64, data []byte) *Cp437Grid {
 	}))
 }
 
+
+
+func (_self *Cp437Grid)Equals(other *Cp437Grid) bool {
+	_pointer := _self.ffiObject.incrementPointer("*Cp437Grid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals(
+		_pointer,FfiConverterCp437GridINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
 
 
 func (_self *Cp437Grid)Fill(value uint8)  {

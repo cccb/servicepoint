@@ -67,4 +67,10 @@ impl BrightnessGrid {
     pub fn height(&self) -> u64 {
         self.actual.read().unwrap().height() as u64
     }
+
+    pub fn equals(&self, other: &BrightnessGrid) -> bool {
+        let a = self.actual.read().unwrap();
+        let b = other.actual.read().unwrap();
+        *a == *b
+    }
 }

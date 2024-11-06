@@ -48,4 +48,10 @@ impl BitVec {
     pub fn len(&self) -> u64 {
         self.actual.read().unwrap().len() as u64
     }
+
+    pub fn equals(&self, other: &BitVec) -> bool {
+        let a = self.actual.read().unwrap();
+        let b = other.actual.read().unwrap();
+        *a == *b
+    }
 }

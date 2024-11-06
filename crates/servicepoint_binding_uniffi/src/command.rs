@@ -155,4 +155,8 @@ impl Command {
     pub fn clone(other: &Arc<Self>) -> Arc<Self> {
         Self::internal_new(other.actual.clone())
     }
+
+    pub fn equals(&self, other: &Command) -> bool {
+        self.actual == other.actual
+    }
 }

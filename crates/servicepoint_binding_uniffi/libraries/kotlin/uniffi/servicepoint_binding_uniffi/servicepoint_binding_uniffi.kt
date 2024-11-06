@@ -391,6 +391,8 @@ internal interface _UniFFILib : Library {
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(`size`: Long,_uniffi_out_err: RustCallStatus, 
     ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals(`ptr`: Pointer,`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Byte
     fun uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(`ptr`: Pointer,`value`: Byte,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(`ptr`: Pointer,`index`: Long,_uniffi_out_err: RustCallStatus, 
@@ -409,6 +411,8 @@ internal interface _UniFFILib : Library {
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(_uniffi_out_err: RustCallStatus, 
     ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals(`ptr`: Pointer,`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Byte
     fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(`ptr`: Pointer,`value`: Byte,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(`ptr`: Pointer,`x`: Long,`y`: Long,_uniffi_out_err: RustCallStatus, 
@@ -427,6 +431,8 @@ internal interface _UniFFILib : Library {
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(`width`: Long,`height`: Long,_uniffi_out_err: RustCallStatus, 
     ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals(`ptr`: Pointer,`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Byte
     fun uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill(`ptr`: Pointer,`value`: Byte,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get(`ptr`: Pointer,`x`: Long,`y`: Long,_uniffi_out_err: RustCallStatus, 
@@ -463,6 +469,8 @@ internal interface _UniFFILib : Library {
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset(_uniffi_out_err: RustCallStatus, 
     ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_command_equals(`ptr`: Pointer,`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Byte
     fun uniffi_servicepoint_binding_uniffi_fn_free_connection(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(`host`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
@@ -479,6 +487,8 @@ internal interface _UniFFILib : Library {
     ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(`width`: Long,`height`: Long,_uniffi_out_err: RustCallStatus, 
     ): Pointer
+    fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals(`ptr`: Pointer,`other`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Byte
     fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(`ptr`: Pointer,`value`: Byte,_uniffi_out_err: RustCallStatus, 
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(`ptr`: Pointer,`x`: Long,`y`: Long,_uniffi_out_err: RustCallStatus, 
@@ -603,6 +613,8 @@ internal interface _UniFFILib : Library {
     ): Unit
     fun ffi_servicepoint_binding_uniffi_rust_future_complete_void(`handle`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get(
@@ -610,6 +622,8 @@ internal interface _UniFFILib : Library {
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(
     ): Short
@@ -621,6 +635,8 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get(
@@ -631,7 +647,11 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill(
     ): Short
@@ -714,6 +734,9 @@ private fun uniffiCheckContractApiVersion(lib: _UniFFILib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals() != 1191.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill() != 12255.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -724,6 +747,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set() != 16307.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals() != 420.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill() != 43887.toShort()) {
@@ -741,6 +767,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width() != 30837.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals() != 13314.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill() != 63376.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -756,7 +785,13 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width() != 26384.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_command_equals() != 20763.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_connection_send() != 23796.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals() != 21544.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill() != 46422.toShort()) {
@@ -1157,6 +1192,7 @@ abstract class FFIObject(
 
 public interface BitVecInterface {
     
+    fun `equals`(`other`: BitVec): Boolean
     fun `fill`(`value`: Boolean)
     fun `get`(`index`: ULong): Boolean
     fun `len`(): ULong
@@ -1187,6 +1223,17 @@ class BitVec(
         }
     }
 
+    override fun `equals`(`other`: BitVec): Boolean =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals(it,
+        FfiConverterTypeBitVec.lower(`other`),
+        _status)
+}
+        }.let {
+            FfiConverterBoolean.lift(it)
+        }
+    
     override fun `fill`(`value`: Boolean) =
         callWithPointer {
     rustCall() { _status ->
@@ -1274,6 +1321,7 @@ public object FfiConverterTypeBitVec: FfiConverter<BitVec, Pointer> {
 
 public interface BitmapInterface {
     
+    fun `equals`(`other`: Bitmap): Boolean
     fun `fill`(`value`: Boolean)
     fun `get`(`x`: ULong, `y`: ULong): Boolean
     fun `height`(): ULong
@@ -1305,6 +1353,17 @@ class Bitmap(
         }
     }
 
+    override fun `equals`(`other`: Bitmap): Boolean =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals(it,
+        FfiConverterTypeBitmap.lower(`other`),
+        _status)
+}
+        }.let {
+            FfiConverterBoolean.lift(it)
+        }
+    
     override fun `fill`(`value`: Boolean) =
         callWithPointer {
     rustCall() { _status ->
@@ -1408,6 +1467,7 @@ public object FfiConverterTypeBitmap: FfiConverter<Bitmap, Pointer> {
 
 public interface BrightnessGridInterface {
     
+    fun `equals`(`other`: BrightnessGrid): Boolean
     fun `fill`(`value`: UByte)
     fun `get`(`x`: ULong, `y`: ULong): UByte
     fun `height`(): ULong
@@ -1439,6 +1499,17 @@ class BrightnessGrid(
         }
     }
 
+    override fun `equals`(`other`: BrightnessGrid): Boolean =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals(it,
+        FfiConverterTypeBrightnessGrid.lower(`other`),
+        _status)
+}
+        }.let {
+            FfiConverterBoolean.lift(it)
+        }
+    
     override fun `fill`(`value`: UByte) =
         callWithPointer {
     rustCall() { _status ->
@@ -1537,6 +1608,7 @@ public object FfiConverterTypeBrightnessGrid: FfiConverter<BrightnessGrid, Point
 
 public interface CommandInterface {
     
+    fun `equals`(`other`: Command): Boolean
     companion object
 }
 
@@ -1558,6 +1630,17 @@ class Command(
         }
     }
 
+    override fun `equals`(`other`: Command): Boolean =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_command_equals(it,
+        FfiConverterTypeCommand.lower(`other`),
+        _status)
+}
+        }.let {
+            FfiConverterBoolean.lift(it)
+        }
+    
     
 
     companion object {
@@ -1731,6 +1814,7 @@ public object FfiConverterTypeConnection: FfiConverter<Connection, Pointer> {
 
 public interface Cp437GridInterface {
     
+    fun `equals`(`other`: Cp437Grid): Boolean
     fun `fill`(`value`: UByte)
     fun `get`(`x`: ULong, `y`: ULong): UByte
     fun `height`(): ULong
@@ -1762,6 +1846,17 @@ class Cp437Grid(
         }
     }
 
+    override fun `equals`(`other`: Cp437Grid): Boolean =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals(it,
+        FfiConverterTypeCp437Grid.lower(`other`),
+        _status)
+}
+        }.let {
+            FfiConverterBoolean.lift(it)
+        }
+    
     override fun `fill`(`value`: UByte) =
         callWithPointer {
     rustCall() { _status ->

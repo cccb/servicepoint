@@ -606,6 +606,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new,
     [:uint64, RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals,
+    [:pointer, :pointer, RustCallStatus.by_ref],
+    :int8
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill,
     [:pointer, :int8, RustCallStatus.by_ref],
     :void
@@ -633,6 +636,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized,
     [RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals,
+    [:pointer, :pointer, RustCallStatus.by_ref],
+    :int8
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill,
     [:pointer, :int8, RustCallStatus.by_ref],
     :void
@@ -660,6 +666,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new,
     [:uint64, :uint64, RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals,
+    [:pointer, :pointer, RustCallStatus.by_ref],
+    :int8
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill,
     [:pointer, :uint8, RustCallStatus.by_ref],
     :void
@@ -714,6 +723,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset,
     [RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_command_equals,
+    [:pointer, :pointer, RustCallStatus.by_ref],
+    :int8
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_connection,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -738,6 +750,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new,
     [:uint64, :uint64, RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals,
+    [:pointer, :pointer, RustCallStatus.by_ref],
+    :int8
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill,
     [:pointer, :uint8, RustCallStatus.by_ref],
     :void
@@ -765,6 +780,9 @@ module UniFFILib
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_reserve,
     [RustBuffer.by_value, :int32, RustCallStatus.by_ref],
     RustBuffer.by_value
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill,
     [RustCallStatus.by_ref],
     :uint16
@@ -775,6 +793,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill,
@@ -792,6 +813,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill,
     [RustCallStatus.by_ref],
     :uint16
@@ -807,7 +831,13 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_command_equals,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_connection_send,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill,
@@ -990,6 +1020,11 @@ end
   end
   
 
+  def equals(other)
+        other = other
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals,@pointer,(BitVec._uniffi_lower other))
+    return 1 == result
+  end
   def fill(value)
         value = value ? true : false
       ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill,@pointer,(value ? 1 : 0))
@@ -1078,6 +1113,11 @@ end
   end
   
 
+  def equals(other)
+        other = other
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals,@pointer,(Bitmap._uniffi_lower other))
+    return 1 == result
+  end
   def fill(value)
         value = value ? true : false
       ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill,@pointer,(value ? 1 : 0))
@@ -1166,6 +1206,11 @@ end
   end
   
 
+  def equals(other)
+        other = other
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals,@pointer,(BrightnessGrid._uniffi_lower other))
+    return 1 == result
+  end
   def fill(value)
         value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
       ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill,@pointer,value)
@@ -1327,6 +1372,11 @@ end
   end
   
 
+  def equals(other)
+        other = other
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_command_equals,@pointer,(Command._uniffi_lower other))
+    return 1 == result
+  end
   
 end
   
@@ -1445,6 +1495,11 @@ end
   end
   
 
+  def equals(other)
+        other = other
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals,@pointer,(Cp437Grid._uniffi_lower other))
+    return 1 == result
+  end
   def fill(value)
         value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
       ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill,@pointer,value)
