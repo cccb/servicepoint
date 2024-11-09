@@ -22,7 +22,7 @@ servicepoint = "0.10.0"
 
 ## Examples
 
-```rust
+```rust should_panic
 fn main() {
     // establish connection
     let connection = servicepoint::Connection::open("172.23.42.29:2342")

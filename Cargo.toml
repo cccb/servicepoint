@@ -1,7 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/*",
+    "crates/servicepoint",
+    "crates/servicepoint_binding_c",
+    "crates/servicepoint_binding_cs",
     "crates/servicepoint_binding_c/examples/lang_c"
 ]
 

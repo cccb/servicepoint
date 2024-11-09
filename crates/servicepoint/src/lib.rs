@@ -120,8 +120,7 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 /// ```rust
 /// # use std::time::Instant;
 /// # use servicepoint::{Command, CompressionCode, FRAME_PACING, Origin, Bitmap};
-/// # let connection = servicepoint::Connection::open("172.23.42.29:2342")
-/// #     .expect("connection failed");
+/// # let connection = servicepoint::Connection::Fake;
 /// # let pixels = Bitmap::max_sized();
 /// loop {
 ///    let start = Instant::now();
