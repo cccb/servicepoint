@@ -24,24 +24,10 @@
 
 typedef struct RustBuffer
 {
-    int32_t capacity;
-    int32_t len;
+    uint64_t capacity;
+    uint64_t len;
     uint8_t *_Nullable data;
 } RustBuffer;
-
-typedef int32_t (*ForeignCallback)(uint64_t, int32_t, const uint8_t *_Nonnull, int32_t, RustBuffer *_Nonnull);
-
-// Task defined in Rust that Swift executes
-typedef void (*UniFfiRustTaskCallback)(const void * _Nullable, int8_t);
-
-// Callback to execute Rust tasks using a Swift Task
-//
-// Args:
-//   executor: ForeignExecutor lowered into a size_t value
-//   delay: Delay in MS
-//   task: UniFfiRustTaskCallback to call
-//   task_data: data to pass the task callback
-typedef int8_t (*UniFfiForeignExecutorCallback)(size_t, uint32_t, UniFfiRustTaskCallback _Nullable, const void * _Nullable);
 
 typedef struct ForeignBytes
 {
@@ -58,423 +44,1298 @@ typedef struct RustCallStatus {
 // ⚠️ Attention: If you change this #else block (ending in `#endif // def UNIFFI_SHARED_H`) you *must* ⚠️
 // ⚠️ increment the version suffix in all instances of UNIFFI_SHARED_HEADER_V4 in this file.           ⚠️
 #endif // def UNIFFI_SHARED_H
+#ifndef UNIFFI_FFIDEF_RUST_FUTURE_CONTINUATION_CALLBACK
+#define UNIFFI_FFIDEF_RUST_FUTURE_CONTINUATION_CALLBACK
+typedef void (*UniffiRustFutureContinuationCallback)(uint64_t, int8_t
+    );
 
-// Continuation callback for UniFFI Futures
-typedef void (*UniFfiRustFutureContinuation)(void * _Nonnull, int8_t);
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_FREE
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_FREE
+typedef void (*UniffiForeignFutureFree)(uint64_t
+    );
 
-// Scaffolding functions
+#endif
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_FREE
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_FREE
+typedef void (*UniffiCallbackInterfaceFree)(uint64_t
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE
+typedef struct UniffiForeignFuture {
+    uint64_t handle;
+    UniffiForeignFutureFree _Nonnull free;
+} UniffiForeignFuture;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U8
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U8
+typedef struct UniffiForeignFutureStructU8 {
+    uint8_t returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructU8;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U8
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U8
+typedef void (*UniffiForeignFutureCompleteU8)(uint64_t, UniffiForeignFutureStructU8
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I8
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I8
+typedef struct UniffiForeignFutureStructI8 {
+    int8_t returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructI8;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I8
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I8
+typedef void (*UniffiForeignFutureCompleteI8)(uint64_t, UniffiForeignFutureStructI8
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U16
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U16
+typedef struct UniffiForeignFutureStructU16 {
+    uint16_t returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructU16;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U16
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U16
+typedef void (*UniffiForeignFutureCompleteU16)(uint64_t, UniffiForeignFutureStructU16
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I16
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I16
+typedef struct UniffiForeignFutureStructI16 {
+    int16_t returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructI16;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I16
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I16
+typedef void (*UniffiForeignFutureCompleteI16)(uint64_t, UniffiForeignFutureStructI16
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U32
+typedef struct UniffiForeignFutureStructU32 {
+    uint32_t returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructU32;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U32
+typedef void (*UniffiForeignFutureCompleteU32)(uint64_t, UniffiForeignFutureStructU32
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I32
+typedef struct UniffiForeignFutureStructI32 {
+    int32_t returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructI32;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I32
+typedef void (*UniffiForeignFutureCompleteI32)(uint64_t, UniffiForeignFutureStructI32
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_U64
+typedef struct UniffiForeignFutureStructU64 {
+    uint64_t returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructU64;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_U64
+typedef void (*UniffiForeignFutureCompleteU64)(uint64_t, UniffiForeignFutureStructU64
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_I64
+typedef struct UniffiForeignFutureStructI64 {
+    int64_t returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructI64;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_I64
+typedef void (*UniffiForeignFutureCompleteI64)(uint64_t, UniffiForeignFutureStructI64
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_F32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_F32
+typedef struct UniffiForeignFutureStructF32 {
+    float returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructF32;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F32
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F32
+typedef void (*UniffiForeignFutureCompleteF32)(uint64_t, UniffiForeignFutureStructF32
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_F64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_F64
+typedef struct UniffiForeignFutureStructF64 {
+    double returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructF64;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F64
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_F64
+typedef void (*UniffiForeignFutureCompleteF64)(uint64_t, UniffiForeignFutureStructF64
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_POINTER
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_POINTER
+typedef struct UniffiForeignFutureStructPointer {
+    void*_Nonnull returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructPointer;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_POINTER
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_POINTER
+typedef void (*UniffiForeignFutureCompletePointer)(uint64_t, UniffiForeignFutureStructPointer
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_RUST_BUFFER
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_RUST_BUFFER
+typedef struct UniffiForeignFutureStructRustBuffer {
+    RustBuffer returnValue;
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructRustBuffer;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_RUST_BUFFER
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_RUST_BUFFER
+typedef void (*UniffiForeignFutureCompleteRustBuffer)(uint64_t, UniffiForeignFutureStructRustBuffer
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_VOID
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_STRUCT_VOID
+typedef struct UniffiForeignFutureStructVoid {
+    RustCallStatus callStatus;
+} UniffiForeignFutureStructVoid;
+
+#endif
+#ifndef UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_VOID
+#define UNIFFI_FFIDEF_FOREIGN_FUTURE_COMPLETE_VOID
+typedef void (*UniffiForeignFutureCompleteVoid)(uint64_t, UniffiForeignFutureStructVoid
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_BITVEC
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_BITVEC
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_clone_bitvec(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_BITVEC
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_BITVEC
 void uniffi_servicepoint_binding_uniffi_fn_free_bitvec(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITVEC_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITVEC_CLONE
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone(void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITVEC_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITVEC_LOAD
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load(RustBuffer data, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITVEC_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITVEC_NEW
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new(uint64_t size, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_COPY_RAW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_COPY_RAW
 RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_EQUALS
 int8_t uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals(void*_Nonnull ptr, void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_FILL
 void uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill(void*_Nonnull ptr, int8_t value, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_GET
 int8_t uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get(void*_Nonnull ptr, uint64_t index, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_LEN
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_LEN
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITVEC_SET
 void uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set(void*_Nonnull ptr, uint64_t index, int8_t value, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_BITMAP
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_BITMAP
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_clone_bitmap(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_BITMAP
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_BITMAP
 void uniffi_servicepoint_binding_uniffi_fn_free_bitmap(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITMAP_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITMAP_CLONE
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone(void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITMAP_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITMAP_LOAD
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load(uint64_t width, uint64_t height, RustBuffer data, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITMAP_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITMAP_NEW
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new(uint64_t width, uint64_t height, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITMAP_NEW_MAX_SIZED
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BITMAP_NEW_MAX_SIZED
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized(RustCallStatus *_Nonnull out_status
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_COPY_RAW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_COPY_RAW
 RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_EQUALS
 int8_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals(void*_Nonnull ptr, void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_FILL
 void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill(void*_Nonnull ptr, int8_t value, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_GET
 int8_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get(void*_Nonnull ptr, uint64_t x, uint64_t y, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_HEIGHT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_HEIGHT
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_SET
 void uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set(void*_Nonnull ptr, uint64_t x, uint64_t y, int8_t value, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_WIDTH
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BITMAP_WIDTH
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_BRIGHTNESSGRID
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_BRIGHTNESSGRID
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_clone_brightnessgrid(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_BRIGHTNESSGRID
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_BRIGHTNESSGRID
 void uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BRIGHTNESSGRID_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BRIGHTNESSGRID_CLONE
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone(void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BRIGHTNESSGRID_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BRIGHTNESSGRID_LOAD
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load(uint64_t width, uint64_t height, RustBuffer data, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BRIGHTNESSGRID_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_BRIGHTNESSGRID_NEW
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new(uint64_t width, uint64_t height, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_COPY_RAW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_COPY_RAW
 RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_EQUALS
 int8_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals(void*_Nonnull ptr, void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_FILL
 void uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill(void*_Nonnull ptr, uint8_t value, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_GET
 uint8_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get(void*_Nonnull ptr, uint64_t x, uint64_t y, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_HEIGHT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_HEIGHT
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_SET
 void uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set(void*_Nonnull ptr, uint64_t x, uint64_t y, uint8_t value, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_WIDTH
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_BRIGHTNESSGRID_WIDTH
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_CHARGRID
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_CHARGRID
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_clone_chargrid(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_CHARGRID
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_CHARGRID
+void uniffi_servicepoint_binding_uniffi_fn_free_chargrid(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CHARGRID_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CHARGRID_CLONE
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_clone(void*_Nonnull other, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CHARGRID_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CHARGRID_LOAD
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_load(RustBuffer data, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CHARGRID_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CHARGRID_NEW
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_new(uint64_t width, uint64_t height, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_AS_STRING
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_AS_STRING
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_as_string(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_EQUALS
+int8_t uniffi_servicepoint_binding_uniffi_fn_method_chargrid_equals(void*_Nonnull ptr, void*_Nonnull other, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_FILL
+void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_fill(void*_Nonnull ptr, RustBuffer value, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_GET
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get(void*_Nonnull ptr, uint64_t x, uint64_t y, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_HEIGHT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_HEIGHT
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_SET
+void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set(void*_Nonnull ptr, uint64_t x, uint64_t y, RustBuffer value, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_WIDTH
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CHARGRID_WIDTH
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_COMMAND
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_COMMAND
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_clone_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_COMMAND
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_COMMAND
 void uniffi_servicepoint_binding_uniffi_fn_free_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear(uint64_t offset, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_AND
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_AND
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and(uint64_t offset, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_OR
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_OR
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or(uint64_t offset, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_WIN
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_WIN
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win(uint64_t offset_x, uint64_t offset_y, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_XOR
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_XOR
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor(uint64_t offset, void*_Nonnull bitmap, RustBuffer compression, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BRIGHTNESS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_BRIGHTNESS
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness(uint8_t brightness, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_CHAR_BRIGHTNESS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_CHAR_BRIGHTNESS
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness(uint64_t offset_x, uint64_t offset_y, void*_Nonnull grid, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_CLEAR
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_CLEAR
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear(RustCallStatus *_Nonnull out_status
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_CLONE
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone(void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_CP437_DATA
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_CP437_DATA
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data(uint64_t offset_x, uint64_t offset_y, void*_Nonnull grid, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_FADE_OUT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_FADE_OUT
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out(RustCallStatus *_Nonnull out_status
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_HARD_RESET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_COMMAND_HARD_RESET
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset(RustCallStatus *_Nonnull out_status
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_COMMAND_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_COMMAND_EQUALS
 int8_t uniffi_servicepoint_binding_uniffi_fn_method_command_equals(void*_Nonnull ptr, void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_CONNECTION
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_CONNECTION
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_clone_connection(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_CONNECTION
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_CONNECTION
 void uniffi_servicepoint_binding_uniffi_fn_free_connection(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CONNECTION_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CONNECTION_NEW
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new(RustBuffer host, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CONNECTION_NEW_FAKE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CONNECTION_NEW_FAKE
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake(RustCallStatus *_Nonnull out_status
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CONNECTION_SEND
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CONNECTION_SEND
 void uniffi_servicepoint_binding_uniffi_fn_method_connection_send(void*_Nonnull ptr, void*_Nonnull command, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_CP437GRID
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CLONE_CP437GRID
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_clone_cp437grid(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_CP437GRID
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_FREE_CP437GRID
 void uniffi_servicepoint_binding_uniffi_fn_free_cp437grid(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CP437GRID_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CP437GRID_CLONE
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone(void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CP437GRID_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CP437GRID_LOAD
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load(uint64_t width, uint64_t height, RustBuffer data, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CP437GRID_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_CONSTRUCTOR_CP437GRID_NEW
 void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new(uint64_t width, uint64_t height, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_COPY_RAW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_COPY_RAW
 RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_EQUALS
 int8_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals(void*_Nonnull ptr, void*_Nonnull other, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_FILL
 void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill(void*_Nonnull ptr, uint8_t value, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_GET
 uint8_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(void*_Nonnull ptr, uint64_t x, uint64_t y, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_HEIGHT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_HEIGHT
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_SET
 void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(void*_Nonnull ptr, uint64_t x, uint64_t y, uint8_t value, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_WIDTH
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_FN_METHOD_CP437GRID_WIDTH
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
-RustBuffer ffi_servicepoint_binding_uniffi_rustbuffer_alloc(int32_t size, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUSTBUFFER_ALLOC
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUSTBUFFER_ALLOC
+RustBuffer ffi_servicepoint_binding_uniffi_rustbuffer_alloc(uint64_t size, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUSTBUFFER_FROM_BYTES
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUSTBUFFER_FROM_BYTES
 RustBuffer ffi_servicepoint_binding_uniffi_rustbuffer_from_bytes(ForeignBytes bytes, RustCallStatus *_Nonnull out_status
 );
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUSTBUFFER_FREE
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUSTBUFFER_FREE
 void ffi_servicepoint_binding_uniffi_rustbuffer_free(RustBuffer buf, RustCallStatus *_Nonnull out_status
 );
-RustBuffer ffi_servicepoint_binding_uniffi_rustbuffer_reserve(RustBuffer buf, int32_t additional, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUSTBUFFER_RESERVE
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUSTBUFFER_RESERVE
+RustBuffer ffi_servicepoint_binding_uniffi_rustbuffer_reserve(RustBuffer buf, uint64_t additional, RustCallStatus *_Nonnull out_status
 );
-void ffi_servicepoint_binding_uniffi_rust_future_continuation_callback_set(UniFfiRustFutureContinuation _Nonnull callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_U8
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_U8
+void ffi_servicepoint_binding_uniffi_rust_future_poll_u8(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_u8(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_U8
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_U8
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_u8(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_u8(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_U8
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_U8
+void ffi_servicepoint_binding_uniffi_rust_future_free_u8(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_u8(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_U8
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_U8
+uint8_t ffi_servicepoint_binding_uniffi_rust_future_complete_u8(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-uint8_t ffi_servicepoint_binding_uniffi_rust_future_complete_u8(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_I8
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_I8
+void ffi_servicepoint_binding_uniffi_rust_future_poll_i8(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_i8(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_I8
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_I8
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_i8(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_i8(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_I8
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_I8
+void ffi_servicepoint_binding_uniffi_rust_future_free_i8(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_i8(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_I8
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_I8
+int8_t ffi_servicepoint_binding_uniffi_rust_future_complete_i8(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-int8_t ffi_servicepoint_binding_uniffi_rust_future_complete_i8(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_U16
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_U16
+void ffi_servicepoint_binding_uniffi_rust_future_poll_u16(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_u16(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_U16
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_U16
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_u16(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_u16(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_U16
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_U16
+void ffi_servicepoint_binding_uniffi_rust_future_free_u16(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_u16(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_U16
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_U16
+uint16_t ffi_servicepoint_binding_uniffi_rust_future_complete_u16(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-uint16_t ffi_servicepoint_binding_uniffi_rust_future_complete_u16(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_I16
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_I16
+void ffi_servicepoint_binding_uniffi_rust_future_poll_i16(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_i16(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_I16
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_I16
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_i16(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_i16(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_I16
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_I16
+void ffi_servicepoint_binding_uniffi_rust_future_free_i16(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_i16(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_I16
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_I16
+int16_t ffi_servicepoint_binding_uniffi_rust_future_complete_i16(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-int16_t ffi_servicepoint_binding_uniffi_rust_future_complete_i16(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_U32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_U32
+void ffi_servicepoint_binding_uniffi_rust_future_poll_u32(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_u32(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_U32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_U32
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_u32(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_u32(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_U32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_U32
+void ffi_servicepoint_binding_uniffi_rust_future_free_u32(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_u32(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_U32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_U32
+uint32_t ffi_servicepoint_binding_uniffi_rust_future_complete_u32(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-uint32_t ffi_servicepoint_binding_uniffi_rust_future_complete_u32(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_I32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_I32
+void ffi_servicepoint_binding_uniffi_rust_future_poll_i32(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_i32(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_I32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_I32
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_i32(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_i32(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_I32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_I32
+void ffi_servicepoint_binding_uniffi_rust_future_free_i32(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_i32(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_I32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_I32
+int32_t ffi_servicepoint_binding_uniffi_rust_future_complete_i32(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-int32_t ffi_servicepoint_binding_uniffi_rust_future_complete_i32(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_U64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_U64
+void ffi_servicepoint_binding_uniffi_rust_future_poll_u64(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_u64(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_U64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_U64
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_u64(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_u64(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_U64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_U64
+void ffi_servicepoint_binding_uniffi_rust_future_free_u64(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_u64(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_U64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_U64
+uint64_t ffi_servicepoint_binding_uniffi_rust_future_complete_u64(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-uint64_t ffi_servicepoint_binding_uniffi_rust_future_complete_u64(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_I64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_I64
+void ffi_servicepoint_binding_uniffi_rust_future_poll_i64(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_i64(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_I64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_I64
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_i64(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_i64(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_I64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_I64
+void ffi_servicepoint_binding_uniffi_rust_future_free_i64(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_i64(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_I64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_I64
+int64_t ffi_servicepoint_binding_uniffi_rust_future_complete_i64(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-int64_t ffi_servicepoint_binding_uniffi_rust_future_complete_i64(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_F32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_F32
+void ffi_servicepoint_binding_uniffi_rust_future_poll_f32(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_f32(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_F32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_F32
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_f32(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_f32(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_F32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_F32
+void ffi_servicepoint_binding_uniffi_rust_future_free_f32(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_f32(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_F32
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_F32
+float ffi_servicepoint_binding_uniffi_rust_future_complete_f32(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-float ffi_servicepoint_binding_uniffi_rust_future_complete_f32(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_F64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_F64
+void ffi_servicepoint_binding_uniffi_rust_future_poll_f64(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_f64(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_F64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_F64
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_f64(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_f64(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_F64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_F64
+void ffi_servicepoint_binding_uniffi_rust_future_free_f64(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_f64(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_F64
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_F64
+double ffi_servicepoint_binding_uniffi_rust_future_complete_f64(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-double ffi_servicepoint_binding_uniffi_rust_future_complete_f64(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_POINTER
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_POINTER
+void ffi_servicepoint_binding_uniffi_rust_future_poll_pointer(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_pointer(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_POINTER
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_POINTER
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_pointer(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_pointer(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_POINTER
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_POINTER
+void ffi_servicepoint_binding_uniffi_rust_future_free_pointer(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_pointer(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_POINTER
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_POINTER
+void*_Nonnull ffi_servicepoint_binding_uniffi_rust_future_complete_pointer(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-void*_Nonnull ffi_servicepoint_binding_uniffi_rust_future_complete_pointer(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_RUST_BUFFER
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_RUST_BUFFER
+void ffi_servicepoint_binding_uniffi_rust_future_poll_rust_buffer(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_rust_buffer(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_RUST_BUFFER
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_RUST_BUFFER
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_rust_buffer(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_rust_buffer(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_RUST_BUFFER
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_RUST_BUFFER
+void ffi_servicepoint_binding_uniffi_rust_future_free_rust_buffer(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_rust_buffer(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_RUST_BUFFER
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_RUST_BUFFER
+RustBuffer ffi_servicepoint_binding_uniffi_rust_future_complete_rust_buffer(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-RustBuffer ffi_servicepoint_binding_uniffi_rust_future_complete_rust_buffer(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_VOID
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_POLL_VOID
+void ffi_servicepoint_binding_uniffi_rust_future_poll_void(uint64_t handle, UniffiRustFutureContinuationCallback _Nonnull callback, uint64_t callback_data
 );
-void ffi_servicepoint_binding_uniffi_rust_future_poll_void(void* _Nonnull handle, void* _Nonnull uniffi_callback
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_VOID
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_CANCEL_VOID
+void ffi_servicepoint_binding_uniffi_rust_future_cancel_void(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_cancel_void(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_VOID
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_FREE_VOID
+void ffi_servicepoint_binding_uniffi_rust_future_free_void(uint64_t handle
 );
-void ffi_servicepoint_binding_uniffi_rust_future_free_void(void* _Nonnull handle
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_VOID
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_RUST_FUTURE_COMPLETE_VOID
+void ffi_servicepoint_binding_uniffi_rust_future_complete_void(uint64_t handle, RustCallStatus *_Nonnull out_status
 );
-void ffi_servicepoint_binding_uniffi_rust_future_complete_void(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
-);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_COPY_RAW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_COPY_RAW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_EQUALS
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_equals(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_FILL
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_fill(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_GET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_get(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_LEN
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_LEN
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_len(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITVEC_SET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_set(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_COPY_RAW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_COPY_RAW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_copy_raw(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_EQUALS
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_equals(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_FILL
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_fill(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_GET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_get(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_HEIGHT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_HEIGHT
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_height(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_SET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_set(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_WIDTH
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BITMAP_WIDTH
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_bitmap_width(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_COPY_RAW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_COPY_RAW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_copy_raw(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_EQUALS
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_equals(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_FILL
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_fill(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_GET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_get(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_HEIGHT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_HEIGHT
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_height(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_SET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_set(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_WIDTH
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_BRIGHTNESSGRID_WIDTH
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_AS_STRING
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_AS_STRING
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_as_string(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_EQUALS
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_equals(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_FILL
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_fill(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_GET
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_HEIGHT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_HEIGHT
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_SET
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_WIDTH
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CHARGRID_WIDTH
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_COMMAND_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_COMMAND_EQUALS
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CONNECTION_SEND
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CONNECTION_SEND
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_connection_send(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_COPY_RAW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_COPY_RAW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_copy_raw(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_EQUALS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_EQUALS
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_equals(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_FILL
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_FILL
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_fill(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_GET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_GET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_get(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_HEIGHT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_HEIGHT
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_SET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_SET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_WIDTH
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_METHOD_CP437GRID_WIDTH
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITVEC_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITVEC_CLONE
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_clone(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITVEC_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITVEC_LOAD
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_load(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITVEC_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITVEC_NEW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitvec_new(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITMAP_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITMAP_CLONE
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_clone(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITMAP_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITMAP_LOAD
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_load(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITMAP_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITMAP_NEW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITMAP_NEW_MAX_SIZED
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BITMAP_NEW_MAX_SIZED
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_bitmap_new_max_sized(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BRIGHTNESSGRID_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BRIGHTNESSGRID_CLONE
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_clone(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BRIGHTNESSGRID_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BRIGHTNESSGRID_LOAD
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_load(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BRIGHTNESSGRID_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_BRIGHTNESSGRID_NEW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CHARGRID_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CHARGRID_CLONE
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_clone(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CHARGRID_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CHARGRID_LOAD
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_load(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CHARGRID_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CHARGRID_NEW
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_new(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_AND
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_AND
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_and(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_OR
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_OR
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_or(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_WIN
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_WIN
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_win(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_XOR
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BITMAP_LINEAR_XOR
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_bitmap_linear_xor(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BRIGHTNESS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_BRIGHTNESS
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_brightness(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_CHAR_BRIGHTNESS
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_CHAR_BRIGHTNESS
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_char_brightness(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_CLEAR
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_CLEAR
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clear(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_CLONE
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_clone(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_CP437_DATA
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_CP437_DATA
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_cp437_data(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_FADE_OUT
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_FADE_OUT
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_fade_out(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_HARD_RESET
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_COMMAND_HARD_RESET
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CONNECTION_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CONNECTION_NEW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CONNECTION_NEW_FAKE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CONNECTION_NEW_FAKE
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new_fake(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CP437GRID_CLONE
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CP437GRID_CLONE
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_clone(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CP437GRID_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CP437GRID_LOAD
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_load(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CP437GRID_NEW
+#define UNIFFI_FFIDEF_UNIFFI_SERVICEPOINT_BINDING_UNIFFI_CHECKSUM_CONSTRUCTOR_CP437GRID_NEW
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_cp437grid_new(void
     
 );
+#endif
+#ifndef UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_UNIFFI_CONTRACT_VERSION
+#define UNIFFI_FFIDEF_FFI_SERVICEPOINT_BINDING_UNIFFI_UNIFFI_CONTRACT_VERSION
 uint32_t ffi_servicepoint_binding_uniffi_uniffi_contract_version(void
     
 );
+#endif
 

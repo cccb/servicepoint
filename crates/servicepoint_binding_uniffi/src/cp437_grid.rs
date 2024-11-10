@@ -50,7 +50,6 @@ impl Cp437Grid {
             .read()
             .unwrap()
             .get(x as usize, y as usize)
-            .into()
     }
 
     pub fn fill(&self, value: u8) {
