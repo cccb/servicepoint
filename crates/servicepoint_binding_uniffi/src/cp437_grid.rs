@@ -1,5 +1,6 @@
 use servicepoint::{DataRef, Grid};
 use std::sync::{Arc, RwLock};
+use crate::char_grid::CharGrid;
 
 #[derive(uniffi::Object)]
 pub struct Cp437Grid {
@@ -7,7 +8,7 @@ pub struct Cp437Grid {
 }
 
 impl Cp437Grid {
-    fn internal_new(actual: servicepoint::Cp437Grid) -> Arc<Self> {
+    pub(crate) fn internal_new(actual: servicepoint::Cp437Grid) -> Arc<Self> {
         Arc::new(Self {
             actual: RwLock::new(actual),
         })
@@ -46,11 +47,7 @@ impl Cp437Grid {
     }
 
     pub fn get(&self, x: u64, y: u64) -> u8 {
-        self.actual
-            .read()
-            .unwrap()
-            .get(x as usize, y as usize)
-            .into()
+        self.actual.read().unwrap().get(x as usize, y as usize)
     }
 
     pub fn fill(&self, value: u8) {
@@ -72,5 +69,9 @@ impl Cp437Grid {
 
     pub fn copy_raw(&self) -> Vec<u8> {
         self.actual.read().unwrap().data_ref().to_vec()
+    }
+
+    pub fn to_utf8(&self) -> Arc<CharGrid> {
+        CharGrid::internal_new(servicepoint::CharGrid::from(&*self.actual.read().unwrap()))
     }
 }

@@ -17,7 +17,7 @@ uniffi = { version = "0.25.0", features = ["build"] }
 
 [dependencies]
 uniffi = { version = "0.25.0" }
-thiserror = "1.0.66"
+thiserror.workspace = true
 
 [dependencies.servicepoint]
 version = "0.11.0"

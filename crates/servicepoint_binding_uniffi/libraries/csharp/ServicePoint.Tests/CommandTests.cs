@@ -37,6 +37,6 @@ public class CommandTests
     [Fact]
     public void BitmapLinearWinSendable()
     {
-        _connection.Send(Command.BitmapLinearWin(0, 0, Bitmap.NewMaxSized()));
+        _connection.Send(Command.BitmapLinearWin(0, 0, Bitmap.NewMaxSized(), CompressionCode.Uncompressed));
     }
 }
