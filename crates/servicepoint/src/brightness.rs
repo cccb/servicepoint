@@ -46,7 +46,7 @@ impl BrightnessGrid {
 
 impl From<Brightness> for u8 {
     fn from(brightness: Brightness) -> Self {
-        brightness.0
+        Self::from(&brightness)
     }
 }
 
@@ -142,7 +142,7 @@ mod tests {
     #[test]
     fn brightness_from_u8() {
         assert_eq!(Err(100), Brightness::try_from(100));
-        assert_eq!(Ok(Brightness(1)), Brightness::try_from(1))
+        assert_eq!(Ok(Brightness(1)), Brightness::try_from(1));
     }
 
     #[test]

@@ -138,6 +138,64 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
             .collect::<Vec<_>>();
         PrimitiveGrid::load(self.width(), self.height(), &data)
     }
+
+    /// Copies a row from the grid.
+    ///
+    /// Returns [None] if y is out of bounds.
+    pub fn get_row(&self, y: usize) -> Option<Vec<T>> {
+        self.data
+            .chunks_exact(self.width())
+            .nth(y)
+            .map(|row| row.to_vec())
+    }
+
+    /// Copies a column from the grid.
+    ///
+    /// Returns [None] if x is out of bounds.
+    pub fn get_col(&self, x: usize) -> Option<Vec<T>> {
+        self.data
+            .chunks_exact(self.width())
+            .map(|row| row.get(x).map(move |x| *x))
+            .collect()
+    }
+
+    /// Overwrites a column in the grid.
+    ///
+    /// Returns [None] if x is out of bounds or `col` is not of the correct size.
+    pub fn set_col(&mut self, x: usize, col: &[T]) -> Option<()> {
+        if col.len() != self.height() {
+            return None;
+        }
+        let width = self.width();
+        if self
+            .data
+            .chunks_exact_mut(width)
+            .zip(col.iter())
+            .map(|(row, column_value)| {
+                row.get_mut(x).map(move |cell| *cell = *column_value)
+            })
+            .all(|cell| cell.is_some())
+        {
+            Some(())
+        } else {
+            None
+        }
+    }
+
+    /// Overwrites a row in the grid.
+    ///
+    /// Returns [None] if y is out of bounds or `row` is not of the correct size.
+    pub fn set_row(&mut self, y: usize, row: &[T]) -> Option<()> {
+        let width = self.width();
+        self.data.chunks_exact_mut(width).nth(y).and_then(|chunk| {
+            if chunk.len() == row.len() {
+                chunk.copy_from_slice(row);
+                Some(())
+            } else {
+                None
+            }
+        })
+    }
 }
 
 impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {
@@ -346,5 +404,29 @@ mod tests {
 
         assert_eq!(grid.get_optional(0, 0), Some(5));
         assert_eq!(grid.get_optional(0, 8), None);
+    }
+
+    #[test]
+    fn col() {
+        let mut grid = PrimitiveGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        assert_eq!(grid.get_col(0), Some(vec![0, 2, 4]));
+        assert_eq!(grid.get_col(1), Some(vec![1, 3, 5]));
+        assert_eq!(grid.get_col(2), None);
+        assert_eq!(grid.set_col(0, &[5, 7, 9]), Some(()));
+        assert_eq!(grid.set_col(2, &[5, 7, 9]), None);
+        assert_eq!(grid.set_col(0, &[5, 7]), None);
+        assert_eq!(grid.get_col(0), Some(vec![5, 7, 9]));
+    }
+
+    #[test]
+    fn row() {
+        let mut grid = PrimitiveGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        assert_eq!(grid.get_row(0), Some(vec![0, 1]));
+        assert_eq!(grid.get_row(2), Some(vec![4, 5]));
+        assert_eq!(grid.get_row(3), None);
+        assert_eq!(grid.set_row(0, &[5, 7]), Some(()));
+        assert_eq!(grid.get_row(0), Some(vec![5, 7]));
+        assert_eq!(grid.set_row(3, &[5, 7]), None);
+        assert_eq!(grid.set_row(2, &[5, 7, 3]), None);
     }
 }
