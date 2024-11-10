@@ -10,9 +10,6 @@ use std::collections::HashMap;
 /// The encoding is currently not enforced.
 pub type Cp437Grid = PrimitiveGrid<u8>;
 
-/// A grid containing UTF-8 characters.
-pub type CharGrid = PrimitiveGrid<char>;
-
 /// Errors that can occur when loading CP-437.
 #[derive(Debug, PartialEq)]
 pub enum Cp437LoadError {
@@ -91,6 +88,7 @@ pub use feature_cp437::*;
 
 #[cfg(feature = "cp437")]
 mod feature_cp437 {
+    use crate::CharGrid;
     use super::*;
 
     /// An array of 256 elements, mapping most of the CP437 values to UTF-8 characters
@@ -248,6 +246,7 @@ mod tests {
 #[cfg(test)]
 #[cfg(feature = "cp437")]
 mod tests_feature_cp437 {
+    use crate::CharGrid;
     use super::*;
 
     #[test]

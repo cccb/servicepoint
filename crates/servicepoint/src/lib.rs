@@ -41,10 +41,11 @@ pub use bitvec;
 
 pub use crate::bitmap::Bitmap;
 pub use crate::brightness::{Brightness, BrightnessGrid};
+pub use crate::char_grid::CharGrid;
 pub use crate::command::{Command, Offset};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
-pub use crate::cp437::{CharGrid, Cp437Grid};
+pub use crate::cp437::Cp437Grid;
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
@@ -55,6 +56,7 @@ pub type BitVec = bitvec::prelude::BitVec<u8, bitvec::prelude::Msb0>;
 
 mod bitmap;
 mod brightness;
+mod char_grid;
 mod command;
 mod command_code;
 mod compression;
