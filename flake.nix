@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
-    nix-filter.url = "github:numtide/nix-filter";
     naersk = {
       url = "github:nix-community/naersk";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,7 +14,6 @@
       self,
       nixpkgs,
       naersk,
-      nix-filter,
     }:
     let
       lib = nixpkgs.lib;
@@ -47,46 +45,61 @@
             cargo = rust-toolchain-core;
             rustc = rust-toolchain-core;
           };
-          source = nix-filter.lib.filter {
-             root = ./.;
-             include = [
-               ./Cargo.toml
-               ./Cargo.lock
-               ./crates
-               ./Web437_IBM_BIOS.woff
-               ./README.md
-               ./LICENSE
-             ];
-           };
+          nativeBuildInputs = with pkgs; [
+            pkg-config
+            makeWrapper
+          ];
+          buildInputs = with pkgs; [
+            xe
+            lzma
+          ];
+          makeExample =
+            package: example:
+            naersk'.buildPackage {
+              pname = example;
+              cargoBuildOptions =
+                x:
+                x
+                ++ [
+                  "--package"
+                  package
+                ];
+              src = ./.;
+              nativeBuildInputs = nativeBuildInputs;
+              strictDeps = true;
+              buildInputs = buildInputs;
+              overrideMain = old: {
+                  preConfigure = ''
+                    cargo_build_options="$cargo_build_options --example ${example}"
+                  '';
+                };
+            };
+          makePackage =
+            package:
+            let
+              package-param = [
+                "--package"
+                package
+              ];
+            in
+            naersk'.buildPackage {
+              pname = package;
+              cargoBuildOptions = x: x ++ package-param;
+              cargoTestOptions = x: x ++ package-param;
+              src = ./.;
+              doCheck = true;
+              nativeBuildInputs = nativeBuildInputs;
+              strictDeps = true;
+              buildInputs = buildInputs;
+            };
         in
         rec {
-          servicepoint = naersk'.buildPackage rec {
-            cargoBuildOptions =
-              x:
-              x
-              ++ [
-                "-p"
-                "servicepoint"
-              ];
-            cargoTestOptions =
-              x:
-              x
-              ++ [
-                "-p"
-                "servicepoint"
-              ];
-            src = source;
-            doCheck = true;
-            nativeBuildInputs = with pkgs; [
-              pkg-config
-              makeWrapper
-            ];
-            strictDeps = true;
-            buildInputs = with pkgs; [
-              xe
-              lzma
-            ];
-          };
+          servicepoint = makePackage "servicepoint";
+          announce = makeExample "servicepoint" "announce";
+          game-of-life = makeExample "servicepoint" "game_of_life";
+          moving-line = makeExample "servicepoint" "moving_line";
+          random-brightness = makeExample "servicepoint" "random_brightness";
+          wiping-clear = makeExample "servicepoint" "wiping_clear";
         }
       );
 
