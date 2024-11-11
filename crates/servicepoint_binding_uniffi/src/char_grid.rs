@@ -1,4 +1,4 @@
-use servicepoint::Grid;
+use servicepoint::{Grid, SeriesError};
 use std::convert::Into;
 use std::sync::{Arc, RwLock};
 
@@ -7,18 +7,17 @@ pub struct CharGrid {
     pub(crate) actual: RwLock<servicepoint::CharGrid>,
 }
 
-impl CharGrid {
-    fn internal_new(actual: servicepoint::CharGrid) -> Arc<Self> {
-        Arc::new(Self {
-            actual: RwLock::new(actual),
-        })
-    }
-}
-
 #[derive(uniffi::Error, thiserror::Error, Debug)]
 pub enum CharGridError {
-    #[error("Exactly one character was expected")]
-    StringNotOneChar,
+    #[error("Exactly one character was expected for argument '{arg}', but found {value:?}")]
+    StringNotOneChar { arg: String, value: String },
+    #[error("The provided series was expected to have a length of {expected}, but was {actual}")]
+    InvalidSeriesLength {
+        actual: u64,
+        expected: u64,
+    },
+    #[error("The index {index} was out of bounds for size {size}")]
+    OutOfBounds { index: u64, size: u64 },
 }
 
 #[uniffi::export]
@@ -41,7 +40,12 @@ impl CharGrid {
         Self::internal_new(other.actual.read().unwrap().clone())
     }
 
-    pub fn set(&self, x: u64, y: u64, value: String) -> Result<(), CharGridError> {
+    pub fn set(
+        &self,
+        x: u64,
+        y: u64,
+        value: String,
+    ) -> Result<(), CharGridError> {
         let value = Self::str_to_char(value)?;
         self.actual
             .write()
@@ -63,6 +67,7 @@ impl CharGrid {
         self.actual.write().unwrap().fill(value);
         Ok(())
     }
+
     pub fn width(&self) -> u64 {
         self.actual.read().unwrap().width() as u64
     }
@@ -81,15 +86,62 @@ impl CharGrid {
         let grid = self.actual.read().unwrap();
         String::from(&*grid)
     }
+
+    pub fn set_row(&self, y: u64, row: String) -> Result<(), CharGridError> {
+        self.actual
+            .write()
+            .unwrap()
+            .set_row(y as usize, &*row.chars().collect::<Vec<_>>())
+            .map_err(CharGridError::from)
+    }
+
+    pub fn set_col(&self, x: u64, col: String) -> Result<(), CharGridError> {
+        self.actual
+            .write()
+            .unwrap()
+            .set_row(x as usize, &*col.chars().collect::<Vec<_>>())
+            .map_err(CharGridError::from)
+    }
+
+    pub fn get_row(&self, y: u64) -> Option<String> {
+        self.actual
+            .read()
+            .unwrap()
+            .get_row(y as usize)
+            .map(move |vec| String::from_iter(vec))
+    }
+
+    pub fn get_col(&self, x: u64) -> Option<String> {
+        self.actual
+            .read()
+            .unwrap()
+            .get_col(x as usize)
+            .map(move |vec| String::from_iter(vec))
+    }
 }
 
 impl CharGrid {
+    fn internal_new(actual: servicepoint::CharGrid) -> Arc<Self> {
+        Arc::new(Self {
+            actual: RwLock::new(actual),
+        })
+    }
+
     fn str_to_char(value: String) -> Result<char, CharGridError> {
         if value.len() != 1 {
-            return Err(CharGridError::StringNotOneChar);
+            return Err(CharGridError::StringNotOneChar{arg: "value".to_string(), value});
         }
 
         let value = value.chars().nth(0).unwrap();
         Ok(value)
+    }
+}
+
+impl From<SeriesError> for CharGridError {
+    fn from(e: SeriesError) -> Self {
+        match e {
+            SeriesError::OutOfBounds { index, size } => CharGridError::OutOfBounds { index: index as u64, size: size as u64 },
+            SeriesError::InvalidLength { actual, expected} => CharGridError::InvalidSeriesLength {actual: actual as u64, expected: expected as u64}
+        }
     }
 }
