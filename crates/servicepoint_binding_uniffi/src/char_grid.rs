@@ -9,13 +9,10 @@ pub struct CharGrid {
 
 #[derive(uniffi::Error, thiserror::Error, Debug)]
 pub enum CharGridError {
-    #[error("Exactly one character was expected for argument '{arg}', but found {value:?}")]
-    StringNotOneChar { arg: String, value: String },
+    #[error("Exactly one character was expected, but {value:?} was provided")]
+    StringNotOneChar { value: String },
     #[error("The provided series was expected to have a length of {expected}, but was {actual}")]
-    InvalidSeriesLength {
-        actual: u64,
-        expected: u64,
-    },
+    InvalidSeriesLength { actual: u64, expected: u64 },
     #[error("The index {index} was out of bounds for size {size}")]
     OutOfBounds { index: u64, size: u64 },
 }
@@ -129,7 +126,9 @@ impl CharGrid {
 
     fn str_to_char(value: String) -> Result<char, CharGridError> {
         if value.len() != 1 {
-            return Err(CharGridError::StringNotOneChar{arg: "value".to_string(), value});
+            return Err(CharGridError::StringNotOneChar {
+                value,
+            });
         }
 
         let value = value.chars().nth(0).unwrap();
@@ -140,8 +139,18 @@ impl CharGrid {
 impl From<SeriesError> for CharGridError {
     fn from(e: SeriesError) -> Self {
         match e {
-            SeriesError::OutOfBounds { index, size } => CharGridError::OutOfBounds { index: index as u64, size: size as u64 },
-            SeriesError::InvalidLength { actual, expected} => CharGridError::InvalidSeriesLength {actual: actual as u64, expected: expected as u64}
+            SeriesError::OutOfBounds { index, size } => {
+                CharGridError::OutOfBounds {
+                    index: index as u64,
+                    size: size as u64,
+                }
+            }
+            SeriesError::InvalidLength { actual, expected } => {
+                CharGridError::InvalidSeriesLength {
+                    actual: actual as u64,
+                    expected: expected as u64,
+                }
+            }
         }
     }
 }

@@ -257,6 +257,95 @@ uint64_t uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width(
 	RustCallStatus* out_status
 );
 
+void uniffi_servicepoint_binding_uniffi_fn_free_chargrid(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_clone(
+	void* other,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_load(
+	RustBuffer data,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_new(
+	uint64_t width,
+	uint64_t height,
+	RustCallStatus* out_status
+);
+
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_as_string(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
+int8_t uniffi_servicepoint_binding_uniffi_fn_method_chargrid_equals(
+	void* ptr,
+	void* other,
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_fill(
+	void* ptr,
+	RustBuffer value,
+	RustCallStatus* out_status
+);
+
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get(
+	void* ptr,
+	uint64_t x,
+	uint64_t y,
+	RustCallStatus* out_status
+);
+
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col(
+	void* ptr,
+	uint64_t x,
+	RustCallStatus* out_status
+);
+
+RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row(
+	void* ptr,
+	uint64_t y,
+	RustCallStatus* out_status
+);
+
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set(
+	void* ptr,
+	uint64_t x,
+	uint64_t y,
+	RustBuffer value,
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_col(
+	void* ptr,
+	uint64_t x,
+	RustBuffer col,
+	RustCallStatus* out_status
+);
+
+void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row(
+	void* ptr,
+	uint64_t y,
+	RustBuffer row,
+	RustCallStatus* out_status
+);
+
+uint64_t uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
 void uniffi_servicepoint_binding_uniffi_fn_free_command(
 	void* ptr,
 	RustCallStatus* out_status
@@ -804,6 +893,50 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_brightnessgrid_width
 	RustCallStatus* out_status
 );
 
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_as_string(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_equals(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_fill(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(
+	RustCallStatus* out_status
+);
+
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(
 	RustCallStatus* out_status
 );
@@ -877,6 +1010,18 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_
 );
 
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_clone(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_load(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_new(
 	RustCallStatus* out_status
 );
 

@@ -75,6 +75,12 @@ impl BrightnessGrid {
     }
 
     pub fn copy_raw(&self) -> Vec<u8> {
-        self.actual.read().unwrap().data_ref().iter().map(u8::from).collect()
+        self.actual
+            .read()
+            .unwrap()
+            .data_ref()
+            .iter()
+            .map(u8::from)
+            .collect()
     }
 }

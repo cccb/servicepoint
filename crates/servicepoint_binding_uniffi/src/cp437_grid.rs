@@ -46,10 +46,7 @@ impl Cp437Grid {
     }
 
     pub fn get(&self, x: u64, y: u64) -> u8 {
-        self.actual
-            .read()
-            .unwrap()
-            .get(x as usize, y as usize)
+        self.actual.read().unwrap().get(x as usize, y as usize)
     }
 
     pub fn fill(&self, value: u8) {

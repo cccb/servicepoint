@@ -70,7 +70,7 @@ impl Bitmap {
         let b = other.actual.read().unwrap();
         *a == *b
     }
-    
+
     pub fn copy_raw(&self) -> Vec<u8> {
         self.actual.read().unwrap().data_ref().to_vec()
     }

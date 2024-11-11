@@ -537,6 +537,105 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_as_string(uniffiStatus)
+	})
+	if checksum != 46581 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_as_string: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_equals(uniffiStatus)
+	})
+	if checksum != 17533 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_equals: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_fill(uniffiStatus)
+	})
+	if checksum != 56996 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_fill: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get(uniffiStatus)
+	})
+	if checksum != 1334 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col(uniffiStatus)
+	})
+	if checksum != 20197 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row(uniffiStatus)
+	})
+	if checksum != 16466 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height(uniffiStatus)
+	})
+	if checksum != 13068 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set(uniffiStatus)
+	})
+	if checksum != 64815 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col(uniffiStatus)
+	})
+	if checksum != 43727 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row(uniffiStatus)
+	})
+	if checksum != 19756 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(uniffiStatus)
+	})
+	if checksum != 48963 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(uniffiStatus)
 	})
 	if checksum != 20763 {
@@ -704,6 +803,33 @@ func uniffiCheckChecksums() {
 	if checksum != 4979 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_clone(uniffiStatus)
+	})
+	if checksum != 61241 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_clone: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_load(uniffiStatus)
+	})
+	if checksum != 47815 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_load: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_new(uniffiStatus)
+	})
+	if checksum != 13303 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_new: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -1520,6 +1646,194 @@ func (_ FfiDestroyerBrightnessGrid) Destroy(value *BrightnessGrid) {
 }
 
 
+type CharGrid struct {
+	ffiObject FfiObject
+}
+func NewCharGrid(width uint64, height uint64) *CharGrid {
+	return FfiConverterCharGridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_new(FfiConverterUint64INSTANCE.Lower(width), FfiConverterUint64INSTANCE.Lower(height), _uniffiStatus)
+	}))
+}
+
+
+func CharGridClone(other *CharGrid) *CharGrid {
+	return FfiConverterCharGridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_clone(FfiConverterCharGridINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
+
+func CharGridLoad(data string) *CharGrid {
+	return FfiConverterCharGridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_load(FfiConverterStringINSTANCE.Lower(data), _uniffiStatus)
+	}))
+}
+
+
+
+func (_self *CharGrid)AsString() string {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterStringINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_as_string(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+func (_self *CharGrid)Equals(other *CharGrid) bool {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_equals(
+		_pointer,FfiConverterCharGridINSTANCE.Lower(other), _uniffiStatus)
+	}))
+}
+
+
+func (_self *CharGrid)Fill(value string) error {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	_, _uniffiErr := rustCallWithError(FfiConverterTypeCharGridError{},func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_fill(
+		_pointer,FfiConverterStringINSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+		return _uniffiErr
+}
+
+
+func (_self *CharGrid)Get(x uint64, y uint64) string {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterStringINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), _uniffiStatus)
+	}))
+}
+
+
+func (_self *CharGrid)GetCol(x uint64) *string {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterOptionalStringINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), _uniffiStatus)
+	}))
+}
+
+
+func (_self *CharGrid)GetRow(y uint64) *string {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterOptionalStringINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row(
+		_pointer,FfiConverterUint64INSTANCE.Lower(y), _uniffiStatus)
+	}))
+}
+
+
+func (_self *CharGrid)Height() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+func (_self *CharGrid)Set(x uint64, y uint64, value string) error {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	_, _uniffiErr := rustCallWithError(FfiConverterTypeCharGridError{},func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), FfiConverterStringINSTANCE.Lower(value), _uniffiStatus)
+		return false
+	})
+		return _uniffiErr
+}
+
+
+func (_self *CharGrid)SetCol(x uint64, col string) error {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	_, _uniffiErr := rustCallWithError(FfiConverterTypeCharGridError{},func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_col(
+		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterStringINSTANCE.Lower(col), _uniffiStatus)
+		return false
+	})
+		return _uniffiErr
+}
+
+
+func (_self *CharGrid)SetRow(y uint64, row string) error {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	_, _uniffiErr := rustCallWithError(FfiConverterTypeCharGridError{},func(_uniffiStatus *C.RustCallStatus) bool {
+		C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row(
+		_pointer,FfiConverterUint64INSTANCE.Lower(y), FfiConverterStringINSTANCE.Lower(row), _uniffiStatus)
+		return false
+	})
+		return _uniffiErr
+}
+
+
+func (_self *CharGrid)Width() uint64 {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterUint64INSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
+
+func (object *CharGrid)Destroy() {
+	runtime.SetFinalizer(object, nil)
+	object.ffiObject.destroy()
+}
+
+type FfiConverterCharGrid struct {}
+
+var FfiConverterCharGridINSTANCE = FfiConverterCharGrid{}
+
+func (c FfiConverterCharGrid) Lift(pointer unsafe.Pointer) *CharGrid {
+	result := &CharGrid {
+		newFfiObject(
+			pointer,
+			func(pointer unsafe.Pointer, status *C.RustCallStatus) {
+				C.uniffi_servicepoint_binding_uniffi_fn_free_chargrid(pointer, status)
+		}),
+	}
+	runtime.SetFinalizer(result, (*CharGrid).Destroy)
+	return result
+}
+
+func (c FfiConverterCharGrid) Read(reader io.Reader) *CharGrid {
+	return c.Lift(unsafe.Pointer(uintptr(readUint64(reader))))
+}
+
+func (c FfiConverterCharGrid) Lower(value *CharGrid) unsafe.Pointer {
+	// TODO: this is bad - all synchronization from ObjectRuntime.go is discarded here,
+	// because the pointer will be decremented immediately after this function returns,
+	// and someone will be left holding onto a non-locked pointer.
+	pointer := value.ffiObject.incrementPointer("*CharGrid")
+	defer value.ffiObject.decrementPointer()
+	return pointer
+}
+
+func (c FfiConverterCharGrid) Write(writer io.Writer, value *CharGrid) {
+	writeUint64(writer, uint64(uintptr(c.Lower(value))))
+}
+
+type FfiDestroyerCharGrid struct {}
+
+func (_ FfiDestroyerCharGrid) Destroy(value *CharGrid) {
+	value.Destroy()
+}
+
+
 type Command struct {
 	ffiObject FfiObject
 }
@@ -1884,6 +2198,166 @@ func (_ FfiDestroyerCp437Grid) Destroy(value *Cp437Grid) {
 	value.Destroy()
 }
 
+type CharGridError struct {
+	err error
+}
+
+func (err CharGridError) Error() string {
+	return fmt.Sprintf("CharGridError: %s", err.err.Error())
+}
+
+func (err CharGridError) Unwrap() error {
+	return err.err
+}
+
+// Err* are used for checking error type with `errors.Is`
+var ErrCharGridErrorStringNotOneChar = fmt.Errorf("CharGridErrorStringNotOneChar")
+var ErrCharGridErrorInvalidSeriesLength = fmt.Errorf("CharGridErrorInvalidSeriesLength")
+var ErrCharGridErrorOutOfBounds = fmt.Errorf("CharGridErrorOutOfBounds")
+
+// Variant structs
+type CharGridErrorStringNotOneChar struct {
+	Value string
+}
+func NewCharGridErrorStringNotOneChar(
+	value string,
+) *CharGridError {
+	return &CharGridError{
+		err: &CharGridErrorStringNotOneChar{
+			Value: value,
+		},
+	}
+}
+
+func (err CharGridErrorStringNotOneChar) Error() string {
+	return fmt.Sprint("StringNotOneChar",
+		": ",
+		
+		"Value=",
+		err.Value,
+	)
+}
+
+func (self CharGridErrorStringNotOneChar) Is(target error) bool {
+	return target == ErrCharGridErrorStringNotOneChar
+}
+type CharGridErrorInvalidSeriesLength struct {
+	Actual uint64
+	Expected uint64
+}
+func NewCharGridErrorInvalidSeriesLength(
+	actual uint64,
+	expected uint64,
+) *CharGridError {
+	return &CharGridError{
+		err: &CharGridErrorInvalidSeriesLength{
+			Actual: actual,
+			Expected: expected,
+		},
+	}
+}
+
+func (err CharGridErrorInvalidSeriesLength) Error() string {
+	return fmt.Sprint("InvalidSeriesLength",
+		": ",
+		
+		"Actual=",
+		err.Actual,
+		", ",
+		"Expected=",
+		err.Expected,
+	)
+}
+
+func (self CharGridErrorInvalidSeriesLength) Is(target error) bool {
+	return target == ErrCharGridErrorInvalidSeriesLength
+}
+type CharGridErrorOutOfBounds struct {
+	Index uint64
+	Size uint64
+}
+func NewCharGridErrorOutOfBounds(
+	index uint64,
+	size uint64,
+) *CharGridError {
+	return &CharGridError{
+		err: &CharGridErrorOutOfBounds{
+			Index: index,
+			Size: size,
+		},
+	}
+}
+
+func (err CharGridErrorOutOfBounds) Error() string {
+	return fmt.Sprint("OutOfBounds",
+		": ",
+		
+		"Index=",
+		err.Index,
+		", ",
+		"Size=",
+		err.Size,
+	)
+}
+
+func (self CharGridErrorOutOfBounds) Is(target error) bool {
+	return target == ErrCharGridErrorOutOfBounds
+}
+
+type FfiConverterTypeCharGridError struct{}
+
+var FfiConverterTypeCharGridErrorINSTANCE = FfiConverterTypeCharGridError{}
+
+func (c FfiConverterTypeCharGridError) Lift(eb RustBufferI) error {
+	return LiftFromRustBuffer[*CharGridError](c, eb)
+}
+
+func (c FfiConverterTypeCharGridError) Lower(value *CharGridError) RustBuffer {
+	return LowerIntoRustBuffer[*CharGridError](c, value)
+}
+
+func (c FfiConverterTypeCharGridError) Read(reader io.Reader) *CharGridError {
+	errorID := readUint32(reader)
+
+	switch errorID {
+	case 1:
+		return &CharGridError{&CharGridErrorStringNotOneChar{
+			Value: FfiConverterStringINSTANCE.Read(reader),
+		}}
+	case 2:
+		return &CharGridError{&CharGridErrorInvalidSeriesLength{
+			Actual: FfiConverterUint64INSTANCE.Read(reader),
+			Expected: FfiConverterUint64INSTANCE.Read(reader),
+		}}
+	case 3:
+		return &CharGridError{&CharGridErrorOutOfBounds{
+			Index: FfiConverterUint64INSTANCE.Read(reader),
+			Size: FfiConverterUint64INSTANCE.Read(reader),
+		}}
+	default:
+		panic(fmt.Sprintf("Unknown error code %d in FfiConverterTypeCharGridError.Read()", errorID))
+	}
+}
+
+func (c FfiConverterTypeCharGridError) Write(writer io.Writer, value *CharGridError) {
+	switch variantValue := value.err.(type) {
+		case *CharGridErrorStringNotOneChar:
+			writeInt32(writer, 1)
+			FfiConverterStringINSTANCE.Write(writer, variantValue.Value)
+		case *CharGridErrorInvalidSeriesLength:
+			writeInt32(writer, 2)
+			FfiConverterUint64INSTANCE.Write(writer, variantValue.Actual)
+			FfiConverterUint64INSTANCE.Write(writer, variantValue.Expected)
+		case *CharGridErrorOutOfBounds:
+			writeInt32(writer, 3)
+			FfiConverterUint64INSTANCE.Write(writer, variantValue.Index)
+			FfiConverterUint64INSTANCE.Write(writer, variantValue.Size)
+		default:
+			_ = variantValue
+			panic(fmt.Sprintf("invalid error value `%v` in FfiConverterTypeCharGridError.Write", value))
+	}
+}
+
 
 
 type CompressionCode uint
@@ -2030,6 +2504,45 @@ func (c FfiConverterTypeServicePointError) Write(writer io.Writer, value *Servic
 		default:
 			_ = variantValue
 			panic(fmt.Sprintf("invalid error value `%v` in FfiConverterTypeServicePointError.Write", value))
+	}
+}
+
+
+
+type FfiConverterOptionalString struct{}
+
+var FfiConverterOptionalStringINSTANCE = FfiConverterOptionalString{}
+
+func (c FfiConverterOptionalString) Lift(rb RustBufferI) *string {
+	return LiftFromRustBuffer[*string](c, rb)
+}
+
+func (_ FfiConverterOptionalString) Read(reader io.Reader) *string {
+	if readInt8(reader) == 0 {
+		return nil
+	}
+	temp := FfiConverterStringINSTANCE.Read(reader)
+	return &temp
+}
+
+func (c FfiConverterOptionalString) Lower(value *string) RustBuffer {
+	return LowerIntoRustBuffer[*string](c, value)
+}
+
+func (_ FfiConverterOptionalString) Write(writer io.Writer, value *string) {
+	if value == nil {
+		writeInt8(writer, 0)
+	} else {
+		writeInt8(writer, 1)
+		FfiConverterStringINSTANCE.Write(writer, *value)
+	}
+}
+
+type FfiDestroyerOptionalString struct {}
+
+func (_ FfiDestroyerOptionalString) Destroy(value *string) {
+	if value != nil {
+		FfiDestroyerString{}.Destroy(*value)
 	}
 }
 

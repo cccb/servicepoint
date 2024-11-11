@@ -37,8 +37,8 @@ def self.uniffi_bytes(v)
 end
 
   class RustBuffer < FFI::Struct
-  layout :capacity, :uint64,
-         :len,      :uint64,
+  layout :capacity, :int32,
+         :len,      :int32,
          :data,     :pointer
 
   def self.alloc(size)
@@ -130,9 +130,6 @@ end
 
   # The Enum type CompressionCode.
 
-  def self.check_lower_TypeCompressionCode(v)
-  end
-
   def self.alloc_from_TypeCompressionCode(v)
     RustBuffer.allocWithBuilder do |builder|
       builder.write_TypeCompressionCode(v)
@@ -148,6 +145,21 @@ end
   
 
   
+
+  # The Optional<T> type for string.
+
+  def self.alloc_from_Optionalstring(v)
+    RustBuffer.allocWithBuilder do |builder|
+      builder.write_Optionalstring(v)
+      return builder.finalize()
+    end
+  end
+
+  def consumeIntoOptionalstring
+    consumeWithStream do |stream|
+      return stream.readOptionalstring
+    end
+  end
 
   
 end
@@ -232,49 +244,49 @@ class RustBufferStream
 
   def readTypeBitVec
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
-    return BitVec.uniffi_allocate(pointer)
+    return BitVec._uniffi_allocate(pointer)
   end
 
   # The Object type Bitmap.
 
   def readTypeBitmap
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
-    return Bitmap.uniffi_allocate(pointer)
+    return Bitmap._uniffi_allocate(pointer)
   end
 
   # The Object type BrightnessGrid.
 
   def readTypeBrightnessGrid
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
-    return BrightnessGrid.uniffi_allocate(pointer)
+    return BrightnessGrid._uniffi_allocate(pointer)
   end
 
   # The Object type CharGrid.
 
   def readTypeCharGrid
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
-    return CharGrid.uniffi_allocate(pointer)
+    return CharGrid._uniffi_allocate(pointer)
   end
 
   # The Object type Command.
 
   def readTypeCommand
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
-    return Command.uniffi_allocate(pointer)
+    return Command._uniffi_allocate(pointer)
   end
 
   # The Object type Connection.
 
   def readTypeConnection
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
-    return Connection.uniffi_allocate(pointer)
+    return Connection._uniffi_allocate(pointer)
   end
 
   # The Object type Cp437Grid.
 
   def readTypeCp437Grid
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
-    return Cp437Grid.uniffi_allocate(pointer)
+    return Cp437Grid._uniffi_allocate(pointer)
   end
 
   
@@ -287,7 +299,21 @@ class RustBufferStream
     variant = unpack_from 4, 'l>'
     
     if variant == 1
-        return CharGridError::StringNotOneChar.new
+        return CharGridError::StringNotOneChar.new(
+            readString()
+        )
+    end
+    if variant == 2
+        return CharGridError::InvalidSeriesLength.new(
+            readU64(),
+            readU64()
+        )
+    end
+    if variant == 3
+        return CharGridError::OutOfBounds.new(
+            readU64(),
+            readU64()
+        )
     end
 
     raise InternalError, 'Unexpected variant tag for TypeCharGridError'
@@ -345,6 +371,20 @@ class RustBufferStream
     raise InternalError, 'Unexpected variant tag for TypeServicePointError'
   end
   
+
+  # The Optional<T> type for string.
+
+  def readOptionalstring
+    flag = unpack_from 1, 'c'
+
+    if flag == 0
+      return nil
+    elsif flag == 1
+      return readString
+    else
+      raise InternalError, 'Unexpected flag byte for Optionalstring'
+    end
+  end
 
   
 
@@ -421,49 +461,49 @@ class RustBufferBuilder
   # The Object type BitVec.
 
   def write_TypeBitVec(obj)
-    pointer = BitVec.uniffi_lower obj
+    pointer = BitVec._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
   # The Object type Bitmap.
 
   def write_TypeBitmap(obj)
-    pointer = Bitmap.uniffi_lower obj
+    pointer = Bitmap._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
   # The Object type BrightnessGrid.
 
   def write_TypeBrightnessGrid(obj)
-    pointer = BrightnessGrid.uniffi_lower obj
+    pointer = BrightnessGrid._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
   # The Object type CharGrid.
 
   def write_TypeCharGrid(obj)
-    pointer = CharGrid.uniffi_lower obj
+    pointer = CharGrid._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
   # The Object type Command.
 
   def write_TypeCommand(obj)
-    pointer = Command.uniffi_lower obj
+    pointer = Command._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
   # The Object type Connection.
 
   def write_TypeConnection(obj)
-    pointer = Connection.uniffi_lower obj
+    pointer = Connection._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
   # The Object type Cp437Grid.
 
   def write_TypeCp437Grid(obj)
-    pointer = Cp437Grid.uniffi_lower obj
+    pointer = Cp437Grid._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
   end
 
@@ -477,6 +517,17 @@ class RustBufferBuilder
    
 
   
+
+  # The Optional<T> type for string.
+
+  def write_Optionalstring(v)
+    if v.nil?
+      pack_into(1, 'c', 0)
+    else
+      pack_into(1, 'c', 1)
+      self.write_String(v)
+    end
+  end
 
   
 
@@ -527,12 +578,44 @@ CALL_PANIC = 2
 
 module CharGridError
   class StringNotOneChar < StandardError
-    def initialize()
+    def initialize(value)
+        @value = value
         super()
       end
 
+    attr_reader :value
+    
+
     def to_s
-     "#{self.class.name}()"
+     "#{self.class.name}(value=#{@value.inspect})"
+    end
+  end
+  class InvalidSeriesLength < StandardError
+    def initialize(actual, expected)
+        @actual = actual
+        @expected = expected
+        super()
+      end
+
+    attr_reader :actual, :expected
+    
+
+    def to_s
+     "#{self.class.name}(actual=#{@actual.inspect}, expected=#{@expected.inspect})"
+    end
+  end
+  class OutOfBounds < StandardError
+    def initialize(index, size)
+        @index = index
+        @size = size
+        super()
+      end
+
+    attr_reader :index, :size
+    
+
+    def to_s
+     "#{self.class.name}(index=#{@index.inspect}, size=#{@size.inspect})"
     end
   end
 
@@ -650,9 +733,6 @@ module UniFFILib
   ffi_lib 'servicepoint_binding_uniffi'
   
 
-  attach_function :uniffi_servicepoint_binding_uniffi_fn_clone_bitvec,
-    [:pointer, RustCallStatus.by_ref],
-    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_bitvec,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -683,9 +763,6 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set,
     [:pointer, :uint64, :int8, RustCallStatus.by_ref],
     :void
-  attach_function :uniffi_servicepoint_binding_uniffi_fn_clone_bitmap,
-    [:pointer, RustCallStatus.by_ref],
-    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_bitmap,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -722,9 +799,6 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width,
     [:pointer, RustCallStatus.by_ref],
     :uint64
-  attach_function :uniffi_servicepoint_binding_uniffi_fn_clone_brightnessgrid,
-    [:pointer, RustCallStatus.by_ref],
-    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -758,9 +832,6 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width,
     [:pointer, RustCallStatus.by_ref],
     :uint64
-  attach_function :uniffi_servicepoint_binding_uniffi_fn_clone_chargrid,
-    [:pointer, RustCallStatus.by_ref],
-    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_chargrid,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -785,18 +856,27 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get,
     [:pointer, :uint64, :uint64, RustCallStatus.by_ref],
     RustBuffer.by_value
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col,
+    [:pointer, :uint64, RustCallStatus.by_ref],
+    RustBuffer.by_value
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row,
+    [:pointer, :uint64, RustCallStatus.by_ref],
+    RustBuffer.by_value
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height,
     [:pointer, RustCallStatus.by_ref],
     :uint64
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set,
     [:pointer, :uint64, :uint64, RustBuffer.by_value, RustCallStatus.by_ref],
     :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_col,
+    [:pointer, :uint64, RustBuffer.by_value, RustCallStatus.by_ref],
+    :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row,
+    [:pointer, :uint64, RustBuffer.by_value, RustCallStatus.by_ref],
+    :void
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width,
     [:pointer, RustCallStatus.by_ref],
     :uint64
-  attach_function :uniffi_servicepoint_binding_uniffi_fn_clone_command,
-    [:pointer, RustCallStatus.by_ref],
-    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_command,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -839,9 +919,6 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_command_equals,
     [:pointer, :pointer, RustCallStatus.by_ref],
     :int8
-  attach_function :uniffi_servicepoint_binding_uniffi_fn_clone_connection,
-    [:pointer, RustCallStatus.by_ref],
-    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_connection,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -854,9 +931,6 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_connection_send,
     [:pointer, :pointer, RustCallStatus.by_ref],
     :void
-  attach_function :uniffi_servicepoint_binding_uniffi_fn_clone_cp437grid,
-    [:pointer, RustCallStatus.by_ref],
-    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_free_cp437grid,
     [:pointer, RustCallStatus.by_ref],
     :void
@@ -891,7 +965,7 @@ module UniFFILib
     [:pointer, RustCallStatus.by_ref],
     :uint64
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_alloc,
-    [:uint64, RustCallStatus.by_ref],
+    [:int32, RustCallStatus.by_ref],
     RustBuffer.by_value
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_from_bytes,
     [ForeignBytes, RustCallStatus.by_ref],
@@ -900,7 +974,7 @@ module UniFFILib
     [RustBuffer.by_value, RustCallStatus.by_ref],
     :void
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_reserve,
-    [RustBuffer.by_value, :uint64, RustCallStatus.by_ref],
+    [RustBuffer.by_value, :int32, RustCallStatus.by_ref],
     RustBuffer.by_value
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw,
     [RustCallStatus.by_ref],
@@ -974,10 +1048,22 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width,
@@ -1133,18 +1219,18 @@ end
 
   # A private helper for initializing instances of the class from a raw pointer,
   # bypassing any initialization logic and ensuring they are GC'd properly.
-  def self.uniffi_allocate(pointer)
+  def self._uniffi_allocate(pointer)
     pointer.autorelease = false
     inst = allocate
     inst.instance_variable_set :@pointer, pointer
-    ObjectSpace.define_finalizer(inst, uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
     return inst
   end
 
   # A private helper for registering an object finalizer.
   # N.B. it's important that this does not capture a reference
   # to the actual instance, only its underlying pointer.
-  def self.uniffi_define_finalizer_by_pointer(pointer, object_id)
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
     Proc.new do |_id|
       ServicepointBindingUniffi.rust_call(
         :uniffi_servicepoint_binding_uniffi_fn_free_bitvec,
@@ -1156,80 +1242,62 @@ end
   # A private helper for lowering instances into a raw pointer.
   # This does an explicit typecheck, because accidentally lowering a different type of
   # object in a place where this type is expected, could lead to memory unsafety.
-  def self.uniffi_check_lower(inst)
+  def self._uniffi_lower(inst)
     if not inst.is_a? self
       raise TypeError.new "Expected a BitVec instance, got #{inst}"
     end
-  end
-
-  def uniffi_clone_pointer()
-    return ServicepointBindingUniffi.rust_call(
-      :uniffi_servicepoint_binding_uniffi_fn_clone_bitvec,
-      @pointer
-    )
-  end
-
-  def self.uniffi_lower(inst)
-    return inst.uniffi_clone_pointer()
+    return inst.instance_variable_get :@pointer
   end
   def initialize(size)
         size = ServicepointBindingUniffi::uniffi_in_range(size, "u64", 0, 2**64)
-        
     pointer = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_new,size)
     @pointer = pointer
-    ObjectSpace.define_finalizer(self, self.class.uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
   def self.clone(other)
         other = other
-        (BitVec.uniffi_check_lower other)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone,(BitVec.uniffi_lower other)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_clone,(BitVec._uniffi_lower other)))
   end
   def self.load(data)
         data = ServicepointBindingUniffi::uniffi_bytes(data)
-        
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load,RustBuffer.allocFromBytes(data)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitvec_load,RustBuffer.allocFromBytes(data)))
   end
   
 
   def copy_raw()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_copy_raw,@pointer,)
     return result.consumeIntoBytes
   end
   def equals(other)
         other = other
-        (BitVec.uniffi_check_lower other)
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals,uniffi_clone_pointer(),(BitVec.uniffi_lower other))
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_equals,@pointer,(BitVec._uniffi_lower other))
     return 1 == result
   end
   def fill(value)
         value = value ? true : false
-        
-      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill,uniffi_clone_pointer(),(value ? 1 : 0))
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_fill,@pointer,(value ? 1 : 0))
   end
   
   def get(index)
         index = ServicepointBindingUniffi::uniffi_in_range(index, "u64", 0, 2**64)
-        
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get,uniffi_clone_pointer(),index)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_get,@pointer,index)
     return 1 == result
   end
   def len()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_len,@pointer,)
     return result.to_i
   end
   def set(index, value)
         index = ServicepointBindingUniffi::uniffi_in_range(index, "u64", 0, 2**64)
-        
         value = value ? true : false
-        
-      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set,uniffi_clone_pointer(),index,(value ? 1 : 0))
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitvec_set,@pointer,index,(value ? 1 : 0))
   end
   
   
@@ -1239,18 +1307,18 @@ end
 
   # A private helper for initializing instances of the class from a raw pointer,
   # bypassing any initialization logic and ensuring they are GC'd properly.
-  def self.uniffi_allocate(pointer)
+  def self._uniffi_allocate(pointer)
     pointer.autorelease = false
     inst = allocate
     inst.instance_variable_set :@pointer, pointer
-    ObjectSpace.define_finalizer(inst, uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
     return inst
   end
 
   # A private helper for registering an object finalizer.
   # N.B. it's important that this does not capture a reference
   # to the actual instance, only its underlying pointer.
-  def self.uniffi_define_finalizer_by_pointer(pointer, object_id)
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
     Proc.new do |_id|
       ServicepointBindingUniffi.rust_call(
         :uniffi_servicepoint_binding_uniffi_fn_free_bitmap,
@@ -1262,100 +1330,77 @@ end
   # A private helper for lowering instances into a raw pointer.
   # This does an explicit typecheck, because accidentally lowering a different type of
   # object in a place where this type is expected, could lead to memory unsafety.
-  def self.uniffi_check_lower(inst)
+  def self._uniffi_lower(inst)
     if not inst.is_a? self
       raise TypeError.new "Expected a Bitmap instance, got #{inst}"
     end
-  end
-
-  def uniffi_clone_pointer()
-    return ServicepointBindingUniffi.rust_call(
-      :uniffi_servicepoint_binding_uniffi_fn_clone_bitmap,
-      @pointer
-    )
-  end
-
-  def self.uniffi_lower(inst)
-    return inst.uniffi_clone_pointer()
+    return inst.instance_variable_get :@pointer
   end
   def initialize(width, height)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
-        
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
-        
     pointer = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new,width,height)
     @pointer = pointer
-    ObjectSpace.define_finalizer(self, self.class.uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
   def self.clone(other)
         other = other
-        (Bitmap.uniffi_check_lower other)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone,(Bitmap.uniffi_lower other)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_clone,(Bitmap._uniffi_lower other)))
   end
   def self.load(width, height, data)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
-        
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
-        
         data = ServicepointBindingUniffi::uniffi_bytes(data)
-        
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load,width,height,RustBuffer.allocFromBytes(data)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_load,width,height,RustBuffer.allocFromBytes(data)))
   end
   def self.new_max_sized()
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized,))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_bitmap_new_max_sized,))
   end
   
 
   def copy_raw()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_copy_raw,@pointer,)
     return result.consumeIntoBytes
   end
   def equals(other)
         other = other
-        (Bitmap.uniffi_check_lower other)
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals,uniffi_clone_pointer(),(Bitmap.uniffi_lower other))
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_equals,@pointer,(Bitmap._uniffi_lower other))
     return 1 == result
   end
   def fill(value)
         value = value ? true : false
-        
-      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill,uniffi_clone_pointer(),(value ? 1 : 0))
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_fill,@pointer,(value ? 1 : 0))
   end
   
   def get(x, y)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-        
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-        
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get,uniffi_clone_pointer(),x,y)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_get,@pointer,x,y)
     return 1 == result
   end
   def height()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_height,@pointer,)
     return result.to_i
   end
   def set(x, y, value)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-        
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-        
         value = value ? true : false
-        
-      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set,uniffi_clone_pointer(),x,y,(value ? 1 : 0))
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_set,@pointer,x,y,(value ? 1 : 0))
   end
   
   def width()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_bitmap_width,@pointer,)
     return result.to_i
   end
   
@@ -1365,18 +1410,18 @@ end
 
   # A private helper for initializing instances of the class from a raw pointer,
   # bypassing any initialization logic and ensuring they are GC'd properly.
-  def self.uniffi_allocate(pointer)
+  def self._uniffi_allocate(pointer)
     pointer.autorelease = false
     inst = allocate
     inst.instance_variable_set :@pointer, pointer
-    ObjectSpace.define_finalizer(inst, uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
     return inst
   end
 
   # A private helper for registering an object finalizer.
   # N.B. it's important that this does not capture a reference
   # to the actual instance, only its underlying pointer.
-  def self.uniffi_define_finalizer_by_pointer(pointer, object_id)
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
     Proc.new do |_id|
       ServicepointBindingUniffi.rust_call(
         :uniffi_servicepoint_binding_uniffi_fn_free_brightnessgrid,
@@ -1388,94 +1433,71 @@ end
   # A private helper for lowering instances into a raw pointer.
   # This does an explicit typecheck, because accidentally lowering a different type of
   # object in a place where this type is expected, could lead to memory unsafety.
-  def self.uniffi_check_lower(inst)
+  def self._uniffi_lower(inst)
     if not inst.is_a? self
       raise TypeError.new "Expected a BrightnessGrid instance, got #{inst}"
     end
-  end
-
-  def uniffi_clone_pointer()
-    return ServicepointBindingUniffi.rust_call(
-      :uniffi_servicepoint_binding_uniffi_fn_clone_brightnessgrid,
-      @pointer
-    )
-  end
-
-  def self.uniffi_lower(inst)
-    return inst.uniffi_clone_pointer()
+    return inst.instance_variable_get :@pointer
   end
   def initialize(width, height)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
-        
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
-        
     pointer = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_new,width,height)
     @pointer = pointer
-    ObjectSpace.define_finalizer(self, self.class.uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
   def self.clone(other)
         other = other
-        (BrightnessGrid.uniffi_check_lower other)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone,(BrightnessGrid.uniffi_lower other)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_clone,(BrightnessGrid._uniffi_lower other)))
   end
   def self.load(width, height, data)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
-        
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
-        
         data = ServicepointBindingUniffi::uniffi_bytes(data)
-        
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load,width,height,RustBuffer.allocFromBytes(data)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_brightnessgrid_load,width,height,RustBuffer.allocFromBytes(data)))
   end
   
 
   def copy_raw()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_copy_raw,@pointer,)
     return result.consumeIntoBytes
   end
   def equals(other)
         other = other
-        (BrightnessGrid.uniffi_check_lower other)
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals,uniffi_clone_pointer(),(BrightnessGrid.uniffi_lower other))
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_equals,@pointer,(BrightnessGrid._uniffi_lower other))
     return 1 == result
   end
   def fill(value)
         value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
-        
-      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill,uniffi_clone_pointer(),value)
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_fill,@pointer,value)
   end
   
   def get(x, y)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-        
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-        
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get,uniffi_clone_pointer(),x,y)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_get,@pointer,x,y)
     return result.to_i
   end
   def height()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_height,@pointer,)
     return result.to_i
   end
   def set(x, y, value)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-        
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-        
         value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
-        
-      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set,uniffi_clone_pointer(),x,y,value)
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_set,@pointer,x,y,value)
   end
   
   def width()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_brightnessgrid_width,@pointer,)
     return result.to_i
   end
   
@@ -1485,18 +1507,18 @@ end
 
   # A private helper for initializing instances of the class from a raw pointer,
   # bypassing any initialization logic and ensuring they are GC'd properly.
-  def self.uniffi_allocate(pointer)
+  def self._uniffi_allocate(pointer)
     pointer.autorelease = false
     inst = allocate
     inst.instance_variable_set :@pointer, pointer
-    ObjectSpace.define_finalizer(inst, uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
     return inst
   end
 
   # A private helper for registering an object finalizer.
   # N.B. it's important that this does not capture a reference
   # to the actual instance, only its underlying pointer.
-  def self.uniffi_define_finalizer_by_pointer(pointer, object_id)
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
     Proc.new do |_id|
       ServicepointBindingUniffi.rust_call(
         :uniffi_servicepoint_binding_uniffi_fn_free_chargrid,
@@ -1508,90 +1530,91 @@ end
   # A private helper for lowering instances into a raw pointer.
   # This does an explicit typecheck, because accidentally lowering a different type of
   # object in a place where this type is expected, could lead to memory unsafety.
-  def self.uniffi_check_lower(inst)
+  def self._uniffi_lower(inst)
     if not inst.is_a? self
       raise TypeError.new "Expected a CharGrid instance, got #{inst}"
     end
-  end
-
-  def uniffi_clone_pointer()
-    return ServicepointBindingUniffi.rust_call(
-      :uniffi_servicepoint_binding_uniffi_fn_clone_chargrid,
-      @pointer
-    )
-  end
-
-  def self.uniffi_lower(inst)
-    return inst.uniffi_clone_pointer()
+    return inst.instance_variable_get :@pointer
   end
   def initialize(width, height)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
-        
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
-        
     pointer = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_new,width,height)
     @pointer = pointer
-    ObjectSpace.define_finalizer(self, self.class.uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
   def self.clone(other)
         other = other
-        (CharGrid.uniffi_check_lower other)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_clone,(CharGrid.uniffi_lower other)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_clone,(CharGrid._uniffi_lower other)))
   end
   def self.load(data)
         data = ServicepointBindingUniffi::uniffi_utf8(data)
-        
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_load,RustBuffer.allocFromString(data)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_load,RustBuffer.allocFromString(data)))
   end
   
 
   def as_string()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_as_string,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_as_string,@pointer,)
     return result.consumeIntoString
   end
   def equals(other)
         other = other
-        (CharGrid.uniffi_check_lower other)
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_equals,uniffi_clone_pointer(),(CharGrid.uniffi_lower other))
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_equals,@pointer,(CharGrid._uniffi_lower other))
     return 1 == result
   end
   def fill(value)
         value = ServicepointBindingUniffi::uniffi_utf8(value)
-        
-      ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_fill,uniffi_clone_pointer(),RustBuffer.allocFromString(value))
+      ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_fill,@pointer,RustBuffer.allocFromString(value))
   end
   
   def get(x, y)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-        
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-        
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get,uniffi_clone_pointer(),x,y)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get,@pointer,x,y)
     return result.consumeIntoString
   end
+  def get_col(x)
+        x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col,@pointer,x)
+    return result.consumeIntoOptionalstring
+  end
+  def get_row(y)
+        y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row,@pointer,y)
+    return result.consumeIntoOptionalstring
+  end
   def height()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height,@pointer,)
     return result.to_i
   end
   def set(x, y, value)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-        
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-        
         value = ServicepointBindingUniffi::uniffi_utf8(value)
-        
-      ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set,uniffi_clone_pointer(),x,y,RustBuffer.allocFromString(value))
+      ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set,@pointer,x,y,RustBuffer.allocFromString(value))
+  end
+  
+  def set_col(x, col)
+        x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
+        col = ServicepointBindingUniffi::uniffi_utf8(col)
+      ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_col,@pointer,x,RustBuffer.allocFromString(col))
+  end
+  
+  def set_row(y, row)
+        y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
+        row = ServicepointBindingUniffi::uniffi_utf8(row)
+      ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row,@pointer,y,RustBuffer.allocFromString(row))
   end
   
   def width()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width,@pointer,)
     return result.to_i
   end
   
@@ -1601,18 +1624,18 @@ end
 
   # A private helper for initializing instances of the class from a raw pointer,
   # bypassing any initialization logic and ensuring they are GC'd properly.
-  def self.uniffi_allocate(pointer)
+  def self._uniffi_allocate(pointer)
     pointer.autorelease = false
     inst = allocate
     inst.instance_variable_set :@pointer, pointer
-    ObjectSpace.define_finalizer(inst, uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
     return inst
   end
 
   # A private helper for registering an object finalizer.
   # N.B. it's important that this does not capture a reference
   # to the actual instance, only its underlying pointer.
-  def self.uniffi_define_finalizer_by_pointer(pointer, object_id)
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
     Proc.new do |_id|
       ServicepointBindingUniffi.rust_call(
         :uniffi_servicepoint_binding_uniffi_fn_free_command,
@@ -1624,149 +1647,114 @@ end
   # A private helper for lowering instances into a raw pointer.
   # This does an explicit typecheck, because accidentally lowering a different type of
   # object in a place where this type is expected, could lead to memory unsafety.
-  def self.uniffi_check_lower(inst)
+  def self._uniffi_lower(inst)
     if not inst.is_a? self
       raise TypeError.new "Expected a Command instance, got #{inst}"
     end
-  end
-
-  def uniffi_clone_pointer()
-    return ServicepointBindingUniffi.rust_call(
-      :uniffi_servicepoint_binding_uniffi_fn_clone_command,
-      @pointer
-    )
-  end
-
-  def self.uniffi_lower(inst)
-    return inst.uniffi_clone_pointer()
+    return inst.instance_variable_get :@pointer
   end
 
   def self.bitmap_linear(offset, bitmap, compression)
         offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
-        
         bitmap = bitmap
-        (BitVec.uniffi_check_lower bitmap)
         compression = compression
-        RustBuffer.check_lower_TypeCompressionCode(compression)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,offset,(BitVec.uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear,offset,(BitVec._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
   def self.bitmap_linear_and(offset, bitmap, compression)
         offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
-        
         bitmap = bitmap
-        (BitVec.uniffi_check_lower bitmap)
         compression = compression
-        RustBuffer.check_lower_TypeCompressionCode(compression)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,offset,(BitVec.uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_and,offset,(BitVec._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
   def self.bitmap_linear_or(offset, bitmap, compression)
         offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
-        
         bitmap = bitmap
-        (BitVec.uniffi_check_lower bitmap)
         compression = compression
-        RustBuffer.check_lower_TypeCompressionCode(compression)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,offset,(BitVec.uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_or,offset,(BitVec._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
   def self.bitmap_linear_win(offset_x, offset_y, bitmap, compression)
         offset_x = ServicepointBindingUniffi::uniffi_in_range(offset_x, "u64", 0, 2**64)
-        
         offset_y = ServicepointBindingUniffi::uniffi_in_range(offset_y, "u64", 0, 2**64)
-        
         bitmap = bitmap
-        (Bitmap.uniffi_check_lower bitmap)
         compression = compression
-        RustBuffer.check_lower_TypeCompressionCode(compression)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,offset_x,offset_y,(Bitmap.uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_win,offset_x,offset_y,(Bitmap._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
   def self.bitmap_linear_xor(offset, bitmap, compression)
         offset = ServicepointBindingUniffi::uniffi_in_range(offset, "u64", 0, 2**64)
-        
         bitmap = bitmap
-        (BitVec.uniffi_check_lower bitmap)
         compression = compression
-        RustBuffer.check_lower_TypeCompressionCode(compression)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,offset,(BitVec.uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_bitmap_linear_xor,offset,(BitVec._uniffi_lower bitmap),RustBuffer.alloc_from_TypeCompressionCode(compression)))
   end
   def self.brightness(brightness)
         brightness = ServicepointBindingUniffi::uniffi_in_range(brightness, "u8", 0, 2**8)
-        
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call_with_error(ServicePointError,:uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness,brightness))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call_with_error(ServicePointError,:uniffi_servicepoint_binding_uniffi_fn_constructor_command_brightness,brightness))
   end
   def self.char_brightness(offset_x, offset_y, grid)
         offset_x = ServicepointBindingUniffi::uniffi_in_range(offset_x, "u64", 0, 2**64)
-        
         offset_y = ServicepointBindingUniffi::uniffi_in_range(offset_y, "u64", 0, 2**64)
-        
         grid = grid
-        (BrightnessGrid.uniffi_check_lower grid)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness,offset_x,offset_y,(BrightnessGrid.uniffi_lower grid)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_char_brightness,offset_x,offset_y,(BrightnessGrid._uniffi_lower grid)))
   end
   def self.clear()
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear,))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_clear,))
   end
   def self.clone(other)
         other = other
-        (Command.uniffi_check_lower other)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone,(Command.uniffi_lower other)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_clone,(Command._uniffi_lower other)))
   end
   def self.cp437_data(offset_x, offset_y, grid)
         offset_x = ServicepointBindingUniffi::uniffi_in_range(offset_x, "u64", 0, 2**64)
-        
         offset_y = ServicepointBindingUniffi::uniffi_in_range(offset_y, "u64", 0, 2**64)
-        
         grid = grid
-        (Cp437Grid.uniffi_check_lower grid)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data,offset_x,offset_y,(Cp437Grid.uniffi_lower grid)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_cp437_data,offset_x,offset_y,(Cp437Grid._uniffi_lower grid)))
   end
   def self.fade_out()
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out,))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_fade_out,))
   end
   def self.hard_reset()
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset,))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset,))
   end
   
 
   def equals(other)
         other = other
-        (Command.uniffi_check_lower other)
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_command_equals,uniffi_clone_pointer(),(Command.uniffi_lower other))
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_command_equals,@pointer,(Command._uniffi_lower other))
     return 1 == result
   end
   
@@ -1776,18 +1764,18 @@ end
 
   # A private helper for initializing instances of the class from a raw pointer,
   # bypassing any initialization logic and ensuring they are GC'd properly.
-  def self.uniffi_allocate(pointer)
+  def self._uniffi_allocate(pointer)
     pointer.autorelease = false
     inst = allocate
     inst.instance_variable_set :@pointer, pointer
-    ObjectSpace.define_finalizer(inst, uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
     return inst
   end
 
   # A private helper for registering an object finalizer.
   # N.B. it's important that this does not capture a reference
   # to the actual instance, only its underlying pointer.
-  def self.uniffi_define_finalizer_by_pointer(pointer, object_id)
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
     Proc.new do |_id|
       ServicepointBindingUniffi.rust_call(
         :uniffi_servicepoint_binding_uniffi_fn_free_connection,
@@ -1799,42 +1787,30 @@ end
   # A private helper for lowering instances into a raw pointer.
   # This does an explicit typecheck, because accidentally lowering a different type of
   # object in a place where this type is expected, could lead to memory unsafety.
-  def self.uniffi_check_lower(inst)
+  def self._uniffi_lower(inst)
     if not inst.is_a? self
       raise TypeError.new "Expected a Connection instance, got #{inst}"
     end
-  end
-
-  def uniffi_clone_pointer()
-    return ServicepointBindingUniffi.rust_call(
-      :uniffi_servicepoint_binding_uniffi_fn_clone_connection,
-      @pointer
-    )
-  end
-
-  def self.uniffi_lower(inst)
-    return inst.uniffi_clone_pointer()
+    return inst.instance_variable_get :@pointer
   end
   def initialize(host)
         host = ServicepointBindingUniffi::uniffi_utf8(host)
-        
     pointer = ServicepointBindingUniffi.rust_call_with_error(ServicePointError,:uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new,RustBuffer.allocFromString(host))
     @pointer = pointer
-    ObjectSpace.define_finalizer(self, self.class.uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
   def self.new_fake()
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake,))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_connection_new_fake,))
   end
   
 
   def send(command)
         command = command
-        (Command.uniffi_check_lower command)
-      ServicepointBindingUniffi.rust_call_with_error(ServicePointError,:uniffi_servicepoint_binding_uniffi_fn_method_connection_send,uniffi_clone_pointer(),(Command.uniffi_lower command))
+      ServicepointBindingUniffi.rust_call_with_error(ServicePointError,:uniffi_servicepoint_binding_uniffi_fn_method_connection_send,@pointer,(Command._uniffi_lower command))
   end
   
   
@@ -1844,18 +1820,18 @@ end
 
   # A private helper for initializing instances of the class from a raw pointer,
   # bypassing any initialization logic and ensuring they are GC'd properly.
-  def self.uniffi_allocate(pointer)
+  def self._uniffi_allocate(pointer)
     pointer.autorelease = false
     inst = allocate
     inst.instance_variable_set :@pointer, pointer
-    ObjectSpace.define_finalizer(inst, uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
+    ObjectSpace.define_finalizer(inst, _uniffi_define_finalizer_by_pointer(pointer, inst.object_id))
     return inst
   end
 
   # A private helper for registering an object finalizer.
   # N.B. it's important that this does not capture a reference
   # to the actual instance, only its underlying pointer.
-  def self.uniffi_define_finalizer_by_pointer(pointer, object_id)
+  def self._uniffi_define_finalizer_by_pointer(pointer, object_id)
     Proc.new do |_id|
       ServicepointBindingUniffi.rust_call(
         :uniffi_servicepoint_binding_uniffi_fn_free_cp437grid,
@@ -1867,94 +1843,71 @@ end
   # A private helper for lowering instances into a raw pointer.
   # This does an explicit typecheck, because accidentally lowering a different type of
   # object in a place where this type is expected, could lead to memory unsafety.
-  def self.uniffi_check_lower(inst)
+  def self._uniffi_lower(inst)
     if not inst.is_a? self
       raise TypeError.new "Expected a Cp437Grid instance, got #{inst}"
     end
-  end
-
-  def uniffi_clone_pointer()
-    return ServicepointBindingUniffi.rust_call(
-      :uniffi_servicepoint_binding_uniffi_fn_clone_cp437grid,
-      @pointer
-    )
-  end
-
-  def self.uniffi_lower(inst)
-    return inst.uniffi_clone_pointer()
+    return inst.instance_variable_get :@pointer
   end
   def initialize(width, height)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
-        
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
-        
     pointer = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_new,width,height)
     @pointer = pointer
-    ObjectSpace.define_finalizer(self, self.class.uniffi_define_finalizer_by_pointer(pointer, self.object_id))
+    ObjectSpace.define_finalizer(self, self.class._uniffi_define_finalizer_by_pointer(pointer, self.object_id))
   end
 
   def self.clone(other)
         other = other
-        (Cp437Grid.uniffi_check_lower other)
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone,(Cp437Grid.uniffi_lower other)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_clone,(Cp437Grid._uniffi_lower other)))
   end
   def self.load(width, height, data)
         width = ServicepointBindingUniffi::uniffi_in_range(width, "u64", 0, 2**64)
-        
         height = ServicepointBindingUniffi::uniffi_in_range(height, "u64", 0, 2**64)
-        
         data = ServicepointBindingUniffi::uniffi_bytes(data)
-        
     # Call the (fallible) function before creating any half-baked object instances.
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
-    return uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load,width,height,RustBuffer.allocFromBytes(data)))
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_cp437grid_load,width,height,RustBuffer.allocFromBytes(data)))
   end
   
 
   def copy_raw()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_copy_raw,@pointer,)
     return result.consumeIntoBytes
   end
   def equals(other)
         other = other
-        (Cp437Grid.uniffi_check_lower other)
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals,uniffi_clone_pointer(),(Cp437Grid.uniffi_lower other))
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_equals,@pointer,(Cp437Grid._uniffi_lower other))
     return 1 == result
   end
   def fill(value)
         value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
-        
-      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill,uniffi_clone_pointer(),value)
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_fill,@pointer,value)
   end
   
   def get(x, y)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-        
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-        
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get,uniffi_clone_pointer(),x,y)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get,@pointer,x,y)
     return result.to_i
   end
   def height()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height,@pointer,)
     return result.to_i
   end
   def set(x, y, value)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-        
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-        
         value = ServicepointBindingUniffi::uniffi_in_range(value, "u8", 0, 2**8)
-        
-      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set,uniffi_clone_pointer(),x,y,value)
+      ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set,@pointer,x,y,value)
   end
   
   def width()
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width,uniffi_clone_pointer(),)
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width,@pointer,)
     return result.to_i
   end
   

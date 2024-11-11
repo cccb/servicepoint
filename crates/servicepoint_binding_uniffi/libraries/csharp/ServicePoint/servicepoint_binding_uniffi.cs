@@ -564,6 +564,67 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_free_chargrid(
+    IntPtr ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CharGridSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_clone(CharGridSafeHandle @other,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CharGridSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_load(RustBuffer @data,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CharGridSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_new(ulong @width,ulong @height,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_as_string(CharGridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_chargrid_equals(CharGridSafeHandle @ptr,CharGridSafeHandle @other,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_fill(CharGridSafeHandle @ptr,RustBuffer @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get(CharGridSafeHandle @ptr,ulong @x,ulong @y,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col(CharGridSafeHandle @ptr,ulong @x,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row(CharGridSafeHandle @ptr,ulong @y,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ulong uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height(CharGridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set(CharGridSafeHandle @ptr,ulong @x,ulong @y,RustBuffer @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_col(CharGridSafeHandle @ptr,ulong @x,RustBuffer @col,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row(CharGridSafeHandle @ptr,ulong @y,RustBuffer @row,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ulong uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(CharGridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_free_command(
     IntPtr ptr,ref RustCallStatus _uniffi_out_err
     );
@@ -991,6 +1052,50 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_as_string(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_equals(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_fill(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(
     );
 
@@ -1064,6 +1169,18 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_clone(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_load(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_new(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -1269,6 +1386,72 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_as_string();
+            if (checksum != 46581) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_as_string` checksum `46581`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_equals();
+            if (checksum != 17533) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_equals` checksum `17533`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_fill();
+            if (checksum != 56996) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_fill` checksum `56996`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get();
+            if (checksum != 1334) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get` checksum `1334`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col();
+            if (checksum != 20197) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col` checksum `20197`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row();
+            if (checksum != 16466) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row` checksum `16466`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height();
+            if (checksum != 13068) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height` checksum `13068`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set();
+            if (checksum != 64815) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set` checksum `64815`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col();
+            if (checksum != 43727) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col` checksum `43727`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row();
+            if (checksum != 19756) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row` checksum `19756`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width();
+            if (checksum != 48963) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width` checksum `48963`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_command_equals();
             if (checksum != 20763) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_command_equals` checksum `20763`, library returned `{checksum}`");
@@ -1380,6 +1563,24 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new();
             if (checksum != 4979) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_brightnessgrid_new` checksum `4979`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_clone();
+            if (checksum != 61241) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_clone` checksum `61241`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_load();
+            if (checksum != 47815) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_load` checksum `47815`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_new();
+            if (checksum != 13303) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_chargrid_new` checksum `13303`, library returned `{checksum}`");
             }
         }
         {
@@ -2122,6 +2323,183 @@ class FfiConverterTypeBrightnessGrid: FfiConverter<BrightnessGrid, BrightnessGri
 
 
 
+public interface ICharGrid {
+    
+    String AsString();
+    
+    bool Equals(CharGrid @other);
+    
+    /// <exception cref="CharGridException"></exception>
+    void Fill(String @value);
+    
+    String Get(ulong @x, ulong @y);
+    
+    String? GetCol(ulong @x);
+    
+    String? GetRow(ulong @y);
+    
+    ulong Height();
+    
+    /// <exception cref="CharGridException"></exception>
+    void Set(ulong @x, ulong @y, String @value);
+    
+    /// <exception cref="CharGridException"></exception>
+    void SetCol(ulong @x, String @col);
+    
+    /// <exception cref="CharGridException"></exception>
+    void SetRow(ulong @y, String @row);
+    
+    ulong Width();
+    
+}
+
+public class CharGridSafeHandle: FFISafeHandle {
+    public CharGridSafeHandle(): base() {
+    }
+    public CharGridSafeHandle(IntPtr pointer): base(pointer) {
+    }
+    override protected bool ReleaseHandle() {
+        _UniffiHelpers.RustCall((ref RustCallStatus status) => {
+            _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_free_chargrid(this.handle, ref status);
+        });
+        return true;
+    }
+}
+public class CharGrid: FFIObject<CharGridSafeHandle>, ICharGrid {
+    public CharGrid(CharGridSafeHandle pointer): base(pointer) {}
+    public CharGrid(ulong @width, ulong @height) :
+        this(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_new(FfiConverterUInt64.INSTANCE.Lower(@width), FfiConverterUInt64.INSTANCE.Lower(@height), ref _status)
+)) {}
+
+    
+    public String AsString() {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_as_string(this.GetHandle(),  ref _status)
+));
+    }
+    
+    public bool Equals(CharGrid @other) {
+        return FfiConverterBoolean.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_equals(this.GetHandle(), FfiConverterTypeCharGrid.INSTANCE.Lower(@other), ref _status)
+));
+    }
+    
+    /// <exception cref="CharGridException"></exception>
+    public void Fill(String @value) {
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeCharGridException.INSTANCE, (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_fill(this.GetHandle(), FfiConverterString.INSTANCE.Lower(@value), ref _status)
+);
+    }
+    
+    
+    public String Get(ulong @x, ulong @y) {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), FfiConverterUInt64.INSTANCE.Lower(@y), ref _status)
+));
+    }
+    
+    public String? GetCol(ulong @x) {
+        return FfiConverterOptionalString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), ref _status)
+));
+    }
+    
+    public String? GetRow(ulong @y) {
+        return FfiConverterOptionalString.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@y), ref _status)
+));
+    }
+    
+    public ulong Height() {
+        return FfiConverterUInt64.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height(this.GetHandle(),  ref _status)
+));
+    }
+    
+    /// <exception cref="CharGridException"></exception>
+    public void Set(ulong @x, ulong @y, String @value) {
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeCharGridException.INSTANCE, (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), FfiConverterUInt64.INSTANCE.Lower(@y), FfiConverterString.INSTANCE.Lower(@value), ref _status)
+);
+    }
+    
+    
+    /// <exception cref="CharGridException"></exception>
+    public void SetCol(ulong @x, String @col) {
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeCharGridException.INSTANCE, (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_col(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), FfiConverterString.INSTANCE.Lower(@col), ref _status)
+);
+    }
+    
+    
+    /// <exception cref="CharGridException"></exception>
+    public void SetRow(ulong @y, String @row) {
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeCharGridException.INSTANCE, (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@y), FfiConverterString.INSTANCE.Lower(@row), ref _status)
+);
+    }
+    
+    
+    public ulong Width() {
+        return FfiConverterUInt64.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(this.GetHandle(),  ref _status)
+));
+    }
+    
+
+    
+    public static CharGrid Clone(CharGrid @other) {
+        return new CharGrid(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_clone(FfiConverterTypeCharGrid.INSTANCE.Lower(@other), ref _status)
+));
+    }
+    
+    public static CharGrid Load(String @data) {
+        return new CharGrid(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_chargrid_load(FfiConverterString.INSTANCE.Lower(@data), ref _status)
+));
+    }
+    
+    
+}
+
+class FfiConverterTypeCharGrid: FfiConverter<CharGrid, CharGridSafeHandle> {
+    public static FfiConverterTypeCharGrid INSTANCE = new FfiConverterTypeCharGrid();
+
+    public override CharGridSafeHandle Lower(CharGrid value) {
+        return value.GetHandle();
+    }
+
+    public override CharGrid Lift(CharGridSafeHandle value) {
+        return new CharGrid(value);
+    }
+
+    public override CharGrid Read(BigEndianStream stream) {
+        return Lift(new CharGridSafeHandle(new IntPtr(stream.ReadLong())));
+    }
+
+    public override int AllocationSize(CharGrid value) {
+        return 8;
+    }
+
+    public override void Write(CharGrid value, BigEndianStream stream) {
+        stream.WriteLong(Lower(value).DangerousGetRawFfiValue().ToInt64());
+    }
+}
+
+
+
 public interface ICommand {
     
     bool Equals(Command @other);
@@ -2476,6 +2854,121 @@ class FfiConverterTypeCp437Grid: FfiConverter<Cp437Grid, Cp437GridSafeHandle> {
 
 
 
+public class CharGridException: UniffiException {
+    // Each variant is a nested class
+    
+    
+    public class StringNotOneChar : CharGridException {
+        // Members
+        public String @value;
+
+        // Constructor
+        public StringNotOneChar(
+                String @value) {
+            this.@value = @value;
+        }
+    }
+    
+    
+    public class InvalidSeriesLength : CharGridException {
+        // Members
+        public ulong @actual;
+        public ulong @expected;
+
+        // Constructor
+        public InvalidSeriesLength(
+                ulong @actual, 
+                ulong @expected) {
+            this.@actual = @actual;
+            this.@expected = @expected;
+        }
+    }
+    
+    
+    public class OutOfBounds : CharGridException {
+        // Members
+        public ulong @index;
+        public ulong @size;
+
+        // Constructor
+        public OutOfBounds(
+                ulong @index, 
+                ulong @size) {
+            this.@index = @index;
+            this.@size = @size;
+        }
+    }
+    
+
+    
+}
+
+class FfiConverterTypeCharGridException : FfiConverterRustBuffer<CharGridException>, CallStatusErrorHandler<CharGridException> {
+    public static FfiConverterTypeCharGridException INSTANCE = new FfiConverterTypeCharGridException();
+
+    public override CharGridException Read(BigEndianStream stream) {
+        var value = stream.ReadInt();
+        switch (value) {
+            case 1:
+                return new CharGridException.StringNotOneChar(
+                    FfiConverterString.INSTANCE.Read(stream));
+            case 2:
+                return new CharGridException.InvalidSeriesLength(
+                    FfiConverterUInt64.INSTANCE.Read(stream),
+                    FfiConverterUInt64.INSTANCE.Read(stream));
+            case 3:
+                return new CharGridException.OutOfBounds(
+                    FfiConverterUInt64.INSTANCE.Read(stream),
+                    FfiConverterUInt64.INSTANCE.Read(stream));
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeCharGridException.Read()", value));
+        }
+    }
+
+    public override int AllocationSize(CharGridException value) {
+        switch (value) {
+            case CharGridException.StringNotOneChar variant_value:
+                return 4
+                    + FfiConverterString.INSTANCE.AllocationSize(variant_value.@value);
+            case CharGridException.InvalidSeriesLength variant_value:
+                return 4
+                    + FfiConverterUInt64.INSTANCE.AllocationSize(variant_value.@actual)
+                    + FfiConverterUInt64.INSTANCE.AllocationSize(variant_value.@expected);
+            case CharGridException.OutOfBounds variant_value:
+                return 4
+                    + FfiConverterUInt64.INSTANCE.AllocationSize(variant_value.@index)
+                    + FfiConverterUInt64.INSTANCE.AllocationSize(variant_value.@size);
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeCharGridException.AllocationSize()", value));
+        }
+    }
+
+    public override void Write(CharGridException value, BigEndianStream stream) {
+        switch (value) {
+            case CharGridException.StringNotOneChar variant_value:
+                stream.WriteInt(1);
+                FfiConverterString.INSTANCE.Write(variant_value.@value, stream);
+                break;
+            case CharGridException.InvalidSeriesLength variant_value:
+                stream.WriteInt(2);
+                FfiConverterUInt64.INSTANCE.Write(variant_value.@actual, stream);
+                FfiConverterUInt64.INSTANCE.Write(variant_value.@expected, stream);
+                break;
+            case CharGridException.OutOfBounds variant_value:
+                stream.WriteInt(3);
+                FfiConverterUInt64.INSTANCE.Write(variant_value.@index, stream);
+                FfiConverterUInt64.INSTANCE.Write(variant_value.@size, stream);
+                break;
+            default:
+                throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeCharGridException.Write()", value));
+        }
+    }
+}
+
+
+
+
+
 public enum CompressionCode: int {
     
     Uncompressed,
@@ -2585,6 +3078,37 @@ class FfiConverterTypeServicePointException : FfiConverterRustBuffer<ServicePoin
                 break;
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeServicePointException.Write()", value));
+        }
+    }
+}
+
+
+
+
+class FfiConverterOptionalString: FfiConverterRustBuffer<String?> {
+    public static FfiConverterOptionalString INSTANCE = new FfiConverterOptionalString();
+
+    public override String? Read(BigEndianStream stream) {
+        if (stream.ReadByte() == 0) {
+            return null;
+        }
+        return FfiConverterString.INSTANCE.Read(stream);
+    }
+
+    public override int AllocationSize(String? value) {
+        if (value == null) {
+            return 1;
+        } else {
+            return 1 + FfiConverterString.INSTANCE.AllocationSize((String)value);
+        }
+    }
+
+    public override void Write(String? value, BigEndianStream stream) {
+        if (value == null) {
+            stream.WriteByte(0);
+        } else {
+            stream.WriteByte(1);
+            FfiConverterString.INSTANCE.Write((String)value, stream);
         }
     }
 }
