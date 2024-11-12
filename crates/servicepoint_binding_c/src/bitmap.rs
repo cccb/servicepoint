@@ -124,6 +124,8 @@ pub unsafe extern "C" fn sp_bitmap_clone(
 /// - `bitmap` points to a valid [SPBitmap]
 /// - `bitmap` is not used concurrently or after bitmap call
 /// - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
+///
+/// [SPCommand]: [crate::SPCommand]
 #[no_mangle]
 pub unsafe extern "C" fn sp_bitmap_free(bitmap: *mut SPBitmap) {
     assert!(!bitmap.is_null());

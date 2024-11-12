@@ -147,6 +147,8 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// let grid: BrightnessGrid = grid.map(Brightness::saturating_from);
     /// let command = Command::CharBrightness(Origin::ZERO, grid);
     /// ```
+    /// [Brightness]: [crate::Brightness]
+    /// [Command]: [crate::Command]
     pub fn map<TConverted, F>(&self, f: F) -> PrimitiveGrid<TConverted>
     where
         TConverted: PrimitiveGridType,

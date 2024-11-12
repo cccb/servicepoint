@@ -133,6 +133,8 @@ pub unsafe extern "C" fn sp_brightness_grid_clone(
 /// - `brightness_grid` points to a valid [SPBrightnessGrid]
 /// - `brightness_grid` is not used concurrently or after this call
 /// - `brightness_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+///
+/// [SPCommand]: [crate::SPCommand]
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_free(
     brightness_grid: *mut SPBrightnessGrid,
@@ -191,7 +193,7 @@ pub unsafe extern "C" fn sp_brightness_grid_get(
 ///
 /// The caller has to make sure that:
 ///
-/// - `brightness_grid` points to a valid [SPBitVec]
+/// - `brightness_grid` points to a valid [SPBrightnessGrid]
 /// - `brightness_grid` is not written to or read from concurrently
 #[no_mangle]
 pub unsafe extern "C" fn sp_brightness_grid_set(

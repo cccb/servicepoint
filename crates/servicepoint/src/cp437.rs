@@ -97,7 +97,7 @@ mod feature_cp437 {
     ///
     /// See <https://en.wikipedia.org/wiki/Code_page_437#Character_set>
     ///
-    /// Mostly copied from https://github.com/kip93/cp437-tools. License: GPL-3.0
+    /// Mostly copied from <https://github.com/kip93/cp437-tools>. License: GPL-3.0
     #[rustfmt::skip]
     pub const CP437_TO_UTF8: [char; 256] = [
         /* 0X */ '\0', '☺', '☻', '♥', '♦', '♣', '♠', '•', '◘', '○', '\n', '♂', '♀', '♪', '♫', '☼',

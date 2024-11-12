@@ -23,6 +23,8 @@ use crate::{
 /// sp_connection_send_command(connection, sp_command_clear());
 /// sp_connection_send_command(connection, sp_command_brightness(5));
 /// ```
+///
+/// [SPConnection]: [crate::SPConnection]
 pub struct SPCommand(pub(crate) servicepoint::Command);
 
 impl Clone for SPCommand {
@@ -90,7 +92,7 @@ pub unsafe extern "C" fn sp_command_clone(
 ///
 /// Does not affect brightness.
 ///
-/// Returns: a new [Command::Clear] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::Clear] instance. Will never return NULL.
 ///
 /// # Examples
 ///
@@ -114,7 +116,7 @@ pub unsafe extern "C" fn sp_command_clear() -> NonNull<SPCommand> {
 ///
 /// Please do not send this in your normal program flow.
 ///
-/// Returns: a new [Command::HardReset] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::HardReset] instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -130,7 +132,7 @@ pub unsafe extern "C" fn sp_command_hard_reset() -> NonNull<SPCommand> {
 
 /// A yet-to-be-tested command.
 ///
-/// Returns: a new `Command::FadeOut` instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::FadeOut] instance. Will never return NULL.
 ///
 /// # Safety
 ///
@@ -146,7 +148,7 @@ pub unsafe extern "C" fn sp_command_fade_out() -> NonNull<SPCommand> {
 
 /// Set the brightness of all tiles to the same value.
 ///
-/// Returns: a new [Command::Brightness] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::Brightness] instance. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -174,7 +176,7 @@ pub unsafe extern "C" fn sp_command_brightness(
 ///
 /// The passed [SPBrightnessGrid] gets consumed.
 ///
-/// Returns: a new [Command::CharBrightness] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::CharBrightness] instance. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -211,7 +213,7 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 ///
 /// The passed [SPBitVec] gets consumed.
 ///
-/// Returns: a new [Command::BitmapLinear] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::BitmapLinear] instance. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -254,7 +256,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 ///
 /// The passed [SPBitVec] gets consumed.
 ///
-/// Returns: a new [Command::BitmapLinearAnd] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::BitmapLinearAnd] instance. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -297,7 +299,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 ///
 /// The passed [SPBitVec] gets consumed.
 ///
-/// Returns: a new [Command::BitmapLinearOr] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::BitmapLinearOr] instance. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -340,7 +342,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 ///
 /// The passed [SPBitVec] gets consumed.
 ///
-/// Returns: a new [Command::BitmapLinearXor] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::BitmapLinearXor] instance. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -378,7 +380,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 ///
 /// The passed [SPCp437Grid] gets consumed.
 ///
-/// Returns: a new [Command::Cp437Data] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::Cp437Data] instance. Will never return NULL.
 ///
 /// # Panics
 ///
@@ -410,7 +412,7 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 ///
 /// The passed [SPBitmap] gets consumed.
 ///
-/// Returns: a new [Command::BitmapLinearWin] instance. Will never return NULL.
+/// Returns: a new [servicepoint::Command::BitmapLinearWin] instance. Will never return NULL.
 ///
 /// # Panics
 ///
