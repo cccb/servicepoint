@@ -1,5 +1,5 @@
 use crate::primitive_grid::SeriesError;
-use crate::PrimitiveGrid;
+use crate::{Grid, PrimitiveGrid};
 
 /// A grid containing UTF-8 characters.
 pub type CharGrid = PrimitiveGrid<char>;
@@ -42,9 +42,57 @@ impl CharGrid {
     }
 }
 
+impl From<&str> for CharGrid {
+    fn from(value: &str) -> Self {
+        let value = value.replace("\r\n", "\n");
+        let mut lines = value
+            .split('\n')
+            .map(move |line| line.trim_end())
+            .collect::<Vec<_>>();
+        let width =
+            lines.iter().fold(0, move |a, x| std::cmp::max(a, x.len()));
+
+        while lines.last().is_some_and(move |line| line.is_empty()) {
+            _ = lines.pop();
+        }
+
+        let mut grid = Self::new(width, lines.len());
+        for (y, line) in lines.iter().enumerate() {
+            for (x, char) in line.chars().enumerate() {
+                grid.set(x, y, char);
+            }
+        }
+
+        grid
+    }
+}
+
+impl From<String> for CharGrid {
+    fn from(value: String) -> Self {
+        CharGrid::from(&*value)
+    }
+}
+
+impl From<&CharGrid> for String {
+    fn from(value: &CharGrid) -> Self {
+        value
+            .iter_rows()
+            .map(move |chars| {
+                chars
+                    .collect::<String>()
+                    .replace('\0', " ")
+                    .trim_end()
+                    .to_string()
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::Grid;
     #[test]
     fn col_str() {
         let mut grid = CharGrid::new(2, 3);
@@ -68,5 +116,14 @@ mod test {
         );
         assert_eq!(grid.set_row_str(1, "ab"), Ok(()));
         assert_eq!(grid.get_row_str(1), Some(String::from("ab")));
+    }
+
+    #[test]
+    fn str_to_char_grid() {
+        let original = "Hello\r\nWorld!\n...\n";
+        let grid = CharGrid::from(original);
+        assert_eq!(3, grid.height());
+        let actual = String::from(&grid);
+        assert_eq!("Hello\nWorld!\n...", actual);
     }
 }

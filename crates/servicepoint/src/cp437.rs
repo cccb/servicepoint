@@ -88,8 +88,8 @@ pub use feature_cp437::*;
 
 #[cfg(feature = "cp437")]
 mod feature_cp437 {
-    use crate::CharGrid;
     use super::*;
+    use crate::CharGrid;
 
     /// An array of 256 elements, mapping most of the CP437 values to UTF-8 characters
     ///
@@ -144,53 +144,6 @@ mod feature_cp437 {
     impl From<CharGrid> for Cp437Grid {
         fn from(value: CharGrid) -> Self {
             Cp437Grid::from(&value)
-        }
-    }
-
-    impl From<&str> for CharGrid {
-        fn from(value: &str) -> Self {
-            let value = value.replace("\r\n", "\n");
-            let mut lines = value
-                .split('\n')
-                .map(move |line| line.trim_end())
-                .collect::<Vec<_>>();
-            let width =
-                lines.iter().fold(0, move |a, x| std::cmp::max(a, x.len()));
-
-            while lines.last().is_some_and(move |line| line.is_empty()) {
-                _ = lines.pop();
-            }
-
-            let mut grid = Self::new(width, lines.len());
-            for (y, line) in lines.iter().enumerate() {
-                for (x, char) in line.chars().enumerate() {
-                    grid.set(x, y, char);
-                }
-            }
-
-            grid
-        }
-    }
-
-    impl From<String> for CharGrid {
-        fn from(value: String) -> Self {
-            CharGrid::from(&value)
-        }
-    }
-
-    impl From<&CharGrid> for String {
-        fn from(value: &CharGrid) -> Self {
-            value
-                .iter_rows()
-                .map(move |chars| {
-                    chars
-                        .collect::<String>()
-                        .replace('\0', " ")
-                        .trim_end()
-                        .to_string()
-                })
-                .collect::<Vec<_>>()
-                .join("\n")
         }
     }
 
@@ -258,8 +211,8 @@ mod tests {
 #[cfg(test)]
 #[cfg(feature = "cp437")]
 mod tests_feature_cp437 {
-    use crate::CharGrid;
     use super::*;
+    use crate::CharGrid;
 
     #[test]
     fn round_trip_cp437() {
@@ -302,14 +255,5 @@ mod tests_feature_cp437 {
     #[test]
     fn convert_invalid() {
         assert_eq!(cp437_to_char(char_to_cp437('😜')), '?');
-    }
-
-    #[test]
-    fn str_to_char_grid() {
-        let original = "Hello\r\nWorld!\n...\n";
-        let grid = CharGrid::from(original);
-        assert_eq!(3, grid.height());
-        let actual = String::from(&grid);
-        assert_eq!("Hello\nWorld!\n...", actual);
     }
 }
