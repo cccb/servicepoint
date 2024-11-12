@@ -19,7 +19,7 @@ use rand::{
 /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
 /// let result = connection.send(Command::Brightness(b));
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Brightness(u8);
 
 /// A grid containing brightness values.
@@ -46,6 +46,12 @@ impl BrightnessGrid {
 
 impl From<Brightness> for u8 {
     fn from(brightness: Brightness) -> Self {
+        brightness.0
+    }
+}
+
+impl From<&Brightness> for u8 {
+    fn from(brightness: &Brightness) -> Self {
         brightness.0
     }
 }
