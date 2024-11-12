@@ -212,21 +212,27 @@ pub enum Command {
 }
 
 /// Err values for [Command::try_from].
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, thiserror::Error)]
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
+    #[error("The command code {0:?} does not correspond to a known command")]
     InvalidCommand(u16),
     /// the expected payload size was n, but size m was found
+    #[error("the expected payload size was {0}, but size {1} was found")]
     UnexpectedPayloadSize(usize, usize),
     /// Header fields not needed for the command have been used.
     ///
     /// Note that these commands would usually still work on the actual display.
+    #[error("Header fields not needed for the command have been used")]
     ExtraneousHeaderValues,
     /// The contained compression code is not known. This could be of disabled features.
+    #[error("The compression code {0:?} does not correspond to a known compression algorithm.")]
     InvalidCompressionCode(u16),
     /// Decompression of the payload failed. This can be caused by corrupted packets.
+    #[error("The decompression of the payload failed")]
     DecompressionFailed,
     /// The given brightness value is out of bounds
+    #[error("The given brightness value {0} is out of bounds.")]
     InvalidBrightness(u8),
 }
 

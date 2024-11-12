@@ -1,5 +1,5 @@
-use std::fmt::Debug;
 use crate::packet::Packet;
+use std::fmt::Debug;
 
 /// A connection to the display.
 ///
@@ -34,20 +34,26 @@ pub enum Connection {
     /// [servicepoint-websocket-relay]: https://github.com/kaesaecracker/servicepoint-websocket-relay
     #[cfg(feature = "protocol_websocket")]
     WebSocket(
-        std::sync::Arc<std::sync::Mutex<tungstenite::WebSocket<
-            tungstenite::stream::MaybeTlsStream<std::net::TcpStream>,
-        >>>,
+        std::sync::Arc<
+            std::sync::Mutex<
+                tungstenite::WebSocket<
+                    tungstenite::stream::MaybeTlsStream<std::net::TcpStream>,
+                >,
+            >,
+        >,
     ),
 
     /// A fake connection for testing that does not actually send anything.
     Fake,
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum SendError {
-    IoError(std::io::Error),
+    #[error("IO error occurred while sending")]
+    IoError(#[from] std::io::Error),
     #[cfg(feature = "protocol_websocket")]
-    WebsocketError(tungstenite::Error),
+    #[error("WebSocket error occurred while sending")]
+    WebsocketError(#[from] tungstenite::Error),
 }
 
 impl Connection {
@@ -103,7 +109,9 @@ impl Connection {
 
         let request = ClientRequestBuilder::new(uri).into_client_request()?;
         let (sock, _) = connect(request)?;
-        Ok(Self::WebSocket(std::sync::Arc::new(std::sync::Mutex::new(sock))))
+        Ok(Self::WebSocket(std::sync::Arc::new(std::sync::Mutex::new(
+            sock,
+        ))))
     }
 
     /// Send something packet-like to the display. Usually this is in the form of a Command.
@@ -157,7 +165,9 @@ impl Drop for Connection {
     fn drop(&mut self) {
         #[cfg(feature = "protocol_websocket")]
         if let Connection::WebSocket(sock) = self {
-            _ = sock.try_lock().map(move |mut sock| sock.close(None).unwrap() );
+            _ = sock
+                .try_lock()
+                .map(move |mut sock| sock.close(None).unwrap());
         }
     }
 }

@@ -10,16 +10,14 @@ use std::collections::HashMap;
 /// The encoding is currently not enforced.
 pub type Cp437Grid = PrimitiveGrid<u8>;
 
-/// Errors that can occur when loading CP-437.
-#[derive(Debug, PartialEq)]
-pub enum Cp437LoadError {
-    /// Invalid character in input prevented loading
-    InvalidChar {
-        /// invalid character is at this position in input
-        index: usize,
-        /// the invalid character
-        char: char,
-    },
+/// The error occurring when loading an invalid character
+#[derive(Debug, PartialEq, thiserror::Error)]
+#[error("The character {char:?} at position {index} is not a valid CP437 character")]
+pub struct InvalidCharError {
+    /// invalid character is at this position in input
+    index: usize,
+    /// the invalid character
+    char: char,
 }
 
 impl Cp437Grid {
@@ -33,7 +31,7 @@ impl Cp437Grid {
         value: &str,
         width: usize,
         wrap: bool,
-    ) -> Result<Self, Cp437LoadError> {
+    ) -> Result<Self, InvalidCharError> {
         assert!(width > 0);
         assert!(!value.is_empty());
 
@@ -43,7 +41,7 @@ impl Cp437Grid {
 
             for (index, char) in value.chars().enumerate() {
                 if !char.is_ascii() {
-                    return Err(Cp437LoadError::InvalidChar { index, char });
+                    return Err(InvalidCharError { index, char });
                 }
 
                 let is_lf = char == '\n';
@@ -199,7 +197,7 @@ mod tests {
     #[test]
     fn load_ascii_invalid() {
         assert_eq!(
-            Err(Cp437LoadError::InvalidChar {
+            Err(InvalidCharError {
                 char: '🥶',
                 index: 2
             }),

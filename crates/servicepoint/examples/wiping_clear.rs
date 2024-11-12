@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use servicepoint::{bitvec::prelude::BitVec, *};
+use servicepoint::*;
 
 #[derive(Parser, Debug)]
 struct Cli {
