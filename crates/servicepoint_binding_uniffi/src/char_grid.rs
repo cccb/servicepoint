@@ -1,6 +1,7 @@
 use servicepoint::{Grid, SeriesError};
 use std::convert::Into;
 use std::sync::{Arc, RwLock};
+use crate::cp437_grid::Cp437Grid;
 
 #[derive(uniffi::Object)]
 pub struct CharGrid {
@@ -115,10 +116,14 @@ impl CharGrid {
             .get_col(x as usize)
             .map(move |vec| String::from_iter(vec))
     }
+
+    pub fn to_cp437(&self) -> Arc<Cp437Grid> {
+        Cp437Grid::internal_new(servicepoint::Cp437Grid::from(&*self.actual.read().unwrap()))
+    }
 }
 
 impl CharGrid {
-    fn internal_new(actual: servicepoint::CharGrid) -> Arc<Self> {
+    pub(crate) fn internal_new(actual: servicepoint::CharGrid) -> Arc<Self> {
         Arc::new(Self {
             actual: RwLock::new(actual),
         })

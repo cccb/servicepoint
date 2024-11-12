@@ -341,6 +341,11 @@ void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row(
 	RustCallStatus* out_status
 );
 
+void* uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437(
+	void* ptr,
+	RustCallStatus* out_status
+);
+
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(
 	void* ptr,
 	RustCallStatus* out_status
@@ -506,6 +511,11 @@ void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(
 	uint64_t x,
 	uint64_t y,
 	uint8_t value,
+	RustCallStatus* out_status
+);
+
+void* uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8(
+	void* ptr,
 	RustCallStatus* out_status
 );
 
@@ -933,6 +943,10 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row(
 	RustCallStatus* out_status
 );
 
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437(
+	RustCallStatus* out_status
+);
+
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(
 	RustCallStatus* out_status
 );
@@ -966,6 +980,10 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height(
 );
 
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(
+	RustCallStatus* out_status
+);
+
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8(
 	RustCallStatus* out_status
 );
 

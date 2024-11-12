@@ -627,6 +627,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437(uniffiStatus)
+	})
+	if checksum != 19261 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(uniffiStatus)
 	})
 	if checksum != 48963 {
@@ -704,6 +713,15 @@ func uniffiCheckChecksums() {
 	if checksum != 8371 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set: UniFFI API checksum mismatch")
+	}
+	}
+	{
+	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
+		return C.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8(uniffiStatus)
+	})
+	if checksum != 21516 {
+		// If this happens try cleaning and rebuilding your project
+		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8: UniFFI API checksum mismatch")
 	}
 	}
 	{
@@ -1778,6 +1796,16 @@ func (_self *CharGrid)SetRow(y uint64, row string) error {
 }
 
 
+func (_self *CharGrid)ToCp437() *Cp437Grid {
+	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterCp437GridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437(
+		_pointer, _uniffiStatus)
+	}))
+}
+
+
 func (_self *CharGrid)Width() uint64 {
 	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
 	defer _self.ffiObject.decrementPointer()
@@ -2140,6 +2168,16 @@ func (_self *Cp437Grid)Set(x uint64, y uint64, value uint8)  {
 		_pointer,FfiConverterUint64INSTANCE.Lower(x), FfiConverterUint64INSTANCE.Lower(y), FfiConverterUint8INSTANCE.Lower(value), _uniffiStatus)
 		return false
 	})
+}
+
+
+func (_self *Cp437Grid)ToUtf8() *CharGrid {
+	_pointer := _self.ffiObject.incrementPointer("*Cp437Grid")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterCharGridINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) unsafe.Pointer {
+		return C.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8(
+		_pointer, _uniffiStatus)
+	}))
 }
 
 

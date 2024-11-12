@@ -564,6 +564,8 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row() != 19756:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437() != 19261:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width() != 48963:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_command_equals() != 20763:
@@ -581,6 +583,8 @@ def _uniffi_check_api_checksums(lib):
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height() != 45951:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set() != 8371:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8() != 21516:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width() != 36872:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -922,6 +926,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row.argtype
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width.argtypes = (
     ctypes.c_void_p,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -1090,6 +1099,11 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set.argtypes =
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set.restype = None
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8.argtypes = (
+    ctypes.c_void_p,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8.restype = ctypes.c_void_p
 _UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width.argtypes = (
     ctypes.c_void_p,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -1444,6 +1458,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col.r
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width.restype = ctypes.c_uint16
@@ -1471,6 +1488,9 @@ _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height.r
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set.restype = ctypes.c_uint16
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8.argtypes = (
+)
+_UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8.restype = ctypes.c_uint16
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width.argtypes = (
 )
 _UniffiLib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width.restype = ctypes.c_uint16
@@ -2286,6 +2306,16 @@ class CharGrid:
 
 
 
+    def to_cp437(self, ) -> "Cp437Grid":
+        return _UniffiConverterTypeCp437Grid.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437,self._pointer,)
+        )
+
+
+
+
+
+
     def width(self, ) -> "int":
         return _UniffiConverterUInt64.lift(
             _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width,self._pointer,)
@@ -2686,6 +2716,16 @@ class Cp437Grid:
         _UniffiConverterUInt64.lower(y),
         _UniffiConverterUInt8.lower(value))
 
+
+
+
+
+
+
+    def to_utf8(self, ) -> "CharGrid":
+        return _UniffiConverterTypeCharGrid.lift(
+            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8,self._pointer,)
+        )
 
 
 

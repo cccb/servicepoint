@@ -934,6 +934,7 @@ public protocol CharGridProtocol {
     func set(x: UInt64, y: UInt64, value: String)  throws
     func setCol(x: UInt64, col: String)  throws
     func setRow(y: UInt64, row: String)  throws
+    func toCp437()   -> Cp437Grid
     func width()   -> UInt64
     
 }
@@ -1091,6 +1092,17 @@ public class CharGrid: CharGridProtocol {
         FfiConverterString.lower(row),$0
     )
 }
+    }
+
+    public func toCp437()  -> Cp437Grid {
+        return try!  FfiConverterTypeCp437Grid.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437(self.pointer, $0
+    )
+}
+        )
     }
 
     public func width()  -> UInt64 {
@@ -1437,6 +1449,7 @@ public protocol Cp437GridProtocol {
     func get(x: UInt64, y: UInt64)   -> UInt8
     func height()   -> UInt64
     func set(x: UInt64, y: UInt64, value: UInt8)  
+    func toUtf8()   -> CharGrid
     func width()   -> UInt64
     
 }
@@ -1554,6 +1567,17 @@ public class Cp437Grid: Cp437GridProtocol {
         FfiConverterUInt8.lower(value),$0
     )
 }
+    }
+
+    public func toUtf8()  -> CharGrid {
+        return try!  FfiConverterTypeCharGrid.lift(
+            try! 
+    rustCall() {
+    
+    uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8(self.pointer, $0
+    )
+}
+        )
     }
 
     public func width()  -> UInt64 {
@@ -1937,6 +1961,9 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row() != 19756) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437() != 19261) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width() != 48963) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -1962,6 +1989,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set() != 8371) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8() != 21516) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width() != 36872) {

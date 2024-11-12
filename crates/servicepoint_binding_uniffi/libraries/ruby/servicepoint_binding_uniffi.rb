@@ -874,6 +874,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row,
     [:pointer, :uint64, RustBuffer.by_value, RustCallStatus.by_ref],
     :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437,
+    [:pointer, RustCallStatus.by_ref],
+    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width,
     [:pointer, RustCallStatus.by_ref],
     :uint64
@@ -961,6 +964,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set,
     [:pointer, :uint64, :uint64, :uint8, RustCallStatus.by_ref],
     :void
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8,
+    [:pointer, RustCallStatus.by_ref],
+    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width,
     [:pointer, RustCallStatus.by_ref],
     :uint64
@@ -1066,6 +1072,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row,
     [RustCallStatus.by_ref],
     :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width,
     [RustCallStatus.by_ref],
     :uint16
@@ -1091,6 +1100,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width,
@@ -1613,6 +1625,10 @@ end
       ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row,@pointer,y,RustBuffer.allocFromString(row))
   end
   
+  def to_cp437()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437,@pointer,)
+    return Cp437Grid._uniffi_allocate(result)
+  end
   def width()
     result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width,@pointer,)
     return result.to_i
@@ -1906,6 +1922,10 @@ end
       ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set,@pointer,x,y,value)
   end
   
+  def to_utf8()
+    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8,@pointer,)
+    return CharGrid._uniffi_allocate(result)
+  end
   def width()
     result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width,@pointer,)
     return result.to_i

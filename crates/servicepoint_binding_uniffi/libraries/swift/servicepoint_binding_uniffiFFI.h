@@ -158,6 +158,8 @@ void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_col(void*_Nonnull
 );
 void uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row(void*_Nonnull ptr, uint64_t y, RustBuffer row, RustCallStatus *_Nonnull out_status
 );
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
+);
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
 void uniffi_servicepoint_binding_uniffi_fn_free_command(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
@@ -219,6 +221,8 @@ uint8_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_get(void*_Nonnull
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_height(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
 void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(void*_Nonnull ptr, uint64_t x, uint64_t y, uint8_t value, RustCallStatus *_Nonnull out_status
+);
+void*_Nonnull uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
 uint64_t uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(void*_Nonnull ptr, RustCallStatus *_Nonnull out_status
 );
@@ -426,6 +430,9 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_col(voi
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row(void
     
 );
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437(void
+    
+);
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(void
     
 );
@@ -451,6 +458,9 @@ uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height(voi
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(void
+    
+);
+uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8(void
     
 );
 uint16_t uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width(void

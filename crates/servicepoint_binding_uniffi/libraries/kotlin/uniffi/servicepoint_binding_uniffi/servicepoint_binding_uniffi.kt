@@ -477,6 +477,8 @@ internal interface _UniFFILib : Library {
     ): Unit
     fun uniffi_servicepoint_binding_uniffi_fn_method_chargrid_set_row(`ptr`: Pointer,`y`: Long,`row`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Long
     fun uniffi_servicepoint_binding_uniffi_fn_free_command(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
@@ -535,6 +537,8 @@ internal interface _UniFFILib : Library {
     ): Long
     fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(`ptr`: Pointer,`x`: Long,`y`: Long,`value`: Byte,_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
+    ): Pointer
     fun uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width(`ptr`: Pointer,_uniffi_out_err: RustCallStatus, 
     ): Long
     fun ffi_servicepoint_binding_uniffi_rustbuffer_alloc(`size`: Int,_uniffi_out_err: RustCallStatus, 
@@ -711,6 +715,8 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row(
     ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437(
+    ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_command_equals(
@@ -728,6 +734,8 @@ internal interface _UniFFILib : Library {
     fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_height(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(
+    ): Short
+    fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8(
     ): Short
     fun uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width(
     ): Short
@@ -898,6 +906,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_set_row() != 19756.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437() != 19261.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width() != 48963.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -923,6 +934,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set() != 8371.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8() != 21516.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_width() != 36872.toShort()) {
@@ -1782,6 +1796,7 @@ public interface CharGridInterface {
     fun `set`(`x`: ULong, `y`: ULong, `value`: String)@Throws(CharGridException::class)
     fun `setCol`(`x`: ULong, `col`: String)@Throws(CharGridException::class)
     fun `setRow`(`y`: ULong, `row`: String)
+    fun `toCp437`(): Cp437Grid
     fun `width`(): ULong
     companion object
 }
@@ -1918,6 +1933,17 @@ class CharGrid(
 }
         }
     
+    
+    override fun `toCp437`(): Cp437Grid =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterTypeCp437Grid.lift(it)
+        }
     
     override fun `width`(): ULong =
         callWithPointer {
@@ -2187,6 +2213,7 @@ public interface Cp437GridInterface {
     fun `get`(`x`: ULong, `y`: ULong): UByte
     fun `height`(): ULong
     fun `set`(`x`: ULong, `y`: ULong, `value`: UByte)
+    fun `toUtf8`(): CharGrid
     fun `width`(): ULong
     companion object
 }
@@ -2277,6 +2304,17 @@ class Cp437Grid(
 }
         }
     
+    
+    override fun `toUtf8`(): CharGrid =
+        callWithPointer {
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8(it,
+        
+        _status)
+}
+        }.let {
+            FfiConverterTypeCharGrid.lift(it)
+        }
     
     override fun `width`(): ULong =
         callWithPointer {

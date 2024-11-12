@@ -621,6 +621,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern Cp437GridSafeHandle uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437(CharGridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ulong uniffi_servicepoint_binding_uniffi_fn_method_chargrid_width(CharGridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
     );
 
@@ -737,6 +741,10 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern void uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_set(Cp437GridSafeHandle @ptr,ulong @x,ulong @y,byte @value,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern CharGridSafeHandle uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8(Cp437GridSafeHandle @ptr,ref RustCallStatus _uniffi_out_err
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -1092,6 +1100,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width(
     );
 
@@ -1125,6 +1137,10 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -1446,6 +1462,12 @@ static class _UniFFILib {
             }
         }
         {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437();
+            if (checksum != 19261) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_to_cp437` checksum `19261`, library returned `{checksum}`");
+            }
+        }
+        {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width();
             if (checksum != 48963) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_width` checksum `48963`, library returned `{checksum}`");
@@ -1497,6 +1519,12 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set();
             if (checksum != 8371) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_set` checksum `8371`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8();
+            if (checksum != 21516) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_cp437grid_to_utf8` checksum `21516`, library returned `{checksum}`");
             }
         }
         {
@@ -2349,6 +2377,8 @@ public interface ICharGrid {
     /// <exception cref="CharGridException"></exception>
     void SetRow(ulong @y, String @row);
     
+    Cp437Grid ToCp437();
+    
     ulong Width();
     
 }
@@ -2447,6 +2477,13 @@ public class CharGrid: FFIObject<CharGridSafeHandle>, ICharGrid {
 );
     }
     
+    
+    public Cp437Grid ToCp437() {
+        return FfiConverterTypeCp437Grid.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_to_cp437(this.GetHandle(),  ref _status)
+));
+    }
     
     public ulong Width() {
         return FfiConverterUInt64.INSTANCE.Lift(
@@ -2733,6 +2770,8 @@ public interface ICp437Grid {
     
     void Set(ulong @x, ulong @y, byte @value);
     
+    CharGrid ToUtf8();
+    
     ulong Width();
     
 }
@@ -2799,6 +2838,13 @@ public class Cp437Grid: FFIObject<Cp437GridSafeHandle>, ICp437Grid {
 );
     }
     
+    
+    public CharGrid ToUtf8() {
+        return FfiConverterTypeCharGrid.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_to_utf8(this.GetHandle(),  ref _status)
+));
+    }
     
     public ulong Width() {
         return FfiConverterUInt64.INSTANCE.Lift(
