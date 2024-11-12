@@ -1,11 +1,9 @@
-use bitvec::prelude::BitVec;
-
 use crate::{
     command_code::CommandCode,
     compression::into_decompressed,
     packet::{Header, Packet},
     Bitmap, Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin,
-    Pixels, PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
+    Pixels, PrimitiveGrid, BitVec, Tiles, TILE_SIZE,
 };
 
 /// Type alias for documenting the meaning of the u16 in enum values
@@ -144,7 +142,7 @@ pub enum Command {
     /// once the starting row is full, overwriting will continue on column 0.
     ///
     /// The contained [BitVec] is always uncompressed.
-    BitmapLinear(Offset, SpBitVec, CompressionCode),
+    BitmapLinear(Offset, BitVec, CompressionCode),
 
     /// Set pixel data according to an and-mask starting at the offset.
     ///
@@ -152,7 +150,7 @@ pub enum Command {
     /// once the starting row is full, overwriting will continue on column 0.
     ///
     /// The contained [BitVec] is always uncompressed.
-    BitmapLinearAnd(Offset, SpBitVec, CompressionCode),
+    BitmapLinearAnd(Offset, BitVec, CompressionCode),
 
     /// Set pixel data according to an or-mask starting at the offset.
     ///
@@ -160,7 +158,7 @@ pub enum Command {
     /// once the starting row is full, overwriting will continue on column 0.
     ///
     /// The contained [BitVec] is always uncompressed.
-    BitmapLinearOr(Offset, SpBitVec, CompressionCode),
+    BitmapLinearOr(Offset, BitVec, CompressionCode),
 
     /// Set pixel data according to a xor-mask starting at the offset.
     ///
@@ -168,7 +166,7 @@ pub enum Command {
     /// once the starting row is full, overwriting will continue on column 0.
     ///
     /// The contained [BitVec] is always uncompressed.
-    BitmapLinearXor(Offset, SpBitVec, CompressionCode),
+    BitmapLinearXor(Offset, BitVec, CompressionCode),
 
     /// Kills the udp daemon on the display, which usually results in a restart.
     ///
@@ -374,7 +372,7 @@ impl Command {
     /// Helper method for Packets into `BitmapLinear*`-Commands
     fn packet_into_linear_bitmap(
         packet: Packet,
-    ) -> Result<(SpBitVec, CompressionCode), TryFromPacketError> {
+    ) -> Result<(BitVec, CompressionCode), TryFromPacketError> {
         let Packet {
             header:
                 Header {

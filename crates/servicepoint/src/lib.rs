@@ -38,7 +38,6 @@
 use std::time::Duration;
 
 pub use bitvec;
-use bitvec::prelude::{BitVec, Msb0};
 
 pub use crate::bitmap::Bitmap;
 pub use crate::brightness::{Brightness, BrightnessGrid};
@@ -51,7 +50,8 @@ pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
 pub use crate::primitive_grid::PrimitiveGrid;
 
-type SpBitVec = BitVec<u8, Msb0>;
+/// An alias for the specific type of [bitvec::prelude::BitVec] used.
+pub type BitVec = bitvec::prelude::BitVec<u8, bitvec::prelude::Msb0>;
 
 mod bitmap;
 mod brightness;
