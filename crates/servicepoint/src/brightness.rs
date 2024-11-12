@@ -37,6 +37,13 @@ pub struct Brightness(u8);
 /// ```
 pub type BrightnessGrid = PrimitiveGrid<Brightness>;
 
+impl BrightnessGrid {
+    /// Like [Self::load], but ignoring any out-of-range brightness values
+    pub fn saturating_load(width: usize, height: usize, data: &[u8]) -> Self {
+        PrimitiveGrid::load(width, height, data).map(Brightness::saturating_from)
+    }
+}
+
 impl From<Brightness> for u8 {
     fn from(brightness: Brightness) -> Self {
         brightness.0
@@ -105,7 +112,7 @@ impl TryFrom<PrimitiveGrid<u8>> for BrightnessGrid {
         let brightnesses = value
             .iter()
             .map(|b| Brightness::try_from(*b))
-            .collect::<Result<Vec<Brightness>, _>>()?;
+            .collect::<Result<Vec<_>, _>>()?;
         Ok(BrightnessGrid::load(
             value.width(),
             value.height(),
@@ -154,5 +161,11 @@ mod tests {
     fn saturating_convert() {
         assert_eq!(Brightness::MAX, Brightness::saturating_from(100));
         assert_eq!(Brightness(5), Brightness::saturating_from(5));
+    }
+
+    #[test]
+    fn saturating_load() {
+        assert_eq!(BrightnessGrid::load(2,2, &[Brightness::MAX, Brightness::MAX, Brightness::MIN, Brightness::MAX]),
+            BrightnessGrid::saturating_load(2,2, &[255u8, 23, 0, 42]));
     }
 }
