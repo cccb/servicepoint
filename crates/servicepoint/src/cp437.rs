@@ -141,6 +141,12 @@ mod feature_cp437 {
         }
     }
 
+    impl From<CharGrid> for Cp437Grid {
+        fn from(value: CharGrid) -> Self {
+            Cp437Grid::from(&value)
+        }
+    }
+
     impl From<&str> for CharGrid {
         fn from(value: &str) -> Self {
             let value = value.replace("\r\n", "\n");
@@ -163,6 +169,12 @@ mod feature_cp437 {
             }
 
             grid
+        }
+    }
+
+    impl From<String> for CharGrid {
+        fn from(value: String) -> Self {
+            CharGrid::from(&value)
         }
     }
 

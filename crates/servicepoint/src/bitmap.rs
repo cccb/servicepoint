@@ -175,6 +175,12 @@ impl From<Bitmap> for Vec<u8> {
     }
 }
 
+impl From<Bitmap> for BitVec {
+    fn from(value: Bitmap) -> Self {
+        value.bit_vec
+    }
+}
+
 pub struct IterRows<'t> {
     bitmap: &'t Bitmap,
     row: usize,

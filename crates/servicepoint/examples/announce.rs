@@ -42,10 +42,10 @@ fn main() {
     }
 
     let text = cli.text.join("\n");
-    let grid = CharGrid::from(&*text);
-    let cp437_grid = Cp437Grid::from(&grid);
+    let grid = CharGrid::from(text);
+    let grid = Cp437Grid::from(grid);
 
     connection
-        .send(Command::Cp437Data(Origin::ZERO, cp437_grid))
+        .send(Command::Cp437Data(Origin::ZERO, grid))
         .expect("sending text failed");
 }
