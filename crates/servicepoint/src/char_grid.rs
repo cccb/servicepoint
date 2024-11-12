@@ -1,3 +1,4 @@
+use crate::primitive_grid::SeriesError;
 use crate::PrimitiveGrid;
 
 /// A grid containing UTF-8 characters.
@@ -20,15 +21,23 @@ impl CharGrid {
 
     /// Overwrites a row in the grid with a str.
     ///
-    /// Returns [None] if y is out of bounds or `row` is not of the correct size.
-    pub fn set_row_str(&mut self, y: usize, value: &str) -> Option<()> {
+    /// Returns [SeriesError] if y is out of bounds or `row` is not of the correct size.
+    pub fn set_row_str(
+        &mut self,
+        y: usize,
+        value: &str,
+    ) -> Result<(), SeriesError> {
         self.set_row(y, value.chars().collect::<Vec<_>>().as_ref())
     }
 
     /// Overwrites a column in the grid with a str.
     ///
-    /// Returns [None] if y is out of bounds or `row` is not of the correct size.
-    pub fn set_col_str(&mut self, x: usize, value: &str) -> Option<()> {
+    /// Returns [SeriesError] if y is out of bounds or `row` is not of the correct size.
+    pub fn set_col_str(
+        &mut self,
+        x: usize,
+        value: &str,
+    ) -> Result<(), SeriesError> {
         self.set_col(x, value.chars().collect::<Vec<_>>().as_ref())
     }
 }
@@ -41,7 +50,7 @@ mod test {
         let mut grid = CharGrid::new(2, 3);
         assert_eq!(grid.get_col_str(2), None);
         assert_eq!(grid.get_col_str(1), Some(String::from("\0\0\0")));
-        assert_eq!(grid.set_col_str(1, "abc"), Some(()));
+        assert_eq!(grid.set_col_str(1, "abc"), Ok(()));
         assert_eq!(grid.get_col_str(1), Some(String::from("abc")));
     }
 
@@ -50,8 +59,14 @@ mod test {
         let mut grid = CharGrid::new(2, 3);
         assert_eq!(grid.get_row_str(3), None);
         assert_eq!(grid.get_row_str(1), Some(String::from("\0\0")));
-        assert_eq!(grid.set_row_str(1, "abc"), None);
-        assert_eq!(grid.set_row_str(1, "ab"), Some(()));
+        assert_eq!(
+            grid.set_row_str(1, "abc"),
+            Err(SeriesError::InvalidLength {
+                expected: 2,
+                actual: 3
+            })
+        );
+        assert_eq!(grid.set_row_str(1, "ab"), Ok(()));
         assert_eq!(grid.get_row_str(1), Some(String::from("ab")));
     }
 }

@@ -49,7 +49,7 @@ pub use crate::cp437::Cp437Grid;
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
-pub use crate::primitive_grid::PrimitiveGrid;
+pub use crate::primitive_grid::{PrimitiveGrid, SeriesError};
 
 /// An alias for the specific type of [bitvec::prelude::BitVec] used.
 pub type BitVec = bitvec::prelude::BitVec<u8, bitvec::prelude::Msb0>;
