@@ -552,9 +552,9 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get() != 1334:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col() != 20197:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col() != 64158:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row() != 16466:
+    if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row() != 39411:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height() != 13068:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -2228,10 +2228,11 @@ class CharGrid:
 
 
 
-    def get_col(self, x: "int") -> "typing.Optional[str]":
+    def get_col(self, x: "int") -> "str":
         
-        return _UniffiConverterOptionalString.lift(
-            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col,self._pointer,
+        return _UniffiConverterString.lift(
+            _rust_call_with_error(
+    _UniffiConverterTypeCharGridError,_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col,self._pointer,
         _UniffiConverterUInt64.lower(x))
         )
 
@@ -2240,10 +2241,11 @@ class CharGrid:
 
 
 
-    def get_row(self, y: "int") -> "typing.Optional[str]":
+    def get_row(self, y: "int") -> "str":
         
-        return _UniffiConverterOptionalString.lift(
-            _rust_call(_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row,self._pointer,
+        return _UniffiConverterString.lift(
+            _rust_call_with_error(
+    _UniffiConverterTypeCharGridError,_UniffiLib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row,self._pointer,
         _UniffiConverterUInt64.lower(y))
         )
 
@@ -2948,28 +2950,6 @@ class _UniffiConverterTypeServicePointError(_UniffiConverterRustBuffer):
         if isinstance(value, ServicePointError.InvalidBrightness):
             buf.write_i32(2)
             _UniffiConverterUInt8.write(value.value, buf)
-
-
-
-class _UniffiConverterOptionalString(_UniffiConverterRustBuffer):
-    @classmethod
-    def write(cls, value, buf):
-        if value is None:
-            buf.write_u8(0)
-            return
-
-        buf.write_u8(1)
-        _UniffiConverterString.write(value, buf)
-
-    @classmethod
-    def read(cls, buf):
-        flag = buf.read_u8()
-        if flag == 0:
-            return None
-        elif flag == 1:
-            return _UniffiConverterString.read(buf)
-        else:
-            raise InternalError("Unexpected flag byte for optional type")
 
 __all__ = [
     "InternalError",

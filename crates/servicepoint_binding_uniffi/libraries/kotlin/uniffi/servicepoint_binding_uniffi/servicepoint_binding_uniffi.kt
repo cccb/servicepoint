@@ -888,10 +888,10 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get() != 1334.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col() != 20197.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col() != 64158.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row() != 16466.toShort()) {
+    if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row() != 39411.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height() != 13068.toShort()) {
@@ -1789,9 +1789,9 @@ public interface CharGridInterface {
     fun `asString`(): String
     fun `equals`(`other`: CharGrid): Boolean@Throws(CharGridException::class)
     fun `fill`(`value`: String)
-    fun `get`(`x`: ULong, `y`: ULong): String
-    fun `getCol`(`x`: ULong): String?
-    fun `getRow`(`y`: ULong): String?
+    fun `get`(`x`: ULong, `y`: ULong): String@Throws(CharGridException::class)
+    fun `getCol`(`x`: ULong): String@Throws(CharGridException::class)
+    fun `getRow`(`y`: ULong): String
     fun `height`(): ULong@Throws(CharGridException::class)
     fun `set`(`x`: ULong, `y`: ULong, `value`: String)@Throws(CharGridException::class)
     fun `setCol`(`x`: ULong, `col`: String)@Throws(CharGridException::class)
@@ -1868,26 +1868,28 @@ class CharGrid(
             FfiConverterString.lift(it)
         }
     
-    override fun `getCol`(`x`: ULong): String? =
+    
+    @Throws(CharGridException::class)override fun `getCol`(`x`: ULong): String =
         callWithPointer {
-    rustCall() { _status ->
+    rustCallWithError(CharGridException) { _status ->
     _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col(it,
         FfiConverterULong.lower(`x`),
         _status)
 }
         }.let {
-            FfiConverterOptionalString.lift(it)
+            FfiConverterString.lift(it)
         }
     
-    override fun `getRow`(`y`: ULong): String? =
+    
+    @Throws(CharGridException::class)override fun `getRow`(`y`: ULong): String =
         callWithPointer {
-    rustCall() { _status ->
+    rustCallWithError(CharGridException) { _status ->
     _UniFFILib.INSTANCE.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row(it,
         FfiConverterULong.lower(`y`),
         _status)
 }
         }.let {
-            FfiConverterOptionalString.lift(it)
+            FfiConverterString.lift(it)
         }
     
     override fun `height`(): ULong =
@@ -2569,34 +2571,5 @@ public object FfiConverterTypeServicePointError : FfiConverterRustBuffer<Service
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
     }
 
-}
-
-
-
-
-public object FfiConverterOptionalString: FfiConverterRustBuffer<String?> {
-    override fun read(buf: ByteBuffer): String? {
-        if (buf.get().toInt() == 0) {
-            return null
-        }
-        return FfiConverterString.read(buf)
-    }
-
-    override fun allocationSize(value: String?): Int {
-        if (value == null) {
-            return 1
-        } else {
-            return 1 + FfiConverterString.allocationSize(value)
-        }
-    }
-
-    override fun write(value: String?, buf: ByteBuffer) {
-        if (value == null) {
-            buf.put(0)
-        } else {
-            buf.put(1)
-            FfiConverterString.write(value, buf)
-        }
-    }
 }
 

@@ -101,20 +101,22 @@ impl CharGrid {
             .map_err(CharGridError::from)
     }
 
-    pub fn get_row(&self, y: u64) -> Option<String> {
+    pub fn get_row(&self, y: u64) -> Result<String, CharGridError> {
         self.actual
             .read()
             .unwrap()
             .get_row(y as usize)
             .map(move |vec| String::from_iter(vec))
+            .ok_or(CharGridError::OutOfBounds {index: y, size: self.height()})
     }
 
-    pub fn get_col(&self, x: u64) -> Option<String> {
+    pub fn get_col(&self, x: u64) -> Result<String, CharGridError> {
         self.actual
             .read()
             .unwrap()
             .get_col(x as usize)
             .map(move |vec| String::from_iter(vec))
+            .ok_or(CharGridError::OutOfBounds {index: x, size: self.width()})
     }
 
     pub fn to_cp437(&self) -> Arc<Cp437Grid> {

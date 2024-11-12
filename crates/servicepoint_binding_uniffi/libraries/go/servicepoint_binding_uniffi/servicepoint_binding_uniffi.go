@@ -575,7 +575,7 @@ func uniffiCheckChecksums() {
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col(uniffiStatus)
 	})
-	if checksum != 20197 {
+	if checksum != 64158 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col: UniFFI API checksum mismatch")
 	}
@@ -584,7 +584,7 @@ func uniffiCheckChecksums() {
 	checksum := rustCall(func(uniffiStatus *C.RustCallStatus) C.uint16_t {
 		return C.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row(uniffiStatus)
 	})
-	if checksum != 16466 {
+	if checksum != 39411 {
 		// If this happens try cleaning and rebuilding your project
 		panic("servicepoint_binding_uniffi: uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row: UniFFI API checksum mismatch")
 	}
@@ -1730,23 +1730,35 @@ func (_self *CharGrid)Get(x uint64, y uint64) string {
 }
 
 
-func (_self *CharGrid)GetCol(x uint64) *string {
+func (_self *CharGrid)GetCol(x uint64) (string, error) {
 	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
 	defer _self.ffiObject.decrementPointer()
-	return FfiConverterOptionalStringINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+	_uniffiRV, _uniffiErr := rustCallWithError(FfiConverterTypeCharGridError{},func(_uniffiStatus *C.RustCallStatus) RustBufferI {
 		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col(
 		_pointer,FfiConverterUint64INSTANCE.Lower(x), _uniffiStatus)
-	}))
+	})
+		if _uniffiErr != nil {
+			var _uniffiDefaultValue string
+			return _uniffiDefaultValue, _uniffiErr
+		} else {
+			return FfiConverterStringINSTANCE.Lift(_uniffiRV), _uniffiErr
+		}
 }
 
 
-func (_self *CharGrid)GetRow(y uint64) *string {
+func (_self *CharGrid)GetRow(y uint64) (string, error) {
 	_pointer := _self.ffiObject.incrementPointer("*CharGrid")
 	defer _self.ffiObject.decrementPointer()
-	return FfiConverterOptionalStringINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+	_uniffiRV, _uniffiErr := rustCallWithError(FfiConverterTypeCharGridError{},func(_uniffiStatus *C.RustCallStatus) RustBufferI {
 		return C.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row(
 		_pointer,FfiConverterUint64INSTANCE.Lower(y), _uniffiStatus)
-	}))
+	})
+		if _uniffiErr != nil {
+			var _uniffiDefaultValue string
+			return _uniffiDefaultValue, _uniffiErr
+		} else {
+			return FfiConverterStringINSTANCE.Lift(_uniffiRV), _uniffiErr
+		}
 }
 
 
@@ -2542,45 +2554,6 @@ func (c FfiConverterTypeServicePointError) Write(writer io.Writer, value *Servic
 		default:
 			_ = variantValue
 			panic(fmt.Sprintf("invalid error value `%v` in FfiConverterTypeServicePointError.Write", value))
-	}
-}
-
-
-
-type FfiConverterOptionalString struct{}
-
-var FfiConverterOptionalStringINSTANCE = FfiConverterOptionalString{}
-
-func (c FfiConverterOptionalString) Lift(rb RustBufferI) *string {
-	return LiftFromRustBuffer[*string](c, rb)
-}
-
-func (_ FfiConverterOptionalString) Read(reader io.Reader) *string {
-	if readInt8(reader) == 0 {
-		return nil
-	}
-	temp := FfiConverterStringINSTANCE.Read(reader)
-	return &temp
-}
-
-func (c FfiConverterOptionalString) Lower(value *string) RustBuffer {
-	return LowerIntoRustBuffer[*string](c, value)
-}
-
-func (_ FfiConverterOptionalString) Write(writer io.Writer, value *string) {
-	if value == nil {
-		writeInt8(writer, 0)
-	} else {
-		writeInt8(writer, 1)
-		FfiConverterStringINSTANCE.Write(writer, *value)
-	}
-}
-
-type FfiDestroyerOptionalString struct {}
-
-func (_ FfiDestroyerOptionalString) Destroy(value *string) {
-	if value != nil {
-		FfiDestroyerString{}.Destroy(*value)
 	}
 }
 

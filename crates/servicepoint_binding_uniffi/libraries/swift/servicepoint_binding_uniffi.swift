@@ -928,8 +928,8 @@ public protocol CharGridProtocol {
     func equals(other: CharGrid)   -> Bool
     func fill(value: String)  throws
     func get(x: UInt64, y: UInt64)   -> String
-    func getCol(x: UInt64)   -> String?
-    func getRow(y: UInt64)   -> String?
+    func getCol(x: UInt64)  throws -> String
+    func getRow(y: UInt64)  throws -> String
     func height()   -> UInt64
     func set(x: UInt64, y: UInt64, value: String)  throws
     func setCol(x: UInt64, col: String)  throws
@@ -1028,11 +1028,10 @@ public class CharGrid: CharGridProtocol {
         )
     }
 
-    public func getCol(x: UInt64)  -> String? {
-        return try!  FfiConverterOptionString.lift(
-            try! 
-    rustCall() {
-    
+    public func getCol(x: UInt64) throws -> String {
+        return try  FfiConverterString.lift(
+            try 
+    rustCallWithError(FfiConverterTypeCharGridError.lift) {
     uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col(self.pointer, 
         FfiConverterUInt64.lower(x),$0
     )
@@ -1040,11 +1039,10 @@ public class CharGrid: CharGridProtocol {
         )
     }
 
-    public func getRow(y: UInt64)  -> String? {
-        return try!  FfiConverterOptionString.lift(
-            try! 
-    rustCall() {
-    
+    public func getRow(y: UInt64) throws -> String {
+        return try  FfiConverterString.lift(
+            try 
+    rustCallWithError(FfiConverterTypeCharGridError.lift) {
     uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row(self.pointer, 
         FfiConverterUInt64.lower(y),$0
     )
@@ -1835,27 +1833,6 @@ extension ServicePointError: Equatable, Hashable {}
 
 extension ServicePointError: Error { }
 
-fileprivate struct FfiConverterOptionString: FfiConverterRustBuffer {
-    typealias SwiftType = String?
-
-    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
-        guard let value = value else {
-            writeInt(&buf, Int8(0))
-            return
-        }
-        writeInt(&buf, Int8(1))
-        FfiConverterString.write(value, into: &buf)
-    }
-
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
-        switch try readInt(&buf) as Int8 {
-        case 0: return nil
-        case 1: return try FfiConverterString.read(from: &buf)
-        default: throw UniffiInternalError.unexpectedOptionalTag
-        }
-    }
-}
-
 private enum InitializationResult {
     case ok
     case contractVersionMismatch
@@ -1943,10 +1920,10 @@ private var initializationResult: InitializationResult {
     if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get() != 1334) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col() != 20197) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col() != 64158) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row() != 16466) {
+    if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row() != 39411) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_height() != 13068) {

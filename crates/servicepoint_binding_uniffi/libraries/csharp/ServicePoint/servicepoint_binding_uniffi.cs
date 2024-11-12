@@ -1427,14 +1427,14 @@ static class _UniFFILib {
         }
         {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col();
-            if (checksum != 20197) {
-                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col` checksum `20197`, library returned `{checksum}`");
+            if (checksum != 64158) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_col` checksum `64158`, library returned `{checksum}`");
             }
         }
         {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row();
-            if (checksum != 16466) {
-                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row` checksum `16466`, library returned `{checksum}`");
+            if (checksum != 39411) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_method_chargrid_get_row` checksum `39411`, library returned `{checksum}`");
             }
         }
         {
@@ -2362,9 +2362,11 @@ public interface ICharGrid {
     
     String Get(ulong @x, ulong @y);
     
-    String? GetCol(ulong @x);
+    /// <exception cref="CharGridException"></exception>
+    String GetCol(ulong @x);
     
-    String? GetRow(ulong @y);
+    /// <exception cref="CharGridException"></exception>
+    String GetRow(ulong @y);
     
     ulong Height();
     
@@ -2433,16 +2435,18 @@ public class CharGrid: FFIObject<CharGridSafeHandle>, ICharGrid {
 ));
     }
     
-    public String? GetCol(ulong @x) {
-        return FfiConverterOptionalString.INSTANCE.Lift(
-    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    /// <exception cref="CharGridException"></exception>
+    public String GetCol(ulong @x) {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeCharGridException.INSTANCE, (ref RustCallStatus _status) =>
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@x), ref _status)
 ));
     }
     
-    public String? GetRow(ulong @y) {
-        return FfiConverterOptionalString.INSTANCE.Lift(
-    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    /// <exception cref="CharGridException"></exception>
+    public String GetRow(ulong @y) {
+        return FfiConverterString.INSTANCE.Lift(
+    _UniffiHelpers.RustCallWithError(FfiConverterTypeCharGridException.INSTANCE, (ref RustCallStatus _status) =>
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row(this.GetHandle(), FfiConverterUInt64.INSTANCE.Lower(@y), ref _status)
 ));
     }
@@ -3124,37 +3128,6 @@ class FfiConverterTypeServicePointException : FfiConverterRustBuffer<ServicePoin
                 break;
             default:
                 throw new InternalException(String.Format("invalid error value '{0}' in FfiConverterTypeServicePointException.Write()", value));
-        }
-    }
-}
-
-
-
-
-class FfiConverterOptionalString: FfiConverterRustBuffer<String?> {
-    public static FfiConverterOptionalString INSTANCE = new FfiConverterOptionalString();
-
-    public override String? Read(BigEndianStream stream) {
-        if (stream.ReadByte() == 0) {
-            return null;
-        }
-        return FfiConverterString.INSTANCE.Read(stream);
-    }
-
-    public override int AllocationSize(String? value) {
-        if (value == null) {
-            return 1;
-        } else {
-            return 1 + FfiConverterString.INSTANCE.AllocationSize((String)value);
-        }
-    }
-
-    public override void Write(String? value, BigEndianStream stream) {
-        if (value == null) {
-            stream.WriteByte(0);
-        } else {
-            stream.WriteByte(1);
-            FfiConverterString.INSTANCE.Write((String)value, stream);
         }
     }
 }

@@ -146,21 +146,6 @@ end
 
   
 
-  # The Optional<T> type for string.
-
-  def self.alloc_from_Optionalstring(v)
-    RustBuffer.allocWithBuilder do |builder|
-      builder.write_Optionalstring(v)
-      return builder.finalize()
-    end
-  end
-
-  def consumeIntoOptionalstring
-    consumeWithStream do |stream|
-      return stream.readOptionalstring
-    end
-  end
-
   
 end
 
@@ -372,20 +357,6 @@ class RustBufferStream
   end
   
 
-  # The Optional<T> type for string.
-
-  def readOptionalstring
-    flag = unpack_from 1, 'c'
-
-    if flag == 0
-      return nil
-    elsif flag == 1
-      return readString
-    else
-      raise InternalError, 'Unexpected flag byte for Optionalstring'
-    end
-  end
-
   
 
   def unpack_from(size, format)
@@ -517,17 +488,6 @@ class RustBufferBuilder
    
 
   
-
-  # The Optional<T> type for string.
-
-  def write_Optionalstring(v)
-    if v.nil?
-      pack_into(1, 'c', 0)
-    else
-      pack_into(1, 'c', 1)
-      self.write_String(v)
-    end
-  end
 
   
 
@@ -1594,13 +1554,13 @@ end
   end
   def get_col(x)
         x = ServicepointBindingUniffi::uniffi_in_range(x, "u64", 0, 2**64)
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col,@pointer,x)
-    return result.consumeIntoOptionalstring
+    result = ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_col,@pointer,x)
+    return result.consumeIntoString
   end
   def get_row(y)
         y = ServicepointBindingUniffi::uniffi_in_range(y, "u64", 0, 2**64)
-    result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row,@pointer,y)
-    return result.consumeIntoOptionalstring
+    result = ServicepointBindingUniffi.rust_call_with_error(CharGridError,:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_get_row,@pointer,y)
+    return result.consumeIntoString
   end
   def height()
     result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_method_chargrid_height,@pointer,)
