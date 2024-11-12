@@ -1,5 +1,4 @@
 use std::fmt::Debug;
-
 use crate::packet::Packet;
 
 /// A connection to the display.
@@ -35,20 +34,13 @@ pub enum Connection {
     /// [servicepoint-websocket-relay]: https://github.com/kaesaecracker/servicepoint-websocket-relay
     #[cfg(feature = "protocol_websocket")]
     WebSocket(
-        tungstenite::WebSocket<
+        std::sync::Arc<std::sync::Mutex<tungstenite::WebSocket<
             tungstenite::stream::MaybeTlsStream<std::net::TcpStream>,
-        >,
+        >>>,
     ),
 
     /// A fake connection for testing that does not actually send anything.
-    ///
-    /// This variant allows immutable send.
     Fake,
-
-    /// A fake connection for testing that does not actually send anything.
-    ///
-    /// This variant does not allow immutable send.
-    FakeMutableSend,
 }
 
 #[derive(Debug)]
@@ -96,7 +88,7 @@ impl Connection {
     /// let uri = "ws://localhost:8080".parse().unwrap();
     /// let mut connection = Connection::open_websocket(uri)
     ///     .expect("could not connect");
-    /// connection.send_mut(Command::Clear)
+    /// connection.send(Command::Clear)
     ///     .expect("send failed");
     /// ```
     #[cfg(feature = "protocol_websocket")]
@@ -111,24 +103,16 @@ impl Connection {
 
         let request = ClientRequestBuilder::new(uri).into_client_request()?;
         let (sock, _) = connect(request)?;
-        Ok(Self::WebSocket(sock))
+        Ok(Self::WebSocket(std::sync::Arc::new(std::sync::Mutex::new(sock))))
     }
 
     /// Send something packet-like to the display. Usually this is in the form of a Command.
-    ///
-    /// This variant can only be used for connections that support immutable send, e.g. [Connection::Udp].
-    ///
-    /// If you want to be able to switch the protocol, you should use [Self::send_mut] instead.
     ///
     /// # Arguments
     ///
     /// - `packet`: the packet-like to send
     ///
     /// returns: true if packet was sent, otherwise false
-    ///
-    /// # Panics
-    ///
-    /// If the connection does not support immutable send, e.g. for [Connection::WebSocket].
     ///
     /// # Examples
     ///
@@ -150,6 +134,13 @@ impl Connection {
                     .map_err(SendError::IoError)
                     .map(move |_| ()) // ignore Ok value
             }
+            #[cfg(feature = "protocol_websocket")]
+            Connection::WebSocket(socket) => {
+                let mut socket = socket.lock().unwrap();
+                socket
+                    .send(tungstenite::Message::Binary(data))
+                    .map_err(SendError::WebsocketError)
+            }
             Connection::Fake => {
                 let _ = data;
                 Ok(())
@@ -160,58 +151,13 @@ impl Connection {
             }
         }
     }
-
-    /// Send something packet-like to the display. Usually this is in the form of a Command.
-    ///
-    /// This variant has to be used for connections that do not support immutable send, e.g. [Connection::WebSocket].
-    ///
-    /// If you want to be able to switch the protocol, you should use this variant.
-    ///
-    /// # Arguments
-    ///
-    /// - `packet`: the packet-like to send
-    ///
-    /// returns: true if packet was sent, otherwise false
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    ///  let mut connection = servicepoint::Connection::FakeMutableSend;
-    ///  // turn off all pixels on display
-    ///  connection.send_mut(servicepoint::Command::Clear)
-    ///      .expect("send failed");
-    /// ```
-    pub fn send_mut(
-        &mut self,
-        packet: impl Into<Packet>,
-    ) -> Result<(), SendError> {
-        match self {
-            #[cfg(feature = "protocol_websocket")]
-            Connection::WebSocket(socket) => {
-                let packet = packet.into();
-                log::debug!("sending {packet:?}");
-                let data: Vec<u8> = packet.into();
-                socket
-                    .send(tungstenite::Message::Binary(data))
-                    .map_err(SendError::WebsocketError)
-            }
-            Connection::FakeMutableSend => {
-                let packet = packet.into();
-                log::debug!("sending {packet:?}");
-                let data: Vec<u8> = packet.into();
-                let _ = data;
-                Ok(())
-            }
-            _ => self.send(packet),
-        }
-    }
 }
 
 impl Drop for Connection {
     fn drop(&mut self) {
         #[cfg(feature = "protocol_websocket")]
         if let Connection::WebSocket(sock) = self {
-            _ = sock.close(None);
+            _ = sock.try_lock().map(move |mut sock| sock.close(None).unwrap() );
         }
     }
 }
@@ -226,20 +172,5 @@ mod tests {
         let data: &[u8] = &[0u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         let packet = Packet::try_from(data).unwrap();
         Connection::Fake.send(packet).unwrap()
-    }
-
-    #[test]
-    fn send_fake_mutable() {
-        let data: &[u8] = &[0u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let packet = Packet::try_from(data).unwrap();
-        Connection::FakeMutableSend.send_mut(packet).unwrap()
-    }
-
-    #[test]
-    #[should_panic]
-    fn send_fake_mutable_panic() {
-        let data: &[u8] = &[0u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let packet = Packet::try_from(data).unwrap();
-        Connection::FakeMutableSend.send(packet).unwrap()
     }
 }

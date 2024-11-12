@@ -5,20 +5,17 @@ use servicepoint::{
 };
 
 fn main() {
-    // make connection mut
-    let mut connection =
+    let connection =
         Connection::open_websocket("ws://localhost:8080".parse().unwrap())
             .unwrap();
 
-    // use send_mut instead of send
-    connection.send_mut(Command::Clear).unwrap();
+    connection.send(Command::Clear).unwrap();
 
     let mut pixels = Bitmap::max_sized();
     pixels.fill(true);
 
-    // use send_mut instead of send
     connection
-        .send_mut(Command::BitmapLinearWin(
+        .send(Command::BitmapLinearWin(
             Origin::ZERO,
             pixels,
             CompressionCode::Lzma,
