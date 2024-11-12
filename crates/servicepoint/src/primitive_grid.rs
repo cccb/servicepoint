@@ -13,12 +13,25 @@ pub struct PrimitiveGrid<T: PrimitiveGridType> {
     data: Vec<T>,
 }
 
+/// Error type for methods that change a whole column or row at once
 #[derive(thiserror::Error, Debug, PartialEq)]
 pub enum SeriesError {
     #[error("The index {index} was out of bounds for size {size}")]
-    OutOfBounds { index: usize, size: usize },
+    /// The index {index} was out of bounds for size {size}
+    OutOfBounds {
+        /// the index where access was tried
+        index: usize,
+        /// the size in that direction
+        size: usize,
+    },
     #[error("The provided series was expected to have a length of {expected}, but was {actual}")]
-    InvalidLength { actual: usize, expected: usize },
+    /// The provided series was expected to have a length of {expected}, but was {actual}
+    InvalidLength {
+        /// actual size of the provided series
+        actual: usize,
+        /// expected size
+        expected: usize,
+    },
 }
 
 impl<T: PrimitiveGridType> PrimitiveGrid<T> {
@@ -189,7 +202,10 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         {
             Ok(())
         } else {
-            Err(SeriesError::OutOfBounds {index: x, size: width})
+            Err(SeriesError::OutOfBounds {
+                index: x,
+                size: width,
+            })
         }
     }
 
