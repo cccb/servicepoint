@@ -13,10 +13,10 @@ repository = "https://github.com/cccb/servicepoint"
 crate-type = ["cdylib"]
 
 [build-dependencies]
-uniffi = { version = "0.25.0", features = ["build"] }
+uniffi = { version = "0.25.3", features = ["build"] }
 
 [dependencies]
-uniffi = { version = "0.25.0" }
+uniffi = { version = "0.25.3" }
 thiserror.workspace = true
 
 [dependencies.servicepoint]
