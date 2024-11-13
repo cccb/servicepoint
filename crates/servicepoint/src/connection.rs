@@ -153,10 +153,6 @@ impl Connection {
                 let _ = data;
                 Ok(())
             }
-            #[allow(unreachable_patterns)] // depends on features
-            _ => {
-                panic!("Connection {:?} does not support immutable send", self)
-            }
         }
     }
 }
