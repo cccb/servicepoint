@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use clap::Parser;
 
-use servicepoint::{bitvec::prelude::BitVec, *};
+use servicepoint::*;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -33,12 +33,8 @@ fn main() {
             enabled_pixels.set(x_offset % PIXEL_WIDTH, y, false);
         }
 
-        // this works because the pixel grid has max size
-        let pixel_data: Vec<u8> = enabled_pixels.clone().into();
-        let bit_vec = BitVec::from_vec(pixel_data);
-
         connection
-            .send(Command::BitmapLinearAnd(0, bit_vec, CompressionCode::Lzma))
+            .send(Command::BitmapLinearWin(Origin::ZERO, enabled_pixels.clone(), CompressionCode::Lzma))
             .expect("could not send command to display");
         thread::sleep(sleep_duration);
     }

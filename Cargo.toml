@@ -8,7 +8,10 @@ members = [
 ]
 
 [workspace.package]
-version = "0.10.0"
+version = "0.11.0"
 
 [workspace.lints.rust]
 missing-docs = "warn"
+
+[workspace.dependencies]
+thiserror = "1.0.69"

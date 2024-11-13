@@ -38,23 +38,25 @@
 use std::time::Duration;
 
 pub use bitvec;
-use bitvec::prelude::{BitVec, Msb0};
 
 pub use crate::bitmap::Bitmap;
 pub use crate::brightness::{Brightness, BrightnessGrid};
+pub use crate::char_grid::CharGrid;
 pub use crate::command::{Command, Offset};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
-pub use crate::cp437::{CharGrid, Cp437Grid};
+pub use crate::cp437::Cp437Grid;
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
-pub use crate::primitive_grid::PrimitiveGrid;
+pub use crate::primitive_grid::{PrimitiveGrid, SeriesError};
 
-type SpBitVec = BitVec<u8, Msb0>;
+/// An alias for the specific type of [bitvec::prelude::BitVec] used.
+pub type BitVec = bitvec::prelude::BitVec<u8, bitvec::prelude::Msb0>;
 
 mod bitmap;
 mod brightness;
+mod char_grid;
 mod command;
 mod command_code;
 mod compression;

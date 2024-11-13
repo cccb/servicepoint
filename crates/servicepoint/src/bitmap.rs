@@ -2,14 +2,14 @@ use bitvec::order::Msb0;
 use bitvec::prelude::BitSlice;
 use bitvec::slice::IterMut;
 
-use crate::{BitVec, DataRef, Grid, SpBitVec, PIXEL_HEIGHT, PIXEL_WIDTH};
+use crate::{BitVec, DataRef, Grid, PIXEL_HEIGHT, PIXEL_WIDTH};
 
 /// A grid of pixels stored in packed bytes.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Bitmap {
     width: usize,
     height: usize,
-    bit_vec: SpBitVec,
+    bit_vec: BitVec,
 }
 
 impl Bitmap {
@@ -172,6 +172,12 @@ impl From<Bitmap> for Vec<u8> {
     /// Turns a [Bitmap] into the underlying [`Vec<u8>`].
     fn from(value: Bitmap) -> Self {
         value.bit_vec.into()
+    }
+}
+
+impl From<Bitmap> for BitVec {
+    fn from(value: Bitmap) -> Self {
+        value.bit_vec
     }
 }
 

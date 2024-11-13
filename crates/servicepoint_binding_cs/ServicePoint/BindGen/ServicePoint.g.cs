@@ -108,6 +108,8 @@ namespace ServicePoint.BindGen
         ///  - `bitmap` points to a valid [SPBitmap]
         ///  - `bitmap` is not used concurrently or after bitmap call
         ///  - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
+        ///
+        ///  [SPCommand]: [crate::SPCommand]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitmap_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void sp_bitmap_free(Bitmap* bitmap);
@@ -321,6 +323,8 @@ namespace ServicePoint.BindGen
         ///  - `bit_vec` points to a valid [SPBitVec]
         ///  - `bit_vec` is not used concurrently or after this call
         ///  - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
+        ///
+        ///  [SPCommand]: [crate::SPCommand]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_bitvec_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void sp_bitvec_free(BitVec* bit_vec);
@@ -540,6 +544,8 @@ namespace ServicePoint.BindGen
         ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
         ///  - `brightness_grid` is not used concurrently or after this call
         ///  - `brightness_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+        ///
+        ///  [SPCommand]: [crate::SPCommand]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void sp_brightness_grid_free(BrightnessGrid* brightness_grid);
@@ -590,7 +596,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The caller has to make sure that:
         ///
-        ///  - `brightness_grid` points to a valid [SPBitVec]
+        ///  - `brightness_grid` points to a valid [SPBrightnessGrid]
         ///  - `brightness_grid` is not written to or read from concurrently
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_brightness_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -737,7 +743,7 @@ namespace ServicePoint.BindGen
         ///
         ///  Does not affect brightness.
         ///
-        ///  Returns: a new [Command::Clear] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::Clear] instance. Will never return NULL.
         ///
         ///  # Examples
         ///
@@ -760,7 +766,7 @@ namespace ServicePoint.BindGen
         ///
         ///  Please do not send this in your normal program flow.
         ///
-        ///  Returns: a new [Command::HardReset] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::HardReset] instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -775,7 +781,7 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  A yet-to-be-tested command.
         ///
-        ///  Returns: a new `Command::FadeOut` instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::FadeOut] instance. Will never return NULL.
         ///
         ///  # Safety
         ///
@@ -790,7 +796,7 @@ namespace ServicePoint.BindGen
         /// <summary>
         ///  Set the brightness of all tiles to the same value.
         ///
-        ///  Returns: a new [Command::Brightness] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::Brightness] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -811,7 +817,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The passed [SPBrightnessGrid] gets consumed.
         ///
-        ///  Returns: a new [Command::CharBrightness] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::CharBrightness] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -839,7 +845,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The passed [SPBitVec] gets consumed.
         ///
-        ///  Returns: a new [Command::BitmapLinear] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::BitmapLinear] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -869,7 +875,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The passed [SPBitVec] gets consumed.
         ///
-        ///  Returns: a new [Command::BitmapLinearAnd] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::BitmapLinearAnd] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -899,7 +905,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The passed [SPBitVec] gets consumed.
         ///
-        ///  Returns: a new [Command::BitmapLinearOr] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::BitmapLinearOr] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -929,7 +935,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The passed [SPBitVec] gets consumed.
         ///
-        ///  Returns: a new [Command::BitmapLinearXor] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::BitmapLinearXor] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -954,7 +960,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The passed [SPCp437Grid] gets consumed.
         ///
-        ///  Returns: a new [Command::Cp437Data] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::Cp437Data] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -977,7 +983,7 @@ namespace ServicePoint.BindGen
         ///
         ///  The passed [SPBitmap] gets consumed.
         ///
-        ///  Returns: a new [Command::BitmapLinearWin] instance. Will never return NULL.
+        ///  Returns: a new [servicepoint::Command::BitmapLinearWin] instance. Will never return NULL.
         ///
         ///  # Panics
         ///
@@ -1178,6 +1184,8 @@ namespace ServicePoint.BindGen
         ///  - `cp437_grid` points to a valid [SPCp437Grid]
         ///  - `cp437_grid` is not used concurrently or after cp437_grid call
         ///  - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+        ///
+        ///  [SPCommand]: [crate::SPCommand]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_free", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void sp_cp437_grid_free(Cp437Grid* cp437_grid);
@@ -1227,6 +1235,8 @@ namespace ServicePoint.BindGen
         ///
         ///  - `cp437_grid` points to a valid [SPBitVec]
         ///  - `cp437_grid` is not written to or read from concurrently
+        ///
+        ///  [SPBitVec]: [crate::SPBitVec]
         /// </summary>
         [DllImport(__DllName, EntryPoint = "sp_cp437_grid_set", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void sp_cp437_grid_set(Cp437Grid* cp437_grid, nuint x, nuint y, byte value);

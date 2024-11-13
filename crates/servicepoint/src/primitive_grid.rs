@@ -13,6 +13,27 @@ pub struct PrimitiveGrid<T: PrimitiveGridType> {
     data: Vec<T>,
 }
 
+/// Error type for methods that change a whole column or row at once
+#[derive(thiserror::Error, Debug, PartialEq)]
+pub enum SeriesError {
+    #[error("The index {index} was out of bounds for size {size}")]
+    /// The index {index} was out of bounds for size {size}
+    OutOfBounds {
+        /// the index where access was tried
+        index: usize,
+        /// the size in that direction
+        size: usize,
+    },
+    #[error("The provided series was expected to have a length of {expected}, but was {actual}")]
+    /// The provided series was expected to have a length of {expected}, but was {actual}
+    InvalidLength {
+        /// actual size of the provided series
+        actual: usize,
+        /// expected size
+        expected: usize,
+    },
+}
+
 impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// Creates a new [PrimitiveGrid] with the specified dimensions.
     ///
@@ -126,6 +147,8 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// let grid: BrightnessGrid = grid.map(Brightness::saturating_from);
     /// let command = Command::CharBrightness(Origin::ZERO, grid);
     /// ```
+    /// [Brightness]: [crate::Brightness]
+    /// [Command]: [crate::Command]
     pub fn map<TConverted, F>(&self, f: F) -> PrimitiveGrid<TConverted>
     where
         TConverted: PrimitiveGridType,
@@ -137,6 +160,81 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
             .map(|elem| f(*elem))
             .collect::<Vec<_>>();
         PrimitiveGrid::load(self.width(), self.height(), &data)
+    }
+
+    /// Copies a row from the grid.
+    ///
+    /// Returns [None] if y is out of bounds.
+    pub fn get_row(&self, y: usize) -> Option<Vec<T>> {
+        self.data
+            .chunks_exact(self.width())
+            .nth(y)
+            .map(|row| row.to_vec())
+    }
+
+    /// Copies a column from the grid.
+    ///
+    /// Returns [None] if x is out of bounds.
+    pub fn get_col(&self, x: usize) -> Option<Vec<T>> {
+        self.data
+            .chunks_exact(self.width())
+            .map(|row| row.get(x).copied())
+            .collect()
+    }
+
+    /// Overwrites a column in the grid.
+    ///
+    /// Returns [Err] if x is out of bounds or `col` is not of the correct size.
+    pub fn set_col(&mut self, x: usize, col: &[T]) -> Result<(), SeriesError> {
+        if col.len() != self.height() {
+            return Err(SeriesError::InvalidLength {
+                expected: self.height(),
+                actual: col.len(),
+            });
+        }
+        let width = self.width();
+        if self
+            .data
+            .chunks_exact_mut(width)
+            .zip(col.iter())
+            .map(|(row, column_value)| {
+                row.get_mut(x).map(move |cell| *cell = *column_value)
+            })
+            .all(|cell| cell.is_some())
+        {
+            Ok(())
+        } else {
+            Err(SeriesError::OutOfBounds {
+                index: x,
+                size: width,
+            })
+        }
+    }
+
+    /// Overwrites a row in the grid.
+    ///
+    /// Returns [Err] if y is out of bounds or `row` is not of the correct size.
+    pub fn set_row(&mut self, y: usize, row: &[T]) -> Result<(), SeriesError> {
+        let width = self.width();
+        if row.len() != width {
+            return Err(SeriesError::InvalidLength {
+                expected: width,
+                actual: row.len(),
+            });
+        }
+
+        let chunk = match self.data.chunks_exact_mut(width).nth(y) {
+            Some(row) => row,
+            None => {
+                return Err(SeriesError::OutOfBounds {
+                    size: self.height(),
+                    index: y,
+                })
+            }
+        };
+
+        chunk.copy_from_slice(row);
+        Ok(())
     }
 }
 
@@ -225,7 +323,7 @@ impl<'t, T: PrimitiveGridType> Iterator for IterRows<'t, T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{DataRef, Grid, PrimitiveGrid};
+    use crate::{DataRef, Grid, PrimitiveGrid, SeriesError};
 
     #[test]
     fn fill() {
@@ -346,5 +444,47 @@ mod tests {
 
         assert_eq!(grid.get_optional(0, 0), Some(5));
         assert_eq!(grid.get_optional(0, 8), None);
+    }
+
+    #[test]
+    fn col() {
+        let mut grid = PrimitiveGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        assert_eq!(grid.get_col(0), Some(vec![0, 2, 4]));
+        assert_eq!(grid.get_col(1), Some(vec![1, 3, 5]));
+        assert_eq!(grid.get_col(2), None);
+        assert_eq!(grid.set_col(0, &[5, 7, 9]), Ok(()));
+        assert_eq!(
+            grid.set_col(2, &[5, 7, 9]),
+            Err(SeriesError::OutOfBounds { size: 2, index: 2 })
+        );
+        assert_eq!(
+            grid.set_col(0, &[5, 7]),
+            Err(SeriesError::InvalidLength {
+                expected: 3,
+                actual: 2
+            })
+        );
+        assert_eq!(grid.get_col(0), Some(vec![5, 7, 9]));
+    }
+
+    #[test]
+    fn row() {
+        let mut grid = PrimitiveGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        assert_eq!(grid.get_row(0), Some(vec![0, 1]));
+        assert_eq!(grid.get_row(2), Some(vec![4, 5]));
+        assert_eq!(grid.get_row(3), None);
+        assert_eq!(grid.set_row(0, &[5, 7]), Ok(()));
+        assert_eq!(grid.get_row(0), Some(vec![5, 7]));
+        assert_eq!(
+            grid.set_row(3, &[5, 7]),
+            Err(SeriesError::OutOfBounds { size: 3, index: 3 })
+        );
+        assert_eq!(
+            grid.set_row(2, &[5, 7, 3]),
+            Err(SeriesError::InvalidLength {
+                expected: 2,
+                actual: 3
+            })
+        );
     }
 }

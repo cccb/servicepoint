@@ -123,6 +123,8 @@ pub unsafe extern "C" fn sp_bitvec_clone(
 /// - `bit_vec` points to a valid [SPBitVec]
 /// - `bit_vec` is not used concurrently or after this call
 /// - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
+///
+/// [SPCommand]: [crate::SPCommand]
 #[no_mangle]
 pub unsafe extern "C" fn sp_bitvec_free(bit_vec: *mut SPBitVec) {
     assert!(!bit_vec.is_null());

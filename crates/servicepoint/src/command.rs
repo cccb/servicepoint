@@ -1,11 +1,9 @@
-use bitvec::prelude::BitVec;
-
 use crate::{
     command_code::CommandCode,
     compression::into_decompressed,
     packet::{Header, Packet},
     Bitmap, Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin,
-    Pixels, PrimitiveGrid, SpBitVec, Tiles, TILE_SIZE,
+    Pixels, PrimitiveGrid, BitVec, Tiles, TILE_SIZE,
 };
 
 /// Type alias for documenting the meaning of the u16 in enum values
@@ -144,7 +142,7 @@ pub enum Command {
     /// once the starting row is full, overwriting will continue on column 0.
     ///
     /// The contained [BitVec] is always uncompressed.
-    BitmapLinear(Offset, SpBitVec, CompressionCode),
+    BitmapLinear(Offset, BitVec, CompressionCode),
 
     /// Set pixel data according to an and-mask starting at the offset.
     ///
@@ -152,7 +150,7 @@ pub enum Command {
     /// once the starting row is full, overwriting will continue on column 0.
     ///
     /// The contained [BitVec] is always uncompressed.
-    BitmapLinearAnd(Offset, SpBitVec, CompressionCode),
+    BitmapLinearAnd(Offset, BitVec, CompressionCode),
 
     /// Set pixel data according to an or-mask starting at the offset.
     ///
@@ -160,7 +158,7 @@ pub enum Command {
     /// once the starting row is full, overwriting will continue on column 0.
     ///
     /// The contained [BitVec] is always uncompressed.
-    BitmapLinearOr(Offset, SpBitVec, CompressionCode),
+    BitmapLinearOr(Offset, BitVec, CompressionCode),
 
     /// Set pixel data according to a xor-mask starting at the offset.
     ///
@@ -168,7 +166,7 @@ pub enum Command {
     /// once the starting row is full, overwriting will continue on column 0.
     ///
     /// The contained [BitVec] is always uncompressed.
-    BitmapLinearXor(Offset, SpBitVec, CompressionCode),
+    BitmapLinearXor(Offset, BitVec, CompressionCode),
 
     /// Kills the udp daemon on the display, which usually results in a restart.
     ///
@@ -214,21 +212,27 @@ pub enum Command {
 }
 
 /// Err values for [Command::try_from].
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, thiserror::Error)]
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
+    #[error("The command code {0:?} does not correspond to a known command")]
     InvalidCommand(u16),
     /// the expected payload size was n, but size m was found
+    #[error("the expected payload size was {0}, but size {1} was found")]
     UnexpectedPayloadSize(usize, usize),
     /// Header fields not needed for the command have been used.
     ///
     /// Note that these commands would usually still work on the actual display.
+    #[error("Header fields not needed for the command have been used")]
     ExtraneousHeaderValues,
     /// The contained compression code is not known. This could be of disabled features.
+    #[error("The compression code {0:?} does not correspond to a known compression algorithm.")]
     InvalidCompressionCode(u16),
     /// Decompression of the payload failed. This can be caused by corrupted packets.
+    #[error("The decompression of the payload failed")]
     DecompressionFailed,
     /// The given brightness value is out of bounds
+    #[error("The given brightness value {0} is out of bounds.")]
     InvalidBrightness(u8),
 }
 
@@ -374,7 +378,7 @@ impl Command {
     /// Helper method for Packets into `BitmapLinear*`-Commands
     fn packet_into_linear_bitmap(
         packet: Packet,
-    ) -> Result<(SpBitVec, CompressionCode), TryFromPacketError> {
+    ) -> Result<(BitVec, CompressionCode), TryFromPacketError> {
         let Packet {
             header:
                 Header {

@@ -19,7 +19,7 @@ use rand::{
 /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
 /// let result = connection.send(Command::Brightness(b));
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Brightness(u8);
 
 /// A grid containing brightness values.
@@ -37,8 +37,21 @@ pub struct Brightness(u8);
 /// ```
 pub type BrightnessGrid = PrimitiveGrid<Brightness>;
 
+impl BrightnessGrid {
+    /// Like [Self::load], but ignoring any out-of-range brightness values
+    pub fn saturating_load(width: usize, height: usize, data: &[u8]) -> Self {
+        PrimitiveGrid::load(width, height, data).map(Brightness::saturating_from)
+    }
+}
+
 impl From<Brightness> for u8 {
     fn from(brightness: Brightness) -> Self {
+        Self::from(&brightness)
+    }
+}
+
+impl From<&Brightness> for u8 {
+    fn from(brightness: &Brightness) -> Self {
         brightness.0
     }
 }
@@ -105,7 +118,7 @@ impl TryFrom<PrimitiveGrid<u8>> for BrightnessGrid {
         let brightnesses = value
             .iter()
             .map(|b| Brightness::try_from(*b))
-            .collect::<Result<Vec<Brightness>, _>>()?;
+            .collect::<Result<Vec<_>, _>>()?;
         Ok(BrightnessGrid::load(
             value.width(),
             value.height(),
@@ -129,7 +142,7 @@ mod tests {
     #[test]
     fn brightness_from_u8() {
         assert_eq!(Err(100), Brightness::try_from(100));
-        assert_eq!(Ok(Brightness(1)), Brightness::try_from(1))
+        assert_eq!(Ok(Brightness(1)), Brightness::try_from(1));
     }
 
     #[test]
@@ -154,5 +167,11 @@ mod tests {
     fn saturating_convert() {
         assert_eq!(Brightness::MAX, Brightness::saturating_from(100));
         assert_eq!(Brightness(5), Brightness::saturating_from(5));
+    }
+
+    #[test]
+    fn saturating_load() {
+        assert_eq!(BrightnessGrid::load(2,2, &[Brightness::MAX, Brightness::MAX, Brightness::MIN, Brightness::MAX]),
+            BrightnessGrid::saturating_load(2,2, &[255u8, 23, 0, 42]));
     }
 }

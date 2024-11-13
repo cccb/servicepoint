@@ -10,19 +10,14 @@ use std::collections::HashMap;
 /// The encoding is currently not enforced.
 pub type Cp437Grid = PrimitiveGrid<u8>;
 
-/// A grid containing UTF-8 characters.
-pub type CharGrid = PrimitiveGrid<char>;
-
-/// Errors that can occur when loading CP-437.
-#[derive(Debug, PartialEq)]
-pub enum Cp437LoadError {
-    /// Invalid character in input prevented loading
-    InvalidChar {
-        /// invalid character is at this position in input
-        index: usize,
-        /// the invalid character
-        char: char,
-    },
+/// The error occurring when loading an invalid character
+#[derive(Debug, PartialEq, thiserror::Error)]
+#[error("The character {char:?} at position {index} is not a valid CP437 character")]
+pub struct InvalidCharError {
+    /// invalid character is at this position in input
+    index: usize,
+    /// the invalid character
+    char: char,
 }
 
 impl Cp437Grid {
@@ -36,7 +31,7 @@ impl Cp437Grid {
         value: &str,
         width: usize,
         wrap: bool,
-    ) -> Result<Self, Cp437LoadError> {
+    ) -> Result<Self, InvalidCharError> {
         assert!(width > 0);
         assert!(!value.is_empty());
 
@@ -46,7 +41,7 @@ impl Cp437Grid {
 
             for (index, char) in value.chars().enumerate() {
                 if !char.is_ascii() {
-                    return Err(Cp437LoadError::InvalidChar { index, char });
+                    return Err(InvalidCharError { index, char });
                 }
 
                 let is_lf = char == '\n';
@@ -92,6 +87,7 @@ pub use feature_cp437::*;
 #[cfg(feature = "cp437")]
 mod feature_cp437 {
     use super::*;
+    use crate::CharGrid;
 
     /// An array of 256 elements, mapping most of the CP437 values to UTF-8 characters
     ///
@@ -99,7 +95,7 @@ mod feature_cp437 {
     ///
     /// See <https://en.wikipedia.org/wiki/Code_page_437#Character_set>
     ///
-    /// Mostly copied from https://github.com/kip93/cp437-tools. License: GPL-3.0
+    /// Mostly copied from <https://github.com/kip93/cp437-tools>. License: GPL-3.0
     #[rustfmt::skip]
     pub const CP437_TO_UTF8: [char; 256] = [
         /* 0X */ '\0', '☺', '☻', '♥', '♦', '♣', '♠', '•', '◘', '○', '\n', '♂', '♀', '♪', '♫', '☼',
@@ -143,44 +139,9 @@ mod feature_cp437 {
         }
     }
 
-    impl From<&str> for CharGrid {
-        fn from(value: &str) -> Self {
-            let value = value.replace("\r\n", "\n");
-            let mut lines = value
-                .split('\n')
-                .map(move |line| line.trim_end())
-                .collect::<Vec<_>>();
-            let width =
-                lines.iter().fold(0, move |a, x| std::cmp::max(a, x.len()));
-
-            while lines.last().is_some_and(move |line| line.is_empty()) {
-                _ = lines.pop();
-            }
-
-            let mut grid = Self::new(width, lines.len());
-            for (y, line) in lines.iter().enumerate() {
-                for (x, char) in line.chars().enumerate() {
-                    grid.set(x, y, char);
-                }
-            }
-
-            grid
-        }
-    }
-
-    impl From<&CharGrid> for String {
-        fn from(value: &CharGrid) -> Self {
-            value
-                .iter_rows()
-                .map(move |chars| {
-                    chars
-                        .collect::<String>()
-                        .replace('\0', " ")
-                        .trim_end()
-                        .to_string()
-                })
-                .collect::<Vec<_>>()
-                .join("\n")
+    impl From<CharGrid> for Cp437Grid {
+        fn from(value: CharGrid) -> Self {
+            Cp437Grid::from(&value)
         }
     }
 
@@ -236,7 +197,7 @@ mod tests {
     #[test]
     fn load_ascii_invalid() {
         assert_eq!(
-            Err(Cp437LoadError::InvalidChar {
+            Err(InvalidCharError {
                 char: '🥶',
                 index: 2
             }),
@@ -249,6 +210,7 @@ mod tests {
 #[cfg(feature = "cp437")]
 mod tests_feature_cp437 {
     use super::*;
+    use crate::CharGrid;
 
     #[test]
     fn round_trip_cp437() {
@@ -291,14 +253,5 @@ mod tests_feature_cp437 {
     #[test]
     fn convert_invalid() {
         assert_eq!(cp437_to_char(char_to_cp437('😜')), '?');
-    }
-
-    #[test]
-    fn str_to_char_grid() {
-        let original = "Hello\r\nWorld!\n...\n";
-        let grid = CharGrid::from(original);
-        assert_eq!(3, grid.height());
-        let actual = String::from(&grid);
-        assert_eq!("Hello\nWorld!\n...", actual);
     }
 }

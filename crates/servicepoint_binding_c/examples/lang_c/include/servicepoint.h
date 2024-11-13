@@ -144,6 +144,8 @@ typedef struct SPBrightnessGrid SPBrightnessGrid;
  * sp_connection_send_command(connection, sp_command_clear());
  * sp_connection_send_command(connection, sp_command_brightness(5));
  * ```
+ *
+ * [SPConnection]: [crate::SPConnection]
  */
 typedef struct SPCommand SPCommand;
 
@@ -266,6 +268,8 @@ void sp_bitmap_fill(SPBitmap *bitmap, bool value);
  * - `bitmap` points to a valid [SPBitmap]
  * - `bitmap` is not used concurrently or after bitmap call
  * - `bitmap` was not passed to another consuming function, e.g. to create a [SPCommand]
+ *
+ * [SPCommand]: [crate::SPCommand]
  */
 void sp_bitmap_free(SPBitmap *bitmap);
 
@@ -479,6 +483,8 @@ void sp_bitvec_fill(SPBitVec *bit_vec, bool value);
  * - `bit_vec` points to a valid [SPBitVec]
  * - `bit_vec` is not used concurrently or after this call
  * - `bit_vec` was not passed to another consuming function, e.g. to create a [SPCommand]
+ *
+ * [SPCommand]: [crate::SPCommand]
  */
 void sp_bitvec_free(SPBitVec *bit_vec);
 
@@ -695,6 +701,8 @@ void sp_brightness_grid_fill(SPBrightnessGrid *brightness_grid, uint8_t value);
  * - `brightness_grid` points to a valid [SPBrightnessGrid]
  * - `brightness_grid` is not used concurrently or after this call
  * - `brightness_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+ *
+ * [SPCommand]: [crate::SPCommand]
  */
 void sp_brightness_grid_free(SPBrightnessGrid *brightness_grid);
 
@@ -805,7 +813,7 @@ SPBrightnessGrid *sp_brightness_grid_new(size_t width,
  *
  * The caller has to make sure that:
  *
- * - `brightness_grid` points to a valid [SPBitVec]
+ * - `brightness_grid` points to a valid [SPBrightnessGrid]
  * - `brightness_grid` is not written to or read from concurrently
  */
 void sp_brightness_grid_set(SPBrightnessGrid *brightness_grid,
@@ -867,7 +875,7 @@ size_t sp_brightness_grid_width(const SPBrightnessGrid *brightness_grid);
  *
  * The passed [SPBitVec] gets consumed.
  *
- * Returns: a new [Command::BitmapLinear] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::BitmapLinear] instance. Will never return NULL.
  *
  * # Panics
  *
@@ -898,7 +906,7 @@ SPCommand *sp_command_bitmap_linear(size_t offset,
  *
  * The passed [SPBitVec] gets consumed.
  *
- * Returns: a new [Command::BitmapLinearAnd] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::BitmapLinearAnd] instance. Will never return NULL.
  *
  * # Panics
  *
@@ -929,7 +937,7 @@ SPCommand *sp_command_bitmap_linear_and(size_t offset,
  *
  * The passed [SPBitVec] gets consumed.
  *
- * Returns: a new [Command::BitmapLinearOr] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::BitmapLinearOr] instance. Will never return NULL.
  *
  * # Panics
  *
@@ -955,7 +963,7 @@ SPCommand *sp_command_bitmap_linear_or(size_t offset,
  *
  * The passed [SPBitmap] gets consumed.
  *
- * Returns: a new [Command::BitmapLinearWin] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::BitmapLinearWin] instance. Will never return NULL.
  *
  * # Panics
  *
@@ -987,7 +995,7 @@ SPCommand *sp_command_bitmap_linear_win(size_t x,
  *
  * The passed [SPBitVec] gets consumed.
  *
- * Returns: a new [Command::BitmapLinearXor] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::BitmapLinearXor] instance. Will never return NULL.
  *
  * # Panics
  *
@@ -1011,7 +1019,7 @@ SPCommand *sp_command_bitmap_linear_xor(size_t offset,
 /**
  * Set the brightness of all tiles to the same value.
  *
- * Returns: a new [Command::Brightness] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::Brightness] instance. Will never return NULL.
  *
  * # Panics
  *
@@ -1031,7 +1039,7 @@ SPCommand *sp_command_brightness(uint8_t brightness);
  *
  * The passed [SPBrightnessGrid] gets consumed.
  *
- * Returns: a new [Command::CharBrightness] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::CharBrightness] instance. Will never return NULL.
  *
  * # Panics
  *
@@ -1055,7 +1063,7 @@ SPCommand *sp_command_char_brightness(size_t x,
  *
  * Does not affect brightness.
  *
- * Returns: a new [Command::Clear] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::Clear] instance. Will never return NULL.
  *
  * # Examples
  *
@@ -1097,7 +1105,7 @@ SPCommand *sp_command_clone(const SPCommand *command);
  *
  * The passed [SPCp437Grid] gets consumed.
  *
- * Returns: a new [Command::Cp437Data] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::Cp437Data] instance. Will never return NULL.
  *
  * # Panics
  *
@@ -1119,7 +1127,7 @@ SPCommand *sp_command_cp437_data(size_t x,
 /**
  * A yet-to-be-tested command.
  *
- * Returns: a new `Command::FadeOut` instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::FadeOut] instance. Will never return NULL.
  *
  * # Safety
  *
@@ -1159,7 +1167,7 @@ void sp_command_free(SPCommand *command);
  *
  * Please do not send this in your normal program flow.
  *
- * Returns: a new [Command::HardReset] instance. Will never return NULL.
+ * Returns: a new [servicepoint::Command::HardReset] instance. Will never return NULL.
  *
  * # Safety
  *
@@ -1328,6 +1336,8 @@ void sp_cp437_grid_fill(SPCp437Grid *cp437_grid, uint8_t value);
  * - `cp437_grid` points to a valid [SPCp437Grid]
  * - `cp437_grid` is not used concurrently or after cp437_grid call
  * - `cp437_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+ *
+ * [SPCommand]: [crate::SPCommand]
  */
 void sp_cp437_grid_free(SPCp437Grid *cp437_grid);
 
@@ -1433,6 +1443,8 @@ SPCp437Grid *sp_cp437_grid_new(size_t width,
  *
  * - `cp437_grid` points to a valid [SPBitVec]
  * - `cp437_grid` is not written to or read from concurrently
+ *
+ * [SPBitVec]: [crate::SPBitVec]
  */
 void sp_cp437_grid_set(SPCp437Grid *cp437_grid,
                        size_t x,
