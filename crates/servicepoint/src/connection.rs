@@ -34,11 +34,9 @@ pub enum Connection {
     /// [servicepoint-websocket-relay]: https://github.com/kaesaecracker/servicepoint-websocket-relay
     #[cfg(feature = "protocol_websocket")]
     WebSocket(
-        std::sync::Arc<
-            std::sync::Mutex<
-                tungstenite::WebSocket<
-                    tungstenite::stream::MaybeTlsStream<std::net::TcpStream>,
-                >,
+        std::sync::Mutex<
+            tungstenite::WebSocket<
+                tungstenite::stream::MaybeTlsStream<std::net::TcpStream>,
             >,
         >,
     ),
@@ -109,9 +107,9 @@ impl Connection {
 
         let request = ClientRequestBuilder::new(uri).into_client_request()?;
         let (sock, _) = connect(request)?;
-        Ok(Self::WebSocket(std::sync::Arc::new(std::sync::Mutex::new(
+        Ok(Self::WebSocket(std::sync::Mutex::new(
             sock,
-        ))))
+        )))
     }
 
     /// Send something packet-like to the display. Usually this is in the form of a Command.
@@ -163,7 +161,7 @@ impl Drop for Connection {
         if let Connection::WebSocket(sock) = self {
             _ = sock
                 .try_lock()
-                .map(move |mut sock| sock.close(None).unwrap());
+                .map(move |mut sock| sock.close(None));
         }
     }
 }
