@@ -1,0 +1,60 @@
+[package]
+name = "servicepoint_binding_uniffi"
+version.workspace = true
+publish = false
+edition = "2021"
+license = "GPL-3.0-or-later"
+description = "C bindings for the servicepoint crate."
+homepage = "https://docs.rs/crate/servicepoint_binding_c"
+repository = "https://github.com/cccb/servicepoint"
+#readme = "README.md"
+
+[lib]
+crate-type = ["cdylib"]
+
+[build-dependencies]
+uniffi = { version = "0.25.3", features = ["build"] }
+
+[dependencies]
+uniffi = { version = "0.25.3" }
+thiserror.workspace = true
+
+[dependencies.servicepoint]
+version = "0.12.0"
+path = "../servicepoint"
+features = ["all_compressions"]
+
+[dependencies.uniffi-bindgen-cs]
+git = "https://github.com/NordSecurity/uniffi-bindgen-cs"
+# tag="v0.8.3+v0.25.0"
+rev = "f68639fbc720b50ebe561ba75c66c84dc456bdce"
+optional = true
+
+[dependencies.uniffi-bindgen-go]
+git = "https://github.com/NordSecurity/uniffi-bindgen-go.git"
+# tag = "0.2.1+v0.25.0"
+rev = "a77dc0462dc18d53846c758155ab4e0a42e5b240"
+optional = true
+
+[lints]
+#workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[[bin]]
+name = "uniffi-bindgen"
+required-features = ["uniffi/cli"]
+
+[[bin]]
+name = "uniffi-bindgen-cs"
+required-features = ["cs"]
+
+[[bin]]
+name = "uniffi-bindgen-go"
+required-features = ["go"]
+
+[features]
+default = []
+cs = ["dep:uniffi-bindgen-cs"]
+go = ["dep:uniffi-bindgen-go"]
