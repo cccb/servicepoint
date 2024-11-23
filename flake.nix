@@ -69,10 +69,10 @@
               strictDeps = true;
               buildInputs = buildInputs;
               overrideMain = old: {
-                  preConfigure = ''
-                    cargo_build_options="$cargo_build_options --example ${example}"
-                  '';
-                };
+                preConfigure = ''
+                  cargo_build_options="$cargo_build_options --example ${example}"
+                '';
+              };
             };
           makePackage =
             package:
@@ -117,16 +117,19 @@
               clippy
               cargo-expand
               cargo-tarpaulin
-              gcc
-              gnumake
-              dotnet-sdk_8
             ];
           };
         in
         {
           default = pkgs.mkShell rec {
             inputsFrom = [ self.packages.${system}.servicepoint ];
-            packages = [ rust-toolchain ];
+            packages = with pkgs; [
+              rust-toolchain
+              ruby
+              dotnet-sdk_8
+              gcc
+              gnumake
+            ];
             LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath (builtins.concatMap (d: d.buildInputs) inputsFrom)}";
             RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
           };

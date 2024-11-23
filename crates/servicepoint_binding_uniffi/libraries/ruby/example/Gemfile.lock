@@ -1,0 +1,19 @@
+PATH
+  remote: ..
+  specs:
+    servicepoint (0.0.0)
+      ffi
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ffi (1.17.0-x86_64-linux-gnu)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  servicepoint!
+
+BUNDLED WITH
+   2.3.27
