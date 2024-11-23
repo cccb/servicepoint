@@ -54,7 +54,11 @@
             lzma
           ];
           makeExample =
-            package: example:
+            {
+              package,
+              example,
+              features ? "",
+            }:
             naersk'.buildPackage {
               pname = example;
               cargoBuildOptions =
@@ -68,9 +72,12 @@
               nativeBuildInputs = nativeBuildInputs;
               strictDeps = true;
               buildInputs = buildInputs;
+              gitSubmodules = true;
               overrideMain = old: {
                 preConfigure = ''
-                  cargo_build_options="$cargo_build_options --example ${example}"
+                  cargo_build_options="$cargo_build_options --example ${example} ${
+                    if features == "" then "" else "--features " + features
+                  }"
                 '';
               };
             };
@@ -95,11 +102,28 @@
         in
         rec {
           servicepoint = makePackage "servicepoint";
-          announce = makeExample "servicepoint" "announce";
-          game-of-life = makeExample "servicepoint" "game_of_life";
-          moving-line = makeExample "servicepoint" "moving_line";
-          random-brightness = makeExample "servicepoint" "random_brightness";
-          wiping-clear = makeExample "servicepoint" "wiping_clear";
+          announce = makeExample {
+            package = "servicepoint";
+            example = "announce";
+          };
+          game-of-life = makeExample {
+            package = "servicepoint";
+            example = "game_of_life";
+            features = "rand";
+          };
+          moving-line = makeExample {
+            package = "servicepoint";
+            example = "moving_line";
+          };
+          random-brightness = makeExample {
+            package = "servicepoint";
+            example = "random_brightness";
+            features = "rand";
+          };
+          wiping-clear = makeExample {
+            package = "servicepoint";
+            example = "wiping_clear";
+          };
         }
       );
 
