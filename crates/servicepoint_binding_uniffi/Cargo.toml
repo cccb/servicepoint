@@ -20,7 +20,7 @@ uniffi = { version = "0.25.3" }
 thiserror.workspace = true
 
 [dependencies.servicepoint]
-version = "0.11.0"
+version = "0.12.0"
 path = "../servicepoint"
 features = ["all_compressions"]
 
