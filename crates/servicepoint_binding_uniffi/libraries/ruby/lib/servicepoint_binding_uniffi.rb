@@ -126,6 +126,21 @@ end
     end
   end
 
+  # The Record type Constants.
+
+  def self.alloc_from_TypeConstants(v)
+    RustBuffer.allocWithBuilder do |builder|
+      builder.write_TypeConstants(v)
+      return builder.finalize
+    end
+  end
+
+  def consumeIntoTypeConstants
+    consumeWithStream do |stream|
+      return stream.readTypeConstants
+    end
+  end
+
   
 
   # The Enum type CompressionCode.
@@ -272,6 +287,19 @@ class RustBufferStream
   def readTypeCp437Grid
     pointer = FFI::Pointer.new unpack_from 8, 'Q>'
     return Cp437Grid._uniffi_allocate(pointer)
+  end
+
+  # The Record type Constants.
+
+  def readTypeConstants
+    Constants.new(
+      readU64,
+      readU64,
+      readU64,
+      readU64,
+      readU64,
+      readU64
+    )
   end
 
   
@@ -476,6 +504,17 @@ class RustBufferBuilder
   def write_TypeCp437Grid(obj)
     pointer = Cp437Grid._uniffi_lower obj
     pack_into(8, 'Q>', pointer.address)
+  end
+
+  # The Record type Constants.
+
+  def write_TypeConstants(v)
+    self.write_U64(v.tile_size)
+    self.write_U64(v.tile_width)
+    self.write_U64(v.tile_height)
+    self.write_U64(v.pixel_width)
+    self.write_U64(v.pixel_height)
+    self.write_U64(v.pixel_count)
   end
 
   
@@ -930,6 +969,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_cp437grid_width,
     [:pointer, RustCallStatus.by_ref],
     :uint64
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_func_get_constants,
+    [RustCallStatus.by_ref],
+    RustBuffer.by_value
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_alloc,
     [:int32, RustCallStatus.by_ref],
     RustBuffer.by_value
@@ -942,6 +984,9 @@ module UniFFILib
   attach_function :ffi_servicepoint_binding_uniffi_rustbuffer_reserve,
     [RustBuffer.by_value, :int32, RustCallStatus.by_ref],
     RustBuffer.by_value
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_func_get_constants,
+    [RustCallStatus.by_ref],
+    :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw,
     [RustCallStatus.by_ref],
     :uint16
@@ -1183,6 +1228,52 @@ end
 
   
   
+  # Record type Constants
+class Constants
+  attr_reader :tile_size, :tile_width, :tile_height, :pixel_width, :pixel_height, :pixel_count
+
+  def initialize(tile_size, tile_width, tile_height, pixel_width, pixel_height, pixel_count)
+    @tile_size = tile_size
+    @tile_width = tile_width
+    @tile_height = tile_height
+    @pixel_width = pixel_width
+    @pixel_height = pixel_height
+    @pixel_count = pixel_count
+  end
+
+  def ==(other)
+    if @tile_size != other.tile_size
+      return false
+    end
+    if @tile_width != other.tile_width
+      return false
+    end
+    if @tile_height != other.tile_height
+      return false
+    end
+    if @pixel_width != other.pixel_width
+      return false
+    end
+    if @pixel_height != other.pixel_height
+      return false
+    end
+    if @pixel_count != other.pixel_count
+      return false
+    end
+
+    true
+  end
+end
+  
+
+  
+  
+
+def self.get_constants()
+  result = ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_func_get_constants,)
+  return result.consumeIntoTypeConstants
+end
+
 
   
 

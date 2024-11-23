@@ -752,6 +752,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern RustBuffer uniffi_servicepoint_binding_uniffi_fn_func_get_constants(ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern RustBuffer ffi_servicepoint_binding_uniffi_rustbuffer_alloc(int @size,ref RustCallStatus _uniffi_out_err
     );
 
@@ -977,6 +981,10 @@ static class _UniFFILib {
 
     [DllImport("servicepoint_binding_uniffi")]
     public static extern void ffi_servicepoint_binding_uniffi_rust_future_complete_void(IntPtr @handle,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_func_get_constants(
     );
 
     [DllImport("servicepoint_binding_uniffi")]
@@ -1281,6 +1289,12 @@ static class _UniFFILib {
     }
 
     static void uniffiCheckApiChecksums() {
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_func_get_constants();
+            if (checksum != 41584) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_func_get_constants` checksum `41584`, library returned `{checksum}`");
+            }
+        }
         {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_method_bitvec_copy_raw();
             if (checksum != 12617) {
@@ -2902,6 +2916,52 @@ class FfiConverterTypeCp437Grid: FfiConverter<Cp437Grid, Cp437GridSafeHandle> {
 
 
 
+public record Constants (
+    ulong @tileSize, 
+    ulong @tileWidth, 
+    ulong @tileHeight, 
+    ulong @pixelWidth, 
+    ulong @pixelHeight, 
+    ulong @pixelCount
+) {
+}
+
+class FfiConverterTypeConstants: FfiConverterRustBuffer<Constants> {
+    public static FfiConverterTypeConstants INSTANCE = new FfiConverterTypeConstants();
+
+    public override Constants Read(BigEndianStream stream) {
+        return new Constants(
+            @tileSize: FfiConverterUInt64.INSTANCE.Read(stream),
+            @tileWidth: FfiConverterUInt64.INSTANCE.Read(stream),
+            @tileHeight: FfiConverterUInt64.INSTANCE.Read(stream),
+            @pixelWidth: FfiConverterUInt64.INSTANCE.Read(stream),
+            @pixelHeight: FfiConverterUInt64.INSTANCE.Read(stream),
+            @pixelCount: FfiConverterUInt64.INSTANCE.Read(stream)
+        );
+    }
+
+    public override int AllocationSize(Constants value) {
+        return
+            FfiConverterUInt64.INSTANCE.AllocationSize(value.@tileSize) +
+            FfiConverterUInt64.INSTANCE.AllocationSize(value.@tileWidth) +
+            FfiConverterUInt64.INSTANCE.AllocationSize(value.@tileHeight) +
+            FfiConverterUInt64.INSTANCE.AllocationSize(value.@pixelWidth) +
+            FfiConverterUInt64.INSTANCE.AllocationSize(value.@pixelHeight) +
+            FfiConverterUInt64.INSTANCE.AllocationSize(value.@pixelCount);
+    }
+
+    public override void Write(Constants value, BigEndianStream stream) {
+            FfiConverterUInt64.INSTANCE.Write(value.@tileSize, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.@tileWidth, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.@tileHeight, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.@pixelWidth, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.@pixelHeight, stream);
+            FfiConverterUInt64.INSTANCE.Write(value.@pixelCount, stream);
+    }
+}
+
+
+
 
 
 public class CharGridException: UniffiException {
@@ -3133,5 +3193,12 @@ class FfiConverterTypeServicePointException : FfiConverterRustBuffer<ServicePoin
 }
 #pragma warning restore 8625
 public static class ServicepointBindingUniffiMethods {
+    public static Constants GetConstants() {
+        return FfiConverterTypeConstants.INSTANCE.Lift(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_func_get_constants( ref _status)
+));
+    }
+
 }
 

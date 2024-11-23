@@ -9,3 +9,4 @@ mod compression_code;
 mod connection;
 mod cp437_grid;
 mod errors;
+mod constants;
