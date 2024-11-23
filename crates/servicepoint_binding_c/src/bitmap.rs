@@ -49,6 +49,22 @@ pub unsafe extern "C" fn sp_bitmap_new(
     NonNull::from(Box::leak(result))
 }
 
+/// Creates a new [SPBitmap] with a size matching the screen.
+///
+/// returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - the returned instance is freed in some way, either by using a consuming function or
+///   by explicitly calling [sp_bitmap_free].
+#[no_mangle]
+pub unsafe extern "C" fn sp_bitmap_new_screen_sized() -> NonNull<SPBitmap> {
+    let result = Box::new(SPBitmap(servicepoint::Bitmap::max_sized()));
+    NonNull::from(Box::leak(result))
+}
+
 /// Loads a [SPBitmap] with the specified dimensions from the provided data.
 ///
 /// # Arguments
