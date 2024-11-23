@@ -89,7 +89,7 @@ impl CharGrid {
         self.actual
             .write()
             .unwrap()
-            .set_row(y as usize, &*row.chars().collect::<Vec<_>>())
+            .set_row(y as usize, &row.chars().collect::<Vec<_>>())
             .map_err(CharGridError::from)
     }
 
@@ -97,7 +97,7 @@ impl CharGrid {
         self.actual
             .write()
             .unwrap()
-            .set_row(x as usize, &*col.chars().collect::<Vec<_>>())
+            .set_row(x as usize, &col.chars().collect::<Vec<_>>())
             .map_err(CharGridError::from)
     }
 
@@ -106,7 +106,7 @@ impl CharGrid {
             .read()
             .unwrap()
             .get_row(y as usize)
-            .map(move |vec| String::from_iter(vec))
+            .map(String::from_iter)
             .ok_or(CharGridError::OutOfBounds {index: y, size: self.height()})
     }
 
@@ -115,7 +115,7 @@ impl CharGrid {
             .read()
             .unwrap()
             .get_col(x as usize)
-            .map(move |vec| String::from_iter(vec))
+            .map(String::from_iter)
             .ok_or(CharGridError::OutOfBounds {index: x, size: self.width()})
     }
 
