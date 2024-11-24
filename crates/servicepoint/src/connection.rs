@@ -144,7 +144,7 @@ impl Connection {
             Connection::WebSocket(socket) => {
                 let mut socket = socket.lock().unwrap();
                 socket
-                    .send(tungstenite::Message::Binary(data))
+                    .send(tungstenite::Message::Binary(data.into()))
                     .map_err(SendError::WebsocketError)
             }
             Connection::Fake => {

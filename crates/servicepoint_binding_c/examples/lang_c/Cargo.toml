@@ -8,7 +8,7 @@ publish = false
 test = false
 
 [build-dependencies]
-cc = "1.0"
+cc = "1.2"
 
 [dependencies]
 servicepoint_binding_c = { path = "../.." }
