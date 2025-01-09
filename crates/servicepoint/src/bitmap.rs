@@ -203,7 +203,7 @@ impl<'t> Iterator for IterRows<'t> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Bitmap, DataRef, Grid};
+    use crate::{BitVec, Bitmap, DataRef, Grid};
 
     #[test]
     fn fill() {
@@ -294,5 +294,13 @@ mod tests {
         let data = grid.data_ref_mut();
         data[1] = 0x0F;
         assert!(grid.get(7, 1));
+    }
+
+    #[test]
+    fn to_bitvec() {
+        let mut grid = Bitmap::new(8, 2);
+        grid.set(0, 0, true);
+        let bitvec: BitVec = grid.into();
+        assert_eq!(bitvec.as_raw_slice(), [0x80, 0x00]);
     }
 }

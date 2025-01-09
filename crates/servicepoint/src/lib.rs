@@ -49,10 +49,12 @@ pub use crate::cp437::Cp437Grid;
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
-pub use crate::primitive_grid::{PrimitiveGrid, SeriesError};
 
 /// An alias for the specific type of [bitvec::prelude::BitVec] used.
 pub type BitVec = bitvec::prelude::BitVec<u8, bitvec::prelude::Msb0>;
+
+/// A simple grid of bytes - see [primitive_grid::PrimitiveGrid].
+pub type ByteGrid = primitive_grid::PrimitiveGrid<u8>;
 
 mod bitmap;
 mod brightness;
@@ -67,7 +69,7 @@ mod data_ref;
 mod grid;
 mod origin;
 pub mod packet;
-mod primitive_grid;
+pub mod primitive_grid;
 
 /// size of a single tile in one dimension
 pub const TILE_SIZE: usize = 8;

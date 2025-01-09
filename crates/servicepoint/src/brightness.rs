@@ -1,5 +1,5 @@
-use crate::{Grid, PrimitiveGrid};
-
+use crate::primitive_grid::PrimitiveGrid;
+use crate::{ByteGrid, Grid};
 #[cfg(feature = "rand")]
 use rand::{
     distributions::{Distribution, Standard},
@@ -40,7 +40,8 @@ pub type BrightnessGrid = PrimitiveGrid<Brightness>;
 impl BrightnessGrid {
     /// Like [Self::load], but ignoring any out-of-range brightness values
     pub fn saturating_load(width: usize, height: usize, data: &[u8]) -> Self {
-        PrimitiveGrid::load(width, height, data).map(Brightness::saturating_from)
+        PrimitiveGrid::load(width, height, data)
+            .map(Brightness::saturating_from)
     }
 }
 
@@ -101,7 +102,7 @@ impl From<BrightnessGrid> for Vec<u8> {
     }
 }
 
-impl From<&BrightnessGrid> for PrimitiveGrid<u8> {
+impl From<&BrightnessGrid> for ByteGrid {
     fn from(value: &PrimitiveGrid<Brightness>) -> Self {
         let u8s = value
             .iter()
@@ -111,10 +112,10 @@ impl From<&BrightnessGrid> for PrimitiveGrid<u8> {
     }
 }
 
-impl TryFrom<PrimitiveGrid<u8>> for BrightnessGrid {
+impl TryFrom<ByteGrid> for BrightnessGrid {
     type Error = u8;
 
-    fn try_from(value: PrimitiveGrid<u8>) -> Result<Self, Self::Error> {
+    fn try_from(value: ByteGrid) -> Result<Self, Self::Error> {
         let brightnesses = value
             .iter()
             .map(|b| Brightness::try_from(*b))
@@ -171,7 +172,18 @@ mod tests {
 
     #[test]
     fn saturating_load() {
-        assert_eq!(BrightnessGrid::load(2,2, &[Brightness::MAX, Brightness::MAX, Brightness::MIN, Brightness::MAX]),
-            BrightnessGrid::saturating_load(2,2, &[255u8, 23, 0, 42]));
+        assert_eq!(
+            BrightnessGrid::load(
+                2,
+                2,
+                &[
+                    Brightness::MAX,
+                    Brightness::MAX,
+                    Brightness::MIN,
+                    Brightness::MAX
+                ]
+            ),
+            BrightnessGrid::saturating_load(2, 2, &[255u8, 23, 0, 42])
+        );
     }
 }

@@ -1,7 +1,7 @@
-use servicepoint::{Grid, SeriesError};
+use crate::cp437_grid::Cp437Grid;
+use servicepoint::{Grid, primitive_grid::SeriesError};
 use std::convert::Into;
 use std::sync::{Arc, RwLock};
-use crate::cp437_grid::Cp437Grid;
 
 #[derive(uniffi::Object)]
 pub struct CharGrid {

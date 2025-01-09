@@ -3,7 +3,7 @@
 //! prefix `sp_brightness_grid_`
 
 use crate::SPByteSlice;
-use servicepoint::{Brightness, DataRef, Grid, PrimitiveGrid};
+use servicepoint::{Brightness, ByteGrid, DataRef, Grid};
 use std::convert::Into;
 use std::intrinsics::transmute;
 use std::ptr::NonNull;
@@ -80,7 +80,7 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
 ) -> NonNull<SPBrightnessGrid> {
     assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let grid = PrimitiveGrid::load(width, height, data);
+    let grid = ByteGrid::load(width, height, data);
     let grid = servicepoint::BrightnessGrid::try_from(grid)
         .expect("invalid brightness value");
     let result = Box::new(SPBrightnessGrid(grid));

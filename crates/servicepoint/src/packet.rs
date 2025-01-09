@@ -209,6 +209,9 @@ impl From<Command> for Packet {
                 grid,
                 CommandCode::Cp437Data,
             ),
+            Command::Utf8Data(origin, grid) => {
+                Self::origin_grid_to_packet(origin, grid, CommandCode::Utf8Data)
+            }
         }
     }
 }

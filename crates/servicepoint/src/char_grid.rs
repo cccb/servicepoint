@@ -1,5 +1,8 @@
-use crate::primitive_grid::SeriesError;
-use crate::{Grid, PrimitiveGrid};
+use crate::primitive_grid::{
+    PrimitiveGrid, SeriesError, TryLoadPrimitiveGridError,
+};
+use crate::Grid;
+use std::string::FromUtf8Error;
 
 /// A grid containing UTF-8 characters.
 pub type CharGrid = PrimitiveGrid<char>;
@@ -40,17 +43,39 @@ impl CharGrid {
     ) -> Result<(), SeriesError> {
         self.set_col(x, value.chars().collect::<Vec<_>>().as_ref())
     }
+
+    /// Loads a [CharGrid] with the specified dimensions from the provided UTF-8 bytes.
+    ///
+    /// returns: [CharGrid] that contains the provided data, or [FromUtf8Error] if the data is invalid.
+    ///
+    /// # Panics
+    ///
+    /// - when the dimensions and data size do not match exactly.
+    pub fn load_utf8(
+        width: usize,
+        height: usize,
+        bytes: Vec<u8>,
+    ) -> Result<CharGrid, LoadUtf8Error> {
+        let s: Vec<char> = String::from_utf8(bytes)?.chars().collect();
+        Ok(CharGrid::try_load(width, height, s)?)
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum LoadUtf8Error {
+    #[error(transparent)]
+    FromUtf8Error(#[from] FromUtf8Error),
+    #[error(transparent)]
+    TryLoadError(#[from] TryLoadPrimitiveGridError),
 }
 
 impl From<&str> for CharGrid {
     fn from(value: &str) -> Self {
         let value = value.replace("\r\n", "\n");
-        let mut lines = value
-            .split('\n')
-            .map(move |line| line.trim_end())
-            .collect::<Vec<_>>();
-        let width =
-            lines.iter().fold(0, move |a, x| std::cmp::max(a, x.len()));
+        let mut lines = value.split('\n').collect::<Vec<_>>();
+        let width = lines
+            .iter()
+            .fold(0, move |a, x| std::cmp::max(a, x.chars().count()));
 
         while lines.last().is_some_and(move |line| line.is_empty()) {
             _ = lines.pop();
@@ -73,19 +98,31 @@ impl From<String> for CharGrid {
     }
 }
 
+impl From<CharGrid> for String {
+    fn from(grid: CharGrid) -> Self {
+        String::from(&grid)
+    }
+}
+
 impl From<&CharGrid> for String {
     fn from(value: &CharGrid) -> Self {
         value
             .iter_rows()
-            .map(move |chars| {
-                chars
-                    .collect::<String>()
-                    .replace('\0', " ")
-                    .trim_end()
-                    .to_string()
-            })
-            .collect::<Vec<_>>()
+            .map(String::from_iter)
+            .collect::<Vec<String>>()
             .join("\n")
+    }
+}
+
+impl From<&CharGrid> for Vec<u8> {
+    fn from(value: &CharGrid) -> Self {
+        String::from_iter(value.iter()).into_bytes()
+    }
+}
+
+impl From<CharGrid> for Vec<u8> {
+    fn from(value: CharGrid) -> Self {
+        Self::from(&value)
     }
 }
 
@@ -120,10 +157,28 @@ mod test {
 
     #[test]
     fn str_to_char_grid() {
-        let original = "Hello\r\nWorld!\n...\n";
+        // conversion with .to_string() covers one more line
+        let original = "Hello\r\nWorld!\n...\n".to_string();
+
         let grid = CharGrid::from(original);
         assert_eq!(3, grid.height());
-        let actual = String::from(&grid);
-        assert_eq!("Hello\nWorld!\n...", actual);
+        assert_eq!("Hello\0\nWorld!\n...\0\0\0", String::from(grid));
+    }
+
+    #[test]
+    fn round_trip_bytes() {
+        let grid = CharGrid::from("Hello\0\nWorld!\n...\0\0\0");
+        let bytes: Vec<u8> = grid.clone().into();
+        let copy =
+            CharGrid::load_utf8(grid.width(), grid.height(), bytes).unwrap();
+        assert_eq!(grid, copy);
+    }
+
+    #[test]
+    fn round_trip_string() {
+        let grid = CharGrid::from("Hello\0\nWorld!\n...\0\0\0");
+        let str: String = grid.clone().into();
+        let copy = CharGrid::from(str);
+        assert_eq!(grid, copy);
     }
 }

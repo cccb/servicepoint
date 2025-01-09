@@ -2,7 +2,7 @@
 //!
 //! Most of the functionality is only available with feature "cp437" enabled.
 
-use crate::{Grid, PrimitiveGrid};
+use crate::{Grid, primitive_grid::PrimitiveGrid};
 use std::collections::HashMap;
 
 /// A grid containing codepage 437 characters.
@@ -12,7 +12,9 @@ pub type Cp437Grid = PrimitiveGrid<u8>;
 
 /// The error occurring when loading an invalid character
 #[derive(Debug, PartialEq, thiserror::Error)]
-#[error("The character {char:?} at position {index} is not a valid CP437 character")]
+#[error(
+    "The character {char:?} at position {index} is not a valid CP437 character"
+)]
 pub struct InvalidCharError {
     /// invalid character is at this position in input
     index: usize,

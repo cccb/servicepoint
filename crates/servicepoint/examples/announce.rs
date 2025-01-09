@@ -2,7 +2,7 @@
 
 use clap::Parser;
 
-use servicepoint::{CharGrid, Command, Connection, Cp437Grid, Origin};
+use servicepoint::{CharGrid, Command, Connection, Origin, TILE_WIDTH};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -41,11 +41,21 @@ fn main() {
             .expect("sending clear failed");
     }
 
-    let text = cli.text.join("\n");
-    let grid = CharGrid::from(text);
-    let grid = Cp437Grid::from(grid);
+    let text = cli
+        .text
+        .iter()
+        .flat_map(move |x| {
+            x.chars()
+                .collect::<Vec<_>>()
+                .chunks(TILE_WIDTH)
+                .map(|c| String::from_iter(c))
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
 
+    let grid = CharGrid::from(text);
     connection
-        .send(Command::Cp437Data(Origin::ZERO, grid))
+        .send(Command::Utf8Data(Origin::ZERO, grid))
         .expect("sending text failed");
 }

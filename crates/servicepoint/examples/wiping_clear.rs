@@ -34,7 +34,11 @@ fn main() {
         }
 
         connection
-            .send(Command::BitmapLinearWin(Origin::ZERO, enabled_pixels.clone(), CompressionCode::Lzma))
+            .send(Command::BitmapLinearWin(
+                Origin::ZERO,
+                enabled_pixels.clone(),
+                CompressionCode::Lzma,
+            ))
             .expect("could not send command to display");
         thread::sleep(sleep_duration);
     }

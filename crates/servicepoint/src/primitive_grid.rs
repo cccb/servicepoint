@@ -1,9 +1,13 @@
+//! This module contains the implementation of the [PrimitiveGrid].
+
+use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
 
 use crate::{DataRef, Grid};
 
-pub trait PrimitiveGridType: Sized + Default + Copy + Clone {}
-impl<T: Sized + Default + Copy + Clone> PrimitiveGridType for T {}
+/// A type that can be stored in a [PrimitiveGrid], e.g. [char], [u8].
+pub trait PrimitiveGridType: Sized + Default + Copy + Clone + Debug {}
+impl<T: Sized + Default + Copy + Clone + Debug> PrimitiveGridType for T {}
 
 /// A 2D grid of bytes
 #[derive(Debug, Clone, PartialEq)]
@@ -60,7 +64,11 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// - when the dimensions and data size do not match exactly.
     #[must_use]
     pub fn load(width: usize, height: usize, data: &[T]) -> Self {
-        assert_eq!(width * height, data.len());
+        assert_eq!(
+            width * height,
+            data.len(),
+            "dimension mismatch for data {data:?}"
+        );
         Self {
             data: Vec::from(data),
             width,
@@ -68,12 +76,31 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         }
     }
 
+    /// Loads a [PrimitiveGrid] with the specified dimensions from the provided data.
+    ///
+    /// returns: [PrimitiveGrid] that contains a copy of the provided data or [TryLoadPrimitiveGridError].
+    pub fn try_load(
+        width: usize,
+        height: usize,
+        data: Vec<T>,
+    ) -> Result<Self, TryLoadPrimitiveGridError> {
+        if width * height != data.len() {
+            return Err(TryLoadPrimitiveGridError::InvalidDimensions);
+        }
+
+        Ok(Self {
+            data,
+            width,
+            height,
+        })
+    }
+
     /// Iterate over all cells in [PrimitiveGrid].
     ///
     /// Order is equivalent to the following loop:
     /// ```
-    /// # use servicepoint::{PrimitiveGrid, Grid};
-    /// # let grid = PrimitiveGrid::<u8>::new(2,2);
+    /// # use servicepoint::{ByteGrid, Grid};
+    /// # let grid = ByteGrid::new(2,2);
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
     ///         grid.get(x, y);
@@ -140,9 +167,9 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     ///
     /// Use logic written for u8s and then convert to [Brightness] values for sending in a [Command].
     /// ```
-    /// # fn foo(grid: &mut PrimitiveGrid<u8>) {}
-    /// # use servicepoint::{Brightness, BrightnessGrid, Command, Origin, PrimitiveGrid, TILE_HEIGHT, TILE_WIDTH};
-    /// let mut grid: PrimitiveGrid<u8> = PrimitiveGrid::new(TILE_WIDTH, TILE_HEIGHT);
+    /// # fn foo(grid: &mut ByteGrid) {}
+    /// # use servicepoint::{Brightness, BrightnessGrid, ByteGrid, Command, Origin, TILE_HEIGHT, TILE_WIDTH};
+    /// let mut grid: ByteGrid = ByteGrid::new(TILE_WIDTH, TILE_HEIGHT);
     /// foo(&mut grid);
     /// let grid: BrightnessGrid = grid.map(Brightness::saturating_from);
     /// let command = Command::CharBrightness(Origin::ZERO, grid);
@@ -238,6 +265,12 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
+pub enum TryLoadPrimitiveGridError {
+    #[error("The provided dimensions do not match with the data size")]
+    InvalidDimensions,
+}
+
 impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {
     /// Sets the value of the cell at the specified position in the `PrimitiveGrid.
     ///
@@ -300,6 +333,7 @@ impl<T: PrimitiveGridType> From<PrimitiveGrid<T>> for Vec<T> {
     }
 }
 
+/// An iterator iver the rows in a [PrimitiveGrid]
 pub struct IterRows<'t, T: PrimitiveGridType> {
     byte_grid: &'t PrimitiveGrid<T>,
     row: usize,
@@ -323,7 +357,8 @@ impl<'t, T: PrimitiveGridType> Iterator for IterRows<'t, T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{DataRef, Grid, PrimitiveGrid, SeriesError};
+    use crate::primitive_grid::{PrimitiveGrid, SeriesError};
+    use crate::{DataRef, Grid};
 
     #[test]
     fn fill() {

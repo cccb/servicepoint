@@ -107,9 +107,7 @@ impl Connection {
 
         let request = ClientRequestBuilder::new(uri).into_client_request()?;
         let (sock, _) = connect(request)?;
-        Ok(Self::WebSocket(std::sync::Mutex::new(
-            sock,
-        )))
+        Ok(Self::WebSocket(std::sync::Mutex::new(sock)))
     }
 
     /// Send something packet-like to the display. Usually this is in the form of a Command.
@@ -159,9 +157,7 @@ impl Drop for Connection {
     fn drop(&mut self) {
         #[cfg(feature = "protocol_websocket")]
         if let Connection::WebSocket(sock) = self {
-            _ = sock
-                .try_lock()
-                .map(move |mut sock| sock.close(None));
+            _ = sock.try_lock().map(move |mut sock| sock.close(None));
         }
     }
 }

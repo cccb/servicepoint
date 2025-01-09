@@ -4,3 +4,4 @@ out
 .direnv
 .envrc
 result
+mutants.*
