@@ -1,2 +1,4 @@
-/// A 2d grid of bytes - see [crate::ValueGrid].
-pub type ByteGrid = crate::value_grid::ValueGrid<u8>;
+use crate::ValueGrid;
+
+/// A 2d grid of bytes - see [ValueGrid].
+pub type ByteGrid = ValueGrid<u8>;

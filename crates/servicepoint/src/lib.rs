@@ -2,20 +2,25 @@
 //!
 //! Your starting point is a [Connection] to the display.
 //! With a connection, you can send [Command]s.
-//! When received, the display will update the state of the pixels.
+//! When received, the display will update the state of its pixels.
 //!
 //! # Examples
 //!
-//! ```rust
-//! use servicepoint::{Command, CompressionCode, Grid, Bitmap};
+//! ### Clear display
 //!
-//! let connection = servicepoint::Connection::open("127.0.0.1:2342")
+//! ```rust
+//! use servicepoint::{Connection, Command};
+//!
+//! // establish a connection
+//! let connection = Connection::open("127.0.0.1:2342")
 //!     .expect("connection failed");
 //!
 //!  // turn off all pixels on display
 //!  connection.send(Command::Clear)
 //!     .expect("send failed");
 //! ```
+//!
+//! ### Set all pixels to on
 //!
 //! ```rust
 //! # use servicepoint::{Command, CompressionCode, Grid, Bitmap};
@@ -34,9 +39,24 @@
 //!  // send command to display
 //!  connection.send(command).expect("send failed");
 //! ```
+//!
+//! ### Send text
+//!
+//! ```rust
+//! # use servicepoint::{Command, CompressionCode, Grid, Bitmap, CharGrid};
+//! # let connection = servicepoint::Connection::open("127.0.0.1:2342").expect("connection failed");
+//! // create a text grid
+//! let mut grid = CharGrid::from("Hello\nCCCB?");
+//! // modify the grid
+//! grid.set(grid.width() - 1, 1, '!');
+//! // create the command to send the data
+//! let command = Command::Utf8Data(servicepoint::Origin::ZERO, grid);
+//! // send command to display
+//! connection.send(command).expect("send failed");
+//! ```
 
+pub use crate::bit_vec::{bitvec, BitVec};
 pub use crate::bitmap::Bitmap;
-pub use crate::bitvec::BitVec;
 pub use crate::brightness::Brightness;
 pub use crate::brightness_grid::BrightnessGrid;
 pub use crate::byte_grid::ByteGrid;
@@ -55,8 +75,8 @@ pub use crate::value_grid::{
     IterGridRows, SetValueSeriesError, TryLoadValueGridError, Value, ValueGrid,
 };
 
+mod bit_vec;
 mod bitmap;
-mod bitvec;
 mod brightness;
 mod brightness_grid;
 mod byte_grid;

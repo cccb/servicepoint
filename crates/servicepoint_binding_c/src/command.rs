@@ -5,8 +5,8 @@
 use std::ptr::{null_mut, NonNull};
 
 use crate::{
-    SPBitVec, SPBitmap, SPBrightnessGrid, SPCompressionCode, SPCp437Grid,
-    SPPacket,
+    SPBitVec, SPBitmap, SPBrightnessGrid, SPCharGrid, SPCompressionCode,
+    SPCp437Grid, SPPacket,
 };
 
 /// A low-level display command.
@@ -366,7 +366,7 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
     NonNull::from(Box::leak(result))
 }
 
-/// Show text on the screen.
+/// Show codepage 437 encoded text on the screen.
 ///
 /// The passed [SPCp437Grid] gets consumed.
 ///
@@ -393,6 +393,39 @@ pub unsafe extern "C" fn sp_command_cp437_data(
     assert!(!grid.is_null());
     let grid = *Box::from_raw(grid);
     let result = Box::new(SPCommand(servicepoint::Command::Cp437Data(
+        servicepoint::Origin::new(x, y),
+        grid.0,
+    )));
+    NonNull::from(Box::leak(result))
+}
+
+/// Show UTF-8 encoded text on the screen.
+///
+/// The passed [SPCharGrid] gets consumed.
+///
+/// Returns: a new [servicepoint::Command::Utf8Data] instance. Will never return NULL.
+///
+/// # Panics
+///
+/// - when `grid` is null
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `grid` points to a valid instance of [SPCharGrid]
+/// - `grid` is not used concurrently or after this call
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_free`.
+#[no_mangle]
+pub unsafe extern "C" fn sp_command_utf8_data(
+    x: usize,
+    y: usize,
+    grid: *mut SPCharGrid,
+) -> NonNull<SPCommand> {
+    assert!(!grid.is_null());
+    let grid = *Box::from_raw(grid);
+    let result = Box::new(SPCommand(servicepoint::Command::Utf8Data(
         servicepoint::Origin::new(x, y),
         grid.0,
     )));
