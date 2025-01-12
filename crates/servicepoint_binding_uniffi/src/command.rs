@@ -1,6 +1,7 @@
 use crate::bitmap::Bitmap;
 use crate::bitvec::BitVec;
 use crate::brightness_grid::BrightnessGrid;
+use crate::char_grid::CharGrid;
 use crate::compression_code::CompressionCode;
 use crate::cp437_grid::Cp437Grid;
 use crate::errors::ServicePointError;
@@ -148,6 +149,18 @@ impl Command {
         let origin = Origin::new(offset_x as usize, offset_y as usize);
         let grid = grid.actual.read().unwrap().clone();
         let actual = servicepoint::Command::Cp437Data(origin, grid);
+        Self::internal_new(actual)
+    }
+
+    #[uniffi::constructor]
+    pub fn utf8_data(
+        offset_x: u64,
+        offset_y: u64,
+        grid: &Arc<CharGrid>,
+    ) -> Arc<Self> {
+        let origin = Origin::new(offset_x as usize, offset_y as usize);
+        let grid = grid.actual.read().unwrap().clone();
+        let actual = servicepoint::Command::Utf8Data(origin, grid);
         Self::internal_new(actual)
     }
 

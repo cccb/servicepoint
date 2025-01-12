@@ -682,6 +682,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern CommandSafeHandle uniffi_servicepoint_binding_uniffi_fn_constructor_command_utf8_data(ulong @offsetX,ulong @offsetY,CharGridSafeHandle @grid,ref RustCallStatus _uniffi_out_err
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern sbyte uniffi_servicepoint_binding_uniffi_fn_method_command_equals(CommandSafeHandle @ptr,CommandSafeHandle @other,ref RustCallStatus _uniffi_out_err
     );
 
@@ -1256,6 +1260,10 @@ static class _UniFFILib {
     );
 
     [DllImport("servicepoint_binding_uniffi")]
+    public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_command_utf8_data(
+    );
+
+    [DllImport("servicepoint_binding_uniffi")]
     public static extern ushort uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new(
     );
 
@@ -1695,6 +1703,12 @@ static class _UniFFILib {
             var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset();
             if (checksum != 62130) {
                 throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset` checksum `62130`, library returned `{checksum}`");
+            }
+        }
+        {
+            var checksum = _UniFFILib.uniffi_servicepoint_binding_uniffi_checksum_constructor_command_utf8_data();
+            if (checksum != 2263) {
+                throw new UniffiContractChecksumException($"ServicePoint: uniffi bindings expected function `uniffi_servicepoint_binding_uniffi_checksum_constructor_command_utf8_data` checksum `2263`, library returned `{checksum}`");
             }
         }
         {
@@ -2668,6 +2682,13 @@ public class Command: FFIObject<CommandSafeHandle>, ICommand {
         return new Command(
     _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
     _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset( ref _status)
+));
+    }
+    
+    public static Command Utf8Data(ulong @offsetX, ulong @offsetY, CharGrid @grid) {
+        return new Command(
+    _UniffiHelpers.RustCall( (ref RustCallStatus _status) =>
+    _UniFFILib.uniffi_servicepoint_binding_uniffi_fn_constructor_command_utf8_data(FfiConverterUInt64.INSTANCE.Lower(@offsetX), FfiConverterUInt64.INSTANCE.Lower(@offsetY), FfiConverterTypeCharGrid.INSTANCE.Lower(@grid), ref _status)
 ));
     }
     
