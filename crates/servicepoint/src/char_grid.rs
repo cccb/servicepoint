@@ -1,11 +1,9 @@
-use crate::primitive_grid::{
-    PrimitiveGrid, SeriesError, TryLoadPrimitiveGridError,
-};
+use crate::value_grid::{SetValueSeriesError, TryLoadPrimitiveGridError, ValueGrid};
 use crate::Grid;
 use std::string::FromUtf8Error;
 
 /// A grid containing UTF-8 characters.
-pub type CharGrid = PrimitiveGrid<char>;
+pub type CharGrid = ValueGrid<char>;
 
 impl CharGrid {
     /// Copies a column from the grid as a String.
@@ -24,23 +22,23 @@ impl CharGrid {
 
     /// Overwrites a row in the grid with a str.
     ///
-    /// Returns [SeriesError] if y is out of bounds or `row` is not of the correct size.
+    /// Returns [SetValueSeriesError] if y is out of bounds or `row` is not of the correct size.
     pub fn set_row_str(
         &mut self,
         y: usize,
         value: &str,
-    ) -> Result<(), SeriesError> {
+    ) -> Result<(), SetValueSeriesError> {
         self.set_row(y, value.chars().collect::<Vec<_>>().as_ref())
     }
 
     /// Overwrites a column in the grid with a str.
     ///
-    /// Returns [SeriesError] if y is out of bounds or `row` is not of the correct size.
+    /// Returns [SetValueSeriesError] if y is out of bounds or `row` is not of the correct size.
     pub fn set_col_str(
         &mut self,
         x: usize,
         value: &str,
-    ) -> Result<(), SeriesError> {
+    ) -> Result<(), SetValueSeriesError> {
         self.set_col(x, value.chars().collect::<Vec<_>>().as_ref())
     }
 
@@ -129,7 +127,6 @@ impl From<CharGrid> for Vec<u8> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::Grid;
     #[test]
     fn col_str() {
         let mut grid = CharGrid::new(2, 3);
@@ -146,7 +143,7 @@ mod test {
         assert_eq!(grid.get_row_str(1), Some(String::from("\0\0")));
         assert_eq!(
             grid.set_row_str(1, "abc"),
-            Err(SeriesError::InvalidLength {
+            Err(SetValueSeriesError::InvalidLength {
                 expected: 2,
                 actual: 3
             })

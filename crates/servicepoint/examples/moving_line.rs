@@ -1,10 +1,8 @@
 //! A simple example for how to send pixel data to the display.
 
-use std::thread;
-
 use clap::Parser;
-
 use servicepoint::*;
+use std::thread;
 
 #[derive(Parser, Debug)]
 struct Cli {

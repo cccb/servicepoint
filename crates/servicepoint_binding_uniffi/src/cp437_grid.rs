@@ -1,6 +1,6 @@
+use crate::char_grid::CharGrid;
 use servicepoint::{DataRef, Grid};
 use std::sync::{Arc, RwLock};
-use crate::char_grid::CharGrid;
 
 #[derive(uniffi::Object)]
 pub struct Cp437Grid {
@@ -72,6 +72,8 @@ impl Cp437Grid {
     }
 
     pub fn to_utf8(&self) -> Arc<CharGrid> {
-        CharGrid::internal_new(servicepoint::CharGrid::from(&*self.actual.read().unwrap()))
+        CharGrid::internal_new(servicepoint::CharGrid::from(
+            &*self.actual.read().unwrap(),
+        ))
     }
 }

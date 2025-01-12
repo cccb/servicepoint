@@ -7,6 +7,6 @@ mod char_grid;
 mod command;
 mod compression_code;
 mod connection;
+mod constants;
 mod cp437_grid;
 mod errors;
-mod constants;

@@ -1,8 +1,7 @@
 //! An example for how to send text to the display.
 
 use clap::Parser;
-
-use servicepoint::{CharGrid, Command, Connection, Origin, TILE_WIDTH};
+use servicepoint::*;
 
 #[derive(Parser, Debug)]
 struct Cli {

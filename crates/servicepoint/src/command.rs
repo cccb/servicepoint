@@ -1,11 +1,7 @@
-use crate::primitive_grid::PrimitiveGrid;
-use crate::{
-    command_code::CommandCode,
-    compression::into_decompressed,
-    packet::{Header, Packet},
-    BitVec, Bitmap, Brightness, BrightnessGrid, CharGrid, CompressionCode,
-    Cp437Grid, Origin, Pixels, Tiles, TILE_SIZE,
-};
+use crate::command_code::CommandCode;
+use crate::compression::into_decompressed;
+use crate::value_grid::ValueGrid;
+use crate::*;
 
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Offset = usize;
@@ -42,7 +38,7 @@ pub type Offset = usize;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{Brightness, Command, Connection, packet::Packet};
+/// use servicepoint::{Brightness, Command, Connection, Packet};
 /// #
 /// // create command
 /// let command = Command::Brightness(Brightness::MAX);
@@ -80,9 +76,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection, Origin};
+    /// # use servicepoint::{Command, Connection, Origin, CharGrid};
     /// # let connection = Connection::Fake;
-    /// use servicepoint::{CharGrid};
     /// let grid = CharGrid::from("Hello,\nWorld!");
     /// connection.send(Command::Utf8Data(Origin::ZERO, grid)).expect("send failed");
     /// ```
@@ -97,9 +92,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection, Origin};
+    /// # use servicepoint::{Command, Connection, Origin, CharGrid, Cp437Grid};
     /// # let connection = Connection::Fake;
-    /// use servicepoint::{CharGrid, Cp437Grid};
     /// let grid = CharGrid::from("Hello,\nWorld!");
     /// let grid = Cp437Grid::from(&grid);
     /// connection.send(Command::Cp437Data(Origin::ZERO, grid)).expect("send failed");
@@ -447,8 +441,7 @@ impl Command {
             payload,
         } = packet;
 
-        let grid =
-            PrimitiveGrid::load(*width as usize, *height as usize, payload);
+        let grid = ValueGrid::load(*width as usize, *height as usize, payload);
         let grid = match BrightnessGrid::try_from(grid) {
             Ok(grid) => grid,
             Err(val) => return Err(TryFromPacketError::InvalidBrightness(val)),
@@ -536,14 +529,11 @@ impl Command {
 
 #[cfg(test)]
 mod tests {
+    use crate::command::TryFromPacketError;
+    use crate::command_code::CommandCode;
     use crate::{
-        bitvec::prelude::BitVec,
-        command::TryFromPacketError,
-        command_code::CommandCode,
-        origin::Pixels,
-        packet::{Header, Packet},
-        Bitmap, Brightness, BrightnessGrid, CharGrid, Command, CompressionCode,
-        Cp437Grid, Origin,
+        BitVec, Bitmap, Brightness, BrightnessGrid, CharGrid, Command,
+        CompressionCode, Cp437Grid, Header, Origin, Packet, Pixels,
     };
 
     fn round_trip(original: Command) {

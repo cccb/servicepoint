@@ -165,7 +165,6 @@ impl Drop for Connection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::packet::*;
 
     #[test]
     fn send_fake() {

@@ -1,8 +1,11 @@
-use bitvec::order::Msb0;
-use bitvec::prelude::BitSlice;
-use bitvec::slice::IterMut;
+//! Implementation of [Bitmap]
 
-use crate::{BitVec, DataRef, Grid, PIXEL_HEIGHT, PIXEL_WIDTH};
+use crate::data_ref::DataRef;
+use crate::BitVec;
+use crate::*;
+use ::bitvec::order::Msb0;
+use ::bitvec::prelude::BitSlice;
+use ::bitvec::slice::IterMut;
 
 /// A grid of pixels stored in packed bytes.
 #[derive(Debug, Clone, PartialEq, Eq)]

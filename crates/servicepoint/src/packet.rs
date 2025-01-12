@@ -7,7 +7,7 @@
 //! Converting a packet to a command and back:
 //!
 //! ```rust
-//! use servicepoint::{Command, packet::Packet};
+//! use servicepoint::{Command, Packet};
 //! # let command = Command::Clear;
 //! let packet: Packet = command.into();
 //! let command: Command = Command::try_from(packet).expect("could not read command from packet");
@@ -16,20 +16,20 @@
 //! Converting a packet to bytes and back:
 //!
 //! ```rust
-//! use servicepoint::{Command, packet::Packet};
+//! use servicepoint::{Command, Packet};
 //! # let command = Command::Clear;
 //! # let packet: Packet = command.into();
 //! let bytes: Vec<u8> = packet.into();
 //! let packet = Packet::try_from(bytes).expect("could not read packet from bytes");
 //! ```
 
-use std::mem::size_of;
-
+use crate::command_code::CommandCode;
 use crate::compression::into_compressed;
 use crate::{
-    command_code::CommandCode, Bitmap, Command, CompressionCode, Grid, Offset,
-    Origin, Pixels, Tiles, TILE_SIZE,
+    Bitmap, Command, CompressionCode, Grid, Offset, Origin, Pixels, Tiles,
+    TILE_SIZE,
 };
+use std::mem::size_of;
 
 /// A raw header.
 ///

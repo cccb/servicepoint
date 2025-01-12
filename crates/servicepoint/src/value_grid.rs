@@ -1,17 +1,17 @@
-//! This module contains the implementation of the [PrimitiveGrid].
+//! This module contains the implementation of the [ValueGrid].
 
 use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
 
-use crate::{DataRef, Grid};
+use crate::*;
 
-/// A type that can be stored in a [PrimitiveGrid], e.g. [char], [u8].
-pub trait PrimitiveGridType: Sized + Default + Copy + Clone + Debug {}
-impl<T: Sized + Default + Copy + Clone + Debug> PrimitiveGridType for T {}
+/// A type that can be stored in a [ValueGrid], e.g. [char], [u8].
+pub trait Value: Sized + Default + Copy + Clone + Debug {}
+impl<T: Sized + Default + Copy + Clone + Debug> Value for T {}
 
 /// A 2D grid of bytes
 #[derive(Debug, Clone, PartialEq)]
-pub struct PrimitiveGrid<T: PrimitiveGridType> {
+pub struct ValueGrid<T: Value> {
     width: usize,
     height: usize,
     data: Vec<T>,
@@ -19,7 +19,7 @@ pub struct PrimitiveGrid<T: PrimitiveGridType> {
 
 /// Error type for methods that change a whole column or row at once
 #[derive(thiserror::Error, Debug, PartialEq)]
-pub enum SeriesError {
+pub enum SetValueSeriesError {
     #[error("The index {index} was out of bounds for size {size}")]
     /// The index {index} was out of bounds for size {size}
     OutOfBounds {
@@ -38,15 +38,15 @@ pub enum SeriesError {
     },
 }
 
-impl<T: PrimitiveGridType> PrimitiveGrid<T> {
-    /// Creates a new [PrimitiveGrid] with the specified dimensions.
+impl<T: Value> ValueGrid<T> {
+    /// Creates a new [ValueGrid] with the specified dimensions.
     ///
     /// # Arguments
     ///
     /// - width: size in x-direction
     /// - height: size in y-direction
     ///
-    /// returns: [PrimitiveGrid] initialized to default value.
+    /// returns: [ValueGrid] initialized to default value.
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             data: vec![Default::default(); width * height],
@@ -55,9 +55,9 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         }
     }
 
-    /// Loads a [PrimitiveGrid] with the specified dimensions from the provided data.
+    /// Loads a [ValueGrid] with the specified dimensions from the provided data.
     ///
-    /// returns: [PrimitiveGrid] that contains a copy of the provided data
+    /// returns: [ValueGrid] that contains a copy of the provided data
     ///
     /// # Panics
     ///
@@ -76,9 +76,9 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         }
     }
 
-    /// Loads a [PrimitiveGrid] with the specified dimensions from the provided data.
+    /// Loads a [ValueGrid] with the specified dimensions from the provided data.
     ///
-    /// returns: [PrimitiveGrid] that contains a copy of the provided data or [TryLoadPrimitiveGridError].
+    /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadPrimitiveGridError].
     pub fn try_load(
         width: usize,
         height: usize,
@@ -95,7 +95,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         })
     }
 
-    /// Iterate over all cells in [PrimitiveGrid].
+    /// Iterate over all cells in [ValueGrid].
     ///
     /// Order is equivalent to the following loop:
     /// ```
@@ -111,9 +111,9 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         self.data.iter()
     }
 
-    /// Iterate over all rows in [PrimitiveGrid] top to bottom.
-    pub fn iter_rows(&self) -> IterRows<T> {
-        IterRows {
+    /// Iterate over all rows in [ValueGrid] top to bottom.
+    pub fn iter_rows(&self) -> IterGridRows<T> {
+        IterGridRows {
             byte_grid: self,
             row: 0,
         }
@@ -176,9 +176,9 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// ```
     /// [Brightness]: [crate::Brightness]
     /// [Command]: [crate::Command]
-    pub fn map<TConverted, F>(&self, f: F) -> PrimitiveGrid<TConverted>
+    pub fn map<TConverted, F>(&self, f: F) -> ValueGrid<TConverted>
     where
-        TConverted: PrimitiveGridType,
+        TConverted: Value,
         F: Fn(T) -> TConverted,
     {
         let data = self
@@ -186,7 +186,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
             .iter()
             .map(|elem| f(*elem))
             .collect::<Vec<_>>();
-        PrimitiveGrid::load(self.width(), self.height(), &data)
+        ValueGrid::load(self.width(), self.height(), &data)
     }
 
     /// Copies a row from the grid.
@@ -212,9 +212,13 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// Overwrites a column in the grid.
     ///
     /// Returns [Err] if x is out of bounds or `col` is not of the correct size.
-    pub fn set_col(&mut self, x: usize, col: &[T]) -> Result<(), SeriesError> {
+    pub fn set_col(
+        &mut self,
+        x: usize,
+        col: &[T],
+    ) -> Result<(), SetValueSeriesError> {
         if col.len() != self.height() {
-            return Err(SeriesError::InvalidLength {
+            return Err(SetValueSeriesError::InvalidLength {
                 expected: self.height(),
                 actual: col.len(),
             });
@@ -231,7 +235,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         {
             Ok(())
         } else {
-            Err(SeriesError::OutOfBounds {
+            Err(SetValueSeriesError::OutOfBounds {
                 index: x,
                 size: width,
             })
@@ -241,10 +245,14 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
     /// Overwrites a row in the grid.
     ///
     /// Returns [Err] if y is out of bounds or `row` is not of the correct size.
-    pub fn set_row(&mut self, y: usize, row: &[T]) -> Result<(), SeriesError> {
+    pub fn set_row(
+        &mut self,
+        y: usize,
+        row: &[T],
+    ) -> Result<(), SetValueSeriesError> {
         let width = self.width();
         if row.len() != width {
-            return Err(SeriesError::InvalidLength {
+            return Err(SetValueSeriesError::InvalidLength {
                 expected: width,
                 actual: row.len(),
             });
@@ -253,7 +261,7 @@ impl<T: PrimitiveGridType> PrimitiveGrid<T> {
         let chunk = match self.data.chunks_exact_mut(width).nth(y) {
             Some(row) => row,
             None => {
-                return Err(SeriesError::OutOfBounds {
+                return Err(SetValueSeriesError::OutOfBounds {
                     size: self.height(),
                     index: y,
                 })
@@ -271,7 +279,7 @@ pub enum TryLoadPrimitiveGridError {
     InvalidDimensions,
 }
 
-impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {
+impl<T: Value> Grid<T> for ValueGrid<T> {
     /// Sets the value of the cell at the specified position in the `PrimitiveGrid.
     ///
     /// # Arguments
@@ -314,7 +322,7 @@ impl<T: PrimitiveGridType> Grid<T> for PrimitiveGrid<T> {
     }
 }
 
-impl<T: PrimitiveGridType> DataRef<T> for PrimitiveGrid<T> {
+impl<T: Value> DataRef<T> for ValueGrid<T> {
     /// Get the underlying byte rows mutable
     fn data_ref_mut(&mut self) -> &mut [T] {
         self.data.as_mut_slice()
@@ -326,20 +334,20 @@ impl<T: PrimitiveGridType> DataRef<T> for PrimitiveGrid<T> {
     }
 }
 
-impl<T: PrimitiveGridType> From<PrimitiveGrid<T>> for Vec<T> {
+impl<T: Value> From<ValueGrid<T>> for Vec<T> {
     /// Turn into the underlying [`Vec<u8>`] containing the rows of bytes.
-    fn from(value: PrimitiveGrid<T>) -> Self {
+    fn from(value: ValueGrid<T>) -> Self {
         value.data
     }
 }
 
-/// An iterator iver the rows in a [PrimitiveGrid]
-pub struct IterRows<'t, T: PrimitiveGridType> {
-    byte_grid: &'t PrimitiveGrid<T>,
+/// An iterator iver the rows in a [ValueGrid]
+pub struct IterGridRows<'t, T: Value> {
+    byte_grid: &'t ValueGrid<T>,
     row: usize,
 }
 
-impl<'t, T: PrimitiveGridType> Iterator for IterRows<'t, T> {
+impl<'t, T: Value> Iterator for IterGridRows<'t, T> {
     type Item = Iter<'t, T>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -357,12 +365,14 @@ impl<'t, T: PrimitiveGridType> Iterator for IterRows<'t, T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::primitive_grid::{PrimitiveGrid, SeriesError};
-    use crate::{DataRef, Grid};
+    use crate::{
+        value_grid::{SetValueSeriesError, ValueGrid},
+        *,
+    };
 
     #[test]
     fn fill() {
-        let mut grid = PrimitiveGrid::<usize>::new(2, 2);
+        let mut grid = ValueGrid::<usize>::new(2, 2);
         assert_eq!(grid.data, [0x00, 0x00, 0x00, 0x00]);
 
         grid.fill(42);
@@ -371,7 +381,7 @@ mod tests {
 
     #[test]
     fn get_set() {
-        let mut grid = PrimitiveGrid::new(2, 2);
+        let mut grid = ValueGrid::new(2, 2);
         assert_eq!(grid.get(0, 0), 0);
         assert_eq!(grid.get(1, 1), 0);
 
@@ -386,7 +396,7 @@ mod tests {
 
     #[test]
     fn load() {
-        let mut grid = PrimitiveGrid::new(2, 3);
+        let mut grid = ValueGrid::new(2, 3);
         for x in 0..grid.width {
             for y in 0..grid.height {
                 grid.set(x, y, (x + y) as u8);
@@ -397,13 +407,13 @@ mod tests {
 
         let data: Vec<u8> = grid.into();
 
-        let grid = PrimitiveGrid::load(2, 3, &data);
+        let grid = ValueGrid::load(2, 3, &data);
         assert_eq!(grid.data, [0, 1, 1, 2, 2, 3]);
     }
 
     #[test]
     fn mut_data_ref() {
-        let mut vec = PrimitiveGrid::new(2, 2);
+        let mut vec = ValueGrid::new(2, 2);
 
         let data_ref = vec.data_ref_mut();
         data_ref.copy_from_slice(&[1, 2, 3, 4]);
@@ -414,7 +424,7 @@ mod tests {
 
     #[test]
     fn iter() {
-        let mut vec = PrimitiveGrid::new(2, 2);
+        let mut vec = ValueGrid::new(2, 2);
         vec.set(1, 1, 5);
 
         let mut iter = vec.iter();
@@ -426,7 +436,7 @@ mod tests {
 
     #[test]
     fn iter_mut() {
-        let mut vec = PrimitiveGrid::new(2, 3);
+        let mut vec = ValueGrid::new(2, 3);
         for (index, cell) in vec.iter_mut().enumerate() {
             *cell = index as u8;
         }
@@ -436,7 +446,7 @@ mod tests {
 
     #[test]
     fn iter_rows() {
-        let vec = PrimitiveGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]);
+        let vec = ValueGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]);
         for (y, row) in vec.iter_rows().enumerate() {
             for (x, val) in row.enumerate() {
                 assert_eq!(*val, (x + y) as u8);
@@ -447,20 +457,20 @@ mod tests {
     #[test]
     #[should_panic]
     fn out_of_bounds_x() {
-        let mut vec = PrimitiveGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
         vec.set(2, 1, 5);
     }
 
     #[test]
     #[should_panic]
     fn out_of_bounds_y() {
-        let vec = PrimitiveGrid::load(2, 2, &[0, 1, 2, 3]);
+        let vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
         vec.get(1, 2);
     }
 
     #[test]
     fn ref_mut() {
-        let mut vec = PrimitiveGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
 
         let top_left = vec.get_ref_mut(0, 0);
         *top_left += 5;
@@ -471,7 +481,7 @@ mod tests {
 
     #[test]
     fn optional() {
-        let mut grid = PrimitiveGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut grid = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
         grid.set_optional(0, 0, 5);
         grid.set_optional(-1, 0, 8);
         grid.set_optional(0, 8, 42);
@@ -483,18 +493,18 @@ mod tests {
 
     #[test]
     fn col() {
-        let mut grid = PrimitiveGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
         assert_eq!(grid.get_col(0), Some(vec![0, 2, 4]));
         assert_eq!(grid.get_col(1), Some(vec![1, 3, 5]));
         assert_eq!(grid.get_col(2), None);
         assert_eq!(grid.set_col(0, &[5, 7, 9]), Ok(()));
         assert_eq!(
             grid.set_col(2, &[5, 7, 9]),
-            Err(SeriesError::OutOfBounds { size: 2, index: 2 })
+            Err(SetValueSeriesError::OutOfBounds { size: 2, index: 2 })
         );
         assert_eq!(
             grid.set_col(0, &[5, 7]),
-            Err(SeriesError::InvalidLength {
+            Err(SetValueSeriesError::InvalidLength {
                 expected: 3,
                 actual: 2
             })
@@ -504,7 +514,7 @@ mod tests {
 
     #[test]
     fn row() {
-        let mut grid = PrimitiveGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
         assert_eq!(grid.get_row(0), Some(vec![0, 1]));
         assert_eq!(grid.get_row(2), Some(vec![4, 5]));
         assert_eq!(grid.get_row(3), None);
@@ -512,11 +522,11 @@ mod tests {
         assert_eq!(grid.get_row(0), Some(vec![5, 7]));
         assert_eq!(
             grid.set_row(3, &[5, 7]),
-            Err(SeriesError::OutOfBounds { size: 3, index: 3 })
+            Err(SetValueSeriesError::OutOfBounds { size: 3, index: 3 })
         );
         assert_eq!(
             grid.set_row(2, &[5, 7, 3]),
-            Err(SeriesError::InvalidLength {
+            Err(SetValueSeriesError::InvalidLength {
                 expected: 2,
                 actual: 3
             })

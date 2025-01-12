@@ -2,8 +2,8 @@
 //!
 //! prefix `sp_bitmap_`
 
-use std::ptr::NonNull;
 use servicepoint::{DataRef, Grid};
+use std::ptr::NonNull;
 
 use crate::byte_slice::SPByteSlice;
 
@@ -43,9 +43,7 @@ pub unsafe extern "C" fn sp_bitmap_new(
     width: usize,
     height: usize,
 ) -> NonNull<SPBitmap> {
-    let result = Box::new(SPBitmap(servicepoint::Bitmap::new(
-        width, height,
-    )));
+    let result = Box::new(SPBitmap(servicepoint::Bitmap::new(width, height)));
     NonNull::from(Box::leak(result))
 }
 
@@ -96,9 +94,8 @@ pub unsafe extern "C" fn sp_bitmap_load(
 ) -> NonNull<SPBitmap> {
     assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let result = Box::new(SPBitmap(servicepoint::Bitmap::load(
-        width, height, data,
-    )));
+    let result =
+        Box::new(SPBitmap(servicepoint::Bitmap::load(width, height, data)));
     NonNull::from(Box::leak(result))
 }
 

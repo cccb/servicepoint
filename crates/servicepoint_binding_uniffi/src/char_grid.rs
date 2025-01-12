@@ -1,5 +1,5 @@
 use crate::cp437_grid::Cp437Grid;
-use servicepoint::{Grid, primitive_grid::SeriesError};
+use servicepoint::{Grid, SetValueSeriesError};
 use std::convert::Into;
 use std::sync::{Arc, RwLock};
 
@@ -107,7 +107,10 @@ impl CharGrid {
             .unwrap()
             .get_row(y as usize)
             .map(String::from_iter)
-            .ok_or(CharGridError::OutOfBounds {index: y, size: self.height()})
+            .ok_or(CharGridError::OutOfBounds {
+                index: y,
+                size: self.height(),
+            })
     }
 
     pub fn get_col(&self, x: u64) -> Result<String, CharGridError> {
@@ -116,11 +119,16 @@ impl CharGrid {
             .unwrap()
             .get_col(x as usize)
             .map(String::from_iter)
-            .ok_or(CharGridError::OutOfBounds {index: x, size: self.width()})
+            .ok_or(CharGridError::OutOfBounds {
+                index: x,
+                size: self.width(),
+            })
     }
 
     pub fn to_cp437(&self) -> Arc<Cp437Grid> {
-        Cp437Grid::internal_new(servicepoint::Cp437Grid::from(&*self.actual.read().unwrap()))
+        Cp437Grid::internal_new(servicepoint::Cp437Grid::from(
+            &*self.actual.read().unwrap(),
+        ))
     }
 }
 
@@ -133,9 +141,7 @@ impl CharGrid {
 
     fn str_to_char(value: String) -> Result<char, CharGridError> {
         if value.len() != 1 {
-            return Err(CharGridError::StringNotOneChar {
-                value,
-            });
+            return Err(CharGridError::StringNotOneChar { value });
         }
 
         let value = value.chars().nth(0).unwrap();
@@ -143,16 +149,16 @@ impl CharGrid {
     }
 }
 
-impl From<SeriesError> for CharGridError {
-    fn from(e: SeriesError) -> Self {
+impl From<SetValueSeriesError> for CharGridError {
+    fn from(e: SetValueSeriesError) -> Self {
         match e {
-            SeriesError::OutOfBounds { index, size } => {
+            SetValueSeriesError::OutOfBounds { index, size } => {
                 CharGridError::OutOfBounds {
                     index: index as u64,
                     size: size as u64,
                 }
             }
-            SeriesError::InvalidLength { actual, expected } => {
+            SetValueSeriesError::InvalidLength { actual, expected } => {
                 CharGridError::InvalidSeriesLength {
                     actual: actual as u64,
                     expected: expected as u64,
