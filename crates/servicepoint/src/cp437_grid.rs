@@ -83,20 +83,17 @@ pub use feature_cp437::*;
 #[cfg(feature = "cp437")]
 mod feature_cp437 {
     use super::*;
-    use crate::{
-        cp437::{char_to_cp437, cp437_to_char},
-        CharGrid,
-    };
+    use crate::{CharGrid, Cp437Converter};
 
     impl From<&Cp437Grid> for CharGrid {
         fn from(value: &Cp437Grid) -> Self {
-            value.map(cp437_to_char)
+            value.map(Cp437Converter::cp437_to_char)
         }
     }
 
     impl From<&CharGrid> for Cp437Grid {
         fn from(value: &CharGrid) -> Self {
-            value.map(char_to_cp437)
+            value.map(Cp437Converter::char_to_cp437)
         }
     }
 
