@@ -522,7 +522,7 @@ impl Command {
             String::from_utf8(payload.clone())?.chars().collect();
         Ok(Command::Utf8Data(
             Origin::new(*a as usize, *b as usize),
-            CharGrid::load(*c as usize, *d as usize, &*payload),
+            CharGrid::load(*c as usize, *d as usize, &payload),
         ))
     }
 }

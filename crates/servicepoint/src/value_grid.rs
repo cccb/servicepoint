@@ -1,5 +1,3 @@
-//! This module contains the implementation of the [ValueGrid].
-
 use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
 
@@ -9,7 +7,12 @@ use crate::*;
 pub trait Value: Sized + Default + Copy + Clone + Debug {}
 impl<T: Sized + Default + Copy + Clone + Debug> Value for T {}
 
-/// A 2D grid of bytes
+/// A 2D grid of values.
+///
+/// The memory layout is the one the display expects in [Command]s.
+///
+/// This structure can be used with any type that implements the [Value] trait.
+/// You can also use the concrete type aliases provided in this crate, e.g. [CharGrid] and [ByteGrid].
 #[derive(Debug, Clone, PartialEq)]
 pub struct ValueGrid<T: Value> {
     width: usize,
@@ -78,14 +81,14 @@ impl<T: Value> ValueGrid<T> {
 
     /// Loads a [ValueGrid] with the specified dimensions from the provided data.
     ///
-    /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadPrimitiveGridError].
+    /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].
     pub fn try_load(
         width: usize,
         height: usize,
         data: Vec<T>,
-    ) -> Result<Self, TryLoadPrimitiveGridError> {
+    ) -> Result<Self, TryLoadValueGridError> {
         if width * height != data.len() {
-            return Err(TryLoadPrimitiveGridError::InvalidDimensions);
+            return Err(TryLoadValueGridError::InvalidDimensions);
         }
 
         Ok(Self {
@@ -159,7 +162,7 @@ impl<T: Value> ValueGrid<T> {
         }
     }
 
-    /// Convert between PrimitiveGrid types.
+    /// Convert between ValueGrid types.
     ///
     /// See also [Iterator::map].
     ///
@@ -273,14 +276,16 @@ impl<T: Value> ValueGrid<T> {
     }
 }
 
+/// Errors that can occur when loading a grid
 #[derive(Debug, thiserror::Error)]
-pub enum TryLoadPrimitiveGridError {
+pub enum TryLoadValueGridError {
     #[error("The provided dimensions do not match with the data size")]
+    /// The provided dimensions do not match with the data size
     InvalidDimensions,
 }
 
 impl<T: Value> Grid<T> for ValueGrid<T> {
-    /// Sets the value of the cell at the specified position in the `PrimitiveGrid.
+    /// Sets the value of the cell at the specified position in the `ValueGrid.
     ///
     /// # Arguments
     ///

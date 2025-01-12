@@ -51,7 +51,7 @@ pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
 pub use crate::packet::{Header, Packet, Payload};
 pub use crate::value_grid::{
-    IterGridRows, SetValueSeriesError, TryLoadPrimitiveGridError, Value, ValueGrid,
+    IterGridRows, SetValueSeriesError, TryLoadValueGridError, Value, ValueGrid,
 };
 
 mod bitmap;

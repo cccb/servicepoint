@@ -1,2 +1,2 @@
-/// A simple grid of bytes - see [primitive_grid::PrimitiveGrid].
+/// A 2d grid of bytes - see [crate::ValueGrid].
 pub type ByteGrid = crate::value_grid::ValueGrid<u8>;

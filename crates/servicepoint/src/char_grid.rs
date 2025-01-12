@@ -1,8 +1,22 @@
-use crate::value_grid::{SetValueSeriesError, TryLoadPrimitiveGridError, ValueGrid};
-use crate::Grid;
+use crate::{Grid, SetValueSeriesError, TryLoadValueGridError, ValueGrid};
 use std::string::FromUtf8Error;
 
 /// A grid containing UTF-8 characters.
+///
+/// To send a CharGrid to the display, use [crate::Command::Utf8Data].
+///
+/// Also see [crate::ValueGrid] for the non-specialized operations and examples.
+///
+/// # Examples
+///
+/// ```rust
+/// # use servicepoint::{CharGrid, Command, Connection, Origin};
+/// let grid = CharGrid::from("You can\nload multiline\nstrings directly");
+/// assert_eq!(grid.get_row_str(1), Some("load multiline\0\0".to_string()));
+///
+/// # let connection = Connection::Fake;
+/// let command = Command::Utf8Data(Origin::ZERO, grid);
+/// ```
 pub type CharGrid = ValueGrid<char>;
 
 impl CharGrid {
@@ -64,7 +78,7 @@ pub enum LoadUtf8Error {
     #[error(transparent)]
     FromUtf8Error(#[from] FromUtf8Error),
     #[error(transparent)]
-    TryLoadError(#[from] TryLoadPrimitiveGridError),
+    TryLoadError(#[from] TryLoadValueGridError),
 }
 
 impl From<&str> for CharGrid {

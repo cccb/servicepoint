@@ -1,5 +1,3 @@
-//! Implementation of [Bitmap]
-
 use crate::data_ref::DataRef;
 use crate::BitVec;
 use crate::*;

@@ -8,9 +8,9 @@ use std::convert::Into;
 use std::intrinsics::transmute;
 use std::ptr::NonNull;
 
-/// see [Brightness::MIN]
+/// see [servicepoint::Brightness::MIN]
 pub const SP_BRIGHTNESS_MIN: u8 = 0;
-/// see [Brightness::MAX]
+/// see [servicepoint::Brightness::MAX]
 pub const SP_BRIGHTNESS_MAX: u8 = 11;
 /// Count of possible brightness values
 pub const SP_BRIGHTNESS_LEVELS: u8 = 12;
