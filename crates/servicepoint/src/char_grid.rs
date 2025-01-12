@@ -3,9 +3,9 @@ use std::string::FromUtf8Error;
 
 /// A grid containing UTF-8 characters.
 ///
-/// To send a CharGrid to the display, use [crate::Command::Utf8Data].
+/// To send a CharGrid to the display, use [Command::Utf8Data](crate::Command::Utf8Data).
 ///
-/// Also see [crate::ValueGrid] for the non-specialized operations and examples.
+/// Also see [ValueGrid] for the non-specialized operations and examples.
 ///
 /// # Examples
 ///
@@ -20,9 +20,52 @@ use std::string::FromUtf8Error;
 pub type CharGrid = ValueGrid<char>;
 
 impl CharGrid {
+    /// Loads a [CharGrid] with the specified width from the provided text, wrapping to as many rows as needed.
+    ///
+    /// The passed rows are extended with '\0' if needed.
+    ///
+    /// returns: [CharGrid] that contains a copy of the provided data.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use servicepoint::CharGrid;
+    /// let grid = CharGrid::wrap_str(2, "abc\ndef");
+    /// ```
+    pub fn wrap_str(width: usize, text: &str) -> Self {
+        let lines = text
+            .split('\n')
+            .flat_map(move |x| {
+                x.chars()
+                    .collect::<Vec<char>>()
+                    .chunks(width)
+                    .map(|c| {
+                        let mut s = String::from_iter(c);
+                        s.push_str(&"\0".repeat(width - s.chars().count()));
+                        s
+                    })
+                    .collect::<Vec<String>>()
+            })
+            .collect::<Vec<String>>();
+        let height = lines.len();
+        let mut result = Self::new(width, height);
+        for (row, text_line) in lines.iter().enumerate() {
+            result.set_row_str(row, text_line).unwrap()
+        }
+        result
+    }
+
     /// Copies a column from the grid as a String.
     ///
     /// Returns [None] if x is out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use servicepoint::CharGrid;
+    /// let grid = CharGrid::from("ab\ncd");
+    /// let col = grid.get_col_str(0).unwrap(); // "ac"
+    /// ```
     pub fn get_col_str(&self, x: usize) -> Option<String> {
         Some(String::from_iter(self.get_col(x)?))
     }
@@ -30,6 +73,14 @@ impl CharGrid {
     /// Copies a row from the grid as a String.
     ///
     /// Returns [None] if y is out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use servicepoint::CharGrid;
+    /// let grid = CharGrid::from("ab\ncd");
+    /// let row = grid.get_row_str(0).unwrap(); // "ab"
+    /// ```
     pub fn get_row_str(&self, y: usize) -> Option<String> {
         Some(String::from_iter(self.get_row(y)?))
     }
@@ -37,6 +88,14 @@ impl CharGrid {
     /// Overwrites a row in the grid with a str.
     ///
     /// Returns [SetValueSeriesError] if y is out of bounds or `row` is not of the correct size.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use servicepoint::CharGrid;
+    /// let mut grid = CharGrid::from("ab\ncd");
+    /// grid.set_row_str(0, "ef").unwrap();
+    /// ```
     pub fn set_row_str(
         &mut self,
         y: usize,
@@ -48,6 +107,14 @@ impl CharGrid {
     /// Overwrites a column in the grid with a str.
     ///
     /// Returns [SetValueSeriesError] if y is out of bounds or `row` is not of the correct size.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use servicepoint::CharGrid;
+    /// let mut grid = CharGrid::from("ab\ncd");
+    /// grid.set_col_str(0, "ef").unwrap();
+    /// ```
     pub fn set_col_str(
         &mut self,
         x: usize,
@@ -60,9 +127,12 @@ impl CharGrid {
     ///
     /// returns: [CharGrid] that contains the provided data, or [FromUtf8Error] if the data is invalid.
     ///
-    /// # Panics
+    /// # Examples
     ///
-    /// - when the dimensions and data size do not match exactly.
+    /// ```
+    /// # use servicepoint::CharGrid;
+    /// let grid = CharGrid::load_utf8(2, 2, [97u8, 98, 99, 100].to_vec());
+    /// ```
     pub fn load_utf8(
         width: usize,
         height: usize,
@@ -117,6 +187,18 @@ impl From<CharGrid> for String {
 }
 
 impl From<&CharGrid> for String {
+    /// Converts a [CharGrid] into a [String].
+    ///
+    /// Rows are separated by '\n'.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::CharGrid;
+    /// let grid = CharGrid::from("ab\ncd");
+    /// let string = String::from(grid);
+    /// let grid = CharGrid::from(string);
+    /// ```
     fn from(value: &CharGrid) -> Self {
         value
             .iter_rows()
@@ -127,12 +209,26 @@ impl From<&CharGrid> for String {
 }
 
 impl From<&CharGrid> for Vec<u8> {
+    /// Converts a [CharGrid] into a [`Vec<u8>`].
+    ///
+    /// Rows are not separated.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{CharGrid, Grid};
+    /// let grid = CharGrid::from("ab\ncd");
+    /// let height = grid.height();
+    /// let width = grid.width();
+    /// let grid = CharGrid::load_utf8(width, height, grid.into());
+    /// ```
     fn from(value: &CharGrid) -> Self {
         String::from_iter(value.iter()).into_bytes()
     }
 }
 
 impl From<CharGrid> for Vec<u8> {
+    /// See [`From<&CharGrid>::from`].
     fn from(value: CharGrid) -> Self {
         Self::from(&value)
     }
@@ -191,5 +287,12 @@ mod test {
         let str: String = grid.clone().into();
         let copy = CharGrid::from(str);
         assert_eq!(grid, copy);
+    }
+
+    #[test]
+    fn wrap_str() {
+        let grid = CharGrid::wrap_str(2, "abc\ndef");
+        assert_eq!(4, grid.height());
+        assert_eq!("ab\nc\0\nde\nf\0", String::from(grid));
     }
 }

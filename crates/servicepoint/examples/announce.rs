@@ -40,20 +40,8 @@ fn main() {
             .expect("sending clear failed");
     }
 
-    let text = cli
-        .text
-        .iter()
-        .flat_map(move |x| {
-            x.chars()
-                .collect::<Vec<_>>()
-                .chunks(TILE_WIDTH)
-                .map(|c| String::from_iter(c))
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>()
-        .join("\n");
-
-    let grid = CharGrid::from(text);
+    let text = cli.text.join("\n");
+    let grid = CharGrid::wrap_str(TILE_WIDTH, &text);
     connection
         .send(Command::Utf8Data(Origin::ZERO, grid))
         .expect("sending text failed");

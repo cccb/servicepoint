@@ -9,12 +9,13 @@ use ::bitvec::slice::IterMut;
 ///
 /// The values are stored in packed bytes (8 values per byte) in the same order as used by the display for storing pixels.
 /// This means that no conversion is necessary for sending the data to the display.
+/// The downside is that the width has to be a multiple of 8.
 ///
 /// # Examples
 ///
 /// ```rust
 /// use servicepoint::Bitmap;
-/// let mut bitmap = Bitmap::new(4, 2);
+/// let mut bitmap = Bitmap::new(8, 2);
 ///
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -192,12 +193,18 @@ impl From<Bitmap> for Vec<u8> {
 }
 
 impl From<Bitmap> for BitVec {
+    /// Turns a [Bitmap] into the underlying [BitVec].
     fn from(value: Bitmap) -> Self {
         value.bit_vec
     }
 }
 
 impl From<&ValueGrid<bool>> for Bitmap {
+    /// Converts a grid of [bool]s into a [Bitmap].
+    /// 
+    /// # Panics
+    ///
+    /// - when the width of `value` is not dividable by 8
     fn from(value: &ValueGrid<bool>) -> Self {
         let mut result = Self::new(value.width(), value.height());
         for (mut to, from) in result.iter_mut().zip(value.iter()) {
@@ -208,6 +215,7 @@ impl From<&ValueGrid<bool>> for Bitmap {
 }
 
 impl From<&Bitmap> for ValueGrid<bool> {
+    /// Converts a [Bitmap] into a grid of [bool]s.
     fn from(value: &Bitmap) -> Self {
         let mut result = Self::new(value.width(), value.height());
         for (to, from) in result.iter_mut().zip(value.iter()) {

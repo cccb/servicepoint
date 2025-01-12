@@ -90,6 +90,12 @@ mod feature_cp437 {
             value.map(Cp437Converter::cp437_to_char)
         }
     }
+    
+    impl From<Cp437Grid> for CharGrid {
+        fn from(value: Cp437Grid) -> Self {
+            Self::from(&value)
+        }
+    }
 
     impl From<&CharGrid> for Cp437Grid {
         fn from(value: &CharGrid) -> Self {
@@ -99,7 +105,7 @@ mod feature_cp437 {
 
     impl From<CharGrid> for Cp437Grid {
         fn from(value: CharGrid) -> Self {
-            Cp437Grid::from(&value)
+            Self::from(&value)
         }
     }
 }
@@ -150,8 +156,8 @@ mod tests_feature_cp437 {
     #[test]
     fn round_trip_cp437() {
         let utf8 = CharGrid::load(2, 2, &['Ä', 'x', '\n', '$']);
-        let cp437 = Cp437Grid::from(&utf8);
-        let actual = CharGrid::from(&cp437);
+        let cp437 = Cp437Grid::from(utf8.clone());
+        let actual = CharGrid::from(cp437);
         assert_eq!(actual, utf8);
     }
 }

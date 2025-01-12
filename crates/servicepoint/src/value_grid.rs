@@ -79,6 +79,27 @@ impl<T: Value> ValueGrid<T> {
         }
     }
 
+    /// Loads a [ValueGrid] with the specified width from the provided data, wrapping to as many rows as needed.
+    ///
+    /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use servicepoint::ValueGrid;
+    /// let grid = ValueGrid::wrap(2, &[0, 1, 2, 3, 4, 5]).unwrap();
+    /// ```
+    pub fn wrap(
+        width: usize,
+        data: &[T],
+    ) -> Result<Self, TryLoadValueGridError> {
+        let len = data.len();
+        if len % width != 0 {
+            return Err(TryLoadValueGridError::InvalidDimensions);
+        }
+        Ok(Self::load(width, len / width, data))
+    }
+
     /// Loads a [ValueGrid] with the specified dimensions from the provided data.
     ///
     /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].
@@ -277,7 +298,7 @@ impl<T: Value> ValueGrid<T> {
 }
 
 /// Errors that can occur when loading a grid
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror::Error, PartialEq)]
 pub enum TryLoadValueGridError {
     #[error("The provided dimensions do not match with the data size")]
     /// The provided dimensions do not match with the data size
@@ -536,5 +557,14 @@ mod tests {
                 actual: 3
             })
         );
+    }
+
+    #[test]
+    fn wrap() {
+        let grid = ValueGrid::wrap(2, &[0, 1, 2, 3, 4, 5]).unwrap();
+        assert_eq!(grid.height(), 3);
+
+        let grid = ValueGrid::wrap(4, &[0, 1, 2, 3, 4, 5]);
+        assert_eq!(grid.err(), Some(TryLoadValueGridError::InvalidDimensions));
     }
 }
