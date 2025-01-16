@@ -1,13 +1,10 @@
 //! A simple example for how to set brightnesses for tiles on the screen.
 //! Continuously changes the tiles in a random window to random brightnesses.
 
-use std::time::Duration;
-
 use clap::Parser;
 use rand::Rng;
-
-use servicepoint::Command::{BitmapLinearWin, Brightness, CharBrightness};
 use servicepoint::*;
+use std::time::Duration;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -31,7 +28,7 @@ fn main() {
         let mut filled_grid = Bitmap::max_sized();
         filled_grid.fill(true);
 
-        let command = BitmapLinearWin(
+        let command = Command::BitmapLinearWin(
             Origin::ZERO,
             filled_grid,
             CompressionCode::Lzma,
@@ -41,7 +38,7 @@ fn main() {
 
     // set all pixels to the same random brightness
     let mut rng = rand::thread_rng();
-    connection.send(Brightness(rng.gen())).unwrap();
+    connection.send(Command::Brightness(rng.gen())).unwrap();
 
     // continuously update random windows to new random brightness
     loop {
@@ -61,7 +58,9 @@ fn main() {
             }
         }
 
-        connection.send(CharBrightness(origin, luma)).unwrap();
+        connection
+            .send(Command::CharBrightness(origin, luma))
+            .unwrap();
         std::thread::sleep(wait_duration);
     }
 }

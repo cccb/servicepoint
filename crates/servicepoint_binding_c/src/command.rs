@@ -4,11 +4,9 @@
 
 use std::ptr::{null_mut, NonNull};
 
-use servicepoint::{Brightness, Origin};
-
 use crate::{
-    SPBitVec, SPBitmap, SPBrightnessGrid, SPCompressionCode, SPCp437Grid,
-    SPPacket,
+    SPBitVec, SPBitmap, SPBrightnessGrid, SPCharGrid, SPCompressionCode,
+    SPCp437Grid, SPPacket,
 };
 
 /// A low-level display command.
@@ -164,11 +162,10 @@ pub unsafe extern "C" fn sp_command_fade_out() -> NonNull<SPCommand> {
 pub unsafe extern "C" fn sp_command_brightness(
     brightness: u8,
 ) -> NonNull<SPCommand> {
-    let brightness =
-        Brightness::try_from(brightness).expect("invalid brightness");
-    let result = Box::new(SPCommand(
-        servicepoint::Command::Brightness(brightness),
-    ));
+    let brightness = servicepoint::Brightness::try_from(brightness)
+        .expect("invalid brightness");
+    let result =
+        Box::new(SPCommand(servicepoint::Command::Brightness(brightness)));
     NonNull::from(Box::leak(result))
 }
 
@@ -198,9 +195,10 @@ pub unsafe extern "C" fn sp_command_char_brightness(
 ) -> NonNull<SPCommand> {
     assert!(!grid.is_null());
     let byte_grid = *Box::from_raw(grid);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::CharBrightness(Origin::new(x, y), byte_grid.0),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::CharBrightness(
+        servicepoint::Origin::new(x, y),
+        byte_grid.0,
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -237,13 +235,11 @@ pub unsafe extern "C" fn sp_command_bitmap_linear(
 ) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinear(
-            offset,
-            bit_vec.into(),
-            compression.try_into().expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinear(
+        offset,
+        bit_vec.into(),
+        compression.try_into().expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -280,13 +276,11 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_and(
 ) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinearAnd(
-            offset,
-            bit_vec.into(),
-            compression.try_into().expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinearAnd(
+        offset,
+        bit_vec.into(),
+        compression.try_into().expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -323,13 +317,11 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_or(
 ) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinearOr(
-            offset,
-            bit_vec.into(),
-            compression.try_into().expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinearOr(
+        offset,
+        bit_vec.into(),
+        compression.try_into().expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -366,17 +358,15 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_xor(
 ) -> NonNull<SPCommand> {
     assert!(!bit_vec.is_null());
     let bit_vec = *Box::from_raw(bit_vec);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinearXor(
-            offset,
-            bit_vec.into(),
-            compression.try_into().expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinearXor(
+        offset,
+        bit_vec.into(),
+        compression.try_into().expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 
-/// Show text on the screen.
+/// Show codepage 437 encoded text on the screen.
 ///
 /// The passed [SPCp437Grid] gets consumed.
 ///
@@ -402,9 +392,43 @@ pub unsafe extern "C" fn sp_command_cp437_data(
 ) -> NonNull<SPCommand> {
     assert!(!grid.is_null());
     let grid = *Box::from_raw(grid);
-    let result = Box::new(SPCommand(
-        servicepoint::Command::Cp437Data(Origin::new(x, y), grid.0),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::Cp437Data(
+        servicepoint::Origin::new(x, y),
+        grid.0,
+    )));
+    NonNull::from(Box::leak(result))
+}
+
+/// Show UTF-8 encoded text on the screen.
+///
+/// The passed [SPCharGrid] gets consumed.
+///
+/// Returns: a new [servicepoint::Command::Utf8Data] instance. Will never return NULL.
+///
+/// # Panics
+///
+/// - when `grid` is null
+///
+/// # Safety
+///
+/// The caller has to make sure that:
+///
+/// - `grid` points to a valid instance of [SPCharGrid]
+/// - `grid` is not used concurrently or after this call
+/// - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+///   by explicitly calling `sp_command_free`.
+#[no_mangle]
+pub unsafe extern "C" fn sp_command_utf8_data(
+    x: usize,
+    y: usize,
+    grid: *mut SPCharGrid,
+) -> NonNull<SPCommand> {
+    assert!(!grid.is_null());
+    let grid = *Box::from_raw(grid);
+    let result = Box::new(SPCommand(servicepoint::Command::Utf8Data(
+        servicepoint::Origin::new(x, y),
+        grid.0,
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -437,15 +461,13 @@ pub unsafe extern "C" fn sp_command_bitmap_linear_win(
 ) -> NonNull<SPCommand> {
     assert!(!bitmap.is_null());
     let byte_grid = (*Box::from_raw(bitmap)).0;
-    let result = Box::new(SPCommand(
-        servicepoint::Command::BitmapLinearWin(
-            Origin::new(x, y),
-            byte_grid,
-            compression_code
-                .try_into()
-                .expect("invalid compression code"),
-        ),
-    ));
+    let result = Box::new(SPCommand(servicepoint::Command::BitmapLinearWin(
+        servicepoint::Origin::new(x, y),
+        byte_grid,
+        compression_code
+            .try_into()
+            .expect("invalid compression code"),
+    )));
     NonNull::from(Box::leak(result))
 }
 

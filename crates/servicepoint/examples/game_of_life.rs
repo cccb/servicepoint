@@ -1,11 +1,9 @@
 //! A simple game of life implementation to show how to render graphics to the display.
 
-use std::thread;
-
 use clap::Parser;
 use rand::{distributions, Rng};
-
 use servicepoint::*;
+use std::thread;
 
 #[derive(Parser, Debug)]
 struct Cli {

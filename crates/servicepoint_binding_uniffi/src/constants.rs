@@ -1,4 +1,6 @@
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, uniffi::Record)]
+#[derive(
+    Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, uniffi::Record,
+)]
 pub struct Constants {
     pub tile_size: u64,
     pub tile_width: u64,
@@ -10,7 +12,7 @@ pub struct Constants {
 
 #[uniffi::export]
 fn get_constants() -> Constants {
-Constants {
+    Constants {
         tile_size: servicepoint::TILE_SIZE as u64,
         tile_width: servicepoint::TILE_WIDTH as u64,
         tile_height: servicepoint::TILE_HEIGHT as u64,

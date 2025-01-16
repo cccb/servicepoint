@@ -20,7 +20,7 @@ uniffi = { version = "0.25.3" }
 thiserror.workspace = true
 
 [dependencies.servicepoint]
-version = "0.12.0"
+version = "0.13.0"
 path = "../servicepoint"
 features = ["all_compressions"]
 
@@ -32,8 +32,8 @@ optional = true
 
 [dependencies.uniffi-bindgen-go]
 git = "https://github.com/NordSecurity/uniffi-bindgen-go.git"
-# tag = "0.2.1+v0.25.0"
-rev = "a77dc0462dc18d53846c758155ab4e0a42e5b240"
+# tag = "0.2.2+v0.25.0"
+rev = "ba23bab72f1a9bcc39ce81924d3d9265598e017c"
 optional = true
 
 [lints]

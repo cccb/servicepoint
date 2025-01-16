@@ -2,9 +2,8 @@
 //!
 //! prefix `sp_bitvec_`
 
-use std::ptr::NonNull;
 use crate::SPByteSlice;
-use servicepoint::bitvec::prelude::{BitVec, Msb0};
+use std::ptr::NonNull;
 
 /// A vector of bits
 ///
@@ -14,15 +13,15 @@ use servicepoint::bitvec::prelude::{BitVec, Msb0};
 /// sp_bitvec_set(vec, 5, true);
 /// sp_bitvec_free(vec);
 /// ```
-pub struct SPBitVec(BitVec<u8, Msb0>);
+pub struct SPBitVec(servicepoint::BitVec);
 
-impl From<BitVec<u8, Msb0>> for SPBitVec {
-    fn from(actual: BitVec<u8, Msb0>) -> Self {
+impl From<servicepoint::BitVec> for SPBitVec {
+    fn from(actual: servicepoint::BitVec) -> Self {
         Self(actual)
     }
 }
 
-impl From<SPBitVec> for BitVec<u8, Msb0> {
+impl From<SPBitVec> for servicepoint::BitVec {
     fn from(value: SPBitVec) -> Self {
         value.0
     }
@@ -54,7 +53,7 @@ impl Clone for SPBitVec {
 ///   by explicitly calling `sp_bitvec_free`.
 #[no_mangle]
 pub unsafe extern "C" fn sp_bitvec_new(size: usize) -> NonNull<SPBitVec> {
-    let result = Box::new(SPBitVec(BitVec::repeat(false, size)));
+    let result = Box::new(SPBitVec(servicepoint::BitVec::repeat(false, size)));
     NonNull::from(Box::leak(result))
 }
 
@@ -81,7 +80,7 @@ pub unsafe extern "C" fn sp_bitvec_load(
 ) -> NonNull<SPBitVec> {
     assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let result = Box::new(SPBitVec(BitVec::from_slice(data)));
+    let result = Box::new(SPBitVec(servicepoint::BitVec::from_slice(data)));
     NonNull::from(Box::leak(result))
 }
 

@@ -1,10 +1,7 @@
-use crate::{
-    command_code::CommandCode,
-    compression::into_decompressed,
-    packet::{Header, Packet},
-    Bitmap, Brightness, BrightnessGrid, CompressionCode, Cp437Grid, Origin,
-    Pixels, PrimitiveGrid, BitVec, Tiles, TILE_SIZE,
-};
+use crate::command_code::CommandCode;
+use crate::compression::into_decompressed;
+use crate::value_grid::ValueGrid;
+use crate::*;
 
 /// Type alias for documenting the meaning of the u16 in enum values
 pub type Offset = usize;
@@ -41,7 +38,7 @@ pub type Offset = usize;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{Brightness, Command, Connection, packet::Packet};
+/// use servicepoint::{Brightness, Command, Connection, Packet};
 /// #
 /// // create command
 /// let command = Command::Brightness(Brightness::MAX);
@@ -74,14 +71,29 @@ pub enum Command {
 
     /// Show text on the screen.
     ///
-    /// The text is sent in the form of a 2D grid of [CP-437] encoded characters.
+    /// The text is sent in the form of a 2D grid of UTF-8 encoded characters (the default encoding in rust).
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection, Origin};
+    /// # use servicepoint::{Command, Connection, Origin, CharGrid};
     /// # let connection = Connection::Fake;
-    /// use servicepoint::{CharGrid, Cp437Grid};
+    /// let grid = CharGrid::from("Hello,\nWorld!");
+    /// connection.send(Command::Utf8Data(Origin::ZERO, grid)).expect("send failed");
+    /// ```
+    Utf8Data(Origin<Tiles>, CharGrid),
+
+    /// Show text on the screen.
+    ///
+    /// The text is sent in the form of a 2D grid of [CP-437] encoded characters.
+    ///
+    /// <div class="warning">You probably want to use [Command::Utf8Data] instead</div>
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use servicepoint::{Command, Connection, Origin, CharGrid, Cp437Grid};
+    /// # let connection = Connection::Fake;
     /// let grid = CharGrid::from("Hello,\nWorld!");
     /// let grid = Cp437Grid::from(&grid);
     /// connection.send(Command::Cp437Data(Origin::ZERO, grid)).expect("send failed");
@@ -234,6 +246,8 @@ pub enum TryFromPacketError {
     /// The given brightness value is out of bounds
     #[error("The given brightness value {0} is out of bounds.")]
     InvalidBrightness(u8),
+    #[error(transparent)]
+    InvalidUtf8(#[from] std::string::FromUtf8Error),
 }
 
 impl TryFrom<Packet> for Command {
@@ -269,6 +283,7 @@ impl TryFrom<Packet> for Command {
             CommandCode::CharBrightness => {
                 Self::packet_into_char_brightness(&packet)
             }
+            CommandCode::Utf8Data => Self::packet_into_utf8(&packet),
             #[allow(deprecated)]
             CommandCode::BitmapLegacy => Ok(Command::BitmapLegacy),
             CommandCode::BitmapLinear => {
@@ -426,8 +441,7 @@ impl Command {
             payload,
         } = packet;
 
-        let grid =
-            PrimitiveGrid::load(*width as usize, *height as usize, payload);
+        let grid = ValueGrid::load(*width as usize, *height as usize, payload);
         let grid = match BrightnessGrid::try_from(grid) {
             Ok(grid) => grid,
             Err(val) => return Err(TryFromPacketError::InvalidBrightness(val)),
@@ -489,18 +503,37 @@ impl Command {
             Cp437Grid::load(*c as usize, *d as usize, payload),
         ))
     }
+
+    fn packet_into_utf8(
+        packet: &Packet,
+    ) -> Result<Command, TryFromPacketError> {
+        let Packet {
+            header:
+                Header {
+                    command_code: _,
+                    a,
+                    b,
+                    c,
+                    d,
+                },
+            payload,
+        } = packet;
+        let payload: Vec<_> =
+            String::from_utf8(payload.clone())?.chars().collect();
+        Ok(Command::Utf8Data(
+            Origin::new(*a as usize, *b as usize),
+            CharGrid::load(*c as usize, *d as usize, &payload),
+        ))
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::command::TryFromPacketError;
+    use crate::command_code::CommandCode;
     use crate::{
-        bitvec::prelude::BitVec,
-        command::TryFromPacketError,
-        command_code::CommandCode,
-        origin::Pixels,
-        packet::{Header, Packet},
-        Bitmap, Brightness, BrightnessGrid, Command, CompressionCode, Origin,
-        PrimitiveGrid,
+        BitVec, Bitmap, Brightness, BrightnessGrid, CharGrid, Command,
+        CompressionCode, Cp437Grid, Header, Origin, Packet, Pixels,
     };
 
     fn round_trip(original: Command) {
@@ -556,16 +589,18 @@ mod tests {
     fn round_trip_char_brightness() {
         round_trip(Command::CharBrightness(
             Origin::new(5, 2),
-            PrimitiveGrid::new(7, 5),
+            BrightnessGrid::new(7, 5),
         ));
     }
 
     #[test]
     fn round_trip_cp437_data() {
-        round_trip(Command::Cp437Data(
-            Origin::new(5, 2),
-            PrimitiveGrid::new(7, 5),
-        ));
+        round_trip(Command::Cp437Data(Origin::new(5, 2), Cp437Grid::new(7, 5)));
+    }
+
+    #[test]
+    fn round_trip_utf8_data() {
+        round_trip(Command::Utf8Data(Origin::new(5, 2), CharGrid::new(7, 5)));
     }
 
     #[test]

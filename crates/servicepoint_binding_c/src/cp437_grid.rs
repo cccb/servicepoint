@@ -2,9 +2,9 @@
 //!
 //! prefix `sp_cp437_grid_`
 
-use std::ptr::NonNull;
 use crate::SPByteSlice;
 use servicepoint::{DataRef, Grid};
+use std::ptr::NonNull;
 
 /// A C-wrapper for grid containing codepage 437 characters.
 ///
@@ -41,9 +41,8 @@ pub unsafe extern "C" fn sp_cp437_grid_new(
     width: usize,
     height: usize,
 ) -> NonNull<SPCp437Grid> {
-    let result = Box::new(SPCp437Grid(
-        servicepoint::Cp437Grid::new(width, height),
-    ));
+    let result =
+        Box::new(SPCp437Grid(servicepoint::Cp437Grid::new(width, height)));
     NonNull::from(Box::leak(result))
 }
 
@@ -73,9 +72,9 @@ pub unsafe extern "C" fn sp_cp437_grid_load(
 ) -> NonNull<SPCp437Grid> {
     assert!(data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let result = Box::new(SPCp437Grid(
-        servicepoint::Cp437Grid::load(width, height, data),
-    ));
+    let result = Box::new(SPCp437Grid(servicepoint::Cp437Grid::load(
+        width, height, data,
+    )));
     NonNull::from(Box::leak(result))
 }
 

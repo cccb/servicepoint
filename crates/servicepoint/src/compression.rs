@@ -8,7 +8,7 @@ use flate2::{FlushCompress, FlushDecompress, Status};
 #[cfg(feature = "compression_zstd")]
 use zstd::{Decoder as ZstdDecoder, Encoder as ZstdEncoder};
 
-use crate::{packet::Payload, CompressionCode};
+use crate::{CompressionCode, Payload};
 
 pub(crate) fn into_decompressed(
     kind: CompressionCode,

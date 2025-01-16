@@ -14,12 +14,12 @@
 #define SP_BRIGHTNESS_LEVELS 12
 
 /**
- * see [Brightness::MAX]
+ * see [servicepoint::Brightness::MAX]
  */
 #define SP_BRIGHTNESS_MAX 11
 
 /**
- * see [Brightness::MIN]
+ * see [servicepoint::Brightness::MIN]
  */
 #define SP_BRIGHTNESS_MIN 0
 
@@ -130,6 +130,25 @@ typedef struct SPBitmap SPBitmap;
  * ```
  */
 typedef struct SPBrightnessGrid SPBrightnessGrid;
+
+/**
+ * A C-wrapper for grid containing UTF-8 characters.
+ *
+ * As the rust [char] type is not FFI-safe, characters are passed in their UTF-32 form as 32bit unsigned integers.
+ *
+ * The encoding is enforced in most cases by the rust standard library
+ * and will panic when provided with illegal characters.
+ *
+ * # Examples
+ *
+ * ```C
+ * CharGrid grid = sp_char_grid_new(4, 3);
+ * sp_char_grid_fill(grid, '?');
+ * sp_char_grid_set(grid, 0, 0, '!');
+ * sp_char_grid_free(grid);
+ * ```
+ */
+typedef struct SPCharGrid SPCharGrid;
 
 /**
  * A low-level display command.
@@ -366,6 +385,20 @@ SPBitmap *sp_bitmap_load(size_t width,
  */
 SPBitmap *sp_bitmap_new(size_t width,
                         size_t height);
+
+/**
+ * Creates a new [SPBitmap] with a size matching the screen.
+ *
+ * returns: [SPBitmap] initialized to all pixels off. Will never return NULL.
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling [sp_bitmap_free].
+ */
+SPBitmap *sp_bitmap_new_screen_sized(void);
 
 /**
  * Sets the value of the specified position in the [SPBitmap].
@@ -866,6 +899,196 @@ SPByteSlice sp_brightness_grid_unsafe_data_ref(SPBrightnessGrid *brightness_grid
 size_t sp_brightness_grid_width(const SPBrightnessGrid *brightness_grid);
 
 /**
+ * Clones a [SPCharGrid].
+ *
+ * Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when `char_grid` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `char_grid` points to a valid [SPCharGrid]
+ * - `char_grid` is not written to concurrently
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_char_grid_free`.
+ */
+SPCharGrid *sp_char_grid_clone(const SPCharGrid *char_grid);
+
+/**
+ * Sets the value of all cells in the [SPCharGrid].
+ *
+ * # Arguments
+ *
+ * - `char_grid`: instance to write to
+ * - `value`: the value to set all cells to
+ *
+ * # Panics
+ *
+ * - when `char_grid` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `char_grid` points to a valid [SPCharGrid]
+ * - `char_grid` is not written to or read from concurrently
+ */
+void sp_char_grid_fill(SPCharGrid *char_grid, uint32_t value);
+
+/**
+ * Deallocates a [SPCharGrid].
+ *
+ * # Panics
+ *
+ * - when `char_grid` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `char_grid` points to a valid [SPCharGrid]
+ * - `char_grid` is not used concurrently or after char_grid call
+ * - `char_grid` was not passed to another consuming function, e.g. to create a [SPCommand]
+ *
+ * [SPCommand]: [crate::SPCommand]
+ */
+void sp_char_grid_free(SPCharGrid *char_grid);
+
+/**
+ * Gets the current value at the specified position.
+ *
+ * # Arguments
+ *
+ * - `char_grid`: instance to read from
+ * - `x` and `y`: position of the cell to read
+ *
+ * # Panics
+ *
+ * - when `char_grid` is NULL
+ * - when accessing `x` or `y` out of bounds
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `char_grid` points to a valid [SPCharGrid]
+ * - `char_grid` is not written to concurrently
+ */
+uint32_t sp_char_grid_get(const SPCharGrid *char_grid, size_t x, size_t y);
+
+/**
+ * Gets the height of the [SPCharGrid] instance.
+ *
+ * # Arguments
+ *
+ * - `char_grid`: instance to read from
+ *
+ * # Panics
+ *
+ * - when `char_grid` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `char_grid` points to a valid [SPCharGrid]
+ */
+size_t sp_char_grid_height(const SPCharGrid *char_grid);
+
+/**
+ * Loads a [SPCharGrid] with the specified dimensions from the provided data.
+ *
+ * Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when `data` is NULL
+ * - when the provided `data_length` does not match `height` and `width`
+ * - when `data` is not valid UTF-8
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `data` points to a valid memory location of at least `data_length`
+ *   bytes in size.
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_char_grid_free`.
+ */
+SPCharGrid *sp_char_grid_load(size_t width,
+                              size_t height,
+                              const uint8_t *data,
+                              size_t data_length);
+
+/**
+ * Creates a new [SPCharGrid] with the specified dimensions.
+ *
+ * returns: [SPCharGrid] initialized to 0. Will never return NULL.
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - the returned instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_char_grid_free`.
+ */
+SPCharGrid *sp_char_grid_new(size_t width,
+                             size_t height);
+
+/**
+ * Sets the value of the specified position in the [SPCharGrid].
+ *
+ * # Arguments
+ *
+ * - `char_grid`: instance to write to
+ * - `x` and `y`: position of the cell
+ * - `value`: the value to write to the cell
+ *
+ * returns: old value of the cell
+ *
+ * # Panics
+ *
+ * - when `char_grid` is NULL
+ * - when accessing `x` or `y` out of bounds
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `char_grid` points to a valid [SPBitVec]
+ * - `char_grid` is not written to or read from concurrently
+ *
+ * [SPBitVec]: [crate::SPBitVec]
+ */
+void sp_char_grid_set(SPCharGrid *char_grid,
+                      size_t x,
+                      size_t y,
+                      uint32_t value);
+
+/**
+ * Gets the width of the [SPCharGrid] instance.
+ *
+ * # Arguments
+ *
+ * - `char_grid`: instance to read from
+ *
+ * # Panics
+ *
+ * - when `char_grid` is NULL
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `char_grid` points to a valid [SPCharGrid]
+ */
+size_t sp_char_grid_width(const SPCharGrid *char_grid);
+
+/**
  * Set pixel data starting at the pixel offset on screen.
  *
  * The screen will continuously overwrite more pixel data without regarding the offset, meaning
@@ -1101,7 +1324,7 @@ SPCommand *sp_command_clear(void);
 SPCommand *sp_command_clone(const SPCommand *command);
 
 /**
- * Show text on the screen.
+ * Show codepage 437 encoded text on the screen.
  *
  * The passed [SPCp437Grid] gets consumed.
  *
@@ -1200,6 +1423,30 @@ SPCommand *sp_command_hard_reset(void);
  *   by explicitly calling `sp_command_free`.
  */
 SPCommand *sp_command_try_from_packet(SPPacket *packet);
+
+/**
+ * Show UTF-8 encoded text on the screen.
+ *
+ * The passed [SPCharGrid] gets consumed.
+ *
+ * Returns: a new [servicepoint::Command::Utf8Data] instance. Will never return NULL.
+ *
+ * # Panics
+ *
+ * - when `grid` is null
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `grid` points to a valid instance of [SPCharGrid]
+ * - `grid` is not used concurrently or after this call
+ * - the returned [SPCommand] instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling `sp_command_free`.
+ */
+SPCommand *sp_command_utf8_data(size_t x,
+                                size_t y,
+                                SPCharGrid *grid);
 
 /**
  * Creates a new instance of [SPConnection] for testing that does not actually send anything.
@@ -1528,7 +1775,7 @@ SPPacket *sp_packet_clone(const SPPacket *packet);
  *
  * # Panics
  *
- * - when `sp_packet_free` is NULL
+ * - when `packet` is NULL
  *
  * # Safety
  *
@@ -1559,6 +1806,40 @@ void sp_packet_free(SPPacket *packet);
  *   by explicitly calling `sp_packet_free`.
  */
 SPPacket *sp_packet_from_command(SPCommand *command);
+
+/**
+ * Creates a raw [SPPacket] from parts.
+ *
+ * # Arguments
+ *
+ * - `command_code` specifies which command this packet contains
+ * - `a`, `b`, `c` and `d` are command-specific header values
+ * - `payload` is the optional data that is part of the command
+ * - `payload_len` is the size of the payload
+ *
+ * returns: new instance. Will never return null.
+ *
+ * # Panics
+ *
+ * - when `payload` is null, but `payload_len` is not zero
+ * - when `payload_len` is zero, but `payload` is nonnull
+ *
+ * # Safety
+ *
+ * The caller has to make sure that:
+ *
+ * - `payload` points to a valid memory region of at least `payload_len` bytes
+ * - `payload` is not written to concurrently
+ * - the returned [SPPacket] instance is freed in some way, either by using a consuming function or
+ *   by explicitly calling [sp_packet_free].
+ */
+SPPacket *sp_packet_from_parts(uint16_t command_code,
+                               uint16_t a,
+                               uint16_t b,
+                               uint16_t c,
+                               uint16_t d,
+                               const uint8_t *payload,
+                               size_t payload_len);
 
 /**
  * Tries to load a [SPPacket] from the passed array with the specified length.

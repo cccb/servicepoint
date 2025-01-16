@@ -1,8 +1,7 @@
 //! An example for how to send text to the display.
 
 use clap::Parser;
-
-use servicepoint::{CharGrid, Command, Connection, Cp437Grid, Origin};
+use servicepoint::*;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -42,10 +41,8 @@ fn main() {
     }
 
     let text = cli.text.join("\n");
-    let grid = CharGrid::from(text);
-    let grid = Cp437Grid::from(grid);
-
+    let grid = CharGrid::wrap_str(TILE_WIDTH, &text);
     connection
-        .send(Command::Cp437Data(Origin::ZERO, grid))
+        .send(Command::Utf8Data(Origin::ZERO, grid))
         .expect("sending text failed");
 }

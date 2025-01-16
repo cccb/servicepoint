@@ -3,14 +3,14 @@
 //! prefix `sp_brightness_grid_`
 
 use crate::SPByteSlice;
-use servicepoint::{Brightness, DataRef, Grid, PrimitiveGrid};
+use servicepoint::{DataRef, Grid};
 use std::convert::Into;
 use std::intrinsics::transmute;
 use std::ptr::NonNull;
 
-/// see [Brightness::MIN]
+/// see [servicepoint::Brightness::MIN]
 pub const SP_BRIGHTNESS_MIN: u8 = 0;
-/// see [Brightness::MAX]
+/// see [servicepoint::Brightness::MAX]
 pub const SP_BRIGHTNESS_MAX: u8 = 11;
 /// Count of possible brightness values
 pub const SP_BRIGHTNESS_LEVELS: u8 = 12;
@@ -48,9 +48,9 @@ pub unsafe extern "C" fn sp_brightness_grid_new(
     width: usize,
     height: usize,
 ) -> NonNull<SPBrightnessGrid> {
-    let result = Box::new(SPBrightnessGrid(
-        servicepoint::BrightnessGrid::new(width, height),
-    ));
+    let result = Box::new(SPBrightnessGrid(servicepoint::BrightnessGrid::new(
+        width, height,
+    )));
     NonNull::from(Box::leak(result))
 }
 
@@ -80,7 +80,7 @@ pub unsafe extern "C" fn sp_brightness_grid_load(
 ) -> NonNull<SPBrightnessGrid> {
     assert!(!data.is_null());
     let data = std::slice::from_raw_parts(data, data_length);
-    let grid = PrimitiveGrid::load(width, height, data);
+    let grid = servicepoint::ByteGrid::load(width, height, data);
     let grid = servicepoint::BrightnessGrid::try_from(grid)
         .expect("invalid brightness value");
     let result = Box::new(SPBrightnessGrid(grid));
@@ -203,8 +203,8 @@ pub unsafe extern "C" fn sp_brightness_grid_set(
     value: u8,
 ) {
     assert!(!brightness_grid.is_null());
-    let brightness =
-        Brightness::try_from(value).expect("invalid brightness value");
+    let brightness = servicepoint::Brightness::try_from(value)
+        .expect("invalid brightness value");
     (*brightness_grid).0.set(x, y, brightness);
 }
 
@@ -232,8 +232,8 @@ pub unsafe extern "C" fn sp_brightness_grid_fill(
     value: u8,
 ) {
     assert!(!brightness_grid.is_null());
-    let brightness =
-        Brightness::try_from(value).expect("invalid brightness value");
+    let brightness = servicepoint::Brightness::try_from(value)
+        .expect("invalid brightness value");
     (*brightness_grid).0.fill(brightness);
 }
 
@@ -311,7 +311,7 @@ pub unsafe extern "C" fn sp_brightness_grid_unsafe_data_ref(
     brightness_grid: *mut SPBrightnessGrid,
 ) -> SPByteSlice {
     assert!(!brightness_grid.is_null());
-    assert_eq!(core::mem::size_of::<Brightness>(), 1);
+    assert_eq!(core::mem::size_of::<servicepoint::Brightness>(), 1);
     let data = (*brightness_grid).0.data_ref_mut();
     // this assumes more about the memory layout than rust guarantees. yikes!
     let data: &mut [u8] = transmute(data);

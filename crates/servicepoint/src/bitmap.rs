@@ -1,10 +1,23 @@
-use bitvec::order::Msb0;
-use bitvec::prelude::BitSlice;
-use bitvec::slice::IterMut;
+use crate::data_ref::DataRef;
+use crate::BitVec;
+use crate::*;
+use ::bitvec::order::Msb0;
+use ::bitvec::prelude::BitSlice;
+use ::bitvec::slice::IterMut;
 
-use crate::{BitVec, DataRef, Grid, PIXEL_HEIGHT, PIXEL_WIDTH};
-
-/// A grid of pixels stored in packed bytes.
+/// A fixed-size 2D grid of booleans.
+///
+/// The values are stored in packed bytes (8 values per byte) in the same order as used by the display for storing pixels.
+/// This means that no conversion is necessary for sending the data to the display.
+/// The downside is that the width has to be a multiple of 8.
+///
+/// # Examples
+///
+/// ```rust
+/// use servicepoint::Bitmap;
+/// let mut bitmap = Bitmap::new(8, 2);
+///
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Bitmap {
     width: usize,
@@ -26,7 +39,11 @@ impl Bitmap {
     ///
     /// - when the width is not dividable by 8
     pub fn new(width: usize, height: usize) -> Self {
-        assert_eq!(width % 8, 0);
+        assert_eq!(
+            width % 8,
+            0,
+            "width must be a multiple of 8, but is {width}"
+        );
         Self {
             width,
             height,
@@ -176,8 +193,35 @@ impl From<Bitmap> for Vec<u8> {
 }
 
 impl From<Bitmap> for BitVec {
+    /// Turns a [Bitmap] into the underlying [BitVec].
     fn from(value: Bitmap) -> Self {
         value.bit_vec
+    }
+}
+
+impl From<&ValueGrid<bool>> for Bitmap {
+    /// Converts a grid of [bool]s into a [Bitmap].
+    /// 
+    /// # Panics
+    ///
+    /// - when the width of `value` is not dividable by 8
+    fn from(value: &ValueGrid<bool>) -> Self {
+        let mut result = Self::new(value.width(), value.height());
+        for (mut to, from) in result.iter_mut().zip(value.iter()) {
+            *to = *from;
+        }
+        result
+    }
+}
+
+impl From<&Bitmap> for ValueGrid<bool> {
+    /// Converts a [Bitmap] into a grid of [bool]s.
+    fn from(value: &Bitmap) -> Self {
+        let mut result = Self::new(value.width(), value.height());
+        for (to, from) in result.iter_mut().zip(value.iter()) {
+            *to = *from;
+        }
+        result
     }
 }
 
@@ -203,7 +247,7 @@ impl<'t> Iterator for IterRows<'t> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Bitmap, DataRef, Grid};
+    use crate::{BitVec, Bitmap, DataRef, Grid, ValueGrid};
 
     #[test]
     fn fill() {
@@ -294,5 +338,25 @@ mod tests {
         let data = grid.data_ref_mut();
         data[1] = 0x0F;
         assert!(grid.get(7, 1));
+    }
+
+    #[test]
+    fn to_bitvec() {
+        let mut grid = Bitmap::new(8, 2);
+        grid.set(0, 0, true);
+        let bitvec: BitVec = grid.into();
+        assert_eq!(bitvec.as_raw_slice(), [0x80, 0x00]);
+    }
+
+    #[test]
+    fn from_bool_grid() {
+        let original = ValueGrid::load(
+            8,
+            1,
+            &[true, false, true, false, true, false, true, false],
+        );
+        let converted = Bitmap::from(&original);
+        let reconverted = ValueGrid::from(&converted);
+        assert_eq!(original, reconverted);
     }
 }

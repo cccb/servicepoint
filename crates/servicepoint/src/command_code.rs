@@ -21,6 +21,7 @@ pub(crate) enum CommandCode {
     BitmapLinearWinBzip2 = 0x0018,
     #[cfg(feature = "compression_lzma")]
     BitmapLinearWinLzma = 0x0019,
+    Utf8Data = 0x0020,
     #[cfg(feature = "compression_zstd")]
     BitmapLinearWinZstd = 0x001A,
 }
@@ -92,6 +93,9 @@ impl TryFrom<u16> for CommandCode {
             #[cfg(feature = "compression_bzip2")]
             value if value == CommandCode::BitmapLinearWinBzip2 as u16 => {
                 Ok(CommandCode::BitmapLinearWinBzip2)
+            }
+            value if value == CommandCode::Utf8Data as u16 => {
+                Ok(CommandCode::Utf8Data)
             }
             _ => Err(()),
         }

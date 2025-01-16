@@ -17,7 +17,7 @@ cargo add servicepoint
 or
 ```toml
 [dependencies]
-servicepoint = "0.12.0"
+servicepoint = "0.13.0"
 ```
 
 ## Examples
@@ -39,8 +39,11 @@ Execute `cargo run --example` for a list of available examples and `cargo run --
 
 ## Note on stability
 
-This library is still in early development.
-You can absolutely use it, and it works, but expect minor breaking changes with every version bump.
+This library can be used for creative project or just to play around with the display.
+A decent coverage by unit tests prevents major problems and I also test this with my own projects, which mostly use up-to-date versions.
+
+That being said, the API is still being worked on.
+Expect minor breaking changes with every version bump.
 Please specify the full version including patch in your Cargo.toml until 1.0 is released.
 
 ## Features

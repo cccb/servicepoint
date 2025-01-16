@@ -1,10 +1,8 @@
 //! An example on how to modify the image on screen without knowing the current content.
+use clap::Parser;
+use servicepoint::*;
 use std::thread;
 use std::time::Duration;
-
-use clap::Parser;
-
-use servicepoint::*;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -34,7 +32,11 @@ fn main() {
         }
 
         connection
-            .send(Command::BitmapLinearWin(Origin::ZERO, enabled_pixels.clone(), CompressionCode::Lzma))
+            .send(Command::BitmapLinearWin(
+                Origin::ZERO,
+                enabled_pixels.clone(),
+                CompressionCode::Lzma,
+            ))
             .expect("could not send command to display");
         thread::sleep(sleep_duration);
     }

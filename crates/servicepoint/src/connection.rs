@@ -107,9 +107,7 @@ impl Connection {
 
         let request = ClientRequestBuilder::new(uri).into_client_request()?;
         let (sock, _) = connect(request)?;
-        Ok(Self::WebSocket(std::sync::Mutex::new(
-            sock,
-        )))
+        Ok(Self::WebSocket(std::sync::Mutex::new(sock)))
     }
 
     /// Send something packet-like to the display. Usually this is in the form of a Command.
@@ -144,7 +142,7 @@ impl Connection {
             Connection::WebSocket(socket) => {
                 let mut socket = socket.lock().unwrap();
                 socket
-                    .send(tungstenite::Message::Binary(data))
+                    .send(tungstenite::Message::Binary(data.into()))
                     .map_err(SendError::WebsocketError)
             }
             Connection::Fake => {
@@ -159,9 +157,7 @@ impl Drop for Connection {
     fn drop(&mut self) {
         #[cfg(feature = "protocol_websocket")]
         if let Connection::WebSocket(sock) = self {
-            _ = sock
-                .try_lock()
-                .map(move |mut sock| sock.close(None));
+            _ = sock.try_lock().map(move |mut sock| sock.close(None));
         }
     }
 }
@@ -169,7 +165,6 @@ impl Drop for Connection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::packet::*;
 
     #[test]
     fn send_fake() {

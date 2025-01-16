@@ -17,6 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: install lzma
+      run: sudo apt-get update && sudo apt-get install -y liblzma-dev
+
     - name: build default features
       run: cargo build --all --verbose
     - name: build default features -- examples

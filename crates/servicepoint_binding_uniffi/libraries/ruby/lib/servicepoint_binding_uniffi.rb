@@ -918,6 +918,9 @@ module UniFFILib
   attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset,
     [RustCallStatus.by_ref],
     :pointer
+  attach_function :uniffi_servicepoint_binding_uniffi_fn_constructor_command_utf8_data,
+    [:uint64, :uint64, :pointer, RustCallStatus.by_ref],
+    :pointer
   attach_function :uniffi_servicepoint_binding_uniffi_fn_method_command_equals,
     [:pointer, :pointer, RustCallStatus.by_ref],
     :int8
@@ -1186,6 +1189,9 @@ module UniFFILib
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_hard_reset,
+    [RustCallStatus.by_ref],
+    :uint16
+  attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_command_utf8_data,
     [RustCallStatus.by_ref],
     :uint16
   attach_function :uniffi_servicepoint_binding_uniffi_checksum_constructor_connection_new,
@@ -1816,6 +1822,15 @@ end
     # Lightly yucky way to bypass the usual "initialize" logic
     # and just create a new instance with the required pointer.
     return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_hard_reset,))
+  end
+  def self.utf8_data(offset_x, offset_y, grid)
+        offset_x = ServicepointBindingUniffi::uniffi_in_range(offset_x, "u64", 0, 2**64)
+        offset_y = ServicepointBindingUniffi::uniffi_in_range(offset_y, "u64", 0, 2**64)
+        grid = grid
+    # Call the (fallible) function before creating any half-baked object instances.
+    # Lightly yucky way to bypass the usual "initialize" logic
+    # and just create a new instance with the required pointer.
+    return _uniffi_allocate(ServicepointBindingUniffi.rust_call(:uniffi_servicepoint_binding_uniffi_fn_constructor_command_utf8_data,offset_x,offset_y,(CharGrid._uniffi_lower grid)))
   end
   
 

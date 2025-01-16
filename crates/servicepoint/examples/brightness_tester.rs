@@ -1,7 +1,6 @@
 //! Show a brightness level test pattern on screen
 
 use clap::Parser;
-
 use servicepoint::*;
 
 #[derive(Parser, Debug)]
