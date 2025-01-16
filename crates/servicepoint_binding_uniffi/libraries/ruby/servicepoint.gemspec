@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "servicepoint"
-  s.version     = "0.12.0"
+  s.version     = "0.13.0"
   s.summary     = ""
   s.description = ""
   s.authors     = ["kaesaecracker"]

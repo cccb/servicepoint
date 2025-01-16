@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <PackageId>ServicePoint</PackageId>
-        <Version>0.12.0</Version>
+        <Version>0.13.0</Version>
         <Authors>Repository Authors</Authors>
         <Company>None</Company>
         <Product>ServicePoint</Product>
