@@ -28,6 +28,7 @@ Take a look at the contained crates for language specific information:
     - animations that play on the display
 - tanks game (C#): [servicepoint-tanks](https://github.com/kaesaecracker/cccb-tanks-cs)
 - cellular automata slideshow (rust): [servicepoint-life](https://github.com/kaesaecracker/servicepoint-life)
+- browser stream (typescript): [cccb-servicepoint-browser](https://github.com/SamuelScheit/cccb-servicepoint-browser)
 
 To add yourself to the list, open a pull request.
 
