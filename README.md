@@ -3,20 +3,22 @@
 [![crates.io](https://img.shields.io/crates/v/servicepoint.svg)](https://crates.io/crates/servicepoint)
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/servicepoint)](https://crates.io/crates/servicepoint)
 [![docs.rs](https://img.shields.io/docsrs/servicepoint)](https://docs.rs/servicepoint/latest/servicepoint/)
-[![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint)](../../LICENSE)
+[![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint)](./LICENSE)
 
 In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. It is called  "Service Point
 Display" or "Airport Display".
 This repository contains a library for parsing, encoding and sending packets to this display via UDP in multiple
 programming languages.
 
+This repository will move to [git.berlin.ccc.de/servicepoint/servicepoint-simulator](https://git.berlin.ccc.de/servicepoint/servicepoint-simulator) soon.
+
 Take a look at the contained crates for language specific information:
 
-| Crate                       | Languages                         | Readme                                                                  |
-|-----------------------------|-----------------------------------|-------------------------------------------------------------------------|
-| servicepoint                | Rust                              | [servicepoint](crates/servicepoint/README.md)                           |
-| servicepoint_binding_c      | C / C++                           | [servicepoint_binding_c](crates/servicepoint_binding_c/README.md)       |
-| servicepoint_binding_uniffi | C# / Python / Go / Kotlin / Swift | [servicepoint_binding_cs](crates/servicepoint_binding_uniffi/README.md) |
+| Crate                       | Languages                         | Readme                                                                      |
+|-----------------------------|-----------------------------------|-----------------------------------------------------------------------------|
+| servicepoint                | Rust                              | [servicepoint](crates/servicepoint/README.md)                               |
+| servicepoint_binding_c      | C / C++                           | [servicepoint_binding_c](crates/servicepoint_binding_c/README.md)           |
+| servicepoint_binding_uniffi | C# / Python / Go / Kotlin / Swift | [servicepoint_binding_uniffi](crates/servicepoint_binding_uniffi/README.md) |
 
 ## Projects using the library
 
@@ -28,7 +30,7 @@ Take a look at the contained crates for language specific information:
     - animations that play on the display
 - tanks game (C#): [servicepoint-tanks](https://github.com/kaesaecracker/cccb-tanks-cs)
 - cellular automata slideshow (rust): [servicepoint-life](https://github.com/kaesaecracker/servicepoint-life)
-- browser stream (typescript): [cccb-servicepoint-browser](https://github.com/SamuelScheit/cccb-servicepoint-browser)
+- partial typescript implementation inspired by this library and browser stream: [cccb-servicepoint-browser](https://github.com/SamuelScheit/cccb-servicepoint-browser)
 
 To add yourself to the list, open a pull request.
 

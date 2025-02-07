@@ -101,7 +101,7 @@ mod tests_feature_cp437 {
         ⌡"#;
 
         let cp437 = Cp437Converter::str_to_cp437(utf8);
-        let actual = Cp437Converter::cp437_to_str(&*cp437);
+        let actual = Cp437Converter::cp437_to_str(&cp437);
         assert_eq!(utf8, actual)
     }
 
