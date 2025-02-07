@@ -10,13 +10,15 @@ Display" or "Airport Display".
 This repository contains a library for parsing, encoding and sending packets to this display via UDP in multiple
 programming languages.
 
+This repository will move to [git.berlin.ccc.de/servicepoint/servicepoint-simulator](https://git.berlin.ccc.de/servicepoint/servicepoint-simulator) soon.
+
 Take a look at the contained crates for language specific information:
 
-| Crate                       | Languages                         | Readme                                                                  |
-|-----------------------------|-----------------------------------|-------------------------------------------------------------------------|
-| servicepoint                | Rust                              | [servicepoint](crates/servicepoint/README.md)                           |
-| servicepoint_binding_c      | C / C++                           | [servicepoint_binding_c](crates/servicepoint_binding_c/README.md)       |
-| servicepoint_binding_uniffi | C# / Python / Go / Kotlin / Swift | [servicepoint_binding_cs](crates/servicepoint_binding_uniffi/README.md) |
+| Crate                       | Languages                         | Readme                                                                      |
+|-----------------------------|-----------------------------------|-----------------------------------------------------------------------------|
+| servicepoint                | Rust                              | [servicepoint](crates/servicepoint/README.md)                               |
+| servicepoint_binding_c      | C / C++                           | [servicepoint_binding_c](crates/servicepoint_binding_c/README.md)           |
+| servicepoint_binding_uniffi | C# / Python / Go / Kotlin / Swift | [servicepoint_binding_uniffi](crates/servicepoint_binding_uniffi/README.md) |
 
 ## Projects using the library
 
