@@ -3,7 +3,7 @@
 [![crates.io](https://img.shields.io/crates/v/servicepoint.svg)](https://crates.io/crates/servicepoint)
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/servicepoint)](https://crates.io/crates/servicepoint)
 [![docs.rs](https://img.shields.io/docsrs/servicepoint)](https://docs.rs/servicepoint/latest/servicepoint/)
-[![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint)](../../LICENSE)
+[![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint)](./LICENSE)
 
 In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. It is called  "Service Point
 Display" or "Airport Display".
