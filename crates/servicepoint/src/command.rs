@@ -605,7 +605,7 @@ mod tests {
 
     #[test]
     fn round_trip_bitmap_linear() {
-        for compression in all_compressions().to_owned() {
+        for compression in all_compressions().iter().copied() {
             round_trip(Command::BitmapLinear(
                 23,
                 BitVec::repeat(false, 40),
@@ -750,7 +750,7 @@ mod tests {
 
     #[test]
     fn error_decompression_failed_win() {
-        for compression in all_compressions().to_owned() {
+        for compression in all_compressions().iter().copied() {
             let p: Packet = Command::BitmapLinearWin(
                 Origin::new(16, 8),
                 Bitmap::new(8, 8),
@@ -780,7 +780,7 @@ mod tests {
 
     #[test]
     fn error_decompression_failed_and() {
-        for compression in all_compressions().to_owned() {
+        for compression in all_compressions().iter().copied() {
             let p: Packet = Command::BitmapLinearAnd(
                 0,
                 BitVec::repeat(false, 8),
