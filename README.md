@@ -10,7 +10,7 @@ Display" or "Airport Display".
 This repository contains a library for parsing, encoding and sending packets to this display via UDP in multiple
 programming languages.
 
-This repository will move to [git.berlin.ccc.de/servicepoint/servicepoint-simulator](https://git.berlin.ccc.de/servicepoint/servicepoint-simulator) soon.
+This repository will move to [git.berlin.ccc.de/servicepoint/servicepoint](https://git.berlin.ccc.de/servicepoint/servicepoint) soon.
 
 Take a look at the contained crates for language specific information:
 
