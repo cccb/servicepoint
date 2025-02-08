@@ -1,5 +1,5 @@
 {
-  description = "Flake for servicepoint-simulator";
+  description = "Flake for the servicepoint library.";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";

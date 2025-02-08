@@ -8,6 +8,7 @@ description = "C bindings for the servicepoint crate."
 homepage = "https://docs.rs/crate/servicepoint_binding_c"
 repository = "https://github.com/cccb/servicepoint"
 #readme = "README.md"
+keywords = ["cccb", "cccb-servicepoint", "uniffi"]
 
 [lib]
 crate-type = ["cdylib"]

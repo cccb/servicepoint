@@ -31,8 +31,11 @@ Take a look at the contained crates for language specific information:
 - tanks game (C#): [servicepoint-tanks](https://github.com/kaesaecracker/cccb-tanks-cs)
 - cellular automata slideshow (rust): [servicepoint-life](https://github.com/kaesaecracker/servicepoint-life)
 - partial typescript implementation inspired by this library and browser stream: [cccb-servicepoint-browser](https://github.com/SamuelScheit/cccb-servicepoint-browser)
+- a CLI: [servicepoint-cli](https://git.berlin.ccc.de/servicepoint/servicepoint-cli)
 
 To add yourself to the list, open a pull request.
+
+You can also check out [awesome-servicepoint](https://github.com/stars/kaesaecracker/lists/awesome-servicepoint) for a bigger collection of projects, including some not related to this library.
 
 ## Contributing
 
