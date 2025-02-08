@@ -79,6 +79,21 @@ impl<T: Value> ValueGrid<T> {
         }
     }
 
+    /// Creates a [ValueGrid] with the specified width from the provided data without copying it.
+    ///
+    /// returns: [ValueGrid] that contains the provided data.
+    ///
+    /// # Panics
+    ///
+    /// - when the data size is not dividable by the width.
+    #[must_use]
+    pub fn from_vec(width: usize, data: Vec<T>) -> Self {
+        let len = data.len();
+        let height = len / width;
+        assert_eq!(0, len % width, "dimension mismatch - len {len} is not dividable by {width}");
+        Self { data, width, height }        
+    }
+
     /// Loads a [ValueGrid] with the specified width from the provided data, wrapping to as many rows as needed.
     ///
     /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].

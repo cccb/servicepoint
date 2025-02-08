@@ -72,13 +72,30 @@ impl Bitmap {
     /// - when the width is not dividable by 8
     #[must_use]
     pub fn load(width: usize, height: usize, data: &[u8]) -> Self {
-        assert_eq!(width % 8, 0);
-        assert_eq!(data.len(), height * width / 8);
+        assert_eq!(width % 8, 0, "width must be a multiple of 8, but is {width}");
+        assert_eq!(data.len(), height * width / 8, "data length must match dimensions, with 8 pixels per byte.");
         Self {
             width,
             height,
             bit_vec: BitVec::from_slice(data),
         }
+    }
+
+    /// Creates a [Bitmap] with the specified width from the provided [BitVec] without copying it.
+    ///
+    /// returns: [Bitmap] that contains the provided data.
+    ///
+    /// # Panics
+    ///
+    /// - when the bitvec size is not dividable by the provided width
+    /// - when the width is not dividable by 8
+    #[must_use]
+    pub fn from_bitvec(width: usize, bit_vec: BitVec) -> Self {
+        assert_eq!(width % 8, 0, "width must be a multiple of 8, but is {width}");
+        let len = bit_vec.len();
+        let height = len / width;
+        assert_eq!(0, len % width, "dimension mismatch - len {len} is not dividable by {width}");
+        Self { width, height, bit_vec }
     }
 
     /// Iterate over all cells in [Bitmap].
