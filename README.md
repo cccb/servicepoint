@@ -10,7 +10,8 @@ Display" or "Airport Display".
 This repository contains a library for parsing, encoding and sending packets to this display via UDP in multiple
 programming languages.
 
-This repository will move to [git.berlin.ccc.de/servicepoint/servicepoint](https://git.berlin.ccc.de/servicepoint/servicepoint) soon.
+This project moved to [git.berlin.ccc.de/servicepoint/servicepoint](https://git.berlin.ccc.de/servicepoint/servicepoint). 
+The [GitHub repository](https://github.com/cccb/servicepoint) remains available as a mirror.
 
 Take a look at the contained crates for language specific information:
 
@@ -22,7 +23,7 @@ Take a look at the contained crates for language specific information:
 
 ## Projects using the library
 
-- screen simulator (rust): [servicepoint-simulator](https://github.com/kaesaecracker/servicepoint-simulator)
+- screen simulator (rust): [servicepoint-simulator](https://git.berlin.ccc.de/servicepoint/servicepoint-simulator)
 - A bunch of projects (C): [arfst23/ServicePoint](https://github.com/arfst23/ServicePoint), including
     - a CLI tool to display image files on the display or use the display as a TTY
     - a BSD games robots clone

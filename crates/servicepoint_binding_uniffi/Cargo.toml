@@ -6,7 +6,7 @@ edition = "2021"
 license = "GPL-3.0-or-later"
 description = "C bindings for the servicepoint crate."
 homepage = "https://docs.rs/crate/servicepoint_binding_c"
-repository = "https://github.com/cccb/servicepoint"
+repository = "https://git.berlin.ccc.de/servicepoint/servicepoint"
 #readme = "README.md"
 keywords = ["cccb", "cccb-servicepoint", "uniffi"]
 

@@ -4,6 +4,9 @@ Contributions are accepted in any form (issues, documentation, feature requests,
 
 All creatures welcome.
 
+If you have access, please contribute on the [CCCB Forgejo](https://git.berlin.ccc.de/servicepoint/servicepoint).
+Contributions on GitHub will be copied over and merged there.
+
 ## Pull requests
 
 Feel free to create a PR, even if your change is not done yet.

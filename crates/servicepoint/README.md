@@ -64,4 +64,4 @@ You can choose to (not) include them by toggling the related features.
 
 ## Everything else
 
-Look at the main project [README](https://github.com/cccb/servicepoint/blob/main/README.md) for further information.
+Look at the main project [README](https://git.berlin.ccc.de/servicepoint/servicepoint/src/branch/main/README.md) for further information.

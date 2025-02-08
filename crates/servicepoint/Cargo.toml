@@ -6,7 +6,7 @@ edition = "2021"
 license = "GPL-3.0-or-later"
 description = "A rust library for the CCCB Service Point Display."
 homepage = "https://docs.rs/crate/servicepoint"
-repository = "https://github.com/cccb/servicepoint"
+repository = "https://git.berlin.ccc.de/servicepoint/servicepoint"
 readme = "README.md"
 keywords = ["cccb", "cccb-servicepoint"]
 
