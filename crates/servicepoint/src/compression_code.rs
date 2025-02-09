@@ -65,3 +65,56 @@ impl TryFrom<u16> for CompressionCode {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn uncompressed() {
+        assert_eq!(
+            CompressionCode::try_from(0x0000),
+            Ok(CompressionCode::Uncompressed)
+        );
+        assert_eq!(u16::from(CompressionCode::Uncompressed), 0x0000);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_zlib")]
+    fn zlib() {
+        assert_eq!(
+            CompressionCode::try_from(0x677a),
+            Ok(CompressionCode::Zlib)
+        );
+        assert_eq!(u16::from(CompressionCode::Zlib), 0x677a);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_bzip2")]
+    fn bzip2() {
+        assert_eq!(
+            CompressionCode::try_from(0x627a),
+            Ok(CompressionCode::Bzip2)
+        );
+        assert_eq!(u16::from(CompressionCode::Bzip2), 0x627a);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_lzma")]
+    fn lzma() {
+        assert_eq!(
+            CompressionCode::try_from(0x6c7a),
+            Ok(CompressionCode::Lzma)
+        );
+        assert_eq!(u16::from(CompressionCode::Lzma), 0x6c7a);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_zstd")]
+    fn zstd() {
+        assert_eq!(
+            CompressionCode::try_from(0x7a73),
+            Ok(CompressionCode::Zstd)
+        );
+        assert_eq!(u16::from(CompressionCode::Zstd), 0x7a73);
+    }
+}

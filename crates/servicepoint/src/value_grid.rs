@@ -511,13 +511,18 @@ mod tests {
 
     #[test]
     fn ref_mut() {
-        let mut vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut vec = ValueGrid::from_vec(3, vec![0, 1, 2, 3,4,5,6,7,8]);
 
         let top_left = vec.get_ref_mut(0, 0);
         *top_left += 5;
+        let somewhere = vec.get_ref_mut(2, 1);
+        *somewhere = 42;
 
-        assert_eq!(None, vec.get_ref_mut_optional(2, 2));
+        assert_eq!(None, vec.get_ref_mut_optional(3, 2));
+        assert_eq!(None, vec.get_ref_mut_optional(2, 3));
         assert_eq!(Some(&mut 5), vec.get_ref_mut_optional(0, 0));
+        assert_eq!(Some(&mut 42), vec.get_ref_mut_optional(2, 1));
+        assert_eq!(Some(&mut 8), vec.get_ref_mut_optional(2, 2));
     }
 
     #[test]
