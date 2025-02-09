@@ -1,6 +1,6 @@
 /// The u16 command codes used for the [Command]s.
 #[repr(u16)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub(crate) enum CommandCode {
     Clear = 0x0002,
     Cp437Data = 0x0003,
@@ -99,5 +99,116 @@ impl TryFrom<u16> for CommandCode {
             }
             _ => Err(()),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn clear() {
+        assert_eq!(CommandCode::try_from(0x0002), Ok(CommandCode::Clear));
+        assert_eq!(u16::from(CommandCode::Clear), 0x0002);
+    }
+
+    #[test]
+    fn cp437_data() {
+        assert_eq!(CommandCode::try_from(0x0003), Ok(CommandCode::Cp437Data));
+        assert_eq!(u16::from(CommandCode::Cp437Data), 0x0003);
+    }
+
+    #[test]
+    fn char_brightness() {
+        assert_eq!(CommandCode::try_from(0x0005), Ok(CommandCode::CharBrightness));
+        assert_eq!(u16::from(CommandCode::CharBrightness), 0x0005);
+    }
+
+    #[test]
+    fn brightness() {
+        assert_eq!(CommandCode::try_from(0x0007), Ok(CommandCode::Brightness));
+        assert_eq!(u16::from(CommandCode::Brightness), 0x0007);
+    }
+
+    #[test]
+    fn hard_reset() {
+        assert_eq!(CommandCode::try_from(0x000b), Ok(CommandCode::HardReset));
+        assert_eq!(u16::from(CommandCode::HardReset), 0x000b);
+    }
+
+    #[test]
+    fn fade_out() {
+        assert_eq!(CommandCode::try_from(0x000d), Ok(CommandCode::FadeOut));
+        assert_eq!(u16::from(CommandCode::FadeOut), 0x000d);
+    }
+
+    #[test]
+    #[allow(deprecated)]
+    fn bitmap_legacy() {
+        assert_eq!(CommandCode::try_from(0x0010), Ok(CommandCode::BitmapLegacy));
+        assert_eq!(u16::from(CommandCode::BitmapLegacy), 0x0010);
+    }
+    
+    #[test]
+    fn linear() {
+        assert_eq!(CommandCode::try_from(0x0012), Ok(CommandCode::BitmapLinear));
+        assert_eq!(u16::from(CommandCode::BitmapLinear), 0x0012);
+    }
+
+    #[test]
+    fn linear_and() {
+        assert_eq!(CommandCode::try_from(0x0014), Ok(CommandCode::BitmapLinearAnd));
+        assert_eq!(u16::from(CommandCode::BitmapLinearAnd), 0x0014);
+    }
+
+    #[test]
+    fn linear_xor() {
+        assert_eq!(CommandCode::try_from(0x0016), Ok(CommandCode::BitmapLinearXor));
+        assert_eq!(u16::from(CommandCode::BitmapLinearXor), 0x0016);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_zlib")]
+    fn bitmap_win_zlib() {
+        assert_eq!(CommandCode::try_from(0x0017), Ok(CommandCode::BitmapLinearWinZlib));
+        assert_eq!(u16::from(CommandCode::BitmapLinearWinZlib), 0x0017);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_bzip2")]
+    fn bitmap_win_bzip2() {
+        assert_eq!(CommandCode::try_from(0x0018), Ok(CommandCode::BitmapLinearWinBzip2));
+        assert_eq!(u16::from(CommandCode::BitmapLinearWinBzip2), 0x0018);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_lzma")]
+    fn bitmap_win_lzma() {
+        assert_eq!(CommandCode::try_from(0x0019), Ok(CommandCode::BitmapLinearWinLzma));
+        assert_eq!(u16::from(CommandCode::BitmapLinearWinLzma), 0x0019);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_zstd")]
+    fn bitmap_win_zstd() {
+        assert_eq!(CommandCode::try_from(0x001A), Ok(CommandCode::BitmapLinearWinZstd));
+        assert_eq!(u16::from(CommandCode::BitmapLinearWinZstd), 0x001A);
+    }
+
+    #[test]
+    fn bitmap_win_uncompressed() {
+        assert_eq!(CommandCode::try_from(0x0013), Ok(CommandCode::BitmapLinearWinUncompressed));
+        assert_eq!(u16::from(CommandCode::BitmapLinearWinUncompressed), 0x0013);
+    }
+
+    #[test]
+    fn utf8_data() {
+        assert_eq!(CommandCode::try_from(0x0020), Ok(CommandCode::Utf8Data));
+        assert_eq!(u16::from(CommandCode::Utf8Data), 0x0020);
+    }
+
+    #[test]
+    fn linear_or() {
+        assert_eq!(CommandCode::try_from(0x0015), Ok(CommandCode::BitmapLinearOr));
+        assert_eq!(u16::from(CommandCode::BitmapLinearOr), 0x0015);
     }
 }

@@ -26,7 +26,7 @@ impl BrightnessGrid {
 }
 
 impl From<BrightnessGrid> for Vec<u8> {
-    fn from(value: ValueGrid<Brightness>) -> Self {
+    fn from(value: BrightnessGrid) -> Self {
         value
             .iter()
             .map(|brightness| (*brightness).into())
@@ -35,7 +35,7 @@ impl From<BrightnessGrid> for Vec<u8> {
 }
 
 impl From<&BrightnessGrid> for ByteGrid {
-    fn from(value: &ValueGrid<Brightness>) -> Self {
+    fn from(value: &BrightnessGrid) -> Self {
         let u8s = value
             .iter()
             .map(|brightness| (*brightness).into())

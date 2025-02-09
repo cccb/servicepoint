@@ -99,4 +99,11 @@ mod tests {
         assert_eq!(Brightness::MAX, Brightness::saturating_from(100));
         assert_eq!(Brightness(5), Brightness::saturating_from(5));
     }
+    
+    #[test]
+    #[cfg(feature = "rand")]
+    fn test() {
+        let mut rng = rand::thread_rng();
+        assert_ne!(rng.gen::<Brightness>(), rng.gen());
+    }
 }
