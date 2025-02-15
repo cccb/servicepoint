@@ -931,7 +931,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint"
-version = "0.13.0"
+version = "0.13.1"
 dependencies = [
  "bitvec",
  "bzip2",
@@ -948,7 +948,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint_binding_c"
-version = "0.13.0"
+version = "0.13.1"
 dependencies = [
  "cbindgen",
  "servicepoint",
@@ -956,7 +956,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint_binding_uniffi"
-version = "0.13.0"
+version = "0.13.1"
 dependencies = [
  "servicepoint",
  "thiserror 2.0.11",

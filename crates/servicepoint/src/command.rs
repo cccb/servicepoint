@@ -1,6 +1,5 @@
 use crate::command_code::CommandCode;
 use crate::compression::into_decompressed;
-use crate::value_grid::ValueGrid;
 use crate::*;
 
 /// Type alias for documenting the meaning of the u16 in enum values
@@ -441,7 +440,7 @@ impl Command {
             payload,
         } = packet;
 
-        let grid = ValueGrid::load(*width as usize, *height as usize, payload);
+        let grid = ByteGrid::load(*width as usize, *height as usize, payload);
         let grid = match BrightnessGrid::try_from(grid) {
             Ok(grid) => grid,
             Err(val) => return Err(TryFromPacketError::InvalidBrightness(val)),

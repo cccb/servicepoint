@@ -1,5 +1,5 @@
 {
-  description = "Flake for servicepoint-simulator";
+  description = "Flake for the servicepoint library.";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
@@ -23,28 +23,21 @@
         "aarch64-darwin"
         "x86_64-darwin"
       ];
-      forAllSystems = lib.genAttrs supported-systems;
-      make-rust-toolchain-core =
-        pkgs:
-        pkgs.symlinkJoin {
-          name = "rust-toolchain-core";
-          paths = with pkgs; [
-            rustc
-            cargo
-            rustPlatform.rustcSrc
-          ];
-        };
+      forAllSystems =
+        f:
+        lib.genAttrs supported-systems (
+          system:
+          f rec {
+            pkgs = nixpkgs.legacyPackages.${system};
+            inherit system;
+          }
+        );
     in
     rec {
       packages = forAllSystems (
-        system:
+        { pkgs, ... }:
         let
-          pkgs = nixpkgs.legacyPackages."${system}";
-          rust-toolchain-core = make-rust-toolchain-core pkgs;
-          naersk' = pkgs.callPackage naersk {
-            cargo = rust-toolchain-core;
-            rustc = rust-toolchain-core;
-          };
+          naersk' = pkgs.callPackage naersk { };
           nativeBuildInputs = with pkgs; [
             pkg-config
             makeWrapper
@@ -69,9 +62,8 @@
                   package
                 ];
               src = ./.;
-              nativeBuildInputs = nativeBuildInputs;
+              inherit nativeBuildInputs buildInputs;
               strictDeps = true;
-              buildInputs = buildInputs;
               gitSubmodules = true;
               overrideMain = old: {
                 preConfigure = ''
@@ -95,9 +87,8 @@
               cargoTestOptions = x: x ++ package-param;
               src = ./.;
               doCheck = true;
-              nativeBuildInputs = nativeBuildInputs;
               strictDeps = true;
-              buildInputs = buildInputs;
+              inherit nativeBuildInputs buildInputs;
             };
         in
         rec {
@@ -130,25 +121,24 @@
       legacyPackages = packages;
 
       devShells = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages."${system}";
-          rust-toolchain = pkgs.symlinkJoin {
-            name = "rust-toolchain";
-            paths = with pkgs; [
-              (make-rust-toolchain-core pkgs)
-              rustfmt
-              clippy
-              cargo-expand
-              cargo-tarpaulin
-            ];
-          };
-        in
+        { pkgs, system }:
         {
           default = pkgs.mkShell rec {
             inputsFrom = [ self.packages.${system}.servicepoint ];
             packages = with pkgs; [
-              rust-toolchain
+              (pkgs.symlinkJoin
+              {
+                name = "rust-toolchain";
+                paths = with pkgs; [
+                  rustc
+                  cargo
+                  rustPlatform.rustcSrc
+                  rustfmt
+                  clippy
+                  cargo-expand
+                  cargo-tarpaulin
+                ];
+              })
               ruby
               dotnet-sdk_8
               gcc
@@ -160,6 +150,6 @@
         }
       );
 
-      formatter = forAllSystems (system: nixpkgs.legacyPackages."${system}".nixfmt-rfc-style);
+      formatter = forAllSystems ({ pkgs, ... }: pkgs.nixfmt-rfc-style);
     };
 }

@@ -5,7 +5,7 @@ Display" or "Airport Display".
 
 This crate contains bindings for multiple programming languages, enabling non-rust-developers to use the library.
 
-Also take a look at the main project [README](https://github.com/cccb/servicepoint/blob/main/README.md) for more
+Also take a look at the main project [README](https://git.berlin.ccc.de/servicepoint/servicepoint/src/branch/main/README.md) for more
 information.
 
 ## Note on stability
@@ -37,7 +37,7 @@ You can absolutely use it, and it works, but expect minor breaking changes with 
 Including this repository as a submodule and building from source is the recommended way of using the library.
 
 ```bash
-git submodule add https://github.com/cccb/servicepoint.git
+git submodule add https://git.berlin.ccc.de/servicepoint/servicepoint.git
 git commit -m "add servicepoint submodule"
 ```
 
