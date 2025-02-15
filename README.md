@@ -38,6 +38,8 @@ To add yourself to the list, open a pull request.
 
 You can also check out [awesome-servicepoint](https://github.com/stars/kaesaecracker/lists/awesome-servicepoint) for a bigger collection of projects, including some not related to this library.
 
+If you have access, there is even more software linked in [the wiki](https://wiki.berlin.ccc.de/LED-Riesendisplay).
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
