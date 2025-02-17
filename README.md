@@ -46,7 +46,7 @@ or
 
 ```toml
 [dependencies]
-servicepoint = "0.13.1"
+servicepoint = "0.13.2"
 ```
 
 ## Note on stability
