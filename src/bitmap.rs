@@ -72,8 +72,16 @@ impl Bitmap {
     /// - when the width is not dividable by 8
     #[must_use]
     pub fn load(width: usize, height: usize, data: &[u8]) -> Self {
-        assert_eq!(width % 8, 0, "width must be a multiple of 8, but is {width}");
-        assert_eq!(data.len(), height * width / 8, "data length must match dimensions, with 8 pixels per byte.");
+        assert_eq!(
+            width % 8,
+            0,
+            "width must be a multiple of 8, but is {width}"
+        );
+        assert_eq!(
+            data.len(),
+            height * width / 8,
+            "data length must match dimensions, with 8 pixels per byte."
+        );
         Self {
             width,
             height,
@@ -91,11 +99,23 @@ impl Bitmap {
     /// - when the width is not dividable by 8
     #[must_use]
     pub fn from_bitvec(width: usize, bit_vec: BitVec) -> Self {
-        assert_eq!(width % 8, 0, "width must be a multiple of 8, but is {width}");
+        assert_eq!(
+            width % 8,
+            0,
+            "width must be a multiple of 8, but is {width}"
+        );
         let len = bit_vec.len();
         let height = len / width;
-        assert_eq!(0, len % width, "dimension mismatch - len {len} is not dividable by {width}");
-        Self { width, height, bit_vec }
+        assert_eq!(
+            0,
+            len % width,
+            "dimension mismatch - len {len} is not dividable by {width}"
+        );
+        Self {
+            width,
+            height,
+            bit_vec,
+        }
     }
 
     /// Iterate over all cells in [Bitmap].
@@ -218,7 +238,7 @@ impl From<Bitmap> for BitVec {
 
 impl From<&ValueGrid<bool>> for Bitmap {
     /// Converts a grid of [bool]s into a [Bitmap].
-    /// 
+    ///
     /// # Panics
     ///
     /// - when the width of `value` is not dividable by 8

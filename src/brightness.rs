@@ -99,7 +99,7 @@ mod tests {
         assert_eq!(Brightness::MAX, Brightness::saturating_from(100));
         assert_eq!(Brightness(5), Brightness::saturating_from(5));
     }
-    
+
     #[test]
     #[cfg(feature = "rand")]
     fn test() {

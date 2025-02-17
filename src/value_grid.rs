@@ -90,8 +90,16 @@ impl<T: Value> ValueGrid<T> {
     pub fn from_vec(width: usize, data: Vec<T>) -> Self {
         let len = data.len();
         let height = len / width;
-        assert_eq!(0, len % width, "dimension mismatch - len {len} is not dividable by {width}");
-        Self { data, width, height }        
+        assert_eq!(
+            0,
+            len % width,
+            "dimension mismatch - len {len} is not dividable by {width}"
+        );
+        Self {
+            data,
+            width,
+            height,
+        }
     }
 
     /// Loads a [ValueGrid] with the specified width from the provided data, wrapping to as many rows as needed.
@@ -511,7 +519,7 @@ mod tests {
 
     #[test]
     fn ref_mut() {
-        let mut vec = ValueGrid::from_vec(3, vec![0, 1, 2, 3,4,5,6,7,8]);
+        let mut vec = ValueGrid::from_vec(3, vec![0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
         let top_left = vec.get_ref_mut(0, 0);
         *top_left += 5;

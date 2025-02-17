@@ -119,7 +119,10 @@ mod tests {
 
     #[test]
     fn char_brightness() {
-        assert_eq!(CommandCode::try_from(0x0005), Ok(CommandCode::CharBrightness));
+        assert_eq!(
+            CommandCode::try_from(0x0005),
+            Ok(CommandCode::CharBrightness)
+        );
         assert_eq!(u16::from(CommandCode::CharBrightness), 0x0005);
     }
 
@@ -144,59 +147,86 @@ mod tests {
     #[test]
     #[allow(deprecated)]
     fn bitmap_legacy() {
-        assert_eq!(CommandCode::try_from(0x0010), Ok(CommandCode::BitmapLegacy));
+        assert_eq!(
+            CommandCode::try_from(0x0010),
+            Ok(CommandCode::BitmapLegacy)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLegacy), 0x0010);
     }
-    
+
     #[test]
     fn linear() {
-        assert_eq!(CommandCode::try_from(0x0012), Ok(CommandCode::BitmapLinear));
+        assert_eq!(
+            CommandCode::try_from(0x0012),
+            Ok(CommandCode::BitmapLinear)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinear), 0x0012);
     }
 
     #[test]
     fn linear_and() {
-        assert_eq!(CommandCode::try_from(0x0014), Ok(CommandCode::BitmapLinearAnd));
+        assert_eq!(
+            CommandCode::try_from(0x0014),
+            Ok(CommandCode::BitmapLinearAnd)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinearAnd), 0x0014);
     }
 
     #[test]
     fn linear_xor() {
-        assert_eq!(CommandCode::try_from(0x0016), Ok(CommandCode::BitmapLinearXor));
+        assert_eq!(
+            CommandCode::try_from(0x0016),
+            Ok(CommandCode::BitmapLinearXor)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinearXor), 0x0016);
     }
 
     #[test]
     #[cfg(feature = "compression_zlib")]
     fn bitmap_win_zlib() {
-        assert_eq!(CommandCode::try_from(0x0017), Ok(CommandCode::BitmapLinearWinZlib));
+        assert_eq!(
+            CommandCode::try_from(0x0017),
+            Ok(CommandCode::BitmapLinearWinZlib)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinearWinZlib), 0x0017);
     }
 
     #[test]
     #[cfg(feature = "compression_bzip2")]
     fn bitmap_win_bzip2() {
-        assert_eq!(CommandCode::try_from(0x0018), Ok(CommandCode::BitmapLinearWinBzip2));
+        assert_eq!(
+            CommandCode::try_from(0x0018),
+            Ok(CommandCode::BitmapLinearWinBzip2)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinearWinBzip2), 0x0018);
     }
 
     #[test]
     #[cfg(feature = "compression_lzma")]
     fn bitmap_win_lzma() {
-        assert_eq!(CommandCode::try_from(0x0019), Ok(CommandCode::BitmapLinearWinLzma));
+        assert_eq!(
+            CommandCode::try_from(0x0019),
+            Ok(CommandCode::BitmapLinearWinLzma)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinearWinLzma), 0x0019);
     }
 
     #[test]
     #[cfg(feature = "compression_zstd")]
     fn bitmap_win_zstd() {
-        assert_eq!(CommandCode::try_from(0x001A), Ok(CommandCode::BitmapLinearWinZstd));
+        assert_eq!(
+            CommandCode::try_from(0x001A),
+            Ok(CommandCode::BitmapLinearWinZstd)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinearWinZstd), 0x001A);
     }
 
     #[test]
     fn bitmap_win_uncompressed() {
-        assert_eq!(CommandCode::try_from(0x0013), Ok(CommandCode::BitmapLinearWinUncompressed));
+        assert_eq!(
+            CommandCode::try_from(0x0013),
+            Ok(CommandCode::BitmapLinearWinUncompressed)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinearWinUncompressed), 0x0013);
     }
 
@@ -208,7 +238,10 @@ mod tests {
 
     #[test]
     fn linear_or() {
-        assert_eq!(CommandCode::try_from(0x0015), Ok(CommandCode::BitmapLinearOr));
+        assert_eq!(
+            CommandCode::try_from(0x0015),
+            Ok(CommandCode::BitmapLinearOr)
+        );
         assert_eq!(u16::from(CommandCode::BitmapLinearOr), 0x0015);
     }
 }
