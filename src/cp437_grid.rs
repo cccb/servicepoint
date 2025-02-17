@@ -1,3 +1,5 @@
+use crate::Grid;
+
 /// A grid containing codepage 437 characters.
 ///
 /// The encoding is currently not enforced.
@@ -76,39 +78,6 @@ impl Cp437Grid {
     }
 }
 
-use crate::Grid;
-#[allow(unused)] // depends on features
-pub use feature_cp437::*;
-
-#[cfg(feature = "cp437")]
-mod feature_cp437 {
-    use super::*;
-    use crate::{CharGrid, Cp437Converter};
-
-    impl From<&Cp437Grid> for CharGrid {
-        fn from(value: &Cp437Grid) -> Self {
-            value.map(Cp437Converter::cp437_to_char)
-        }
-    }
-    
-    impl From<Cp437Grid> for CharGrid {
-        fn from(value: Cp437Grid) -> Self {
-            Self::from(&value)
-        }
-    }
-
-    impl From<&CharGrid> for Cp437Grid {
-        fn from(value: &CharGrid) -> Self {
-            value.map(Cp437Converter::char_to_cp437)
-        }
-    }
-
-    impl From<CharGrid> for Cp437Grid {
-        fn from(value: CharGrid) -> Self {
-            Self::from(&value)
-        }
-    }
-}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -144,20 +113,5 @@ mod tests {
             }),
             Cp437Grid::load_ascii("?#🥶42", 3, false)
         );
-    }
-}
-
-#[cfg(test)]
-#[cfg(feature = "cp437")]
-mod tests_feature_cp437 {
-    use super::*;
-    use crate::CharGrid;
-
-    #[test]
-    fn round_trip_cp437() {
-        let utf8 = CharGrid::load(2, 2, &['Ä', 'x', '\n', '$']);
-        let cp437 = Cp437Grid::from(utf8.clone());
-        let actual = CharGrid::from(cp437);
-        assert_eq!(actual, utf8);
     }
 }

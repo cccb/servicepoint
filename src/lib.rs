@@ -65,7 +65,6 @@ pub use crate::command::{Command, Offset};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
 pub use crate::constants::*;
-pub use crate::cp437::Cp437Converter;
 pub use crate::cp437_grid::Cp437Grid;
 pub use crate::data_ref::DataRef;
 pub use crate::grid::Grid;
@@ -96,6 +95,9 @@ mod value_grid;
 
 #[cfg(feature = "cp437")]
 mod cp437;
+
+#[cfg(feature = "cp437")]
+pub use crate::cp437::Cp437Converter;
 
 // include README.md in doctest
 #[doc = include_str!("../README.md")]
