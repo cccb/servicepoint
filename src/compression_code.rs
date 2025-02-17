@@ -66,6 +66,17 @@ impl TryFrom<u16> for CompressionCode {
     }
 }
 
+impl Default for CompressionCode {
+    #[cfg(feature = "compression_lzma")]
+    fn default() -> Self {
+        CompressionCode::Lzma
+    }
+    #[cfg(not(feature = "compression_lzma"))]
+    fn default() -> Self {
+        CompressionCode::Uncompressed
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -116,5 +127,17 @@ mod test {
             Ok(CompressionCode::Zstd)
         );
         assert_eq!(u16::from(CompressionCode::Zstd), 0x7a73);
+    }
+
+    #[test]
+    #[cfg(feature = "compression_lzma")]
+    fn default_lzma() {
+        assert_eq!(CompressionCode::default(), CompressionCode::Lzma);
+    }
+
+    #[test]
+    #[cfg(not(feature = "compression_lzma"))]
+    fn default_uncompressed() {
+        assert_eq!(CompressionCode::default(), CompressionCode::Uncompressed);
     }
 }

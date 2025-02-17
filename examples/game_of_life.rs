@@ -24,7 +24,7 @@ fn main() {
         let command = Command::BitmapLinearWin(
             Origin::ZERO,
             field.clone(),
-            CompressionCode::Lzma,
+            CompressionCode::default(),
         );
         connection.send(command).expect("could not send");
         thread::sleep(FRAME_PACING);

@@ -33,7 +33,7 @@
 //!  let command = Command::BitmapLinearWin(
 //!     servicepoint::Origin::ZERO,
 //!     pixels,
-//!     CompressionCode::Uncompressed
+//!     CompressionCode::default()
 //!  );
 //!
 //!  // send command to display

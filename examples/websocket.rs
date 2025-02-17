@@ -18,7 +18,7 @@ fn main() {
         .send(Command::BitmapLinearWin(
             Origin::ZERO,
             pixels,
-            CompressionCode::Lzma,
+            CompressionCode::default(),
         ))
         .unwrap();
 }

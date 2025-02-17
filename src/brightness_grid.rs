@@ -13,7 +13,7 @@ use crate::ByteGrid;
 /// grid.set(0, 0, Brightness::MIN);
 /// grid.set(1, 1, Brightness::MIN);
 ///
-/// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+/// # let connection = Connection::Fake;
 /// connection.send(Command::CharBrightness(Origin::new(3, 7), grid)).unwrap()
 /// ```
 pub type BrightnessGrid = ValueGrid<Brightness>;

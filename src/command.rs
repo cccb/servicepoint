@@ -26,7 +26,7 @@ pub type Offset = usize;
 /// # Compression
 ///
 /// Some commands can contain compressed payloads.
-/// To get started, use [CompressionCode::Uncompressed].
+/// To get started, use [CompressionCode::default].
 ///
 /// If you want to archive the best performance (e.g. latency),
 /// you can try the different compression algorithms for your hardware and use case.
@@ -52,7 +52,7 @@ pub type Offset = usize;
 /// assert_eq!(command, round_tripped);
 ///
 /// // send command
-/// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+/// # let connection = Connection::Fake;
 /// connection.send(command).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq)]
@@ -63,7 +63,7 @@ pub enum Command {
     ///
     /// ```rust
     /// # use servicepoint::{Command, Connection};
-    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// # let connection = Connection::Fake;
     /// connection.send(Command::Clear).unwrap();
     /// ```
     Clear,
@@ -125,7 +125,7 @@ pub enum Command {
     /// let command = Command::BitmapLinearWin(
     ///    servicepoint::Origin::ZERO,
     ///    pixels,
-    ///    CompressionCode::Uncompressed
+    ///    CompressionCode::default()
     /// );
     ///
     /// connection.send(command).expect("send failed");
@@ -138,7 +138,7 @@ pub enum Command {
     ///
     /// ```rust
     /// # use servicepoint::{Brightness, Command, Connection};
-    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// # let connection = Connection::Fake;
     /// let command = Command::Brightness(Brightness::MAX);
     /// connection.send(command).unwrap();
     /// ```
@@ -187,7 +187,7 @@ pub enum Command {
     ///
     /// ```rust
     /// # use servicepoint::{Command, Connection};
-    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// # let connection = Connection::Fake;
     /// connection.send(Command::HardReset).unwrap();
     /// ```
     HardReset,
@@ -200,7 +200,7 @@ pub enum Command {
     ///
     /// ```rust
     /// # use servicepoint::{Command, Connection};
-    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// # let connection = Connection::Fake;
     /// connection.send(Command::FadeOut).unwrap();
     /// ```
     FadeOut,
@@ -213,7 +213,7 @@ pub enum Command {
     ///
     /// ```rust
     /// # use servicepoint::{Command, Connection};
-    /// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+    /// # let connection = Connection::Fake;
     /// // this sends a packet that does nothing
     /// # #[allow(deprecated)]
     /// connection.send(Command::BitmapLegacy).unwrap();

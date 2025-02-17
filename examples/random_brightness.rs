@@ -31,7 +31,7 @@ fn main() {
         let command = Command::BitmapLinearWin(
             Origin::ZERO,
             filled_grid,
-            CompressionCode::Lzma,
+            CompressionCode::default(),
         );
         connection.send(command).expect("send failed");
     }

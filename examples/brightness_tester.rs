@@ -20,7 +20,7 @@ fn main() {
     let command = Command::BitmapLinearWin(
         Origin::ZERO,
         pixels,
-        CompressionCode::Uncompressed,
+        CompressionCode::default(),
     );
     connection.send(command).expect("send failed");
 

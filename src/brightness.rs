@@ -14,7 +14,7 @@ use rand::{
 /// let val: u8 = b.into();
 ///
 /// let b = Brightness::try_from(7).unwrap();
-/// # let connection = Connection::open("127.0.0.1:2342").unwrap();
+/// # let connection = Connection::Fake;
 /// let result = connection.send(Command::Brightness(b));
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]

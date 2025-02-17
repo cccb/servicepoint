@@ -63,7 +63,7 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 ///    connection.send(Command::BitmapLinearWin(
 ///            Origin::new(0,0),
 ///            pixels,
-///            CompressionCode::Lzma
+///            CompressionCode::default()
 ///        ))
 ///        .expect("send failed");
 ///

@@ -25,7 +25,7 @@ fn main() {
         let command = Command::BitmapLinearWin(
             Origin::ZERO,
             pixels.clone(),
-            CompressionCode::Lzma,
+            CompressionCode::default(),
         );
         connection.send(command).expect("send failed");
         thread::sleep(FRAME_PACING);
