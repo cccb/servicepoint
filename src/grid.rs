@@ -79,6 +79,6 @@ pub trait Grid<T> {
         let width = self.width();
         assert!(x < width, "cannot access index [{x}, {y}] because x is outside of bounds [0..{width})");
         let height = self.height();
-        assert!(y < height, "cannot access index [{x}, {y}] because x is outside of bounds [0..{height})");
+        assert!(y < height, "cannot access index [{x}, {y}] because y is outside of bounds [0..{height})");
     }
 }
