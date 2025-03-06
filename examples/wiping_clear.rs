@@ -1,4 +1,5 @@
 //! An example on how to modify the image on screen without knowing the current content.
+
 use clap::Parser;
 use servicepoint::*;
 use std::thread;
@@ -20,7 +21,7 @@ fn main() {
         Duration::from_millis(cli.time / PIXEL_WIDTH as u64),
     );
 
-    let connection = Connection::open(cli.destination)
+    let connection = connection::Udp::open(cli.destination)
         .expect("could not connect to display");
 
     let mut enabled_pixels = Bitmap::max_sized();

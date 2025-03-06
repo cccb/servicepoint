@@ -9,12 +9,12 @@ use rand::{
 /// # Examples
 ///
 /// ```
-/// # use servicepoint::{Brightness, Command, Connection};
+/// # use servicepoint::{Brightness, Command, Connection, connection};
 /// let b = Brightness::MAX;
 /// let val: u8 = b.into();
 ///
 /// let b = Brightness::try_from(7).unwrap();
-/// # let connection = Connection::Fake;
+/// # let connection = connection::Fake;
 /// let result = connection.send(Command::Brightness(b));
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]

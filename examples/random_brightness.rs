@@ -4,6 +4,7 @@
 use clap::Parser;
 use rand::Rng;
 use servicepoint::*;
+use std::net::UdpSocket;
 use std::time::Duration;
 
 #[derive(Parser, Debug)]
@@ -19,7 +20,7 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = Connection::open(cli.destination)
+    let connection = connection::Udp::open(cli.destination)
         .expect("could not connect to display");
     let wait_duration = Duration::from_millis(cli.wait_ms);
 

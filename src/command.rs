@@ -37,7 +37,7 @@ pub type Offset = usize;
 /// # Examples
 ///
 /// ```rust
-/// use servicepoint::{Brightness, Command, Connection, Packet};
+/// use servicepoint::{connection, Brightness, Command, Connection, Packet};
 /// #
 /// // create command
 /// let command = Command::Brightness(Brightness::MAX);
@@ -52,7 +52,7 @@ pub type Offset = usize;
 /// assert_eq!(command, round_tripped);
 ///
 /// // send command
-/// # let connection = Connection::Fake;
+/// # let connection = connection::Fake;
 /// connection.send(command).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq)]
@@ -62,8 +62,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection};
-    /// # let connection = Connection::Fake;
+    /// # use servicepoint::{connection, Command, Connection};
+    /// # let connection = connection::Fake;
     /// connection.send(Command::Clear).unwrap();
     /// ```
     Clear,
@@ -75,8 +75,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection, Origin, CharGrid};
-    /// # let connection = Connection::Fake;
+    /// # use servicepoint::*;
+    /// # let connection = connection::Fake;
     /// let grid = CharGrid::from("Hello,\nWorld!");
     /// connection.send(Command::Utf8Data(Origin::ZERO, grid)).expect("send failed");
     /// ```
@@ -91,16 +91,16 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection, Origin, CharGrid, Cp437Grid};
-    /// # let connection = Connection::Fake;
+    /// # use servicepoint::{Command, Connection, Origin, CharGrid, Cp437Grid, connection};
+    /// # let connection = connection::Fake;
     /// let grid = CharGrid::from("Hello,\nWorld!");
     /// let grid = Cp437Grid::from(&grid);
     /// connection.send(Command::Cp437Data(Origin::ZERO, grid)).expect("send failed");
     /// ```
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection, Cp437Grid, Origin};
-    /// # let connection = Connection::Fake;
+    /// # use servicepoint::{connection, Command, Connection, Cp437Grid, Origin};
+    /// # let connection = connection::Fake;
     /// let grid = Cp437Grid::load_ascii("Hello\nWorld", 5, false).unwrap();
     /// connection.send(Command::Cp437Data(Origin::new(2, 2), grid)).unwrap();
     /// ```
@@ -114,8 +114,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, CompressionCode, Grid, Bitmap};
-    /// # let connection = servicepoint::Connection::Fake;
+    /// # use servicepoint::{Command, CompressionCode, Grid, Bitmap, Connection};
+    /// # let connection = servicepoint::connection::Fake;
     /// #
     /// let mut pixels = Bitmap::max_sized();
     /// // draw something to the pixels here
@@ -137,8 +137,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Brightness, Command, Connection};
-    /// # let connection = Connection::Fake;
+    /// # use servicepoint::{connection, Brightness, Command, Connection};
+    /// # let connection = connection::Fake;
     /// let command = Command::Brightness(Brightness::MAX);
     /// connection.send(command).unwrap();
     /// ```
@@ -186,8 +186,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection};
-    /// # let connection = Connection::Fake;
+    /// # use servicepoint::{connection, Command, Connection};
+    /// # let connection = connection::Fake;
     /// connection.send(Command::HardReset).unwrap();
     /// ```
     HardReset,
@@ -199,8 +199,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection};
-    /// # let connection = Connection::Fake;
+    /// # use servicepoint::{connection, Command, Connection};
+    /// # let connection = connection::Fake;
     /// connection.send(Command::FadeOut).unwrap();
     /// ```
     FadeOut,
@@ -212,8 +212,8 @@ pub enum Command {
     /// # Examples
     ///
     /// ```rust
-    /// # use servicepoint::{Command, Connection};
-    /// # let connection = Connection::Fake;
+    /// # use servicepoint::{connection, Command, Connection};
+    /// # let connection = connection::Fake;
     /// // this sends a packet that does nothing
     /// # #[allow(deprecated)]
     /// connection.send(Command::BitmapLegacy).unwrap();

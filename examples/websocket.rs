@@ -1,13 +1,13 @@
 //! Example for how to use the WebSocket connection
 
+use servicepoint::connection::Websocket;
 use servicepoint::{
     Bitmap, Command, CompressionCode, Connection, Grid, Origin,
 };
 
 fn main() {
     let connection =
-        Connection::open_websocket("ws://localhost:8080".parse().unwrap())
-            .unwrap();
+        Websocket::open("ws://localhost:8080".parse().unwrap()).unwrap();
 
     connection.send(Command::Clear).unwrap();
 

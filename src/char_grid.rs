@@ -10,11 +10,11 @@ use std::string::FromUtf8Error;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{CharGrid, Command, Connection, Origin};
+/// # use servicepoint::{connection, CharGrid, Command, Connection, Origin};
 /// let grid = CharGrid::from("You can\nload multiline\nstrings directly");
 /// assert_eq!(grid.get_row_str(1), Some("load multiline\0\0".to_string()));
 ///
-/// # let connection = Connection::Fake;
+/// # let connection = connection::Fake;
 /// let command = Command::Utf8Data(Origin::ZERO, grid);
 /// ```
 pub type CharGrid = ValueGrid<char>;

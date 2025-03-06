@@ -11,7 +11,7 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
-    let connection = Connection::open(cli.destination)
+    let connection = connection::Udp::open(cli.destination)
         .expect("could not connect to display");
 
     let mut pixels = Bitmap::max_sized();

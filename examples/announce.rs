@@ -31,7 +31,7 @@ fn main() {
         cli.text.push("Hello, CCCB!".to_string());
     }
 
-    let connection = Connection::open(&cli.destination)
+    let connection = connection::Udp::open(&cli.destination)
         .expect("could not connect to display");
 
     if cli.clear {

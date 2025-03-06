@@ -9,10 +9,10 @@
 //! ### Clear display
 //!
 //! ```rust
-//! use servicepoint::{Connection, Command};
+//! use servicepoint::{Connection, Command, connection};
 //!
 //! // establish a connection
-//! let connection = Connection::open("127.0.0.1:2342")
+//! let connection = connection::Udp::open("127.0.0.1:2342")
 //!     .expect("connection failed");
 //!
 //!  // turn off all pixels on display
@@ -23,8 +23,8 @@
 //! ### Set all pixels to on
 //!
 //! ```rust
-//! # use servicepoint::{Command, CompressionCode, Grid, Bitmap};
-//! # let connection = servicepoint::Connection::open("127.0.0.1:2342").expect("connection failed");
+//! # use servicepoint::{Command, CompressionCode, Grid, Bitmap, Connection};
+//! # let connection = servicepoint::connection::Udp::open("127.0.0.1:2342").expect("connection failed");
 //!  // turn on all pixels in a grid
 //!  let mut pixels = Bitmap::max_sized();
 //!  pixels.fill(true);
@@ -43,14 +43,14 @@
 //! ### Send text
 //!
 //! ```rust
-//! # use servicepoint::{Command, CompressionCode, Grid, Bitmap, CharGrid};
-//! # let connection = servicepoint::Connection::open("127.0.0.1:2342").expect("connection failed");
+//! # use servicepoint::*;
+//! # let connection = connection::Udp::open("127.0.0.1:2342").expect("connection failed");
 //! // create a text grid
 //! let mut grid = CharGrid::from("Hello\nCCCB?");
 //! // modify the grid
 //! grid.set(grid.width() - 1, 1, '!');
 //! // create the command to send the data
-//! let command = Command::Utf8Data(servicepoint::Origin::ZERO, grid);
+//! let command = Command::Utf8Data(Origin::ZERO, grid);
 //! // send command to display
 //! connection.send(command).expect("send failed");
 //! ```
@@ -84,7 +84,7 @@ mod command;
 mod command_code;
 mod compression;
 mod compression_code;
-mod connection;
+pub mod connection;
 mod constants;
 mod cp437_grid;
 mod data_ref;
@@ -95,7 +95,6 @@ mod value_grid;
 
 #[cfg(feature = "cp437")]
 mod cp437;
-
 #[cfg(feature = "cp437")]
 pub use crate::cp437::Cp437Converter;
 

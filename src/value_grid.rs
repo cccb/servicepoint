@@ -154,16 +154,13 @@ impl<T: Value> ValueGrid<T> {
     ///     }
     /// }
     /// ```
-    pub fn iter(&self) -> Iter<T> {
+    pub fn iter(&self) -> impl Iterator<Item = &T> {
         self.data.iter()
     }
 
     /// Iterate over all rows in [ValueGrid] top to bottom.
     pub fn iter_rows(&self) -> IterGridRows<T> {
-        IterGridRows {
-            byte_grid: self,
-            row: 0,
-        }
+        IterGridRows { grid: self, row: 0 }
     }
 
     /// Returns an iterator that allows modifying each value.
@@ -318,6 +315,17 @@ impl<T: Value> ValueGrid<T> {
         chunk.copy_from_slice(row);
         Ok(())
     }
+
+    /// Enumerates all values in the grid.
+    pub fn enumerate(
+        &self,
+    ) -> impl Iterator<Item = (usize, usize, T)> + use<'_, T> {
+        EnumerateGrid {
+            grid: self,
+            column: 0,
+            row: 0,
+        }
+    }
 }
 
 /// Errors that can occur when loading a grid
@@ -392,7 +400,7 @@ impl<T: Value> From<ValueGrid<T>> for Vec<T> {
 
 /// An iterator iver the rows in a [ValueGrid]
 pub struct IterGridRows<'t, T: Value> {
-    byte_grid: &'t ValueGrid<T>,
+    grid: &'t ValueGrid<T>,
     row: usize,
 }
 
@@ -400,15 +408,40 @@ impl<'t, T: Value> Iterator for IterGridRows<'t, T> {
     type Item = Iter<'t, T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.row >= self.byte_grid.height {
+        if self.row >= self.grid.height {
             return None;
         }
 
-        let start = self.row * self.byte_grid.width;
-        let end = start + self.byte_grid.width;
-        let result = self.byte_grid.data[start..end].iter();
+        let start = self.row * self.grid.width;
+        let end = start + self.grid.width;
+        let result = self.grid.data[start..end].iter();
         self.row += 1;
         Some(result)
+    }
+}
+
+pub struct EnumerateGrid<'t, T: Value> {
+    grid: &'t ValueGrid<T>,
+    row: usize,
+    column: usize,
+}
+
+impl<'t, T: Value> Iterator for EnumerateGrid<'t, T> {
+    type Item = (usize, usize, T);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.row >= self.grid.height {
+            return None;
+        }
+
+        let result =
+            Some((self.row, self.column, self.grid.get(self.row, self.column)));
+        self.column += 1;
+        if self.column == self.grid.width {
+            self.column = 0;
+            self.row += 1;
+        }
+        result
     }
 }
 

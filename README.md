@@ -24,7 +24,7 @@ use servicepoint::*;
 
 fn main() {
     // establish connection
-    let connection = Connection::open("172.23.42.29:2342")
+    let connection = connection::Udp::open("172.23.42.29:2342")
         .expect("connection failed");
 
     // clear screen content

@@ -52,8 +52,8 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 ///
 /// ```rust
 /// # use std::time::Instant;
-/// # use servicepoint::{Command, CompressionCode, FRAME_PACING, Origin, Bitmap};
-/// # let connection = servicepoint::Connection::Fake;
+/// # use servicepoint::{Command, CompressionCode, FRAME_PACING, Origin, Bitmap, Connection};
+/// # let connection = servicepoint::connection::Fake;
 /// # let pixels = Bitmap::max_sized();
 /// loop {
 ///    let start = Instant::now();
