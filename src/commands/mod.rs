@@ -49,10 +49,7 @@
 
 mod bitmap_legacy;
 mod bitmap_linear;
-mod bitmap_linear_and;
-mod bitmap_linear_or;
 mod bitmap_linear_win;
-mod bitmap_linear_xor;
 mod char_brightness;
 mod clear;
 mod cp437_data;
@@ -67,10 +64,7 @@ use std::fmt::Debug;
 
 pub use bitmap_legacy::*;
 pub use bitmap_linear::*;
-pub use bitmap_linear_and::*;
-pub use bitmap_linear_or::*;
 pub use bitmap_linear_win::*;
-pub use bitmap_linear_xor::*;
 pub use char_brightness::*;
 pub use clear::*;
 pub use cp437_data::*;
@@ -104,12 +98,6 @@ pub enum TypedCommand {
     CharBrightness(CharBrightness),
 
     BitmapLinear(BitmapLinear),
-
-    BitmapLinearAnd(BitmapLinearAnd),
-
-    BitmapLinearOr(BitmapLinearOr),
-
-    BitmapLinearXor(BitmapLinearXor),
 
     HardReset(HardReset),
 
@@ -194,17 +182,11 @@ impl TryFrom<Packet> for TypedCommand {
             CommandCode::BitmapLegacy => {
                 packet_to_command_case!(BitmapLegacy, packet)
             }
-            CommandCode::BitmapLinear => {
+            CommandCode::BitmapLinear
+            | CommandCode::BitmapLinearOr
+            | CommandCode::BitmapLinearAnd
+            | CommandCode::BitmapLinearXor => {
                 packet_to_command_case!(BitmapLinear, packet)
-            }
-            CommandCode::BitmapLinearAnd => {
-                packet_to_command_case!(BitmapLinearAnd, packet)
-            }
-            CommandCode::BitmapLinearOr => {
-                packet_to_command_case!(BitmapLinearOr, packet)
-            }
-            CommandCode::BitmapLinearXor => {
-                packet_to_command_case!(BitmapLinearXor, packet)
             }
             CommandCode::BitmapLinearWinUncompressed => {
                 packet_to_command_case!(BitmapLinearWin, packet)
@@ -239,9 +221,6 @@ impl From<TypedCommand> for Packet {
             TypedCommand::GlobalBrightness(c) => c.into(),
             TypedCommand::CharBrightness(c) => c.into(),
             TypedCommand::BitmapLinear(c) => c.into(),
-            TypedCommand::BitmapLinearAnd(c) => c.into(),
-            TypedCommand::BitmapLinearOr(c) => c.into(),
-            TypedCommand::BitmapLinearXor(c) => c.into(),
             TypedCommand::HardReset(c) => c.into(),
             TypedCommand::FadeOut(c) => c.into(),
             #[allow(deprecated)]
@@ -250,20 +229,25 @@ impl From<TypedCommand> for Packet {
     }
 }
 
-pub(self) fn check_command_code_only(packet: Packet, code: CommandCode) -> Option<TryFromPacketError> {
+pub(self) fn check_command_code_only(
+    packet: Packet,
+    code: CommandCode,
+) -> Option<TryFromPacketError> {
     let Packet {
         header:
-        Header {
-            command_code: _,
-            a,
-            b,
-            c,
-            d,
-        },
+            Header {
+                command_code: _,
+                a,
+                b,
+                c,
+                d,
+            },
         payload,
     } = packet;
     if packet.header.command_code != u16::from(code) {
-        Some(TryFromPacketError::InvalidCommand(packet.header.command_code))
+        Some(TryFromPacketError::InvalidCommand(
+            packet.header.command_code,
+        ))
     } else if !payload.is_empty() {
         Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
     } else if a != 0 || b != 0 || c != 0 || d != 0 {
@@ -275,8 +259,8 @@ pub(self) fn check_command_code_only(packet: Packet, code: CommandCode) -> Optio
 
 #[cfg(test)]
 mod tests {
-    use crate::commands::{BitmapLinear, BitmapLinearWin, BitmapLinearXor, CharBrightness, GlobalBrightness, TryFromPacketError};
     use crate::command_code::CommandCode;
+    use crate::commands::{BinaryOperation, TryFromPacketError};
     use crate::*;
 
     fn round_trip(original: TypedCommand) {
@@ -319,9 +303,11 @@ mod tests {
 
     #[test]
     fn round_trip_brightness() {
-        round_trip(TypedCommand::GlobalBrightness(GlobalBrightness {
-            brightness: Brightness::try_from(6).unwrap(),
-        }));
+        round_trip(TypedCommand::GlobalBrightness(
+            commands::GlobalBrightness {
+                brightness: Brightness::try_from(6).unwrap(),
+            },
+        ));
     }
 
     #[test]
@@ -332,7 +318,7 @@ mod tests {
 
     #[test]
     fn round_trip_char_brightness() {
-        round_trip(TypedCommand::CharBrightness(CharBrightness {
+        round_trip(TypedCommand::CharBrightness(commands::CharBrightness {
             origin: Origin::new(5, 2),
             grid: BrightnessGrid::new(7, 5),
         }));
@@ -357,33 +343,28 @@ mod tests {
     #[test]
     fn round_trip_bitmap_linear() {
         for compression in all_compressions().iter().copied() {
-            round_trip(TypedCommand::BitmapLinear(BitmapLinear {
-                offset: 23,
-                bitvec: BitVec::repeat(false, 40),
-                compression,
-            }));
-            round_trip(TypedCommand::BitmapLinearAnd(
-                commands::BitmapLinearAnd {
-                    offset: 23,
-                    bitvec: BitVec::repeat(false, 40),
+            for operation in [
+                BinaryOperation::Overwrite,
+                BinaryOperation::And,
+                BinaryOperation::Or,
+                BinaryOperation::Xor,
+            ] {
+                round_trip(TypedCommand::BitmapLinear(
+                    commands::BitmapLinear {
+                        offset: 23,
+                        bitvec: BitVec::repeat(false, 40),
+                        compression,
+                        operation,
+                    },
+                ));
+            }
+            round_trip(TypedCommand::BitmapLinearWin(
+                commands::BitmapLinearWin {
+                    origin: Origin::ZERO,
+                    bitmap: Bitmap::max_sized(),
                     compression,
                 },
             ));
-            round_trip(TypedCommand::BitmapLinearOr(commands::BitmapLinearOr {
-                offset: 23,
-                bitvec: BitVec::repeat(false, 40),
-                compression,
-            }));
-            round_trip(TypedCommand::BitmapLinearXor(BitmapLinearXor {
-                offset: 23,
-                bitvec: BitVec::repeat(false, 40),
-                compression,
-            }));
-            round_trip(TypedCommand::BitmapLinearWin(BitmapLinearWin {
-                origin: Origin::ZERO,
-                bitmap: Bitmap::max_sized(),
-                compression,
-            }));
         }
     }
 
@@ -534,10 +515,11 @@ mod tests {
     #[test]
     fn error_decompression_failed_and() {
         for compression in all_compressions().iter().copied() {
-            let p: Packet = commands::BitmapLinearAnd {
+            let p: Packet = commands::BitmapLinear {
                 offset: 0,
                 bitvec: BitVec::repeat(false, 8),
                 compression,
+                operation: BinaryOperation::Overwrite,
             }
             .into();
             let Packet {
@@ -598,6 +580,7 @@ mod tests {
             offset: 0,
             bitvec: BitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
+            operation: BinaryOperation::Or,
         }
         .into();
         let Header {
@@ -629,6 +612,7 @@ mod tests {
             offset: 0,
             bitvec: BitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
+            operation: BinaryOperation::And,
         }
         .into();
         let Header {
@@ -660,6 +644,7 @@ mod tests {
             offset: 0,
             bitvec: BitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
+            operation: BinaryOperation::Xor,
         }
         .into();
         let Header {
@@ -699,7 +684,10 @@ mod tests {
     #[test]
     fn packet_into_char_brightness_invalid() {
         let grid = BrightnessGrid::new(2, 2);
-        let command = commands::CharBrightness{origin: Origin::ZERO, grid};
+        let command = commands::CharBrightness {
+            origin: Origin::ZERO,
+            grid,
+        };
         let mut packet: Packet = command.into();
         let slot = packet.payload.get_mut(1).unwrap();
         *slot = 23;
@@ -711,7 +699,10 @@ mod tests {
 
     #[test]
     fn packet_into_brightness_invalid() {
-        let mut packet: Packet = commands::GlobalBrightness{brightness: Brightness::MAX}.into();
+        let mut packet: Packet = commands::GlobalBrightness {
+            brightness: Brightness::MAX,
+        }
+        .into();
         let slot = packet.payload.get_mut(0).unwrap();
         *slot = 42;
         assert_eq!(

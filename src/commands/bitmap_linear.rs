@@ -1,13 +1,30 @@
+use crate::compression::into_compressed;
 use crate::{
-    commands::TryFromPacketError, command_code::CommandCode,
+    command_code::CommandCode, commands::TryFromPacketError,
     compression::into_decompressed, BitVec, CompressionCode, Header, Offset,
     Packet, TypedCommand,
 };
+
+/// Binary operations for use with the [BitmapLinear] command.
+#[derive(Clone, PartialEq, Eq, Debug, Default)]
+pub enum BinaryOperation {
+    #[default]
+    Overwrite,
+    And,
+    Or,
+    Xor,
+}
 
 /// Set pixel data starting at the pixel offset on screen.
 ///
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
+///
+/// The [BinaryOperation] will be applied on the display comparing old and sent bit.
+/// 
+/// `new_bit = old_bit op sent_bit`
+/// 
+/// For example, [BinaryOperation::Or] can be used to turn on some pixels without affecting other pixels.
 ///
 /// The contained [BitVec] is always uncompressed.
 #[derive(Clone, PartialEq, Debug)]
@@ -16,18 +33,34 @@ pub struct BitmapLinear {
     pub offset: Offset,
     /// the pixels to send to the display as one long row
     pub bitvec: BitVec,
+    /// The operation to apply on the display per bit comparing old and new state.
+    pub operation: BinaryOperation,
     /// how to compress the command when converting to packet
     pub compression: CompressionCode,
 }
 
 impl From<BitmapLinear> for Packet {
-    fn from(bitmap: BitmapLinear) -> Self {
-        Packet::bitmap_linear_into_packet(
-            CommandCode::BitmapLinear,
-            bitmap.offset,
-            bitmap.compression,
-            bitmap.bitvec.into(),
-        )
+    fn from(command: BitmapLinear) -> Self {
+        let command_code = match command.operation {
+            BinaryOperation::Overwrite => CommandCode::BitmapLinear,
+            BinaryOperation::And => CommandCode::BitmapLinearAnd,
+            BinaryOperation::Or => CommandCode::BitmapLinearOr,
+            BinaryOperation::Xor => CommandCode::BitmapLinearXor,
+        };
+
+        let payload: Vec<_> = command.bitvec.into();
+        let length = payload.len() as u16;
+        let payload = into_compressed(command.compression, payload);
+        Packet {
+            header: Header {
+                command_code: command_code.into(),
+                a: command.offset as u16,
+                b: length,
+                c: command.compression.into(),
+                d: 0,
+            },
+            payload,
+        }
     }
 }
 
@@ -35,30 +68,10 @@ impl TryFrom<Packet> for BitmapLinear {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
-        let (offset, bitvec, compression) =
-            Self::packet_into_linear_bitmap(packet)?;
-        Ok(Self {
-            offset,
-            bitvec,
-            compression,
-        })
-    }
-}
-
-impl From<BitmapLinear> for TypedCommand {
-    fn from(command: BitmapLinear) -> Self {
-        Self::BitmapLinear(command)
-    }
-}
-
-impl BitmapLinear {
-    /// Helper method for Packets into `BitmapLinear*`-Commands
-    pub(crate) fn packet_into_linear_bitmap(
-        packet: Packet,
-    ) -> Result<(Offset, BitVec, CompressionCode), TryFromPacketError> {
         let Packet {
             header:
                 Header {
+                    command_code,
                     a: offset,
                     b: length,
                     c: sub,
@@ -67,16 +80,30 @@ impl BitmapLinear {
                 },
             payload,
         } = packet;
+        let command_code = CommandCode::try_from(command_code)
+            .map_err(|_| TryFromPacketError::InvalidCommand(command_code))?;
+        let operation = match command_code {
+            CommandCode::BitmapLinear => BinaryOperation::Overwrite,
+            CommandCode::BitmapLinearAnd => BinaryOperation::And,
+            CommandCode::BitmapLinearOr => BinaryOperation::Or,
+            CommandCode::BitmapLinearXor => BinaryOperation::Xor,
+            _ => {
+                return Err(TryFromPacketError::InvalidCommand(
+                    command_code.into(),
+                ))
+            }
+        };
+
         if reserved != 0 {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
         }
-        let sub = match CompressionCode::try_from(sub) {
+        let compression = match CompressionCode::try_from(sub) {
             Err(()) => {
                 return Err(TryFromPacketError::InvalidCompressionCode(sub));
             }
             Ok(value) => value,
         };
-        let payload = match into_decompressed(sub, payload) {
+        let payload = match into_decompressed(compression, payload) {
             None => return Err(TryFromPacketError::DecompressionFailed),
             Some(value) => value,
         };
@@ -86,6 +113,17 @@ impl BitmapLinear {
                 payload.len(),
             ));
         }
-        Ok((offset as Offset, BitVec::from_vec(payload), sub))
+        Ok(Self {
+            offset: offset as Offset,
+            bitvec: BitVec::from_vec(payload),
+            compression,
+            operation,
+        })
+    }
+}
+
+impl From<BitmapLinear> for TypedCommand {
+    fn from(command: BitmapLinear) -> Self {
+        Self::BitmapLinear(command)
     }
 }

@@ -24,8 +24,7 @@
 //! ```
 
 use crate::command_code::CommandCode;
-use crate::compression::into_compressed;
-use crate::{CompressionCode, Grid, Offset, Origin, Tiles};
+use crate::{Grid, Origin, Tiles};
 use std::mem::size_of;
 
 /// A raw header.
@@ -136,28 +135,6 @@ impl TryFrom<Vec<u8>> for Packet {
 }
 
 impl Packet {
-    /// Helper method for `BitmapLinear*`-Commands into [Packet]
-    #[allow(clippy::cast_possible_truncation)]
-    pub(crate) fn bitmap_linear_into_packet(
-        command: CommandCode,
-        offset: Offset,
-        compression: CompressionCode,
-        payload: Vec<u8>,
-    ) -> Packet {
-        let length = payload.len() as u16;
-        let payload = into_compressed(compression, payload);
-        Packet {
-            header: Header {
-                command_code: command.into(),
-                a: offset as u16,
-                b: length,
-                c: compression.into(),
-                d: 0,
-            },
-            payload,
-        }
-    }
-
     fn u16_from_be_slice(slice: &[u8]) -> u16 {
         let mut bytes = [0u8; 2];
         bytes[0] = slice[0];
