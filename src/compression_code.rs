@@ -3,14 +3,22 @@
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{Command, CompressionCode, Origin, Bitmap};
+/// # use servicepoint::*;
 /// // create command without payload compression
 /// # let pixels = Bitmap::max_sized();
-/// _ = Command::BitmapLinearWin(Origin::ZERO, pixels, CompressionCode::Uncompressed);
+/// _ = command::BitmapLinearWin {
+///     origin: Origin::ZERO, 
+///     bitmap: pixels, 
+///     compression: CompressionCode::Uncompressed
+/// };
 ///
 /// // create command with payload compressed with lzma and appropriate header flags
 /// # let pixels = Bitmap::max_sized();
-/// _ = Command::BitmapLinearWin(Origin::ZERO, pixels, CompressionCode::Lzma);
+/// _ = command::BitmapLinearWin { 
+///     origin: Origin::ZERO,
+///     bitmap: pixels, 
+///     compression: CompressionCode::Lzma
+/// };
 /// ```
 #[repr(u16)]
 #[derive(Debug, Clone, Copy, PartialEq)]

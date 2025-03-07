@@ -212,11 +212,11 @@ impl<T: Value> ValueGrid<T> {
     /// Use logic written for u8s and then convert to [Brightness] values for sending in a [Command].
     /// ```
     /// # fn foo(grid: &mut ByteGrid) {}
-    /// # use servicepoint::{Brightness, BrightnessGrid, ByteGrid, Command, Origin, TILE_HEIGHT, TILE_WIDTH};
+    /// # use servicepoint::*;
     /// let mut grid: ByteGrid = ByteGrid::new(TILE_WIDTH, TILE_HEIGHT);
     /// foo(&mut grid);
     /// let grid: BrightnessGrid = grid.map(Brightness::saturating_from);
-    /// let command = Command::CharBrightness(Origin::ZERO, grid);
+    /// let command = command::CharBrightness { origin: Origin::ZERO, grid };
     /// ```
     /// [Brightness]: [crate::Brightness]
     /// [Command]: [crate::Command]

@@ -14,14 +14,14 @@ fn main() {
     let connection = connection::Udp::open(cli.destination)
         .expect("could not connect to display");
 
-    let mut pixels = Bitmap::max_sized();
-    pixels.fill(true);
+    let mut bitmap = Bitmap::max_sized();
+    bitmap.fill(true);
 
-    let command = Command::BitmapLinearWin(
-        Origin::ZERO,
-        pixels,
-        CompressionCode::default(),
-    );
+    let command = command::BitmapLinearWin {
+        origin: Origin::ZERO,
+        bitmap,
+        compression: CompressionCode::default(),
+    };
     connection.send(command).expect("send failed");
 
     let max_brightness: u8 = Brightness::MAX.into();
@@ -31,7 +31,9 @@ fn main() {
         *byte = Brightness::try_from(level).unwrap();
     }
 
-    connection
-        .send(Command::CharBrightness(Origin::ZERO, brightnesses))
-        .expect("send failed");
+    let command = command::CharBrightness {
+        origin: Origin::ZERO,
+        grid: brightnesses,
+    };
+    connection.send(command).expect("send failed");
 }

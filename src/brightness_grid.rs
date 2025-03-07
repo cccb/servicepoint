@@ -8,13 +8,16 @@ use crate::ByteGrid;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{Brightness, BrightnessGrid, Command, Connection, Grid, Origin, connection};
+/// # use servicepoint::*;
 /// let mut grid = BrightnessGrid::new(2,2);
 /// grid.set(0, 0, Brightness::MIN);
 /// grid.set(1, 1, Brightness::MIN);
 ///
 /// # let connection = connection::Fake;
-/// connection.send(Command::CharBrightness(Origin::new(3, 7), grid)).unwrap()
+/// connection.send(command::CharBrightness {
+///     origin: Origin::new(3, 7), 
+///     grid
+/// }).unwrap()
 /// ```
 pub type BrightnessGrid = ValueGrid<Brightness>;
 

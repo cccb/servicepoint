@@ -9,32 +9,32 @@
 //! ### Clear display
 //!
 //! ```rust
-//! use servicepoint::{Connection, Command, connection};
+//! use servicepoint::*;
 //!
 //! // establish a connection
 //! let connection = connection::Udp::open("127.0.0.1:2342")
 //!     .expect("connection failed");
 //!
 //!  // turn off all pixels on display
-//!  connection.send(Command::Clear)
+//!  connection.send(command::Clear)
 //!     .expect("send failed");
 //! ```
 //!
 //! ### Set all pixels to on
 //!
 //! ```rust
-//! # use servicepoint::{Command, CompressionCode, Grid, Bitmap, Connection};
-//! # let connection = servicepoint::connection::Udp::open("127.0.0.1:2342").expect("connection failed");
+//! # use servicepoint::*;
+//! # let connection = connection::Udp::open("127.0.0.1:2342").expect("connection failed");
 //!  // turn on all pixels in a grid
 //!  let mut pixels = Bitmap::max_sized();
 //!  pixels.fill(true);
 //!
 //!  // create command to send pixels
-//!  let command = Command::BitmapLinearWin(
-//!     servicepoint::Origin::ZERO,
-//!     pixels,
-//!     CompressionCode::default()
-//!  );
+//!  let command = command::BitmapLinearWin {
+//!     origin: Origin::ZERO,
+//!     bitmap: pixels,
+//!     compression: CompressionCode::default()
+//!  };
 //!
 //!  // send command to display
 //!  connection.send(command).expect("send failed");
@@ -50,7 +50,7 @@
 //! // modify the grid
 //! grid.set(grid.width() - 1, 1, '!');
 //! // create the command to send the data
-//! let command = Command::Utf8Data(Origin::ZERO, grid);
+//! let command = command::Utf8Data { origin: Origin::ZERO, grid };
 //! // send command to display
 //! connection.send(command).expect("send failed");
 //! ```
@@ -61,7 +61,7 @@ pub use crate::brightness::Brightness;
 pub use crate::brightness_grid::BrightnessGrid;
 pub use crate::byte_grid::ByteGrid;
 pub use crate::char_grid::CharGrid;
-pub use crate::command::{Command, Offset};
+pub use crate::command::{Command, TypedCommand};
 pub use crate::compression_code::CompressionCode;
 pub use crate::connection::Connection;
 pub use crate::constants::*;
@@ -80,7 +80,7 @@ mod brightness;
 mod brightness_grid;
 mod byte_grid;
 mod char_grid;
-mod command;
+pub mod command;
 mod command_code;
 mod compression;
 mod compression_code;
@@ -95,6 +95,8 @@ mod value_grid;
 
 #[cfg(feature = "cp437")]
 mod cp437;
+mod parser;
+
 #[cfg(feature = "cp437")]
 pub use crate::cp437::Cp437Converter;
 
@@ -102,3 +104,6 @@ pub use crate::cp437::Cp437Converter;
 #[doc = include_str!("../README.md")]
 #[cfg(doctest)]
 pub struct ReadmeDocTests;
+
+/// Type alias for documenting the meaning of the u16 in enum values
+pub type Offset = usize;

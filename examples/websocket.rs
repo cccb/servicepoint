@@ -1,24 +1,21 @@
 //! Example for how to use the WebSocket connection
 
 use servicepoint::connection::Websocket;
-use servicepoint::{
-    Bitmap, Command, CompressionCode, Connection, Grid, Origin,
-};
+use servicepoint::*;
 
 fn main() {
-    let connection =
-        Websocket::open("ws://localhost:8080".parse().unwrap()).unwrap();
+    let uri = "ws://localhost:8080".parse().unwrap();
+    let connection = Websocket::open(uri).unwrap();
 
-    connection.send(Command::Clear).unwrap();
+    connection.send(command::Clear).unwrap();
 
     let mut pixels = Bitmap::max_sized();
     pixels.fill(true);
 
-    connection
-        .send(Command::BitmapLinearWin(
-            Origin::ZERO,
-            pixels,
-            CompressionCode::default(),
-        ))
-        .unwrap();
+    let command = command::BitmapLinearWin {
+        origin: Origin::ZERO,
+        bitmap: pixels,
+        compression: CompressionCode::default(),
+    };
+    connection.send(command).unwrap();
 }

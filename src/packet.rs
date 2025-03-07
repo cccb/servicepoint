@@ -7,17 +7,17 @@
 //! Converting a packet to a command and back:
 //!
 //! ```rust
-//! use servicepoint::{Command, Packet};
-//! # let command = Command::Clear;
+//! use servicepoint::{Command, Packet, TypedCommand};
+//! # let command = servicepoint::command::Clear;
 //! let packet: Packet = command.into();
-//! let command: Command = Command::try_from(packet).expect("could not read command from packet");
+//! let command = TypedCommand::try_from(packet).expect("could not read command from packet");
 //! ```
 //!
 //! Converting a packet to bytes and back:
 //!
 //! ```rust
 //! use servicepoint::{Command, Packet};
-//! # let command = Command::Clear;
+//! # let command = servicepoint::command::Clear;
 //! # let packet: Packet = command.into();
 //! let bytes: Vec<u8> = packet.into();
 //! let packet = Packet::try_from(bytes).expect("could not read packet from bytes");
@@ -25,10 +25,7 @@
 
 use crate::command_code::CommandCode;
 use crate::compression::into_compressed;
-use crate::{
-    Bitmap, Command, CompressionCode, Grid, Offset, Origin, Pixels, Tiles,
-    TILE_SIZE,
-};
+use crate::{CompressionCode, Grid, Offset, Origin, Tiles};
 use std::mem::size_of;
 
 /// A raw header.
@@ -37,7 +34,7 @@ use std::mem::size_of;
 /// payload, where applicable.
 ///
 /// Because the meaning of most fields depend on the command, there are no speaking names for them.
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Default)]
 pub struct Header {
     /// The first two bytes specify which command this packet represents.
     pub command_code: u16,
@@ -138,88 +135,10 @@ impl TryFrom<Vec<u8>> for Packet {
     }
 }
 
-impl From<Command> for Packet {
-    /// Move the [Command] into a [Packet] instance for sending.
-    #[allow(clippy::cast_possible_truncation)]
-    fn from(value: Command) -> Self {
-        match value {
-            Command::Clear => Self::command_code_only(CommandCode::Clear),
-            Command::FadeOut => Self::command_code_only(CommandCode::FadeOut),
-            Command::HardReset => {
-                Self::command_code_only(CommandCode::HardReset)
-            }
-            #[allow(deprecated)]
-            Command::BitmapLegacy => {
-                Self::command_code_only(CommandCode::BitmapLegacy)
-            }
-            Command::CharBrightness(origin, grid) => {
-                Self::origin_grid_to_packet(
-                    origin,
-                    grid,
-                    CommandCode::CharBrightness,
-                )
-            }
-            Command::Brightness(brightness) => Packet {
-                header: Header {
-                    command_code: CommandCode::Brightness.into(),
-                    a: 0x00000,
-                    b: 0x0000,
-                    c: 0x0000,
-                    d: 0x0000,
-                },
-                payload: vec![brightness.into()],
-            },
-            Command::BitmapLinearWin(origin, pixels, compression) => {
-                Self::bitmap_win_into_packet(origin, pixels, compression)
-            }
-            Command::BitmapLinear(offset, bits, compression) => {
-                Self::bitmap_linear_into_packet(
-                    CommandCode::BitmapLinear,
-                    offset,
-                    compression,
-                    bits.into(),
-                )
-            }
-            Command::BitmapLinearAnd(offset, bits, compression) => {
-                Self::bitmap_linear_into_packet(
-                    CommandCode::BitmapLinearAnd,
-                    offset,
-                    compression,
-                    bits.into(),
-                )
-            }
-            Command::BitmapLinearOr(offset, bits, compression) => {
-                Self::bitmap_linear_into_packet(
-                    CommandCode::BitmapLinearOr,
-                    offset,
-                    compression,
-                    bits.into(),
-                )
-            }
-            Command::BitmapLinearXor(offset, bits, compression) => {
-                Self::bitmap_linear_into_packet(
-                    CommandCode::BitmapLinearXor,
-                    offset,
-                    compression,
-                    bits.into(),
-                )
-            }
-            Command::Cp437Data(origin, grid) => Self::origin_grid_to_packet(
-                origin,
-                grid,
-                CommandCode::Cp437Data,
-            ),
-            Command::Utf8Data(origin, grid) => {
-                Self::origin_grid_to_packet(origin, grid, CommandCode::Utf8Data)
-            }
-        }
-    }
-}
-
 impl Packet {
     /// Helper method for `BitmapLinear*`-Commands into [Packet]
     #[allow(clippy::cast_possible_truncation)]
-    fn bitmap_linear_into_packet(
+    pub(crate) fn bitmap_linear_into_packet(
         command: CommandCode,
         offset: Offset,
         compression: CompressionCode,
@@ -239,59 +158,6 @@ impl Packet {
         }
     }
 
-    #[allow(clippy::cast_possible_truncation)]
-    fn bitmap_win_into_packet(
-        origin: Origin<Pixels>,
-        pixels: Bitmap,
-        compression: CompressionCode,
-    ) -> Packet {
-        debug_assert_eq!(origin.x % 8, 0);
-        debug_assert_eq!(pixels.width() % 8, 0);
-
-        let tile_x = (origin.x / TILE_SIZE) as u16;
-        let tile_w = (pixels.width() / TILE_SIZE) as u16;
-        let pixel_h = pixels.height() as u16;
-        let payload = into_compressed(compression, pixels.into());
-        let command = match compression {
-            CompressionCode::Uncompressed => {
-                CommandCode::BitmapLinearWinUncompressed
-            }
-            #[cfg(feature = "compression_zlib")]
-            CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
-            #[cfg(feature = "compression_bzip2")]
-            CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
-            #[cfg(feature = "compression_lzma")]
-            CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
-            #[cfg(feature = "compression_zstd")]
-            CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
-        };
-
-        Packet {
-            header: Header {
-                command_code: command.into(),
-                a: tile_x,
-                b: origin.y as u16,
-                c: tile_w,
-                d: pixel_h,
-            },
-            payload,
-        }
-    }
-
-    /// Helper method for creating empty packets only containing the command code
-    fn command_code_only(code: CommandCode) -> Packet {
-        Packet {
-            header: Header {
-                command_code: code.into(),
-                a: 0x0000,
-                b: 0x0000,
-                c: 0x0000,
-                d: 0x0000,
-            },
-            payload: vec![],
-        }
-    }
-
     fn u16_from_be_slice(slice: &[u8]) -> u16 {
         let mut bytes = [0u8; 2];
         bytes[0] = slice[0];
@@ -299,7 +165,7 @@ impl Packet {
         u16::from_be_bytes(bytes)
     }
 
-    fn origin_grid_to_packet<T>(
+    pub(crate) fn origin_grid_to_packet<T>(
         origin: Origin<Tiles>,
         grid: impl Grid<T> + Into<Payload>,
         command_code: CommandCode,
@@ -313,6 +179,16 @@ impl Packet {
                 d: grid.height() as u16,
             },
             payload: grid.into(),
+        }
+    }
+
+    pub(crate) fn command_code_only(c: CommandCode) -> Self {
+        Self {
+            header: Header {
+                command_code: c.into(),
+                ..Default::default()
+            },
+            payload: vec![],
         }
     }
 }

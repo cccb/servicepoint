@@ -32,12 +32,13 @@ fn main() {
             enabled_pixels.set(x_offset % PIXEL_WIDTH, y, false);
         }
 
+        let command = command::BitmapLinearWin {
+            origin: Origin::ZERO,
+            bitmap: enabled_pixels.clone(),
+            compression: CompressionCode::default(),
+        };
         connection
-            .send(Command::BitmapLinearWin(
-                Origin::ZERO,
-                enabled_pixels.clone(),
-                CompressionCode::default(),
-            ))
+            .send(command)
             .expect("could not send command to display");
         thread::sleep(sleep_duration);
     }

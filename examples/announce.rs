@@ -36,13 +36,16 @@ fn main() {
 
     if cli.clear {
         connection
-            .send(Command::Clear)
+            .send(command::Clear)
             .expect("sending clear failed");
     }
 
     let text = cli.text.join("\n");
-    let grid = CharGrid::wrap_str(TILE_WIDTH, &text);
+    let command = command::Utf8Data {
+        origin: Origin::ZERO,
+        grid: CharGrid::wrap_str(TILE_WIDTH, &text),
+    };
     connection
-        .send(Command::Utf8Data(Origin::ZERO, grid))
+        .send(command)
         .expect("sending text failed");
 }

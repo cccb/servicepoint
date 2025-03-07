@@ -28,7 +28,7 @@ fn main() {
         .expect("connection failed");
 
     // clear screen content
-    connection.send(Command::Clear)
+    connection.send(command::Clear)
         .expect("send failed");
 }
 ```

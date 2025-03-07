@@ -4,7 +4,6 @@
 use clap::Parser;
 use rand::Rng;
 use servicepoint::*;
-use std::net::UdpSocket;
 use std::time::Duration;
 
 #[derive(Parser, Debug)]
@@ -29,17 +28,17 @@ fn main() {
         let mut filled_grid = Bitmap::max_sized();
         filled_grid.fill(true);
 
-        let command = Command::BitmapLinearWin(
-            Origin::ZERO,
-            filled_grid,
-            CompressionCode::default(),
-        );
+        let command = command::BitmapLinearWin {
+            origin: Origin::ZERO,
+            bitmap: filled_grid,
+            compression: CompressionCode::default(),
+        };
         connection.send(command).expect("send failed");
     }
 
     // set all pixels to the same random brightness
     let mut rng = rand::thread_rng();
-    connection.send(Command::Brightness(rng.gen())).unwrap();
+    connection.send(rng.gen::<Brightness>()).unwrap();
 
     // continuously update random windows to new random brightness
     loop {
@@ -60,7 +59,7 @@ fn main() {
         }
 
         connection
-            .send(Command::CharBrightness(origin, luma))
+            .send(command::CharBrightness { origin, grid: luma })
             .unwrap();
         std::thread::sleep(wait_duration);
     }

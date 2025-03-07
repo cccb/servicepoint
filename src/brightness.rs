@@ -15,7 +15,7 @@ use rand::{
 ///
 /// let b = Brightness::try_from(7).unwrap();
 /// # let connection = connection::Fake;
-/// let result = connection.send(Command::Brightness(b));
+/// let result = connection.send(b);
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Brightness(u8);

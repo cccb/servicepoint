@@ -14,19 +14,19 @@ fn main() {
     let connection = connection::Udp::open(Cli::parse().destination)
         .expect("could not connect to display");
 
-    let mut pixels = Bitmap::max_sized();
+    let mut bitmap = Bitmap::max_sized();
     for x_offset in 0..usize::MAX {
-        pixels.fill(false);
+        bitmap.fill(false);
 
         for y in 0..PIXEL_HEIGHT {
-            pixels.set((y + x_offset) % PIXEL_WIDTH, y, true);
+            bitmap.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
 
-        let command = Command::BitmapLinearWin(
-            Origin::ZERO,
-            pixels.clone(),
-            CompressionCode::default(),
-        );
+        let command = command::BitmapLinearWin {
+            bitmap: bitmap.clone(),
+            compression: CompressionCode::default(),
+            origin: Origin::ZERO,
+        };
         connection.send(command).expect("send failed");
         thread::sleep(FRAME_PACING);
     }
