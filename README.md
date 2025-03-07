@@ -24,11 +24,11 @@ use servicepoint::*;
 
 fn main() {
     // establish connection
-    let connection = connection::Udp::open("172.23.42.29:2342")
+    let connection = connections::Udp::open("172.23.42.29:2342")
         .expect("connection failed");
 
     // clear screen content
-    connection.send(command::Clear)
+    connection.send(commands::Clear)
         .expect("send failed");
 }
 ```

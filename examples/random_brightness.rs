@@ -19,7 +19,7 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = connection::Udp::open(cli.destination)
+    let connection = connections::Udp::open(cli.destination)
         .expect("could not connect to display");
     let wait_duration = Duration::from_millis(cli.wait_ms);
 
@@ -28,7 +28,7 @@ fn main() {
         let mut filled_grid = Bitmap::max_sized();
         filled_grid.fill(true);
 
-        let command = command::BitmapLinearWin {
+        let command = commands::BitmapLinearWin {
             origin: Origin::ZERO,
             bitmap: filled_grid,
             compression: CompressionCode::default(),
@@ -59,7 +59,7 @@ fn main() {
         }
 
         connection
-            .send(command::CharBrightness { origin, grid: luma })
+            .send(commands::CharBrightness { origin, grid: luma })
             .unwrap();
         std::thread::sleep(wait_duration);
     }

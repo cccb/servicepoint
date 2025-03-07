@@ -17,12 +17,12 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = connection::Udp::open(&cli.destination)
+    let connection = connections::Udp::open(&cli.destination)
         .expect("could not connect to display");
     let mut field = make_random_field(cli.probability);
 
     loop {
-        let command = command::BitmapLinearWin {
+        let command = commands::BitmapLinearWin {
             origin: Origin::ZERO,
             bitmap: field.clone(),
             compression: CompressionCode::default(),

@@ -1,5 +1,5 @@
 use crate::{
-    command::TryFromPacketError, command_code::CommandCode,
+    commands::TryFromPacketError, command_code::CommandCode,
     compression::into_compressed, compression::into_decompressed, Bitmap,
     CompressionCode, Grid, Header, Origin, Packet, Pixels, TypedCommand,
     TILE_SIZE,
@@ -13,14 +13,14 @@ use crate::{
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connection::Fake;
+/// # let connection = connections::Fake;
 /// #
 /// let mut bitmap = Bitmap::max_sized();
 /// // draw something to the pixels here
 /// # bitmap.set(2, 5, true);
 ///
 /// // create command to send pixels
-/// let command = command::BitmapLinearWin {
+/// let command = commands::BitmapLinearWin {
 ///     bitmap,
 ///     origin: Origin::ZERO,
 ///     compression: CompressionCode::Uncompressed

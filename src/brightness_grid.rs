@@ -13,9 +13,9 @@ use crate::ByteGrid;
 /// grid.set(0, 0, Brightness::MIN);
 /// grid.set(1, 1, Brightness::MIN);
 ///
-/// # let connection = connection::Fake;
-/// connection.send(command::CharBrightness {
-///     origin: Origin::new(3, 7), 
+/// # let connection = connections::Fake;
+/// connection.send(commands::CharBrightness {
+///     origin: Origin::new(3, 7),
 ///     grid
 /// }).unwrap()
 /// ```

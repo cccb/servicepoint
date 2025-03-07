@@ -53,14 +53,14 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 /// ```rust
 /// # use std::time::Instant;
 /// # use servicepoint::*;
-/// # let connection = connection::Fake;
+/// # let connection = connections::Fake;
 /// # let pixels = Bitmap::max_sized();
 /// loop {
 ///    let start = Instant::now();
 ///
 ///    // Change pixels here
 ///
-///    connection.send(command::BitmapLinearWin {
+///    connection.send(commands::BitmapLinearWin {
 ///            origin: Origin::new(0,0),
 ///            bitmap: pixels,
 ///            compression: CompressionCode::default()

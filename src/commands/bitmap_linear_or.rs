@@ -1,5 +1,5 @@
 use crate::{
-    command::{BitmapLinear, TryFromPacketError},
+    commands::{BitmapLinear, TryFromPacketError},
     command_code::CommandCode,
     BitVec, CompressionCode, Offset, Packet, TypedCommand,
 };
@@ -12,7 +12,7 @@ use crate::{
 /// The contained [BitVec] is always uncompressed.
 #[derive(Clone, PartialEq, Debug)]
 pub struct BitmapLinearOr {
-    /// where to start overwriting pixel data 
+    /// where to start overwriting pixel data
     pub offset: Offset,
     /// the pixels to send to the display as one long row
     pub bitvec: BitVec,

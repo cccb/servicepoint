@@ -31,17 +31,17 @@ fn main() {
         cli.text.push("Hello, CCCB!".to_string());
     }
 
-    let connection = connection::Udp::open(&cli.destination)
+    let connection = connections::Udp::open(&cli.destination)
         .expect("could not connect to display");
 
     if cli.clear {
         connection
-            .send(command::Clear)
+            .send(commands::Clear)
             .expect("sending clear failed");
     }
 
     let text = cli.text.join("\n");
-    let command = command::Utf8Data {
+    let command = commands::Utf8Data {
         origin: Origin::ZERO,
         grid: CharGrid::wrap_str(TILE_WIDTH, &text),
     };

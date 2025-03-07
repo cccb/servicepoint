@@ -31,19 +31,19 @@
 //! use servicepoint::*;
 //!
 //! // create command
-//! let command = command::GlobalBrightness{ brightness: Brightness::MAX };
+//! let command = commands::GlobalBrightness{ brightness: Brightness::MAX };
 //!
 //! // turn command into Packet
 //! let packet: Packet = command.clone().into();
 //!
 //! // read command from packet
-//! let round_tripped = command::TypedCommand::try_from(packet).unwrap();
+//! let round_tripped = commands::TypedCommand::try_from(packet).unwrap();
 //!
 //! // round tripping produces exact copy
 //! assert_eq!(round_tripped, TypedCommand::from(command.clone()));
 //!
 //! // send command
-//! # let connection = connection::Fake;
+//! # let connection = connections::Fake;
 //! connection.send(command).unwrap();
 //! ```
 
@@ -275,7 +275,7 @@ pub(self) fn check_command_code_only(packet: Packet, code: CommandCode) -> Optio
 
 #[cfg(test)]
 mod tests {
-    use crate::command::{BitmapLinear, BitmapLinearWin, BitmapLinearXor, CharBrightness, GlobalBrightness, TryFromPacketError};
+    use crate::commands::{BitmapLinear, BitmapLinearWin, BitmapLinearXor, CharBrightness, GlobalBrightness, TryFromPacketError};
     use crate::command_code::CommandCode;
     use crate::*;
 
@@ -304,17 +304,17 @@ mod tests {
 
     #[test]
     fn round_trip_clear() {
-        round_trip(TypedCommand::Clear(command::Clear));
+        round_trip(TypedCommand::Clear(commands::Clear));
     }
 
     #[test]
     fn round_trip_hard_reset() {
-        round_trip(TypedCommand::HardReset(command::HardReset));
+        round_trip(TypedCommand::HardReset(commands::HardReset));
     }
 
     #[test]
     fn round_trip_fade_out() {
-        round_trip(TypedCommand::FadeOut(command::FadeOut));
+        round_trip(TypedCommand::FadeOut(commands::FadeOut));
     }
 
     #[test]
@@ -327,7 +327,7 @@ mod tests {
     #[test]
     #[allow(deprecated)]
     fn round_trip_bitmap_legacy() {
-        round_trip(TypedCommand::BitmapLegacy(command::BitmapLegacy));
+        round_trip(TypedCommand::BitmapLegacy(commands::BitmapLegacy));
     }
 
     #[test]
@@ -340,7 +340,7 @@ mod tests {
 
     #[test]
     fn round_trip_cp437_data() {
-        round_trip(TypedCommand::Cp437Data(command::Cp437Data {
+        round_trip(TypedCommand::Cp437Data(commands::Cp437Data {
             origin: Origin::new(5, 2),
             grid: Cp437Grid::new(7, 5),
         }));
@@ -348,7 +348,7 @@ mod tests {
 
     #[test]
     fn round_trip_utf8_data() {
-        round_trip(TypedCommand::Utf8Data(command::Utf8Data {
+        round_trip(TypedCommand::Utf8Data(commands::Utf8Data {
             origin: Origin::new(5, 2),
             grid: CharGrid::new(7, 5),
         }));
@@ -363,13 +363,13 @@ mod tests {
                 compression,
             }));
             round_trip(TypedCommand::BitmapLinearAnd(
-                command::BitmapLinearAnd {
+                commands::BitmapLinearAnd {
                     offset: 23,
                     bitvec: BitVec::repeat(false, 40),
                     compression,
                 },
             ));
-            round_trip(TypedCommand::BitmapLinearOr(command::BitmapLinearOr {
+            round_trip(TypedCommand::BitmapLinearOr(commands::BitmapLinearOr {
                 offset: 23,
                 bitvec: BitVec::repeat(false, 40),
                 compression,
@@ -504,7 +504,7 @@ mod tests {
     #[test]
     fn error_decompression_failed_win() {
         for compression in all_compressions().iter().copied() {
-            let p: Packet = command::BitmapLinearWin {
+            let p: Packet = commands::BitmapLinearWin {
                 origin: Origin::new(16, 8),
                 bitmap: Bitmap::new(8, 8),
                 compression,
@@ -534,7 +534,7 @@ mod tests {
     #[test]
     fn error_decompression_failed_and() {
         for compression in all_compressions().iter().copied() {
-            let p: Packet = command::BitmapLinearAnd {
+            let p: Packet = commands::BitmapLinearAnd {
                 offset: 0,
                 bitvec: BitVec::repeat(false, 8),
                 compression,
@@ -594,7 +594,7 @@ mod tests {
 
     #[test]
     fn error_reserved_used() {
-        let Packet { header, payload } = command::BitmapLinear {
+        let Packet { header, payload } = commands::BitmapLinear {
             offset: 0,
             bitvec: BitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
@@ -625,7 +625,7 @@ mod tests {
 
     #[test]
     fn error_invalid_compression() {
-        let Packet { header, payload } = command::BitmapLinear {
+        let Packet { header, payload } = commands::BitmapLinear {
             offset: 0,
             bitvec: BitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
@@ -656,7 +656,7 @@ mod tests {
 
     #[test]
     fn error_unexpected_size() {
-        let Packet { header, payload } = command::BitmapLinear {
+        let Packet { header, payload } = commands::BitmapLinear {
             offset: 0,
             bitvec: BitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
@@ -699,7 +699,7 @@ mod tests {
     #[test]
     fn packet_into_char_brightness_invalid() {
         let grid = BrightnessGrid::new(2, 2);
-        let command = command::CharBrightness{origin: Origin::ZERO, grid};
+        let command = commands::CharBrightness{origin: Origin::ZERO, grid};
         let mut packet: Packet = command.into();
         let slot = packet.payload.get_mut(1).unwrap();
         *slot = 23;
@@ -711,7 +711,7 @@ mod tests {
 
     #[test]
     fn packet_into_brightness_invalid() {
-        let mut packet: Packet = command::GlobalBrightness{brightness: Brightness::MAX}.into();
+        let mut packet: Packet = commands::GlobalBrightness{brightness: Brightness::MAX}.into();
         let slot = packet.payload.get_mut(0).unwrap();
         *slot = 42;
         assert_eq!(

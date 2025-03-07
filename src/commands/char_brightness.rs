@@ -1,5 +1,5 @@
 use crate::{
-    command::TryFromPacketError, command_code::CommandCode, BrightnessGrid,
+    commands::TryFromPacketError, command_code::CommandCode, BrightnessGrid,
     ByteGrid, Header, Origin, Packet, Tiles, TypedCommand,
 };
 

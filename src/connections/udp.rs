@@ -25,7 +25,7 @@ impl Udp {
     ///
     /// # Examples
     /// ```rust
-    ///  let connection = servicepoint::connection::Udp::open("127.0.0.1:2342")
+    ///  let connection = servicepoint::connections::Udp::open("127.0.0.1:2342")
     ///     .expect("connection failed");
     /// ```
     pub fn open(

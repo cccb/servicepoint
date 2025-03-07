@@ -21,7 +21,7 @@ fn main() {
         Duration::from_millis(cli.time / PIXEL_WIDTH as u64),
     );
 
-    let connection = connection::Udp::open(cli.destination)
+    let connection = connections::Udp::open(cli.destination)
         .expect("could not connect to display");
 
     let mut enabled_pixels = Bitmap::max_sized();
@@ -32,7 +32,7 @@ fn main() {
             enabled_pixels.set(x_offset % PIXEL_WIDTH, y, false);
         }
 
-        let command = command::BitmapLinearWin {
+        let command = commands::BitmapLinearWin {
             origin: Origin::ZERO,
             bitmap: enabled_pixels.clone(),
             compression: CompressionCode::default(),

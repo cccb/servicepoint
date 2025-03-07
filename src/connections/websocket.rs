@@ -40,7 +40,7 @@ impl Websocket {
     /// use tungstenite::http::Uri;
     /// use servicepoint::{
     ///     Command,
-    ///     connection::{Websocket as WebsocketConnection, Connection}
+    ///     connections::{Websocket as WebsocketConnection, Connection}
     /// };
     /// let uri = "ws://localhost:8080".parse().unwrap();
     /// let mut connection = WebsocketConnection::open(uri)

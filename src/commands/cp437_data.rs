@@ -1,5 +1,5 @@
 use crate::{
-    command::TryFromPacketError, command_code::CommandCode, Cp437Grid, Header,
+    commands::TryFromPacketError, command_code::CommandCode, Cp437Grid, Header,
     Origin, Packet, Tiles, TypedCommand,
 };
 
@@ -13,17 +13,17 @@ use crate::{
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connection::Fake;
+/// # let connection = connections::Fake;
 /// let grid = CharGrid::from("Hello,\nWorld!");
 /// let grid = Cp437Grid::from(&grid);
-/// connection.send(command::Cp437Data{ origin: Origin::ZERO, grid }).expect("send failed");
+/// connection.send(commands::Cp437Data{ origin: Origin::ZERO, grid }).expect("send failed");
 /// ```
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connection::Fake;
+/// # let connection = connections::Fake;
 /// let grid = Cp437Grid::load_ascii("Hello\nWorld", 5, false).unwrap();
-/// connection.send(command::Cp437Data{ origin: Origin::new(2, 2), grid }).unwrap();
+/// connection.send(commands::Cp437Data{ origin: Origin::new(2, 2), grid }).unwrap();
 /// ```
 /// [CP-437]: https://en.wikipedia.org/wiki/Code_page_437
 #[derive(Clone, Debug, PartialEq)]

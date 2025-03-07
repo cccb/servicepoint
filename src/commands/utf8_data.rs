@@ -1,5 +1,5 @@
 use crate::{
-    command::TryFromPacketError, command_code::CommandCode, CharGrid, Header,
+    commands::TryFromPacketError, command_code::CommandCode, CharGrid, Header,
     Origin, Packet, Tiles, TypedCommand,
 };
 
@@ -11,9 +11,9 @@ use crate::{
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connection::Fake;
+/// # let connection = connections::Fake;
 /// let grid = CharGrid::from("Hello,\nWorld!");
-/// connection.send(command::Utf8Data { origin: Origin::ZERO, grid }).expect("send failed");
+/// connection.send(commands::Utf8Data { origin: Origin::ZERO, grid }).expect("send failed");
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct Utf8Data {

@@ -1,5 +1,5 @@
 use crate::{
-    command::TryFromPacketError, command_code::CommandCode, Brightness, Header,
+    commands::TryFromPacketError, command_code::CommandCode, Brightness, Header,
     Packet, TypedCommand,
 };
 
@@ -9,8 +9,8 @@ use crate::{
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connection::Fake;
-/// let command = command::GlobalBrightness { brightness: Brightness::MAX };
+/// # let connection = connections::Fake;
+/// let command = commands::GlobalBrightness { brightness: Brightness::MAX };
 /// connection.send(command).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq)]

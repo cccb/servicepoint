@@ -14,8 +14,8 @@ use std::string::FromUtf8Error;
 /// let grid = CharGrid::from("You can\nload multiline\nstrings directly");
 /// assert_eq!(grid.get_row_str(1), Some("load multiline\0\0".to_string()));
 ///
-/// # let connection = connection::Fake;
-/// let command = command::Utf8Data { origin: Origin::ZERO, grid };
+/// # let connection = connections::Fake;
+/// let command = commands::Utf8Data { origin: Origin::ZERO, grid };
 /// connection.send(command).unwrap()
 /// ```
 pub type CharGrid = ValueGrid<char>;

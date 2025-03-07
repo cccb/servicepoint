@@ -1,5 +1,5 @@
 use crate::{
-    command::check_command_code_only, command::TryFromPacketError,
+    commands::check_command_code_only, commands::TryFromPacketError,
     command_code::CommandCode, Packet, TypedCommand,
 };
 use std::fmt::Debug;
@@ -9,9 +9,9 @@ use std::fmt::Debug;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{connection, Command, Connection, command};
-/// # let connection = connection::Fake;
-/// connection.send(command::Clear).unwrap();
+/// # use servicepoint::{connections, Command, Connection, commands};
+/// # let connection = connections::Fake;
+/// connection.send(commands::Clear).unwrap();
 #[derive(Debug, Clone, PartialEq)]
 /// ```
 pub struct Clear;
