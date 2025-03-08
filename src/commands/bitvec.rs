@@ -167,7 +167,7 @@ mod tests {
                     BitVecCommand {
                         offset: 23,
                         bitvec: BitVec::repeat(false, 40),
-                        compression,
+                        compression: *compression,
                         operation,
                     }
                     .into(),
@@ -177,7 +177,7 @@ mod tests {
                 BitmapCommand {
                     origin: Origin::ZERO,
                     bitmap: Bitmap::max_sized(),
-                    compression,
+                    compression: *compression,
                 }
                 .into(),
             );
@@ -190,7 +190,7 @@ mod tests {
             let p: Packet = commands::BitVecCommand {
                 offset: 0,
                 bitvec: BitVec::repeat(false, 8),
-                compression,
+                compression: *compression,
                 operation: BinaryOperation::Overwrite,
             }
             .into();
@@ -206,7 +206,7 @@ mod tests {
 
             let p = Packet { header, payload };
             let result = TypedCommand::try_from(p);
-            if compression != CompressionCode::Uncompressed {
+            if *compression != CompressionCode::Uncompressed {
                 assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
             } else {
                 // when not compressing, there is no way to detect corrupted data

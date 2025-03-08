@@ -141,17 +141,18 @@ impl BitmapCommand {
             Some(decompressed) => decompressed,
         };
 
+        let bitmap = Bitmap::load(
+            tile_w as usize * TILE_SIZE,
+            pixel_h as usize,
+            &payload,
+        )?;
+
         Ok(Self {
             origin: Origin::new(
                 tiles_x as usize * TILE_SIZE,
                 pixels_y as usize,
             ),
-            bitmap: Bitmap::load(
-                tile_w as usize * TILE_SIZE,
-                pixel_h as usize,
-                &payload,
-            )
-            .unwrap(),
+            bitmap,
             compression,
         })
     }
@@ -159,9 +160,9 @@ impl BitmapCommand {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::command_code::CommandCode;
     use crate::*;
-    use super::*;
 
     #[test]
     fn command_code() {
@@ -185,7 +186,7 @@ mod tests {
             let p: Packet = commands::BitmapCommand {
                 origin: Origin::new(16, 8),
                 bitmap: Bitmap::new(8, 8).unwrap(),
-                compression,
+                compression: *compression,
             }
             .into();
 
@@ -201,7 +202,7 @@ mod tests {
 
             let p = Packet { header, payload };
             let result = TypedCommand::try_from(p);
-            if compression != CompressionCode::Uncompressed {
+            if *compression != CompressionCode::Uncompressed {
                 assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
             } else {
                 assert!(result.is_ok());

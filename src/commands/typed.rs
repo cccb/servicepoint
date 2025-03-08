@@ -1,7 +1,7 @@
 use crate::{
     command_code::CommandCode, BitVecCommand, BitmapCommand, BrightnessCommand,
     BrightnessGridCommand, CharGridCommand, ClearCommand, Cp437GridCommand,
-    FadeOutCommand, HardResetCommand, Header, Packet,
+    FadeOutCommand, HardResetCommand, Header, LoadBitmapError, Packet,
 };
 
 /// This enum contains all commands provided by the library.
@@ -60,6 +60,8 @@ pub enum TryFromPacketError {
     /// Some provided text was not valid UTF-8.
     #[error(transparent)]
     InvalidUtf8(#[from] std::string::FromUtf8Error),
+    #[error(transparent)]
+    LoadBitmapFailed(#[from] LoadBitmapError),
 }
 
 impl TryFrom<Packet> for TypedCommand {

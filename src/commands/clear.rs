@@ -46,12 +46,12 @@ mod tests {
     use crate::Header;
 
     #[test]
-    fn round_trip_clear() {
+    fn round_trip() {
         crate::commands::tests::round_trip(ClearCommand.into());
     }
 
     #[test]
-    fn error_extraneous_header_values_clear() {
+    fn extraneous_header_values() {
         let p = Packet {
             header: Header {
                 command_code: CommandCode::Clear.into(),
@@ -67,5 +67,25 @@ mod tests {
             result,
             Err(TryFromPacketError::ExtraneousHeaderValues)
         ))
+    }
+
+    #[test]
+    fn invalid_command_code() {
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::HardReset.into(),
+                a: 0x00,
+                b: 0x00,
+                c: 0x00,
+                d: 0x00,
+            },
+            payload: vec![],
+        };
+        assert_eq!(
+            Err(TryFromPacketError::InvalidCommand(
+                CommandCode::HardReset.into()
+            )),
+            ClearCommand::try_from(p)
+        );
     }
 }

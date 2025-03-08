@@ -101,18 +101,6 @@ impl<T: Value> ValueGrid<T> {
         })
     }
 
-    /// Loads a [ValueGrid] with the specified width from the provided data, wrapping to as many rows as needed.
-    ///
-    /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].
-    ///
-    #[must_use]
-    pub fn wrap(
-        width: usize,
-        data: &[T],
-    ) -> Option<Self> {
-        Self::from_vec(width, data.to_vec())
-    }
-
     /// Iterate over all cells in [ValueGrid].
     ///
     /// Order is equivalent to the following loop:
@@ -406,7 +394,7 @@ impl<'t, T: Value> Iterator for EnumerateGrid<'t, T> {
         }
 
         let result =
-            Some((self.row, self.column, self.grid.get(self.row, self.column)));
+            Some((self.column, self.row, self.grid.get(self.column, self.row)));
         self.column += 1;
         if self.column == self.grid.width {
             self.column = 0;
@@ -520,7 +508,8 @@ mod tests {
 
     #[test]
     fn ref_mut() {
-        let mut vec = ValueGrid::from_vec(3, vec![0, 1, 2, 3, 4, 5, 6, 7, 8]).unwrap();
+        let mut vec =
+            ValueGrid::from_vec(3, vec![0, 1, 2, 3, 4, 5, 6, 7, 8]).unwrap();
 
         let top_left = vec.get_ref_mut(0, 0);
         *top_left += 5;
@@ -595,5 +584,27 @@ mod tests {
 
         let grid = ValueGrid::from_vec(4, vec![0, 1, 2, 3, 4, 5]);
         assert_eq!(grid, None);
+    }
+
+    #[test]
+    fn load_invalid_size() {
+        assert_eq!(ValueGrid::load(2, 2, &[1, 2, 3]), None);
+    }
+
+    #[test]
+    fn enumerate() {
+        let grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]).unwrap();
+        let values = grid.enumerate().collect::<Vec<_>>();
+        assert_eq!(
+            values,
+            vec![
+                (0, 0, 0),
+                (1, 0, 1),
+                (0, 1, 2),
+                (1, 1, 3),
+                (0, 2, 4),
+                (1, 2, 5)
+            ]
+        );
     }
 }

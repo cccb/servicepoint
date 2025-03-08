@@ -41,7 +41,7 @@ pub enum CompressionCode {
 
 impl CompressionCode {
     /// All available compression codes (depending on features).
-    pub const ALL: [CompressionCode; 5] = [
+    pub const ALL: &'static [CompressionCode] = &[
         Self::Uncompressed,
         #[cfg(feature = "compression_zlib")]
         Self::Zlib,
