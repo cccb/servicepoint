@@ -38,7 +38,8 @@ fn main() {
 
     // set all pixels to the same random brightness
     let mut rng = rand::thread_rng();
-    connection.send(rng.gen::<Brightness>()).unwrap();
+    let command: BrightnessCommand = rng.gen::<Brightness>().into();
+    connection.send(command).unwrap();
 
     // continuously update random windows to new random brightness
     loop {

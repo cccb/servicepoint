@@ -73,8 +73,21 @@ impl From<BrightnessCommand> for TypedCommand {
     }
 }
 
-impl From<Brightness> for Packet {
+impl From<Brightness> for BrightnessCommand {
     fn from(brightness: Brightness) -> Self {
-        Packet::from(BrightnessCommand { brightness })
+        BrightnessCommand { brightness }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Brightness, BrightnessCommand};
+
+    #[test]
+    fn brightness_as_command() {
+        assert_eq!(
+            BrightnessCommand { brightness: Brightness::MAX },
+            Brightness::MAX.into()
+        )
     }
 }

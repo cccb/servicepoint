@@ -61,7 +61,7 @@ impl TryFrom<Packet> for Cp437GridCommand {
         } = packet;
         Ok(Self {
             origin: Origin::new(a as usize, b as usize),
-            grid: Cp437Grid::load(c as usize, d as usize, &*payload),
+            grid: Cp437Grid::load(c as usize, d as usize, &payload),
         })
     }
 }

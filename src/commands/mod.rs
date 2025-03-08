@@ -1,52 +1,3 @@
-//! This module contains the basic commands the display can handle, which all implement [Command].
-//!
-//! To send a [Command], use a [connection][crate::Connection].
-//!
-//! # Available commands
-//!
-//! To send text, take a look at [Cp437GridCommand].
-//!
-//! To draw pixels, the easiest command to use is [BitmapCommand].
-//!
-//! The other BitmapLinear-Commands operate on a region of pixel memory directly.
-//! [BitVecCommand] overwrites a region.
-//! [BitmapLinearOr], [BitmapLinearAnd] and [BitmapLinearXor] apply logical operations per pixel.
-//!
-//! Out of bounds operations may be truncated or ignored by the display.
-//!
-//! # Compression
-//!
-//! Some commands can contain compressed payloads.
-//! To get started, use [CompressionCode::default].
-//!
-//! If you want to archive the best performance (e.g. latency),
-//! you can try the different compression algorithms for your hardware and use case.
-//!
-//! In memory, the payload is not compressed in the [Command].
-//! Payload (de-)compression happens when converting the [Command] into a [Packet] or vice versa.
-//!
-//! # Examples
-//!
-//! ```rust
-//! use servicepoint::*;
-//!
-//! // create command
-//! let command = BrightnessCommand{ brightness: Brightness::MAX };
-//!
-//! // turn command into Packet
-//! let packet: Packet = command.clone().into();
-//!
-//! // read command from packet
-//! let round_tripped = TypedCommand::try_from(packet).unwrap();
-//!
-//! // round tripping produces exact copy
-//! assert_eq!(round_tripped, TypedCommand::from(command.clone()));
-//!
-//! // send command
-//! # let connection = FakeConnection;
-//! connection.send(command).unwrap();
-//! ```
-
 mod bitmap;
 mod bitmap_legacy;
 mod bitvec;
@@ -75,12 +26,59 @@ pub use hard_reset::*;
 pub use typed::*;
 pub use char_grid::*;
 
-/// Represents a command that can be sent to the display.
+/// This trait represents a command that can be sent to the display.
+///
+/// To send a [Command], use a [connection][crate::Connection].
+///
+/// # Available commands
+///
+/// To send text, take a look at [Cp437GridCommand].
+///
+/// To draw pixels, the easiest command to use is [BitmapCommand].
+///
+/// The other BitmapLinear-Commands operate on a region of pixel memory directly.
+/// [BitVecCommand] overwrites a region.
+/// [BitmapLinearOr], [BitmapLinearAnd] and [BitmapLinearXor] apply logical operations per pixel.
+///
+/// Out of bounds operations may be truncated or ignored by the display.
+///
+/// # Compression
+///
+/// Some commands can contain compressed payloads.
+/// To get started, use [CompressionCode::default].
+///
+/// If you want to archive the best performance (e.g. latency),
+/// you can try the different compression algorithms for your hardware and use case.
+///
+/// In memory, the payload is not compressed in the [Command].
+/// Payload (de-)compression happens when converting the [Command] into a [Packet] or vice versa.
+///
+/// # Examples
+///
+/// ```rust
+/// use servicepoint::*;
+///
+/// // create command
+/// let command = BrightnessCommand{ brightness: Brightness::MAX };
+///
+/// // turn command into Packet
+/// let packet: Packet = command.clone().into();
+///
+/// // read command from packet
+/// let round_tripped = TypedCommand::try_from(packet).unwrap();
+///
+/// // round tripping produces exact copy
+/// assert_eq!(round_tripped, TypedCommand::from(command.clone()));
+///
+/// // send command
+/// # let connection = FakeConnection;
+/// connection.send(command).unwrap();
+/// ```
 pub trait Command: Debug + Clone + PartialEq + Into<Packet> {}
 
 impl<T: Debug + Clone + PartialEq + Into<Packet>> Command for T {}
 
-pub(self) fn check_command_code_only(
+fn check_command_code_only(
     packet: Packet,
     code: CommandCode,
 ) -> Option<TryFromPacketError> {

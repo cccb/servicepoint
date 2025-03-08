@@ -1,5 +1,17 @@
-use crate::{BitVecCommand, BitmapCommand, BitmapLegacyCommand, BrightnessCommand, BrightnessGridCommand, CharGridCommand, ClearCommand, Command, Cp437GridCommand, FadeOutCommand, HardResetCommand, Header, Packet};
-use crate::command_code::CommandCode;
+use crate::{
+    command_code::CommandCode,
+    BitVecCommand,
+    BitmapCommand,
+    BrightnessCommand,
+    BrightnessGridCommand,
+    CharGridCommand,
+    ClearCommand,
+    Cp437GridCommand,
+    FadeOutCommand,
+    HardResetCommand,
+    Header,
+    Packet
+};
 
 /// This enum contains all commands provided by the library.
 /// This is useful in case you want one data type for all kinds of commands without using `dyn`.
@@ -28,7 +40,7 @@ pub enum TypedCommand {
 
     #[allow(deprecated)]
     #[deprecated]
-    BitmapLegacy(BitmapLegacyCommand),
+    BitmapLegacy(crate::BitmapLegacyCommand),
 }
 
 /// Err values for [TypedCommand::try_from].
