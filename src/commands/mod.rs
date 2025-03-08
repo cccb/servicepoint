@@ -50,14 +50,14 @@
 mod bitmap;
 mod bitmap_legacy;
 mod bitvec;
-mod char_brightness;
+mod brightness_grid;
 mod clear;
-mod cp437_data;
+mod cp437_grid;
 mod fade_out;
-mod global_brightness;
+mod brightness;
 mod hard_reset;
 mod typed;
-mod utf8_data;
+mod char_grid;
 
 use crate::command_code::CommandCode;
 use crate::*;
@@ -66,14 +66,14 @@ use std::fmt::Debug;
 pub use bitmap::*;
 pub use bitmap_legacy::*;
 pub use bitvec::*;
-pub use char_brightness::*;
+pub use brightness_grid::*;
 pub use clear::*;
-pub use cp437_data::*;
+pub use cp437_grid::*;
 pub use fade_out::*;
-pub use global_brightness::*;
+pub use brightness::*;
 pub use hard_reset::*;
 pub use typed::*;
-pub use utf8_data::*;
+pub use char_grid::*;
 
 /// Represents a command that can be sent to the display.
 pub trait Command: Debug + Clone + PartialEq + Into<Packet> {}

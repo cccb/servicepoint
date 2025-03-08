@@ -1,4 +1,4 @@
-use crate::{brightness::Brightness, grid::Grid, ByteGrid, ValueGrid};
+use crate::{Brightness, Grid, ByteGrid, ValueGrid};
 
 /// A grid containing brightness values.
 ///

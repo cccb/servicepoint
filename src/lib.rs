@@ -61,7 +61,6 @@ pub use crate::compression_code::CompressionCode;
 pub use crate::connections::*;
 pub use crate::constants::*;
 pub use crate::containers::*;
-pub use crate::grid::Grid;
 pub use crate::origin::{Origin, Pixels, Tiles};
 pub use crate::packet::{Header, Packet, Payload};
 
@@ -73,10 +72,8 @@ mod compression_code;
 mod connections;
 mod constants;
 mod containers;
-mod grid;
 mod origin;
 mod packet;
-mod parser;
 #[cfg(feature = "cp437")]
 mod cp437;
 
