@@ -447,10 +447,7 @@ impl<'t, T: Value> Iterator for EnumerateGrid<'t, T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        value_grid::{SetValueSeriesError, ValueGrid},
-        *,
-    };
+    use crate::{SetValueSeriesError, ValueGrid, *};
 
     #[test]
     fn fill() {

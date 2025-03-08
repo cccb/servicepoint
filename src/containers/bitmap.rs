@@ -1,9 +1,5 @@
-use crate::data_ref::DataRef;
-use crate::BitVec;
 use crate::*;
-use ::bitvec::order::Msb0;
-use ::bitvec::prelude::BitSlice;
-use ::bitvec::slice::IterMut;
+use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 
 /// A fixed-size 2D grid of booleans.
 ///
@@ -72,12 +68,16 @@ impl Bitmap {
     ///
     /// - `width`: size in pixels in x-direction
     /// - `height`: size in pixels in y-direction
-    pub fn load(width: usize, height: usize, data: &[u8]) -> Result<Self, LoadBitmapError> {
+    pub fn load(
+        width: usize,
+        height: usize,
+        data: &[u8],
+    ) -> Result<Self, LoadBitmapError> {
         if width % 8 != 0 {
-            return Err(LoadBitmapError::InvalidWidth)
+            return Err(LoadBitmapError::InvalidWidth);
         }
         if data.len() != height * width / 8 {
-            return Err(LoadBitmapError::InvalidDataSize)
+            return Err(LoadBitmapError::InvalidDataSize);
         }
         Ok(Self {
             width,
@@ -94,16 +94,19 @@ impl Bitmap {
     ///
     /// In those cases, an Err is returned.
     /// Otherwise, this returns a [Bitmap] that contains the provided data.
-    pub fn from_bitvec(width: usize, bit_vec: BitVec) -> Result<Self, LoadBitmapError> {
+    pub fn from_bitvec(
+        width: usize,
+        bit_vec: BitVec,
+    ) -> Result<Self, LoadBitmapError> {
         if width % 8 != 0 {
-            return Err(LoadBitmapError::InvalidWidth)
+            return Err(LoadBitmapError::InvalidWidth);
         }
         let len = bit_vec.len();
         let height = len / width;
         if len % width != 0 {
-            return Err(LoadBitmapError::InvalidDataSize)
+            return Err(LoadBitmapError::InvalidDataSize);
         }
-        
+
         Ok(Self {
             width,
             height,
@@ -236,8 +239,7 @@ impl TryFrom<&ValueGrid<bool>> for Bitmap {
     ///
     /// Returns Err if the width of `value` is not dividable by 8
     fn try_from(value: &ValueGrid<bool>) -> Result<Self, Self::Error> {
-        let mut result = Self::new(value.width(), value.height())
-            .ok_or(())?;
+        let mut result = Self::new(value.width(), value.height()).ok_or(())?;
         for (mut to, from) in result.iter_mut().zip(value.iter()) {
             *to = *from;
         }
@@ -280,8 +282,10 @@ impl<'t> Iterator for IterRows<'t> {
 pub enum LoadBitmapError {
     #[error("The provided width is not divisible by 8.")]
     InvalidWidth,
-    #[error("The provided data has an incorrect size for the provided dimensions.")]
-    InvalidDataSize
+    #[error(
+        "The provided data has an incorrect size for the provided dimensions."
+    )]
+    InvalidDataSize,
 }
 
 #[cfg(test)]

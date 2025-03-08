@@ -1,7 +1,4 @@
-use crate::brightness::Brightness;
-use crate::grid::Grid;
-use crate::value_grid::ValueGrid;
-use crate::ByteGrid;
+use crate::{brightness::Brightness, grid::Grid, ByteGrid, ValueGrid};
 
 /// A grid containing brightness values.
 ///
@@ -65,8 +62,7 @@ impl TryFrom<ByteGrid> for BrightnessGrid {
 
 #[cfg(test)]
 mod tests {
-    use crate::value_grid::ValueGrid;
-    use crate::{Brightness, BrightnessGrid, DataRef, Grid};
+    use crate::{Brightness, BrightnessGrid, DataRef, Grid, ValueGrid};
 
     #[test]
     fn to_u8_grid() {

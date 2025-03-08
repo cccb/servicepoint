@@ -1,9 +1,9 @@
-use crate::Grid;
+use crate::{Grid, ValueGrid};
 
 /// A grid containing codepage 437 characters.
 ///
 /// The encoding is currently not enforced.
-pub type Cp437Grid = crate::value_grid::ValueGrid<u8>;
+pub type Cp437Grid = ValueGrid<u8>;
 
 /// The error occurring when loading an invalid character
 #[derive(Debug, PartialEq, thiserror::Error)]

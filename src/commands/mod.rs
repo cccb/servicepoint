@@ -136,12 +136,6 @@ pub enum TryFromPacketError {
     InvalidUtf8(#[from] std::string::FromUtf8Error),
 }
 
-macro_rules! packet_to_command_case {
-    ($T:tt, $packet:ident) => {
-        paste! {}
-    };
-}
-
 impl TryFrom<Packet> for TypedCommand {
     type Error = TryFromPacketError;
 
