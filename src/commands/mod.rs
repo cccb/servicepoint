@@ -56,8 +56,8 @@ mod cp437_data;
 mod fade_out;
 mod global_brightness;
 mod hard_reset;
-mod utf8_data;
 mod typed;
+mod utf8_data;
 
 use crate::command_code::CommandCode;
 use crate::*;
@@ -72,8 +72,8 @@ pub use cp437_data::*;
 pub use fade_out::*;
 pub use global_brightness::*;
 pub use hard_reset::*;
-pub use utf8_data::*;
 pub use typed::*;
+pub use utf8_data::*;
 
 /// Represents a command that can be sent to the display.
 pub trait Command: Debug + Clone + PartialEq + Into<Packet> {}
@@ -139,56 +139,60 @@ mod tests {
 
     #[test]
     fn round_trip_clear() {
-        round_trip(TypedCommand::Clear(commands::ClearCommand));
+        round_trip(ClearCommand.into());
     }
 
     #[test]
     fn round_trip_hard_reset() {
-        round_trip(TypedCommand::HardReset(commands::HardResetCommand));
+        round_trip(HardResetCommand.into());
     }
 
     #[test]
     fn round_trip_fade_out() {
-        round_trip(TypedCommand::FadeOut(commands::FadeOutCommand));
+        round_trip(FadeOutCommand.into());
     }
 
     #[test]
     fn round_trip_brightness() {
-        round_trip(TypedCommand::Brightness(commands::BrightnessCommand {
-            brightness: Brightness::try_from(6).unwrap(),
-        }));
+        round_trip(
+            BrightnessCommand {
+                brightness: Brightness::try_from(6).unwrap(),
+            }
+            .into(),
+        );
     }
 
     #[test]
     #[allow(deprecated)]
     fn round_trip_bitmap_legacy() {
-        round_trip(TypedCommand::BitmapLegacy(commands::BitmapLegacyCommand));
+        round_trip(BitmapLegacyCommand.into());
     }
 
     #[test]
     fn round_trip_char_brightness() {
-        round_trip(TypedCommand::BrightnessGrid(
-            commands::BrightnessGridCommand {
+        round_trip(
+            BrightnessGridCommand {
                 origin: Origin::new(5, 2),
                 grid: BrightnessGrid::new(7, 5),
-            },
-        ));
+            }
+            .into(),
+        );
     }
 
     #[test]
     fn round_trip_cp437_data() {
-        round_trip(TypedCommand::Cp437Grid(commands::Cp437GridCommand {
+        round_trip(Cp437GridCommand {
             origin: Origin::new(5, 2),
             grid: Cp437Grid::new(7, 5),
-        }));
+        }.into());
     }
 
     #[test]
     fn round_trip_utf8_data() {
-        round_trip(TypedCommand::CharGrid(commands::CharGridCommand {
+        round_trip(CharGridCommand {
             origin: Origin::new(5, 2),
             grid: CharGrid::new(7, 5),
-        }));
+        }.into());
     }
 
     #[test]
@@ -200,18 +204,18 @@ mod tests {
                 BinaryOperation::Or,
                 BinaryOperation::Xor,
             ] {
-                round_trip(TypedCommand::BitVec(commands::BitVecCommand {
+                round_trip(BitVecCommand {
                     offset: 23,
                     bitvec: BitVec::repeat(false, 40),
                     compression,
                     operation,
-                }));
+                }.into());
             }
-            round_trip(TypedCommand::Bitmap(commands::BitmapCommand {
+            round_trip(BitmapCommand {
                 origin: Origin::ZERO,
                 bitmap: Bitmap::max_sized(),
                 compression,
-            }));
+            }.into());
         }
     }
 
