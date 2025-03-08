@@ -23,13 +23,12 @@ The [GitHub repository](https://github.com/cccb/servicepoint) remains available 
 use servicepoint::*;
 
 fn main() {
-    // establish connection
-    let connection = connections::Udp::open("172.23.42.29:2342")
-        .expect("connection failed");
+  // establish connection
+  let connection = UdpConnection::open("172.23.42.29:2342")
+          .expect("connection failed");
 
-    // clear screen content
-    connection.send(commands::Clear)
-        .expect("send failed");
+  // clear screen content
+  connection.send(ClearCommand).expect("send failed");
 }
 ```
 

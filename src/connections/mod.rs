@@ -22,10 +22,10 @@ pub use websocket::*;
 ///
 /// # Examples
 /// ```rust
-/// use servicepoint::{commands, connections, Connection};
-/// let connection = connections::Udp::open("127.0.0.1:2342")
+/// use servicepoint::{ClearCommand, Connection, UdpConnection};
+/// let connection = UdpConnection::open("127.0.0.1:2342")
 ///     .expect("connection failed");
-///  connection.send(commands::Clear)
+///  connection.send(ClearCommand)
 ///     .expect("send failed");
 /// ```
 pub trait Connection: Debug {
@@ -43,10 +43,10 @@ pub trait Connection: Debug {
     /// # Examples
     ///
     /// ```rust
-    ///  # use servicepoint::connections::Connection;
-    ///  let connection = servicepoint::connections::Fake;
+    ///  # use servicepoint::Connection;
+    ///  let connection = servicepoint::FakeConnection;
     ///  // turn off all pixels on display
-    ///  connection.send(servicepoint::commands::Clear)
+    ///  connection.send(servicepoint::ClearCommand)
     ///      .expect("send failed");
     /// ```
     fn send(&self, packet: impl Into<Packet>) -> Result<(), Self::Error>;

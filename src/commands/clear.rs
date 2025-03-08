@@ -9,14 +9,14 @@ use std::fmt::Debug;
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{connections, Command, Connection, commands};
-/// # let connection = connections::Fake;
-/// connection.send(commands::Clear).unwrap();
+/// # use servicepoint::*;
+/// # let connection = FakeConnection;
+/// connection.send(ClearCommand).unwrap();
 #[derive(Debug, Clone, PartialEq)]
 /// ```
-pub struct Clear;
+pub struct ClearCommand;
 
-impl TryFrom<Packet> for Clear {
+impl TryFrom<Packet> for ClearCommand {
     type Error = TryFromPacketError;
 
     fn try_from(value: Packet) -> Result<Self, Self::Error> {
@@ -28,14 +28,14 @@ impl TryFrom<Packet> for Clear {
     }
 }
 
-impl From<Clear> for Packet {
-    fn from(_: Clear) -> Self {
+impl From<ClearCommand> for Packet {
+    fn from(_: ClearCommand) -> Self {
         Packet::command_code_only(CommandCode::Clear)
     }
 }
 
-impl From<Clear> for TypedCommand {
-    fn from(command: Clear) -> Self {
+impl From<ClearCommand> for TypedCommand {
+    fn from(command: ClearCommand) -> Self {
         Self::Clear(command)
     }
 }

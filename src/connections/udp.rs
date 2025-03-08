@@ -8,11 +8,11 @@ use std::net::UdpSocket;
 ///
 /// Requires the feature "protocol_udp" which is enabled by default.
 #[derive(Debug)]
-pub struct Udp {
+pub struct UdpConnection {
     socket: UdpSocket,
 }
 
-impl Udp {
+impl UdpConnection {
     /// Open a new UDP socket and connect to the provided host.
     ///
     /// Note that this is UDP, which means that the open call can succeed even if the display is unreachable.
@@ -25,7 +25,7 @@ impl Udp {
     ///
     /// # Examples
     /// ```rust
-    ///  let connection = servicepoint::connections::Udp::open("127.0.0.1:2342")
+    ///  let connection = servicepoint::UdpConnection::open("127.0.0.1:2342")
     ///     .expect("connection failed");
     /// ```
     pub fn open(
@@ -38,7 +38,7 @@ impl Udp {
     }
 }
 
-impl Connection for Udp {
+impl Connection for UdpConnection {
     type Error = std::io::Error;
 
     fn send(&self, packet: impl Into<Packet>) -> Result<(), Self::Error> {
@@ -47,7 +47,7 @@ impl Connection for Udp {
     }
 }
 
-impl From<UdpSocket> for Udp {
+impl From<UdpSocket> for UdpConnection {
     fn from(socket: UdpSocket) -> Self {
         Self { socket }
     }

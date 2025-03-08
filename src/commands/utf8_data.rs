@@ -11,20 +11,20 @@ use crate::{
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connections::Fake;
+/// # let connection = FakeConnection;
 /// let grid = CharGrid::from("Hello,\nWorld!");
-/// connection.send(commands::Utf8Data { origin: Origin::ZERO, grid }).expect("send failed");
+/// connection.send(CharGridCommand { origin: Origin::ZERO, grid }).expect("send failed");
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct Utf8Data {
+pub struct CharGridCommand {
     /// which tile the text should start
     pub origin: Origin<Tiles>,
     /// the text to send to the display
     pub grid: CharGrid,
 }
 
-impl From<Utf8Data> for Packet {
-    fn from(value: Utf8Data) -> Self {
+impl From<CharGridCommand> for Packet {
+    fn from(value: CharGridCommand) -> Self {
         Packet::origin_grid_to_packet(
             value.origin,
             value.grid,
@@ -33,7 +33,7 @@ impl From<Utf8Data> for Packet {
     }
 }
 
-impl TryFrom<Packet> for Utf8Data {
+impl TryFrom<Packet> for CharGridCommand {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
@@ -57,8 +57,8 @@ impl TryFrom<Packet> for Utf8Data {
     }
 }
 
-impl From<Utf8Data> for TypedCommand {
-    fn from(command: Utf8Data) -> Self {
-        Self::Utf8Data(command)
+impl From<CharGridCommand> for TypedCommand {
+    fn from(command: CharGridCommand) -> Self {
+        Self::CharGrid(command)
     }
 }

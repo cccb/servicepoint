@@ -3,9 +3,9 @@ use log::debug;
 
 #[derive(Debug)]
 /// A fake connection for testing that does not actually send anything.
-pub struct Fake;
+pub struct FakeConnection;
 
-impl Connection for Fake {
+impl Connection for FakeConnection {
     // TODO: () does not implement Error+Debug, some placeholder is needed
     type Error = std::io::Error;
 
@@ -25,6 +25,6 @@ mod tests {
     fn send_fake() {
         let data: &[u8] = &[0u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         let packet = Packet::try_from(data).unwrap();
-        Fake.send(packet).unwrap()
+        FakeConnection.send(packet).unwrap()
     }
 }

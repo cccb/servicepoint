@@ -5,15 +5,15 @@ use crate::{
 
 /// Set the brightness of individual tiles in a rectangular area of the display.
 #[derive(Clone, PartialEq, Debug)]
-pub struct CharBrightness {
+pub struct BrightnessGridCommand {
     /// which tile the brightness rectangle should start
     pub origin: Origin<Tiles>,
     /// the brightness values per tile
     pub grid: BrightnessGrid,
 }
 
-impl From<CharBrightness> for Packet {
-    fn from(value: CharBrightness) -> Self {
+impl From<BrightnessGridCommand> for Packet {
+    fn from(value: BrightnessGridCommand) -> Self {
         Packet::origin_grid_to_packet(
             value.origin,
             value.grid,
@@ -22,7 +22,7 @@ impl From<CharBrightness> for Packet {
     }
 }
 
-impl TryFrom<Packet> for CharBrightness {
+impl TryFrom<Packet> for BrightnessGridCommand {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
@@ -51,8 +51,8 @@ impl TryFrom<Packet> for CharBrightness {
     }
 }
 
-impl From<CharBrightness> for TypedCommand {
-    fn from(command: CharBrightness) -> Self {
-        Self::CharBrightness(command)
+impl From<BrightnessGridCommand> for TypedCommand {
+    fn from(command: BrightnessGridCommand) -> Self {
+        Self::BrightnessGrid(command)
     }
 }

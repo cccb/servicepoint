@@ -12,14 +12,14 @@ use std::fmt::Debug;
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connections::Fake;
-/// connection.send(commands::FadeOut).unwrap();
+/// # let connection = FakeConnection;
+/// connection.send(FadeOutCommand).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 /// ```
-pub struct FadeOut;
+pub struct FadeOutCommand;
 
-impl TryFrom<Packet> for FadeOut {
+impl TryFrom<Packet> for FadeOutCommand {
     type Error = TryFromPacketError;
 
     fn try_from(value: Packet) -> Result<Self, Self::Error> {
@@ -31,14 +31,14 @@ impl TryFrom<Packet> for FadeOut {
     }
 }
 
-impl From<FadeOut> for Packet {
-    fn from(_: FadeOut) -> Self {
+impl From<FadeOutCommand> for Packet {
+    fn from(_: FadeOutCommand) -> Self {
         Packet::command_code_only(CommandCode::FadeOut)
     }
 }
 
-impl From<FadeOut> for TypedCommand {
-    fn from(command: FadeOut) -> Self {
+impl From<FadeOutCommand> for TypedCommand {
+    fn from(command: FadeOutCommand) -> Self {
         Self::FadeOut(command)
     }
 }

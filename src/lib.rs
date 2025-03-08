@@ -12,11 +12,11 @@
 //! use servicepoint::*;
 //!
 //! // establish a connection
-//! let connection = connections::Udp::open("127.0.0.1:2342")
+//! let connection = UdpConnection::open("127.0.0.1:2342")
 //!     .expect("connection failed");
 //!
 //!  // turn off all pixels on display
-//!  connection.send(commands::Clear)
+//!  connection.send(ClearCommand)
 //!     .expect("send failed");
 //! ```
 //!
@@ -24,13 +24,13 @@
 //!
 //! ```rust
 //! # use servicepoint::*;
-//! # let connection = connections::Udp::open("127.0.0.1:2342").expect("connection failed");
+//! # let connection = UdpConnection::open("127.0.0.1:2342").expect("connection failed");
 //!  // turn on all pixels in a grid
 //!  let mut pixels = Bitmap::max_sized();
 //!  pixels.fill(true);
 //!
 //!  // create command to send pixels
-//!  let command = commands::BitmapLinearWin {
+//!  let command = BitmapCommand {
 //!     origin: Origin::ZERO,
 //!     bitmap: pixels,
 //!     compression: CompressionCode::default()
@@ -44,13 +44,13 @@
 //!
 //! ```rust
 //! # use servicepoint::*;
-//! # let connection = connections::Udp::open("127.0.0.1:2342").expect("connection failed");
+//! # let connection = UdpConnection::open("127.0.0.1:2342").expect("connection failed");
 //! // create a text grid
 //! let mut grid = CharGrid::from("Hello\nCCCB?");
 //! // modify the grid
 //! grid.set(grid.width() - 1, 1, '!');
 //! // create the command to send the data
-//! let command = commands::Utf8Data { origin: Origin::ZERO, grid };
+//! let command = CharGridCommand { origin: Origin::ZERO, grid };
 //! // send command to display
 //! connection.send(command).expect("send failed");
 //! ```
@@ -61,9 +61,9 @@ pub use crate::brightness::Brightness;
 pub use crate::brightness_grid::BrightnessGrid;
 pub use crate::byte_grid::ByteGrid;
 pub use crate::char_grid::CharGrid;
-pub use crate::commands::{Command, TypedCommand};
+pub use crate::commands::*;
 pub use crate::compression_code::CompressionCode;
-pub use crate::connections::Connection;
+pub use crate::connections::*;
 pub use crate::constants::*;
 pub use crate::cp437_grid::Cp437Grid;
 pub use crate::data_ref::DataRef;
@@ -80,11 +80,11 @@ mod brightness;
 mod brightness_grid;
 mod byte_grid;
 mod char_grid;
-pub mod commands;
+mod commands;
 mod command_code;
 mod compression;
 mod compression_code;
-pub mod connections;
+mod connections;
 mod constants;
 mod cp437_grid;
 mod data_ref;

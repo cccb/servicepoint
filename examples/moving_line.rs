@@ -11,7 +11,7 @@ struct Cli {
 }
 
 fn main() {
-    let connection = connections::Udp::open(Cli::parse().destination)
+    let connection = UdpConnection::open(Cli::parse().destination)
         .expect("could not connect to display");
 
     let mut bitmap = Bitmap::max_sized();
@@ -22,7 +22,7 @@ fn main() {
             bitmap.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
 
-        let command = commands::BitmapLinearWin {
+        let command = BitmapCommand {
             bitmap: bitmap.clone(),
             compression: CompressionCode::default(),
             origin: Origin::ZERO,

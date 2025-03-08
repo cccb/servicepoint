@@ -13,14 +13,14 @@ use crate::{
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connections::Fake;
+/// # let connection = FakeConnection;
 /// #
 /// let mut bitmap = Bitmap::max_sized();
 /// // draw something to the pixels here
 /// # bitmap.set(2, 5, true);
 ///
 /// // create command to send pixels
-/// let command = commands::BitmapLinearWin {
+/// let command = BitmapCommand {
 ///     bitmap,
 ///     origin: Origin::ZERO,
 ///     compression: CompressionCode::Uncompressed
@@ -29,7 +29,7 @@ use crate::{
 /// connection.send(command).expect("send failed");
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct BitmapLinearWin {
+pub struct BitmapCommand {
     /// where to start drawing the pixels
     pub origin: Origin<Pixels>,
     /// the pixels to send
@@ -38,8 +38,8 @@ pub struct BitmapLinearWin {
     pub compression: CompressionCode,
 }
 
-impl From<BitmapLinearWin> for Packet {
-    fn from(value: BitmapLinearWin) -> Self {
+impl From<BitmapCommand> for Packet {
+    fn from(value: BitmapCommand) -> Self {
         assert_eq!(value.origin.x % 8, 0);
         assert_eq!(value.bitmap.width() % 8, 0);
 
@@ -74,7 +74,7 @@ impl From<BitmapLinearWin> for Packet {
     }
 }
 
-impl TryFrom<Packet> for BitmapLinearWin {
+impl TryFrom<Packet> for BitmapCommand {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
@@ -113,13 +113,13 @@ impl TryFrom<Packet> for BitmapLinearWin {
     }
 }
 
-impl From<BitmapLinearWin> for TypedCommand {
-    fn from(command: BitmapLinearWin) -> Self {
-        Self::BitmapLinearWin(command)
+impl From<BitmapCommand> for TypedCommand {
+    fn from(command: BitmapCommand) -> Self {
+        Self::Bitmap(command)
     }
 }
 
-impl BitmapLinearWin {
+impl BitmapCommand {
     fn packet_into_bitmap_win(
         packet: Packet,
         compression: CompressionCode,

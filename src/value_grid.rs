@@ -216,7 +216,7 @@ impl<T: Value> ValueGrid<T> {
     /// let mut grid: ByteGrid = ByteGrid::new(TILE_WIDTH, TILE_HEIGHT);
     /// foo(&mut grid);
     /// let grid: BrightnessGrid = grid.map(Brightness::saturating_from);
-    /// let command = commands::CharBrightness { origin: Origin::ZERO, grid };
+    /// let command = BrightnessGridCommand { origin: Origin::ZERO, grid };
     /// ```
     /// [Brightness]: [crate::Brightness]
     /// [Command]: [crate::Command]

@@ -12,14 +12,14 @@ use std::fmt::Debug;
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connections::Fake;
-/// connection.send(commands::HardReset).unwrap();
+/// # let connection = FakeConnection;
+/// connection.send(HardResetCommand).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 /// ```
-pub struct HardReset;
+pub struct HardResetCommand;
 
-impl TryFrom<Packet> for HardReset {
+impl TryFrom<Packet> for HardResetCommand {
     type Error = TryFromPacketError;
 
     fn try_from(value: Packet) -> Result<Self, Self::Error> {
@@ -32,14 +32,14 @@ impl TryFrom<Packet> for HardReset {
     }
 }
 
-impl From<HardReset> for Packet {
-    fn from(_: HardReset) -> Self {
+impl From<HardResetCommand> for Packet {
+    fn from(_: HardResetCommand) -> Self {
         Packet::command_code_only(CommandCode::HardReset)
     }
 }
 
-impl From<HardReset> for TypedCommand {
-    fn from(command: HardReset) -> Self {
+impl From<HardResetCommand> for TypedCommand {
+    fn from(command: HardResetCommand) -> Self {
         Self::HardReset(command)
     }
 }

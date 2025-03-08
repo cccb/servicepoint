@@ -11,13 +11,13 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
-    let connection = connections::Udp::open(cli.destination)
+    let connection = UdpConnection::open(cli.destination)
         .expect("could not connect to display");
 
     let mut bitmap = Bitmap::max_sized();
     bitmap.fill(true);
 
-    let command = commands::BitmapLinearWin {
+    let command = BitmapCommand {
         origin: Origin::ZERO,
         bitmap,
         compression: CompressionCode::default(),
@@ -31,7 +31,7 @@ fn main() {
         *byte = Brightness::try_from(level).unwrap();
     }
 
-    let command = commands::CharBrightness {
+    let command = BrightnessGridCommand {
         origin: Origin::ZERO,
         grid: brightnesses,
     };

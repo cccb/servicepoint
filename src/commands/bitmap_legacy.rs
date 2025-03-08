@@ -12,17 +12,17 @@ use std::fmt::Debug;
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connections::Fake;
+/// # let connection = FakeConnection;
 /// // this sends a packet that does nothing
 /// # #[allow(deprecated)]
-/// connection.send(commands::BitmapLegacy).unwrap();
+/// connection.send(BitmapLegacyCommand).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 #[deprecated]
-pub struct BitmapLegacy;
+pub struct BitmapLegacyCommand;
 
 #[allow(deprecated)]
-impl TryFrom<Packet> for BitmapLegacy {
+impl TryFrom<Packet> for BitmapLegacyCommand {
     type Error = TryFromPacketError;
 
     fn try_from(value: Packet) -> Result<Self, Self::Error> {
@@ -37,15 +37,15 @@ impl TryFrom<Packet> for BitmapLegacy {
 }
 
 #[allow(deprecated)]
-impl From<BitmapLegacy> for Packet {
-    fn from(_: BitmapLegacy) -> Self {
+impl From<BitmapLegacyCommand> for Packet {
+    fn from(_: BitmapLegacyCommand) -> Self {
         Packet::command_code_only(CommandCode::BitmapLegacy)
     }
 }
 
 #[allow(deprecated)]
-impl From<BitmapLegacy> for TypedCommand {
-    fn from(command: BitmapLegacy) -> Self {
+impl From<BitmapLegacyCommand> for TypedCommand {
+    fn from(command: BitmapLegacyCommand) -> Self {
         Self::BitmapLegacy(command)
     }
 }

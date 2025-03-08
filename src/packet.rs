@@ -8,7 +8,7 @@
 //!
 //! ```rust
 //! use servicepoint::{Command, Packet, TypedCommand};
-//! # let command = servicepoint::commands::Clear;
+//! # let command = servicepoint::ClearCommand;
 //! let packet: Packet = command.into();
 //! let command = TypedCommand::try_from(packet).expect("could not read command from packet");
 //! ```
@@ -17,7 +17,7 @@
 //!
 //! ```rust
 //! use servicepoint::{Command, Packet};
-//! # let command = servicepoint::commands::Clear;
+//! # let command = servicepoint::ClearCommand;
 //! # let packet: Packet = command.into();
 //! let bytes: Vec<u8> = packet.into();
 //! let packet = Packet::try_from(bytes).expect("could not read packet from bytes");

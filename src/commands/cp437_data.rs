@@ -13,29 +13,29 @@ use crate::{
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connections::Fake;
+/// # let connection = FakeConnection;
 /// let grid = CharGrid::from("Hello,\nWorld!");
 /// let grid = Cp437Grid::from(&grid);
-/// connection.send(commands::Cp437Data{ origin: Origin::ZERO, grid }).expect("send failed");
+/// connection.send(Cp437GridCommand{ origin: Origin::ZERO, grid }).expect("send failed");
 /// ```
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connections::Fake;
+/// # let connection = FakeConnection;
 /// let grid = Cp437Grid::load_ascii("Hello\nWorld", 5, false).unwrap();
-/// connection.send(commands::Cp437Data{ origin: Origin::new(2, 2), grid }).unwrap();
+/// connection.send(Cp437GridCommand{ origin: Origin::new(2, 2), grid }).unwrap();
 /// ```
 /// [CP-437]: https://en.wikipedia.org/wiki/Code_page_437
 #[derive(Clone, Debug, PartialEq)]
-pub struct Cp437Data {
+pub struct Cp437GridCommand {
     /// which tile the text should start
     pub origin: Origin<Tiles>,
     /// the text to send to the display
     pub grid: Cp437Grid,
 }
 
-impl From<Cp437Data> for Packet {
-    fn from(value: Cp437Data) -> Self {
+impl From<Cp437GridCommand> for Packet {
+    fn from(value: Cp437GridCommand) -> Self {
         Packet::origin_grid_to_packet(
             value.origin,
             value.grid,
@@ -44,7 +44,7 @@ impl From<Cp437Data> for Packet {
     }
 }
 
-impl TryFrom<Packet> for Cp437Data {
+impl TryFrom<Packet> for Cp437GridCommand {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
@@ -66,8 +66,8 @@ impl TryFrom<Packet> for Cp437Data {
     }
 }
 
-impl From<Cp437Data> for TypedCommand {
-    fn from(command: Cp437Data) -> Self {
-        Self::Cp437Data(command)
+impl From<Cp437GridCommand> for TypedCommand {
+    fn from(command: Cp437GridCommand) -> Self {
+        Self::Cp437Grid(command)
     }
 }

@@ -11,7 +11,7 @@ use crate::{Connection, Packet};
 ///
 /// [servicepoint-websocket-relay]: https://github.com/kaesaecracker/servicepoint-websocket-relay
 #[derive(Debug)]
-pub struct Websocket(
+pub struct WebsocketConnection(
     std::sync::Mutex<
         tungstenite::WebSocket<
             tungstenite::stream::MaybeTlsStream<std::net::TcpStream>,
@@ -19,7 +19,7 @@ pub struct Websocket(
     >,
 );
 
-impl Connection for Websocket {
+impl Connection for WebsocketConnection {
     type Error = tungstenite::Error;
 
     fn send(&self, packet: impl Into<Packet>) -> Result<(), Self::Error> {
@@ -29,7 +29,7 @@ impl Connection for Websocket {
     }
 }
 
-impl Websocket {
+impl WebsocketConnection {
     /// Open a new WebSocket and connect to the provided host.
     ///
     /// Requires the feature "protocol_websocket" which is disabled by default.
@@ -40,7 +40,7 @@ impl Websocket {
     /// use tungstenite::http::Uri;
     /// use servicepoint::{
     ///     Command,
-    ///     connections::{Websocket as WebsocketConnection, Connection}
+    ///     connections::{WebsocketConnection as WebsocketConnection, Connection}
     /// };
     /// let uri = "ws://localhost:8080".parse().unwrap();
     /// let mut connection = WebsocketConnection::open(uri)
@@ -61,7 +61,7 @@ impl Websocket {
     }
 }
 
-impl Drop for Websocket {
+impl Drop for WebsocketConnection {
     fn drop(&mut self) {
         _ = self.0.try_lock().map(move |mut sock| sock.close(None));
     }

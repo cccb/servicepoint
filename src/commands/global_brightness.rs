@@ -9,18 +9,18 @@ use crate::{
 ///
 /// ```rust
 /// # use servicepoint::*;
-/// # let connection = connections::Fake;
-/// let command = commands::GlobalBrightness { brightness: Brightness::MAX };
+/// # let connection = FakeConnection;
+/// let command = BrightnessCommand { brightness: Brightness::MAX };
 /// connection.send(command).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct GlobalBrightness {
+pub struct BrightnessCommand {
     /// the brightness to set all pixels to
     pub brightness: Brightness,
 }
 
-impl From<GlobalBrightness> for Packet {
-    fn from(command: GlobalBrightness) -> Self {
+impl From<BrightnessCommand> for Packet {
+    fn from(command: BrightnessCommand) -> Self {
         Self {
             header: Header {
                 command_code: CommandCode::Brightness.into(),
@@ -34,7 +34,7 @@ impl From<GlobalBrightness> for Packet {
     }
 }
 
-impl TryFrom<Packet> for GlobalBrightness {
+impl TryFrom<Packet> for BrightnessCommand {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
@@ -67,14 +67,14 @@ impl TryFrom<Packet> for GlobalBrightness {
     }
 }
 
-impl From<GlobalBrightness> for TypedCommand {
-    fn from(command: GlobalBrightness) -> Self {
-        Self::GlobalBrightness(command)
+impl From<BrightnessCommand> for TypedCommand {
+    fn from(command: BrightnessCommand) -> Self {
+        Self::Brightness(command)
     }
 }
 
 impl From<Brightness> for Packet {
     fn from(brightness: Brightness) -> Self {
-        Packet::from(GlobalBrightness { brightness })
+        Packet::from(BrightnessCommand { brightness })
     }
 }

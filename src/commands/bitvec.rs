@@ -5,7 +5,7 @@ use crate::{
     Packet, TypedCommand,
 };
 
-/// Binary operations for use with the [BitmapLinear] command.
+/// Binary operations for use with the [BitVecCommand] command.
 #[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub enum BinaryOperation {
     #[default]
@@ -28,7 +28,7 @@ pub enum BinaryOperation {
 ///
 /// The contained [BitVec] is always uncompressed.
 #[derive(Clone, PartialEq, Debug)]
-pub struct BitmapLinear {
+pub struct BitVecCommand {
     /// where to start overwriting pixel data
     pub offset: Offset,
     /// the pixels to send to the display as one long row
@@ -39,8 +39,8 @@ pub struct BitmapLinear {
     pub compression: CompressionCode,
 }
 
-impl From<BitmapLinear> for Packet {
-    fn from(command: BitmapLinear) -> Self {
+impl From<BitVecCommand> for Packet {
+    fn from(command: BitVecCommand) -> Self {
         let command_code = match command.operation {
             BinaryOperation::Overwrite => CommandCode::BitmapLinear,
             BinaryOperation::And => CommandCode::BitmapLinearAnd,
@@ -64,7 +64,7 @@ impl From<BitmapLinear> for Packet {
     }
 }
 
-impl TryFrom<Packet> for BitmapLinear {
+impl TryFrom<Packet> for BitVecCommand {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
@@ -122,8 +122,8 @@ impl TryFrom<Packet> for BitmapLinear {
     }
 }
 
-impl From<BitmapLinear> for TypedCommand {
-    fn from(command: BitmapLinear) -> Self {
-        Self::BitmapLinear(command)
+impl From<BitVecCommand> for TypedCommand {
+    fn from(command: BitVecCommand) -> Self {
+        Self::BitVec(command)
     }
 }
