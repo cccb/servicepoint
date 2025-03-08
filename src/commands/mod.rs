@@ -108,8 +108,6 @@ fn check_command_code_only(
 
 #[cfg(test)]
 mod tests {
-    use crate::command_code::CommandCode;
-    use crate::commands::{BinaryOperation, TryFromPacketError};
     use crate::*;
 
     pub(crate) fn round_trip(original: TypedCommand) {

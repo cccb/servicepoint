@@ -9,7 +9,7 @@ mod grid;
 mod value_grid;
 
 pub use bit_vec::{bitvec, BitVec};
-pub use bitmap::Bitmap;
+pub use bitmap::*;
 pub use brightness_grid::BrightnessGrid;
 pub use byte_grid::ByteGrid;
 pub use char_grid::CharGrid;

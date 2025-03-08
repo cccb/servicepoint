@@ -160,10 +160,8 @@ impl BitmapCommand {
 #[cfg(test)]
 mod tests {
     use crate::command_code::CommandCode;
-    use crate::{
-        commands, Bitmap, BitmapCommand, CompressionCode, Header, Origin,
-        Packet, TryFromPacketError, TypedCommand,
-    };
+    use crate::*;
+    use super::*;
 
     #[test]
     fn command_code() {

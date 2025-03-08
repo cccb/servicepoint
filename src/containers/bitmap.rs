@@ -278,7 +278,7 @@ impl<'t> Iterator for IterRows<'t> {
     }
 }
 
-#[derive(thiserror::Error, Debug)]
+#[derive(thiserror::Error, Debug, PartialEq)]
 pub enum LoadBitmapError {
     #[error("The provided width is not divisible by 8.")]
     InvalidWidth,
@@ -290,7 +290,7 @@ pub enum LoadBitmapError {
 
 #[cfg(test)]
 mod tests {
-    use crate::{BitVec, Bitmap, DataRef, Grid, ValueGrid};
+    use crate::{BitVec, Bitmap, DataRef, Grid, LoadBitmapError, ValueGrid};
 
     #[test]
     fn fill() {
@@ -401,5 +401,40 @@ mod tests {
         let converted = Bitmap::try_from(&original).unwrap();
         let reconverted = ValueGrid::from(&converted);
         assert_eq!(original, reconverted);
+    }
+
+    #[test]
+    fn load_invalid_width() {
+        let data = BitVec::repeat(false, 7*3).into_vec();
+        assert_eq!(Bitmap::load(7, 3, &data), Err(LoadBitmapError::InvalidWidth))
+    }
+
+    #[test]
+    fn load_invalid_size() {
+        let data = BitVec::repeat(false, 8*4).into_vec();
+        assert_eq!(Bitmap::load(8, 3, &data), Err(LoadBitmapError::InvalidDataSize))
+    }
+
+    #[test]
+    fn from_vec_invalid_width() {
+        let data = BitVec::repeat(false, 7*3);
+        assert_eq!(Bitmap::from_bitvec(7, data), Err(LoadBitmapError::InvalidWidth))
+    }
+
+    #[test]
+    fn from_vec_invalid_size() {
+        let data = BitVec::repeat(false, 7*4);
+        assert_eq!(Bitmap::from_bitvec(8, data), Err(LoadBitmapError::InvalidDataSize))
+    }
+
+    #[test]
+    fn from_vec() {
+        let orig = Bitmap::new(8, 3).unwrap();
+        assert_eq!(Bitmap::from_bitvec(8, orig.bit_vec.clone()).unwrap(), orig);
+    }
+
+    #[test]
+    fn new_invalid_width() {
+        assert_eq!(Bitmap::new(7,2), None)
     }
 }
