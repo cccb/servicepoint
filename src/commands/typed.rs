@@ -1,16 +1,7 @@
 use crate::{
-    command_code::CommandCode,
-    BitVecCommand,
-    BitmapCommand,
-    BrightnessCommand,
-    BrightnessGridCommand,
-    CharGridCommand,
-    ClearCommand,
-    Cp437GridCommand,
-    FadeOutCommand,
-    HardResetCommand,
-    Header,
-    Packet
+    command_code::CommandCode, BitVecCommand, BitmapCommand, BrightnessCommand,
+    BrightnessGridCommand, CharGridCommand, ClearCommand, Cp437GridCommand,
+    FadeOutCommand, HardResetCommand, Header, Packet,
 };
 
 /// This enum contains all commands provided by the library.
@@ -94,25 +85,25 @@ impl TryFrom<Packet> for TypedCommand {
             CommandCode::Brightness => TypedCommand::Brightness(
                 crate::BrightnessCommand::try_from(packet)?,
             ),
-            CommandCode::HardReset => {
-                TypedCommand::HardReset(crate::HardResetCommand::try_from(packet)?)
-            }
+            CommandCode::HardReset => TypedCommand::HardReset(
+                crate::HardResetCommand::try_from(packet)?,
+            ),
             CommandCode::FadeOut => {
                 TypedCommand::FadeOut(crate::FadeOutCommand::try_from(packet)?)
             }
-            CommandCode::Cp437Data => {
-                TypedCommand::Cp437Grid(crate::Cp437GridCommand::try_from(packet)?)
-            }
-            CommandCode::CharBrightness => {
-                TypedCommand::BrightnessGrid(crate::BrightnessGridCommand::try_from(packet)?)
-            }
-            CommandCode::Utf8Data => {
-                TypedCommand::CharGrid(crate::CharGridCommand::try_from(packet)?)
-            }
+            CommandCode::Cp437Data => TypedCommand::Cp437Grid(
+                crate::Cp437GridCommand::try_from(packet)?,
+            ),
+            CommandCode::CharBrightness => TypedCommand::BrightnessGrid(
+                crate::BrightnessGridCommand::try_from(packet)?,
+            ),
+            CommandCode::Utf8Data => TypedCommand::CharGrid(
+                crate::CharGridCommand::try_from(packet)?,
+            ),
             #[allow(deprecated)]
-            CommandCode::BitmapLegacy => {
-                TypedCommand::BitmapLegacy(crate::BitmapLegacyCommand::try_from(packet)?)
-            }
+            CommandCode::BitmapLegacy => TypedCommand::BitmapLegacy(
+                crate::BitmapLegacyCommand::try_from(packet)?,
+            ),
             CommandCode::BitmapLinear
             | CommandCode::BitmapLinearOr
             | CommandCode::BitmapLinearAnd
@@ -157,5 +148,29 @@ impl From<TypedCommand> for Packet {
             #[allow(deprecated)]
             TypedCommand::BitmapLegacy(c) => c.into(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Header, Packet, TryFromPacketError, TypedCommand};
+
+    #[test]
+    fn error_invalid_command() {
+        let p = Packet {
+            header: Header {
+                command_code: 0xFF,
+                a: 0x00,
+                b: 0x00,
+                c: 0x00,
+                d: 0x00,
+            },
+            payload: vec![],
+        };
+        let result = TypedCommand::try_from(p);
+        assert!(matches!(
+            result,
+            Err(TryFromPacketError::InvalidCommand(0xFF))
+        ))
     }
 }

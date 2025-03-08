@@ -1,6 +1,6 @@
 use crate::{
-    commands::TryFromPacketError, command_code::CommandCode, Brightness, Header,
-    Packet, TypedCommand,
+    command_code::CommandCode, commands::TryFromPacketError, Brightness,
+    Header, Packet, TypedCommand,
 };
 
 /// Set the brightness of all tiles to the same value.
@@ -81,13 +81,94 @@ impl From<Brightness> for BrightnessCommand {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Brightness, BrightnessCommand};
+    use crate::command_code::CommandCode;
+    use crate::commands::tests::round_trip;
+    use crate::{
+        commands, Brightness, BrightnessCommand, Header, Packet,
+        TryFromPacketError, TypedCommand,
+    };
 
     #[test]
     fn brightness_as_command() {
         assert_eq!(
-            BrightnessCommand { brightness: Brightness::MAX },
+            BrightnessCommand {
+                brightness: Brightness::MAX
+            },
             Brightness::MAX.into()
         )
+    }
+
+    #[test]
+    fn round_trip_brightness() {
+        round_trip(
+            BrightnessCommand {
+                brightness: Brightness::try_from(6).unwrap(),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn error_extraneous_header_values() {
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::Brightness.into(),
+                a: 0x00,
+                b: 0x13,
+                c: 0x37,
+                d: 0x00,
+            },
+            payload: vec![5],
+        };
+        let result = TypedCommand::try_from(p);
+        assert!(matches!(
+            result,
+            Err(TryFromPacketError::ExtraneousHeaderValues)
+        ))
+    }
+
+    #[test]
+    fn unexpected_payload_size_brightness() {
+        assert_eq!(
+            TypedCommand::try_from(Packet {
+                header: Header {
+                    command_code: CommandCode::Brightness.into(),
+                    a: 0,
+                    b: 0,
+                    c: 0,
+                    d: 0,
+                },
+                payload: vec!()
+            }),
+            Err(TryFromPacketError::UnexpectedPayloadSize(1, 0))
+        );
+
+        assert_eq!(
+            TypedCommand::try_from(Packet {
+                header: Header {
+                    command_code: CommandCode::Brightness.into(),
+                    a: 0,
+                    b: 0,
+                    c: 0,
+                    d: 0,
+                },
+                payload: vec!(0, 0)
+            }),
+            Err(TryFromPacketError::UnexpectedPayloadSize(1, 2))
+        );
+    }
+
+    #[test]
+    fn packet_into_brightness_invalid() {
+        let mut packet: Packet = commands::BrightnessCommand {
+            brightness: Brightness::MAX,
+        }
+        .into();
+        let slot = packet.payload.get_mut(0).unwrap();
+        *slot = 42;
+        assert_eq!(
+            TypedCommand::try_from(packet),
+            Err(TryFromPacketError::InvalidBrightness(42))
+        );
     }
 }

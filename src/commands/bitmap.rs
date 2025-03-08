@@ -1,5 +1,5 @@
 use crate::{
-    commands::TryFromPacketError, command_code::CommandCode,
+    command_code::CommandCode, commands::TryFromPacketError,
     compression::into_compressed, compression::into_decompressed, Bitmap,
     CompressionCode, Grid, Header, Origin, Packet, Pixels, TypedCommand,
     TILE_SIZE,
@@ -150,8 +150,64 @@ impl BitmapCommand {
                 tile_w as usize * TILE_SIZE,
                 pixel_h as usize,
                 &payload,
-            ).unwrap(),
+            )
+            .unwrap(),
             compression,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::command_code::CommandCode;
+    use crate::{
+        commands, Bitmap, BitmapCommand, CompressionCode, Header, Origin,
+        Packet, TryFromPacketError, TypedCommand,
+    };
+
+    #[test]
+    fn command_code() {
+        assert_eq!(
+            BitmapCommand::try_from(Packet {
+                payload: vec![],
+                header: Header {
+                    command_code: CommandCode::Brightness.into(),
+                    ..Default::default()
+                }
+            }),
+            Err(TryFromPacketError::InvalidCommand(
+                CommandCode::Brightness.into()
+            ))
+        );
+    }
+
+    #[test]
+    fn error_decompression_failed_win() {
+        for compression in CompressionCode::ALL {
+            let p: Packet = commands::BitmapCommand {
+                origin: Origin::new(16, 8),
+                bitmap: Bitmap::new(8, 8).unwrap(),
+                compression,
+            }
+            .into();
+
+            let Packet {
+                header,
+                mut payload,
+            } = p;
+
+            // mangle it
+            for byte in payload.iter_mut() {
+                *byte -= *byte / 2;
+            }
+
+            let p = Packet { header, payload };
+            let result = TypedCommand::try_from(p);
+            if compression != CompressionCode::Uncompressed {
+                assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
+            } else {
+                assert!(result.is_ok());
+            }
+        }
     }
 }

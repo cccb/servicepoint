@@ -1,6 +1,6 @@
 use crate::{
-    commands::check_command_code_only, commands::TryFromPacketError,
-    command_code::CommandCode, Packet, TypedCommand,
+    command_code::CommandCode, commands::check_command_code_only,
+    commands::TryFromPacketError, Packet, TypedCommand,
 };
 use std::fmt::Debug;
 
@@ -40,5 +40,36 @@ impl From<HardResetCommand> for Packet {
 impl From<HardResetCommand> for TypedCommand {
     fn from(command: HardResetCommand) -> Self {
         Self::HardReset(command)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::commands::tests::round_trip;
+    use crate::Header;
+
+    #[test]
+    fn round_trip_hard_reset() {
+        round_trip(HardResetCommand.into());
+    }
+
+    #[test]
+    fn error_extraneous_header() {
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::HardReset.into(),
+                a: 0x00,
+                b: 0x00,
+                c: 0x00,
+                d: 0x01,
+            },
+            payload: vec![],
+        };
+        let result = TypedCommand::try_from(p);
+        assert!(matches!(
+            result,
+            Err(TryFromPacketError::ExtraneousHeaderValues)
+        ))
     }
 }

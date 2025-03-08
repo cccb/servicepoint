@@ -35,9 +35,7 @@ fn main() {
         .expect("could not connect to display");
 
     if cli.clear {
-        connection
-            .send(ClearCommand)
-            .expect("sending clear failed");
+        connection.send(ClearCommand).expect("sending clear failed");
     }
 
     let text = cli.text.join("\n");
@@ -45,7 +43,5 @@ fn main() {
         origin: Origin::ZERO,
         grid: CharGrid::wrap_str(TILE_WIDTH, &text),
     };
-    connection
-        .send(command)
-        .expect("sending text failed");
+    connection.send(command).expect("sending text failed");
 }

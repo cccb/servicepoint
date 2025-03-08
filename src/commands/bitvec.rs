@@ -25,9 +25,9 @@ pub enum BinaryOperation {
 /// once the starting row is full, overwriting will continue on column 0.
 ///
 /// The [BinaryOperation] will be applied on the display comparing old and sent bit.
-/// 
+///
 /// `new_bit = old_bit op sent_bit`
-/// 
+///
 /// For example, [BinaryOperation::Or] can be used to turn on some pixels without affecting other pixels.
 ///
 /// The contained [BitVec] is always uncompressed.
@@ -129,5 +129,188 @@ impl TryFrom<Packet> for BitVecCommand {
 impl From<BitVecCommand> for TypedCommand {
     fn from(command: BitVecCommand) -> Self {
         Self::BitVec(command)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::commands::tests::round_trip;
+    use crate::{commands, Bitmap, BitmapCommand, Origin};
+
+    #[test]
+    fn command_code() {
+        assert_eq!(
+            BitVecCommand::try_from(Packet {
+                payload: vec![],
+                header: Header {
+                    command_code: CommandCode::Brightness.into(),
+                    ..Default::default()
+                }
+            }),
+            Err(TryFromPacketError::InvalidCommand(
+                CommandCode::Brightness.into()
+            ))
+        );
+    }
+
+    #[test]
+    fn round_trip_bitmap_linear() {
+        for compression in CompressionCode::ALL {
+            for operation in [
+                BinaryOperation::Overwrite,
+                BinaryOperation::And,
+                BinaryOperation::Or,
+                BinaryOperation::Xor,
+            ] {
+                round_trip(
+                    BitVecCommand {
+                        offset: 23,
+                        bitvec: BitVec::repeat(false, 40),
+                        compression,
+                        operation,
+                    }
+                    .into(),
+                );
+            }
+            round_trip(
+                BitmapCommand {
+                    origin: Origin::ZERO,
+                    bitmap: Bitmap::max_sized(),
+                    compression,
+                }
+                .into(),
+            );
+        }
+    }
+
+    #[test]
+    fn error_decompression_failed_and() {
+        for compression in CompressionCode::ALL {
+            let p: Packet = commands::BitVecCommand {
+                offset: 0,
+                bitvec: BitVec::repeat(false, 8),
+                compression,
+                operation: BinaryOperation::Overwrite,
+            }
+            .into();
+            let Packet {
+                header,
+                mut payload,
+            } = p;
+
+            // mangle it
+            for byte in payload.iter_mut() {
+                *byte -= *byte / 2;
+            }
+
+            let p = Packet { header, payload };
+            let result = TypedCommand::try_from(p);
+            if compression != CompressionCode::Uncompressed {
+                assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
+            } else {
+                // when not compressing, there is no way to detect corrupted data
+                assert!(result.is_ok());
+            }
+        }
+    }
+
+    #[test]
+    fn error_reserved_used() {
+        let Packet { header, payload } = commands::BitVecCommand {
+            offset: 0,
+            bitvec: BitVec::repeat(false, 8),
+            compression: CompressionCode::Uncompressed,
+            operation: BinaryOperation::Or,
+        }
+        .into();
+        let Header {
+            command_code: command,
+            a: offset,
+            b: length,
+            c: sub,
+            d: _reserved,
+        } = header;
+        let p = Packet {
+            header: Header {
+                command_code: command,
+                a: offset,
+                b: length,
+                c: sub,
+                d: 69,
+            },
+            payload,
+        };
+        assert_eq!(
+            TypedCommand::try_from(p),
+            Err(TryFromPacketError::ExtraneousHeaderValues)
+        );
+    }
+
+    #[test]
+    fn error_invalid_compression() {
+        let Packet { header, payload } = commands::BitVecCommand {
+            offset: 0,
+            bitvec: BitVec::repeat(false, 8),
+            compression: CompressionCode::Uncompressed,
+            operation: BinaryOperation::And,
+        }
+        .into();
+        let Header {
+            command_code: command,
+            a: offset,
+            b: length,
+            c: _sub,
+            d: reserved,
+        } = header;
+        let p = Packet {
+            header: Header {
+                command_code: command,
+                a: offset,
+                b: length,
+                c: 42,
+                d: reserved,
+            },
+            payload,
+        };
+        assert_eq!(
+            TypedCommand::try_from(p),
+            Err(TryFromPacketError::InvalidCompressionCode(42))
+        );
+    }
+
+    #[test]
+    fn error_unexpected_size() {
+        let Packet { header, payload } = commands::BitVecCommand {
+            offset: 0,
+            bitvec: BitVec::repeat(false, 8),
+            compression: CompressionCode::Uncompressed,
+            operation: BinaryOperation::Xor,
+        }
+        .into();
+        let Header {
+            command_code: command,
+            a: offset,
+            b: length,
+            c: compression,
+            d: reserved,
+        } = header;
+        let p = Packet {
+            header: Header {
+                command_code: command,
+                a: offset,
+                b: 420,
+                c: compression,
+                d: reserved,
+            },
+            payload,
+        };
+        assert_eq!(
+            TypedCommand::try_from(p),
+            Err(TryFromPacketError::UnexpectedPayloadSize(
+                420,
+                length as usize,
+            ))
+        );
     }
 }

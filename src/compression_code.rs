@@ -39,6 +39,21 @@ pub enum CompressionCode {
     Zstd = 0x7a73,
 }
 
+impl CompressionCode {
+    /// All available compression codes (depending on features).
+    pub const ALL: [CompressionCode; 5] = [
+        Self::Uncompressed,
+        #[cfg(feature = "compression_zlib")]
+        Self::Zlib,
+        #[cfg(feature = "compression_bzip2")]
+        Self::Bzip2,
+        #[cfg(feature = "compression_lzma")]
+        Self::Lzma,
+        #[cfg(feature = "compression_zstd")]
+        Self::Zstd,
+    ];
+}
+
 impl From<CompressionCode> for u16 {
     fn from(value: CompressionCode) -> Self {
         value as u16

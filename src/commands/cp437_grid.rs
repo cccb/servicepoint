@@ -1,5 +1,5 @@
 use crate::{
-    commands::TryFromPacketError, command_code::CommandCode, Cp437Grid, Header,
+    command_code::CommandCode, commands::TryFromPacketError, Cp437Grid, Header,
     Origin, Packet, Tiles, TypedCommand,
 };
 
@@ -69,5 +69,22 @@ impl TryFrom<Packet> for Cp437GridCommand {
 impl From<Cp437GridCommand> for TypedCommand {
     fn from(command: Cp437GridCommand) -> Self {
         Self::Cp437Grid(command)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::commands::tests::round_trip;
+
+    #[test]
+    fn round_trip_cp437_data() {
+        round_trip(
+            Cp437GridCommand {
+                origin: Origin::new(5, 2),
+                grid: Cp437Grid::new(7, 5),
+            }
+            .into(),
+        );
     }
 }

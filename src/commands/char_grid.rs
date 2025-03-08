@@ -1,5 +1,5 @@
 use crate::{
-    commands::TryFromPacketError, command_code::CommandCode, CharGrid, Header,
+    command_code::CommandCode, commands::TryFromPacketError, CharGrid, Header,
     Origin, Packet, Tiles, TypedCommand,
 };
 
@@ -60,5 +60,22 @@ impl TryFrom<Packet> for CharGridCommand {
 impl From<CharGridCommand> for TypedCommand {
     fn from(command: CharGridCommand) -> Self {
         Self::CharGrid(command)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::commands::tests::round_trip;
+    use crate::{CharGrid, CharGridCommand, Origin};
+
+    #[test]
+    fn round_trip_utf8_data() {
+        round_trip(
+            CharGridCommand {
+                origin: Origin::new(5, 2),
+                grid: CharGrid::new(7, 5),
+            }
+            .into(),
+        );
     }
 }

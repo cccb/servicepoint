@@ -65,17 +65,17 @@ pub use crate::origin::{Origin, Pixels, Tiles};
 pub use crate::packet::{Header, Packet, Payload};
 
 mod brightness;
-mod commands;
 mod command_code;
+mod commands;
 mod compression;
 mod compression_code;
 mod connections;
 mod constants;
 mod containers;
-mod origin;
-mod packet;
 #[cfg(feature = "cp437")]
 mod cp437;
+mod origin;
+mod packet;
 
 #[cfg(feature = "cp437")]
 pub use crate::cp437::Cp437Converter;

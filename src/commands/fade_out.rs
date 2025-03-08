@@ -1,6 +1,6 @@
 use crate::{
-    commands::check_command_code_only, commands::TryFromPacketError,
-    command_code::CommandCode, Packet, TypedCommand,
+    command_code::CommandCode, commands::check_command_code_only,
+    commands::TryFromPacketError, Packet, TypedCommand,
 };
 use std::fmt::Debug;
 
@@ -39,5 +39,57 @@ impl From<FadeOutCommand> for Packet {
 impl From<FadeOutCommand> for TypedCommand {
     fn from(command: FadeOutCommand) -> Self {
         Self::FadeOut(command)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::command_code::CommandCode;
+    use crate::commands::tests::round_trip;
+    use crate::{
+        FadeOutCommand, Header, Packet, TryFromPacketError, TypedCommand,
+    };
+
+    #[test]
+    fn round_trip_fade_out() {
+        round_trip(FadeOutCommand.into());
+    }
+
+    #[test]
+    fn error_extraneous_header_fade_out() {
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::FadeOut.into(),
+                a: 0x10,
+                b: 0x00,
+                c: 0x00,
+                d: 0x01,
+            },
+            payload: vec![],
+        };
+        let result = TypedCommand::try_from(p);
+        assert!(matches!(
+            result,
+            Err(TryFromPacketError::ExtraneousHeaderValues)
+        ))
+    }
+
+    #[test]
+    fn error_unexpected_payload() {
+        let p = Packet {
+            header: Header {
+                command_code: CommandCode::FadeOut.into(),
+                a: 0x00,
+                b: 0x00,
+                c: 0x00,
+                d: 0x00,
+            },
+            payload: vec![5, 7],
+        };
+        let result = TypedCommand::try_from(p);
+        assert!(matches!(
+            result,
+            Err(TryFromPacketError::UnexpectedPayloadSize(0, 2))
+        ))
     }
 }

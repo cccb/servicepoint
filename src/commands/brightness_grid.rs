@@ -1,5 +1,5 @@
 use crate::{
-    commands::TryFromPacketError, command_code::CommandCode, BrightnessGrid,
+    command_code::CommandCode, commands::TryFromPacketError, BrightnessGrid,
     ByteGrid, Header, Origin, Packet, Tiles, TypedCommand,
 };
 
@@ -54,5 +54,41 @@ impl TryFrom<Packet> for BrightnessGridCommand {
 impl From<BrightnessGridCommand> for TypedCommand {
     fn from(command: BrightnessGridCommand) -> Self {
         Self::BrightnessGrid(command)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::commands::tests::round_trip;
+    use crate::{
+        commands, BrightnessGrid, BrightnessGridCommand, Origin, Packet,
+        TryFromPacketError, TypedCommand,
+    };
+
+    #[test]
+    fn round_trip_char_brightness() {
+        round_trip(
+            BrightnessGridCommand {
+                origin: Origin::new(5, 2),
+                grid: BrightnessGrid::new(7, 5),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn packet_into_char_brightness_invalid() {
+        let grid = BrightnessGrid::new(2, 2);
+        let command = commands::BrightnessGridCommand {
+            origin: Origin::ZERO,
+            grid,
+        };
+        let mut packet: Packet = command.into();
+        let slot = packet.payload.get_mut(1).unwrap();
+        *slot = 23;
+        assert_eq!(
+            TypedCommand::try_from(packet),
+            Err(TryFromPacketError::InvalidBrightness(23))
+        );
     }
 }

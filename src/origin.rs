@@ -119,4 +119,12 @@ mod tests {
         let pixel: Origin<Pixels> = Origin::new(7, 16);
         let _: Origin<Tiles> = Origin::try_from(&pixel).unwrap();
     }
+
+    #[test]
+    fn origin_add() {
+        assert_eq!(
+            Origin::<Pixels>::new(4, 2),
+            Origin::new(1, 0) + Origin::new(3, 2)
+        );
+    }
 }

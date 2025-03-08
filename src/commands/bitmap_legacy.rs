@@ -1,6 +1,6 @@
 use crate::{
-    commands::check_command_code_only, commands::TryFromPacketError,
-    command_code::CommandCode, Packet, TypedCommand,
+    command_code::CommandCode, commands::check_command_code_only,
+    commands::TryFromPacketError, Packet, TypedCommand,
 };
 use std::fmt::Debug;
 
@@ -47,5 +47,33 @@ impl From<BitmapLegacyCommand> for Packet {
 impl From<BitmapLegacyCommand> for TypedCommand {
     fn from(command: BitmapLegacyCommand) -> Self {
         Self::BitmapLegacy(command)
+    }
+}
+
+#[cfg(test)]
+#[allow(deprecated)]
+mod tests {
+    use super::*;
+    use crate::commands::tests::round_trip;
+    use crate::Header;
+
+    #[test]
+    fn invalid_fields() {
+        assert_eq!(
+            BitmapLegacyCommand::try_from(Packet {
+                header: Header {
+                    command_code: CommandCode::BitmapLegacy.into(),
+                    a: 1,
+                    ..Default::default()
+                },
+                payload: vec![],
+            }),
+            Err(TryFromPacketError::ExtraneousHeaderValues)
+        );
+    }
+
+    #[test]
+    fn round_trip_bitmap_legacy() {
+        round_trip(BitmapLegacyCommand.into());
     }
 }
