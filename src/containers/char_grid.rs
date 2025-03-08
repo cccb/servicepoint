@@ -140,11 +140,9 @@ impl CharGrid {
         bytes: Vec<u8>,
     ) -> Result<CharGrid, LoadUtf8Error> {
         let s: Vec<char> = String::from_utf8(bytes)?.chars().collect();
-        Ok(CharGrid::load(width, height, &s).ok_or(
-            LoadUtf8Error::TryLoadError(
-                TryLoadValueGridError::InvalidDimensions,
-            ),
-        )?)
+        CharGrid::load(width, height, &s).ok_or(LoadUtf8Error::TryLoadError(
+            TryLoadValueGridError::InvalidDimensions,
+        ))
     }
 }
 

@@ -158,7 +158,7 @@ impl Bitmap {
     }
 
     /// Iterate over all rows in [Bitmap] top to bottom.
-    pub fn iter_rows(&self) -> IterRows {
+    pub fn iter_rows(&self) -> impl Iterator<Item = &BitSlice<u8, Msb0>> {
         IterRows {
             bitmap: self,
             row: 0,
@@ -258,7 +258,7 @@ impl From<&Bitmap> for ValueGrid<bool> {
     }
 }
 
-pub struct IterRows<'t> {
+struct IterRows<'t> {
     bitmap: &'t Bitmap,
     row: usize,
 }
@@ -278,10 +278,13 @@ impl<'t> Iterator for IterRows<'t> {
     }
 }
 
+/// Errors that can happen when loading a bitmap.
 #[derive(thiserror::Error, Debug, PartialEq)]
 pub enum LoadBitmapError {
+    /// The provided width is not divisible by 8.
     #[error("The provided width is not divisible by 8.")]
     InvalidWidth,
+    /// The provided data has an incorrect size for the provided dimensions.
     #[error(
         "The provided data has an incorrect size for the provided dimensions."
     )]

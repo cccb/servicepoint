@@ -60,6 +60,7 @@ pub enum TryFromPacketError {
     /// Some provided text was not valid UTF-8.
     #[error(transparent)]
     InvalidUtf8(#[from] std::string::FromUtf8Error),
+    /// The bitmap contained in the payload could not be loaded
     #[error(transparent)]
     LoadBitmapFailed(#[from] LoadBitmapError),
 }
