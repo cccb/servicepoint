@@ -8,10 +8,14 @@ use crate::{
 /// Binary operations for use with the [BitVecCommand] command.
 #[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub enum BinaryOperation {
+    /// r := a
     #[default]
     Overwrite,
+    /// r := a && b
     And,
+    /// r := a || b
     Or,
+    /// r := (a || b) && (a != b)
     Xor,
 }
 

@@ -3,7 +3,7 @@ use std::string::FromUtf8Error;
 
 /// A grid containing UTF-8 characters.
 ///
-/// To send a CharGrid to the display, use [Command::Utf8Data](crate::Command::Utf8Data).
+/// To send a CharGrid to the display, use a [crate::CharGridCommand].
 ///
 /// Also see [ValueGrid] for the non-specialized operations and examples.
 ///

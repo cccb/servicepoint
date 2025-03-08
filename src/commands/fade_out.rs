@@ -16,7 +16,6 @@ use std::fmt::Debug;
 /// connection.send(FadeOutCommand).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-/// ```
 pub struct FadeOutCommand;
 
 impl TryFrom<Packet> for FadeOutCommand {

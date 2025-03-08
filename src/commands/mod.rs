@@ -108,7 +108,7 @@ pub enum TypedCommand {
     BitmapLegacy(BitmapLegacyCommand),
 }
 
-/// Err values for [Command::try_from].
+/// Err values for [TypedCommand::try_from].
 #[derive(Debug, PartialEq, thiserror::Error)]
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
