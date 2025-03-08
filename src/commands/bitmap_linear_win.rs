@@ -150,7 +150,7 @@ impl BitmapLinearWin {
                 tile_w as usize * TILE_SIZE,
                 pixel_h as usize,
                 &payload,
-            ),
+            ).unwrap(),
             compression,
         })
     }

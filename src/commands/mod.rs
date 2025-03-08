@@ -487,7 +487,7 @@ mod tests {
         for compression in all_compressions().iter().copied() {
             let p: Packet = commands::BitmapLinearWin {
                 origin: Origin::new(16, 8),
-                bitmap: Bitmap::new(8, 8),
+                bitmap: Bitmap::new(8, 8).unwrap(),
                 compression,
             }
             .into();
