@@ -86,7 +86,7 @@ mod tests {
     fn load_ascii_nowrap() {
         let chars = ['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd']
             .map(move |c| c as u8);
-        let expected = Cp437Grid::load(5, 2, &chars);
+        let expected = Cp437Grid::load(5, 2, &chars).unwrap();
 
         let actual = Cp437Grid::load_ascii("Hello,\nWorld!", 5, false).unwrap();
         // comma will be removed because line is too long and wrap is off
@@ -97,7 +97,7 @@ mod tests {
     fn load_ascii_wrap() {
         let chars = ['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd']
             .map(move |c| c as u8);
-        let expected = Cp437Grid::load(5, 2, &chars);
+        let expected = Cp437Grid::load(5, 2, &chars).unwrap();
 
         let actual = Cp437Grid::load_ascii("HelloWorld", 5, true).unwrap();
         // line break will be added

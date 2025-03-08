@@ -60,86 +60,57 @@ impl<T: Value> ValueGrid<T> {
 
     /// Loads a [ValueGrid] with the specified dimensions from the provided data.
     ///
-    /// returns: [ValueGrid] that contains a copy of the provided data
-    ///
-    /// # Panics
-    ///
-    /// - when the dimensions and data size do not match exactly.
+    /// returns: [ValueGrid] that contains a copy of the provided data,
+    /// or None if the dimensions do not match the data size.
     #[must_use]
-    pub fn load(width: usize, height: usize, data: &[T]) -> Self {
-        assert_eq!(
-            width * height,
-            data.len(),
-            "dimension mismatch for data {data:?}"
-        );
-        Self {
+    pub fn load(width: usize, height: usize, data: &[T]) -> Option<Self> {
+        if width * height != data.len() {
+            return None;
+        }
+        Some(Self {
             data: Vec::from(data),
             width,
             height,
-        }
+        })
     }
 
-    /// Creates a [ValueGrid] with the specified width from the provided data without copying it.
+    /// Creates a [ValueGrid] with the specified width from the provided data,
+    /// wrapping to as many rows as needed,
+    /// without copying the vec.
     ///
-    /// returns: [ValueGrid] that contains the provided data.
+    /// returns: [ValueGrid] that contains the provided data,
+    /// or None if the data size is not divisible by the width.
     ///
-    /// # Panics
+    /// # Examples
     ///
-    /// - when the data size is not dividable by the width.
+    /// ```
+    /// # use servicepoint::ValueGrid;
+    /// let grid = ValueGrid::from_vec(2, vec![0, 1, 2, 3, 4, 5]).unwrap();
+    /// ```
     #[must_use]
-    pub fn from_vec(width: usize, data: Vec<T>) -> Self {
+    pub fn from_vec(width: usize, data: Vec<T>) -> Option<Self> {
         let len = data.len();
         let height = len / width;
-        assert_eq!(
-            0,
-            len % width,
-            "dimension mismatch - len {len} is not dividable by {width}"
-        );
-        Self {
+        if len % width != 0 {
+            return None;
+        }
+        Some(Self {
             data,
             width,
             height,
-        }
+        })
     }
 
     /// Loads a [ValueGrid] with the specified width from the provided data, wrapping to as many rows as needed.
     ///
     /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use servicepoint::ValueGrid;
-    /// let grid = ValueGrid::wrap(2, &[0, 1, 2, 3, 4, 5]).unwrap();
-    /// ```
+    #[must_use]
     pub fn wrap(
         width: usize,
         data: &[T],
-    ) -> Result<Self, TryLoadValueGridError> {
-        let len = data.len();
-        if len % width != 0 {
-            return Err(TryLoadValueGridError::InvalidDimensions);
-        }
-        Ok(Self::load(width, len / width, data))
-    }
-
-    /// Loads a [ValueGrid] with the specified dimensions from the provided data.
-    ///
-    /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].
-    pub fn try_load(
-        width: usize,
-        height: usize,
-        data: Vec<T>,
-    ) -> Result<Self, TryLoadValueGridError> {
-        if width * height != data.len() {
-            return Err(TryLoadValueGridError::InvalidDimensions);
-        }
-
-        Ok(Self {
-            data,
-            width,
-            height,
-        })
+    ) -> Option<Self> {
+        Self::from_vec(width, data.to_vec())
     }
 
     /// Iterate over all cells in [ValueGrid].
@@ -230,7 +201,7 @@ impl<T: Value> ValueGrid<T> {
             .iter()
             .map(|elem| f(*elem))
             .collect::<Vec<_>>();
-        ValueGrid::load(self.width(), self.height(), &data)
+        ValueGrid::load(self.width(), self.height(), &data).unwrap()
     }
 
     /// Copies a row from the grid.
@@ -486,7 +457,7 @@ mod tests {
 
         let data: Vec<u8> = grid.into();
 
-        let grid = ValueGrid::load(2, 3, &data);
+        let grid = ValueGrid::load(2, 3, &data).unwrap();
         assert_eq!(grid.data, [0, 1, 1, 2, 2, 3]);
     }
 
@@ -525,7 +496,7 @@ mod tests {
 
     #[test]
     fn iter_rows() {
-        let vec = ValueGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]);
+        let vec = ValueGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]).unwrap();
         for (y, row) in vec.iter_rows().enumerate() {
             for (x, val) in row.enumerate() {
                 assert_eq!(*val, (x + y) as u8);
@@ -536,20 +507,20 @@ mod tests {
     #[test]
     #[should_panic]
     fn out_of_bounds_x() {
-        let mut vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
         vec.set(2, 1, 5);
     }
 
     #[test]
     #[should_panic]
     fn out_of_bounds_y() {
-        let vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
+        let vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
         vec.get(1, 2);
     }
 
     #[test]
     fn ref_mut() {
-        let mut vec = ValueGrid::from_vec(3, vec![0, 1, 2, 3, 4, 5, 6, 7, 8]);
+        let mut vec = ValueGrid::from_vec(3, vec![0, 1, 2, 3, 4, 5, 6, 7, 8]).unwrap();
 
         let top_left = vec.get_ref_mut(0, 0);
         *top_left += 5;
@@ -565,7 +536,7 @@ mod tests {
 
     #[test]
     fn optional() {
-        let mut grid = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut grid = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
         grid.set_optional(0, 0, 5);
         grid.set_optional(-1, 0, 8);
         grid.set_optional(0, 8, 42);
@@ -577,7 +548,7 @@ mod tests {
 
     #[test]
     fn col() {
-        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]).unwrap();
         assert_eq!(grid.get_col(0), Some(vec![0, 2, 4]));
         assert_eq!(grid.get_col(1), Some(vec![1, 3, 5]));
         assert_eq!(grid.get_col(2), None);
@@ -598,7 +569,7 @@ mod tests {
 
     #[test]
     fn row() {
-        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]).unwrap();
         assert_eq!(grid.get_row(0), Some(vec![0, 1]));
         assert_eq!(grid.get_row(2), Some(vec![4, 5]));
         assert_eq!(grid.get_row(3), None);
@@ -619,10 +590,10 @@ mod tests {
 
     #[test]
     fn wrap() {
-        let grid = ValueGrid::wrap(2, &[0, 1, 2, 3, 4, 5]).unwrap();
+        let grid = ValueGrid::from_vec(2, vec![0, 1, 2, 3, 4, 5]).unwrap();
         assert_eq!(grid.height(), 3);
 
-        let grid = ValueGrid::wrap(4, &[0, 1, 2, 3, 4, 5]);
-        assert_eq!(grid.err(), Some(TryLoadValueGridError::InvalidDimensions));
+        let grid = ValueGrid::from_vec(4, vec![0, 1, 2, 3, 4, 5]);
+        assert_eq!(grid, None);
     }
 }

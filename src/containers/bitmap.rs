@@ -397,7 +397,7 @@ mod tests {
             8,
             1,
             &[true, false, true, false, true, false, true, false],
-        );
+        ).unwrap();
         let converted = Bitmap::try_from(&original).unwrap();
         let reconverted = ValueGrid::from(&converted);
         assert_eq!(original, reconverted);

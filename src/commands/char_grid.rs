@@ -52,7 +52,7 @@ impl TryFrom<Packet> for CharGridCommand {
             String::from_utf8(payload.clone())?.chars().collect();
         Ok(Self {
             origin: Origin::new(a as usize, b as usize),
-            grid: CharGrid::load(c as usize, d as usize, &payload),
+            grid: CharGrid::load(c as usize, d as usize, &payload).unwrap(),
         })
     }
 }

@@ -140,7 +140,7 @@ mod tests_feature_cp437 {
 
     #[test]
     fn round_trip_cp437() {
-        let utf8 = CharGrid::load(2, 2, &['Ä', 'x', '\n', '$']);
+        let utf8 = CharGrid::load(2, 2, &['Ä', 'x', '\n', '$']).unwrap();
         let cp437 = Cp437Grid::from(utf8.clone());
         let actual = CharGrid::from(cp437);
         assert_eq!(actual, utf8);

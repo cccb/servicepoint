@@ -38,7 +38,7 @@ impl TryFrom<Packet> for BrightnessGridCommand {
             payload,
         } = packet;
 
-        let grid = ByteGrid::load(width as usize, height as usize, &payload);
+        let grid = ByteGrid::load(width as usize, height as usize, &payload).unwrap();
         let grid = match BrightnessGrid::try_from(grid) {
             Ok(grid) => grid,
             Err(val) => return Err(TryFromPacketError::InvalidBrightness(val)),
