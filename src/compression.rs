@@ -67,6 +67,7 @@ pub(crate) fn into_decompressed(
     }
 }
 
+#[allow(clippy::unwrap_used)]
 pub(crate) fn into_compressed(
     kind: CompressionCode,
     payload: Payload,

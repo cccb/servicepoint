@@ -15,7 +15,7 @@ use rand::{
 ///
 /// let b = Brightness::try_from(7).unwrap();
 /// # let connection = FakeConnection;
-/// let result = connection.send(b);
+/// let result = connection.send(BrightnessCommand::from(b));
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Brightness(u8);
@@ -90,7 +90,7 @@ mod tests {
     fn rand_brightness() {
         let mut rng = rand::thread_rng();
         for _ in 0..100 {
-            let _: Brightness = rng.gen();
+            let _: Brightness = rng.r#gen();
         }
     }
 
@@ -104,6 +104,6 @@ mod tests {
     #[cfg(feature = "rand")]
     fn test() {
         let mut rng = rand::thread_rng();
-        assert_ne!(rng.gen::<Brightness>(), rng.gen());
+        assert_ne!(rng.r#gen::<Brightness>(), rng.r#gen());
     }
 }

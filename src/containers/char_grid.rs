@@ -51,6 +51,8 @@ impl CharGrid {
         let height = lines.len();
         let mut result = Self::new(width, height);
         for (row, text_line) in lines.iter().enumerate() {
+            #[allow(clippy::unwrap_used)]
+            // we calculated the width before setting
             result.set_row_str(row, text_line).unwrap()
         }
         result

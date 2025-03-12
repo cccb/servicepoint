@@ -60,6 +60,8 @@ There should be no breaking changes in patch releases, but there may also be fea
 
 All of this means for you: please specify the full version including patch in your Cargo.toml until 1.0 is released.
 
+Release notes are published [here](https://git.berlin.ccc.de/servicepoint/servicepoint/releases), please check them before updating.
+
 ## Features
 
 This library has multiple optional dependencies.

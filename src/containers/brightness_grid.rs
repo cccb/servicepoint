@@ -20,10 +20,13 @@ pub type BrightnessGrid = ValueGrid<Brightness>;
 
 impl BrightnessGrid {
     /// Like [Self::load], but ignoring any out-of-range brightness values
-    pub fn saturating_load(width: usize, height: usize, data: &[u8]) -> Self {
+    pub fn saturating_load(
+        width: usize,
+        height: usize,
+        data: &[u8],
+    ) -> Option<Self> {
         ValueGrid::load(width, height, data)
-            .unwrap()
-            .map(Brightness::saturating_from)
+            .map(move |grid| grid.map(Brightness::saturating_from))
     }
 }
 
@@ -42,7 +45,7 @@ impl From<&BrightnessGrid> for ByteGrid {
             .iter()
             .map(|brightness| (*brightness).into())
             .collect::<Vec<u8>>();
-        ValueGrid::load(value.width(), value.height(), &u8s).unwrap()
+        Self::from_raw_parts_unchecked(value.width(), value.height(), u8s)
     }
 }
 
@@ -54,10 +57,11 @@ impl TryFrom<ByteGrid> for BrightnessGrid {
             .iter()
             .map(|b| Brightness::try_from(*b))
             .collect::<Result<Vec<_>, _>>()?;
-        Ok(
-            BrightnessGrid::load(value.width(), value.height(), &brightnesses)
-                .unwrap(),
-        )
+        Ok(Self::from_raw_parts_unchecked(
+            value.width(),
+            value.height(),
+            brightnesses,
+        ))
     }
 }
 
@@ -88,7 +92,7 @@ mod tests {
                 ]
             )
             .unwrap(),
-            BrightnessGrid::saturating_load(2, 2, &[255u8, 23, 0, 42])
+            BrightnessGrid::saturating_load(2, 2, &[255u8, 23, 0, 42]).unwrap()
         );
     }
 }

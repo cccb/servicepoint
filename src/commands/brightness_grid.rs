@@ -1,6 +1,7 @@
 use crate::{
-    command_code::CommandCode, commands::TryFromPacketError, BrightnessGrid,
-    ByteGrid, Header, Origin, Packet, Tiles, TypedCommand,
+    command_code::CommandCode, commands::check_command_code,
+    commands::TryFromPacketError, BrightnessGrid, ByteGrid, Header, Origin,
+    Packet, Tiles, TypedCommand,
 };
 
 /// Set the brightness of individual tiles in a rectangular area of the display.
@@ -29,7 +30,7 @@ impl TryFrom<Packet> for BrightnessGridCommand {
         let Packet {
             header:
                 Header {
-                    command_code: _,
+                    command_code,
                     a: x,
                     b: y,
                     c: width,
@@ -38,8 +39,21 @@ impl TryFrom<Packet> for BrightnessGridCommand {
             payload,
         } = packet;
 
-        let grid =
-            ByteGrid::load(width as usize, height as usize, &payload).unwrap();
+        check_command_code(command_code, CommandCode::CharBrightness)?;
+
+        let expected_size = width as usize * height as usize;
+        if payload.len() != expected_size {
+            return Err(TryFromPacketError::UnexpectedPayloadSize(
+                payload.len(),
+                expected_size,
+            ));
+        }
+
+        let grid = ByteGrid::from_raw_parts_unchecked(
+            width as usize,
+            height as usize,
+            payload,
+        );
         let grid = match BrightnessGrid::try_from(grid) {
             Ok(grid) => grid,
             Err(val) => return Err(TryFromPacketError::InvalidBrightness(val)),

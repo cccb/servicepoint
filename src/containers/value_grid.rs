@@ -101,6 +101,20 @@ impl<T: Value> ValueGrid<T> {
         })
     }
 
+    #[must_use]
+    pub(crate) fn from_raw_parts_unchecked(
+        width: usize,
+        height: usize,
+        data: Vec<T>,
+    ) -> Self {
+        debug_assert_eq!(data.len(), width * height);
+        Self {
+            data,
+            width,
+            height,
+        }
+    }
+
     /// Iterate over all cells in [ValueGrid].
     ///
     /// Order is equivalent to the following loop:
@@ -189,7 +203,11 @@ impl<T: Value> ValueGrid<T> {
             .iter()
             .map(|elem| f(*elem))
             .collect::<Vec<_>>();
-        ValueGrid::load(self.width(), self.height(), &data).unwrap()
+        ValueGrid {
+            width: self.width(),
+            height: self.height(),
+            data,
+        }
     }
 
     /// Copies a row from the grid.

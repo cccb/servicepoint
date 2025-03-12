@@ -9,6 +9,7 @@ homepage = "https://docs.rs/crate/servicepoint"
 repository = "https://git.berlin.ccc.de/servicepoint/servicepoint"
 readme = "README.md"
 keywords = ["cccb", "cccb-servicepoint"]
+rust-version = "1.70.0"
 
 [lib]
 crate-type = ["rlib"]
@@ -55,6 +56,23 @@ clap = { version = "4.5", features = ["derive"] }
 
 [lints.rust]
 missing-docs = "warn"
+deprecated-safe = "warn"
+future-incompatible = "warn"
+keyword-idents = "warn"
+let-underscore = "warn"
+nonstandard-style = "warn"
+refining_impl_trait_reachable = "warn"
+rust-2024-compatibility = "warn"
+
+[lints.clippy]
+unwrap_used  = "warn"
+expect_used = "warn"
+panic = "warn"
+incompatible_msrv = "forbid"
+
+[lints.rustdoc]
+private_doc_tests = "warn"
+unescaped_backticks = "warn"
 
 [package.metadata.docs.rs]
 all-features = true

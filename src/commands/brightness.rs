@@ -1,6 +1,6 @@
 use crate::{
-    command_code::CommandCode, commands::TryFromPacketError, Brightness,
-    Header, Packet, TypedCommand,
+    command_code::CommandCode, commands::check_command_code,
+    commands::TryFromPacketError, Brightness, Header, Packet, TypedCommand,
 };
 
 /// Set the brightness of all tiles to the same value.
@@ -41,7 +41,7 @@ impl TryFrom<Packet> for BrightnessCommand {
         let Packet {
             header:
                 Header {
-                    command_code: _,
+                    command_code,
                     a,
                     b,
                     c,
@@ -49,6 +49,9 @@ impl TryFrom<Packet> for BrightnessCommand {
                 },
             payload,
         } = packet;
+
+        check_command_code(command_code, CommandCode::Brightness)?;
+
         if payload.len() != 1 {
             return Err(TryFromPacketError::UnexpectedPayloadSize(
                 1,

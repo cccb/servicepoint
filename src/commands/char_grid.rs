@@ -1,6 +1,7 @@
 use crate::{
-    command_code::CommandCode, commands::TryFromPacketError, CharGrid, Header,
-    Origin, Packet, Tiles, TypedCommand,
+    command_code::CommandCode, commands::check_command_code,
+    commands::TryFromPacketError, CharGrid, Header, Origin, Packet, Tiles,
+    TypedCommand,
 };
 
 /// Show text on the screen.
@@ -40,19 +41,35 @@ impl TryFrom<Packet> for CharGridCommand {
         let Packet {
             header:
                 Header {
-                    command_code: _,
-                    a,
-                    b,
-                    c,
-                    d,
+                    command_code,
+                    a: origin_x,
+                    b: origin_y,
+                    c: width,
+                    d: height,
                 },
             payload,
         } = packet;
+
+        check_command_code(command_code, CommandCode::Utf8Data)?;
+
         let payload: Vec<_> =
             String::from_utf8(payload.clone())?.chars().collect();
+
+        let expected_size = width as usize * height as usize;
+        if payload.len() != expected_size {
+            return Err(TryFromPacketError::UnexpectedPayloadSize(
+                expected_size,
+                payload.len(),
+            ));
+        }
+
         Ok(Self {
-            origin: Origin::new(a as usize, b as usize),
-            grid: CharGrid::load(c as usize, d as usize, &payload).unwrap(),
+            origin: Origin::new(origin_x as usize, origin_y as usize),
+            grid: CharGrid::from_raw_parts_unchecked(
+                width as usize,
+                height as usize,
+                payload,
+            ),
         })
     }
 }
