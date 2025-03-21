@@ -1,6 +1,6 @@
 use crate::{
     command_code::CommandCode, commands::check_command_code_only,
-    commands::TryFromPacketError, Packet, TypedCommand,
+    commands::errors::TryFromPacketError, Packet, TypedCommand,
 };
 use std::fmt::Debug;
 
@@ -15,7 +15,7 @@ use std::fmt::Debug;
 /// # let connection = FakeConnection;
 /// connection.send(HardResetCommand).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HardResetCommand;
 
 impl TryFrom<Packet> for HardResetCommand {
@@ -46,8 +46,10 @@ impl From<HardResetCommand> for TypedCommand {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::commands::tests::round_trip;
+    use crate::commands::tests::{round_trip, TestImplementsCommand};
     use crate::Header;
+
+    impl TestImplementsCommand for HardResetCommand {}
 
     #[test]
     fn round_trip_hard_reset() {

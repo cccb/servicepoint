@@ -1,8 +1,7 @@
-use crate::compression::into_compressed;
 use crate::{
-    command_code::CommandCode, commands::TryFromPacketError,
-    compression::into_decompressed, BitVec, CompressionCode, Header, Offset,
-    Packet, TypedCommand,
+    command_code::CommandCode, commands::errors::TryFromPacketError,
+    compression::into_compressed, compression::into_decompressed, BitVec,
+    CompressionCode, Header, Offset, Packet, TryIntoPacketError, TypedCommand,
 };
 
 /// Binary operations for use with the [BitVecCommand] command.
@@ -31,7 +30,7 @@ pub enum BinaryOperation {
 /// For example, [BinaryOperation::Or] can be used to turn on some pixels without affecting other pixels.
 ///
 /// The contained [BitVec] is always uncompressed.
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, Eq)]
 pub struct BitVecCommand {
     /// where to start overwriting pixel data
     pub offset: Offset,
@@ -43,28 +42,31 @@ pub struct BitVecCommand {
     pub compression: CompressionCode,
 }
 
-impl From<BitVecCommand> for Packet {
-    fn from(command: BitVecCommand) -> Self {
-        let command_code = match command.operation {
+impl TryFrom<BitVecCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: BitVecCommand) -> Result<Self, Self::Error> {
+        let command_code = match value.operation {
             BinaryOperation::Overwrite => CommandCode::BitmapLinear,
             BinaryOperation::And => CommandCode::BitmapLinearAnd,
             BinaryOperation::Or => CommandCode::BitmapLinearOr,
             BinaryOperation::Xor => CommandCode::BitmapLinearXor,
         };
 
-        let payload: Vec<_> = command.bitvec.into();
-        let length = payload.len() as u16;
-        let payload = into_compressed(command.compression, payload);
-        Packet {
+        let payload: Vec<_> = value.bitvec.into();
+        let length = payload.len().try_into()?;
+        let payload = into_compressed(value.compression, payload)
+            .ok_or(TryIntoPacketError::CompressionFailed)?;
+        Ok(Packet {
             header: Header {
                 command_code: command_code.into(),
-                a: command.offset as u16,
+                a: value.offset.try_into()?,
                 b: length,
-                c: command.compression.into(),
+                c: value.compression.into(),
                 d: 0,
             },
             payload,
-        }
+        })
     }
 }
 
@@ -135,8 +137,10 @@ impl From<BitVecCommand> for TypedCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::commands::tests::round_trip;
+    use crate::commands::tests::{round_trip, TestImplementsCommand};
     use crate::{commands, Bitmap, BitmapCommand, Origin};
+
+    impl TestImplementsCommand for BitVecCommand {}
 
     #[test]
     fn command_code() {
@@ -193,7 +197,8 @@ mod tests {
                 compression: *compression,
                 operation: BinaryOperation::Overwrite,
             }
-            .into();
+            .try_into()
+            .unwrap();
             let Packet {
                 header,
                 mut payload,
@@ -223,7 +228,8 @@ mod tests {
             compression: CompressionCode::Uncompressed,
             operation: BinaryOperation::Or,
         }
-        .into();
+        .try_into()
+        .unwrap();
         let Header {
             command_code: command,
             a: offset,
@@ -255,7 +261,8 @@ mod tests {
             compression: CompressionCode::Uncompressed,
             operation: BinaryOperation::And,
         }
-        .into();
+        .try_into()
+        .unwrap();
         let Header {
             command_code: command,
             a: offset,
@@ -287,7 +294,8 @@ mod tests {
             compression: CompressionCode::Uncompressed,
             operation: BinaryOperation::Xor,
         }
-        .into();
+        .try_into()
+        .unwrap();
         let Header {
             command_code: command,
             a: offset,

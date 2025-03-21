@@ -1,16 +1,28 @@
-use crate::{Connection, Packet};
+use crate::{Connection, Packet, SendError};
 use log::debug;
+use std::{convert::Infallible, error::Error, fmt::Debug};
 
 #[derive(Debug)]
 /// A fake connection for testing that does not actually send anything.
 pub struct FakeConnection;
 
 impl Connection for FakeConnection {
-    // TODO: () does not implement Error+Debug, some placeholder is needed
-    type Error = std::io::Error;
+    type TransportError = Infallible;
 
-    fn send(&self, packet: impl Into<Packet>) -> Result<(), Self::Error> {
-        let data: Vec<u8> = packet.into().into();
+    fn send<P: TryInto<Packet>>(
+        &self,
+        packet: P,
+    ) -> Result<
+        (),
+        SendError<<P as TryInto<Packet>>::Error, Self::TransportError>,
+    >
+    where
+        <P as TryInto<Packet>>::Error: Error + Debug,
+    {
+        let data: Vec<u8> = packet
+            .try_into()
+            .map(Into::<Vec<u8>>::into)
+            .map_err(SendError::IntoPacket)?;
         debug!("Sending fake packet: {data:?}");
         Ok(())
     }

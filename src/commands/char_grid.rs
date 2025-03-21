@@ -1,7 +1,7 @@
 use crate::{
     command_code::CommandCode, commands::check_command_code,
-    commands::TryFromPacketError, CharGrid, Header, Origin, Packet, Tiles,
-    TypedCommand,
+    commands::errors::TryFromPacketError, CharGrid, Header, Origin, Packet,
+    Tiles, TryIntoPacketError, TypedCommand,
 };
 
 /// Show text on the screen.
@@ -16,7 +16,7 @@ use crate::{
 /// let grid = CharGrid::from("Hello,\nWorld!");
 /// connection.send(CharGridCommand { origin: Origin::ZERO, grid }).expect("send failed");
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CharGridCommand {
     /// which tile the text should start
     pub origin: Origin<Tiles>,
@@ -24,13 +24,15 @@ pub struct CharGridCommand {
     pub grid: CharGrid,
 }
 
-impl From<CharGridCommand> for Packet {
-    fn from(value: CharGridCommand) -> Self {
-        Packet::origin_grid_to_packet(
+impl TryFrom<CharGridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: CharGridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_to_packet(
             value.origin,
             value.grid,
             CommandCode::Utf8Data,
-        )
+        )?)
     }
 }
 
@@ -82,8 +84,10 @@ impl From<CharGridCommand> for TypedCommand {
 
 #[cfg(test)]
 mod tests {
-    use crate::commands::tests::round_trip;
+    use crate::commands::tests::{round_trip, TestImplementsCommand};
     use crate::{CharGrid, CharGridCommand, Origin};
+
+    impl TestImplementsCommand for CharGridCommand {}
 
     #[test]
     fn round_trip_utf8_data() {

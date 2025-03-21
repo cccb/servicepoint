@@ -1,8 +1,10 @@
 use crate::{
-    command_code::CommandCode, commands::TryFromPacketError,
-    compression::into_compressed, compression::into_decompressed, Bitmap,
-    CompressionCode, Grid, Header, Origin, Packet, Pixels, TypedCommand,
-    TILE_SIZE,
+    command_code::CommandCode,
+    commands::errors::{TryFromPacketError, TryIntoPacketError},
+    compression::into_compressed,
+    compression::into_decompressed,
+    Bitmap, CompressionCode, Grid, Header, Origin, Packet, Pixels,
+    TypedCommand, TILE_SIZE,
 };
 
 /// Overwrites a rectangular region of pixels.
@@ -28,7 +30,7 @@ use crate::{
 ///
 /// connection.send(command).expect("send failed");
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BitmapCommand {
     /// where to start drawing the pixels
     pub origin: Origin<Pixels>,
@@ -38,15 +40,18 @@ pub struct BitmapCommand {
     pub compression: CompressionCode,
 }
 
-impl From<BitmapCommand> for Packet {
-    fn from(value: BitmapCommand) -> Self {
+impl TryFrom<BitmapCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: BitmapCommand) -> Result<Self, Self::Error> {
         assert_eq!(value.origin.x % 8, 0);
         assert_eq!(value.bitmap.width() % 8, 0);
 
-        let tile_x = (value.origin.x / TILE_SIZE) as u16;
-        let tile_w = (value.bitmap.width() / TILE_SIZE) as u16;
-        let pixel_h = value.bitmap.height() as u16;
-        let payload = into_compressed(value.compression, value.bitmap.into());
+        let tile_x = (value.origin.x / TILE_SIZE).try_into()?;
+        let tile_w = (value.bitmap.width() / TILE_SIZE).try_into()?;
+        let pixel_h = value.bitmap.height().try_into()?;
+        let payload = into_compressed(value.compression, value.bitmap.into())
+            .ok_or(TryIntoPacketError::CompressionFailed)?;
         let command = match value.compression {
             CompressionCode::Uncompressed => {
                 CommandCode::BitmapLinearWinUncompressed
@@ -61,16 +66,16 @@ impl From<BitmapCommand> for Packet {
             CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
         };
 
-        Packet {
+        Ok(Packet {
             header: Header {
                 command_code: command.into(),
                 a: tile_x,
-                b: value.origin.y as u16,
+                b: value.origin.y.try_into()?,
                 c: tile_w,
                 d: pixel_h,
             },
             payload,
-        }
+        })
     }
 }
 
@@ -162,7 +167,10 @@ impl BitmapCommand {
 mod tests {
     use super::*;
     use crate::command_code::CommandCode;
+    use crate::commands::tests::TestImplementsCommand;
     use crate::*;
+
+    impl TestImplementsCommand for BitmapCommand {}
 
     #[test]
     fn command_code() {
@@ -188,7 +196,8 @@ mod tests {
                 bitmap: Bitmap::new(8, 8).unwrap(),
                 compression: *compression,
             }
-            .into();
+            .try_into()
+            .unwrap();
 
             let Packet {
                 header,

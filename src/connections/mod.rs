@@ -1,8 +1,7 @@
 //! This module contains the [Connection] trait and all implementations provided in this library.
 
 use crate::Packet;
-use std::error::Error;
-use std::fmt::Debug;
+use std::{error::Error, fmt::Debug};
 
 mod fake;
 #[cfg(feature = "protocol_udp")]
@@ -15,6 +14,18 @@ pub use fake::*;
 pub use udp::*;
 #[cfg(feature = "protocol_websocket")]
 pub use websocket::*;
+
+/// An error that can happen when sending a command
+#[derive(Debug, thiserror::Error)]
+pub enum SendError<
+    IntoPacketError: Error + Debug,
+    TransportError: Error + Debug,
+> {
+    #[error(transparent)]
+    Transport(TransportError),
+    #[error(transparent)]
+    IntoPacket(IntoPacketError),
+}
 
 /// A connection to the display.
 ///
@@ -30,7 +41,7 @@ pub use websocket::*;
 /// ```
 pub trait Connection: Debug {
     /// The error that can occur when sending a packet
-    type Error: Error + Debug;
+    type TransportError: Error + Debug;
 
     /// Send something packet-like to the display. Usually this is in the form of a Command.
     ///
@@ -49,5 +60,13 @@ pub trait Connection: Debug {
     ///  connection.send(servicepoint::ClearCommand)
     ///      .expect("send failed");
     /// ```
-    fn send(&self, packet: impl Into<Packet>) -> Result<(), Self::Error>;
+    fn send<P: TryInto<Packet>>(
+        &self,
+        packet: P,
+    ) -> Result<
+        (),
+        SendError<<P as TryInto<Packet>>::Error, Self::TransportError>,
+    >
+    where
+        <P as TryInto<Packet>>::Error: Error + Debug;
 }

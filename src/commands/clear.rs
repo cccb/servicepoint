@@ -1,6 +1,6 @@
 use crate::{
     command_code::CommandCode, commands::check_command_code_only,
-    commands::TryFromPacketError, Packet, TypedCommand,
+    commands::errors::TryFromPacketError, Packet, TypedCommand,
 };
 use std::fmt::Debug;
 
@@ -12,7 +12,7 @@ use std::fmt::Debug;
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
 /// connection.send(ClearCommand).unwrap();
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 /// ```
 pub struct ClearCommand;
 
@@ -43,7 +43,10 @@ impl From<ClearCommand> for TypedCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::commands::tests::TestImplementsCommand;
     use crate::Header;
+
+    impl TestImplementsCommand for ClearCommand {}
 
     #[test]
     fn round_trip() {

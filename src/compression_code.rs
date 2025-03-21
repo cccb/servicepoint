@@ -21,7 +21,7 @@
 /// };
 /// ```
 #[repr(u16)]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompressionCode {
     /// no compression
     Uncompressed = 0x0,

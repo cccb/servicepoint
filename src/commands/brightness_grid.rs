@@ -1,11 +1,11 @@
 use crate::{
     command_code::CommandCode, commands::check_command_code,
-    commands::TryFromPacketError, BrightnessGrid, ByteGrid, Header, Origin,
-    Packet, Tiles, TypedCommand,
+    commands::errors::TryFromPacketError, BrightnessGrid, ByteGrid, Header,
+    Origin, Packet, Tiles, TryIntoPacketError, TypedCommand,
 };
 
 /// Set the brightness of individual tiles in a rectangular area of the display.
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, Eq)]
 pub struct BrightnessGridCommand {
     /// which tile the brightness rectangle should start
     pub origin: Origin<Tiles>,
@@ -13,13 +13,15 @@ pub struct BrightnessGridCommand {
     pub grid: BrightnessGrid,
 }
 
-impl From<BrightnessGridCommand> for Packet {
-    fn from(value: BrightnessGridCommand) -> Self {
-        Packet::origin_grid_to_packet(
+impl TryFrom<BrightnessGridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: BrightnessGridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_to_packet(
             value.origin,
             value.grid,
             CommandCode::CharBrightness,
-        )
+        )?)
     }
 }
 
@@ -74,11 +76,14 @@ impl From<BrightnessGridCommand> for TypedCommand {
 
 #[cfg(test)]
 mod tests {
-    use crate::commands::tests::round_trip;
+    use crate::commands::errors::TryFromPacketError;
+    use crate::commands::tests::{round_trip, TestImplementsCommand};
     use crate::{
         commands, BrightnessGrid, BrightnessGridCommand, Origin, Packet,
-        TryFromPacketError, TypedCommand,
+        TypedCommand,
     };
+
+    impl TestImplementsCommand for BrightnessGridCommand {}
 
     #[test]
     fn round_trip_char_brightness() {
@@ -98,7 +103,7 @@ mod tests {
             origin: Origin::ZERO,
             grid,
         };
-        let mut packet: Packet = command.into();
+        let mut packet: Packet = command.try_into().unwrap();
         let slot = packet.payload.get_mut(1).unwrap();
         *slot = 23;
         assert_eq!(

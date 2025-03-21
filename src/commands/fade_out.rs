@@ -1,6 +1,6 @@
 use crate::{
     command_code::CommandCode, commands::check_command_code_only,
-    commands::TryFromPacketError, Packet, TypedCommand,
+    commands::errors::TryFromPacketError, Packet, TypedCommand,
 };
 use std::fmt::Debug;
 
@@ -15,7 +15,7 @@ use std::fmt::Debug;
 /// # let connection = FakeConnection;
 /// connection.send(FadeOutCommand).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FadeOutCommand;
 
 impl TryFrom<Packet> for FadeOutCommand {
@@ -45,10 +45,11 @@ impl From<FadeOutCommand> for TypedCommand {
 #[cfg(test)]
 mod tests {
     use crate::command_code::CommandCode;
-    use crate::commands::tests::round_trip;
-    use crate::{
-        FadeOutCommand, Header, Packet, TryFromPacketError, TypedCommand,
-    };
+    use crate::commands::errors::TryFromPacketError;
+    use crate::commands::tests::{round_trip, TestImplementsCommand};
+    use crate::{ClearCommand, FadeOutCommand, Header, Packet, TypedCommand};
+
+    impl TestImplementsCommand for FadeOutCommand {}
 
     #[test]
     fn round_trip_fade_out() {

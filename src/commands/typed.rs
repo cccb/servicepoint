@@ -1,14 +1,15 @@
 use crate::{
-    command_code::CommandCode, BitVecCommand, BitmapCommand, BrightnessCommand,
-    BrightnessGridCommand, CharGridCommand, ClearCommand, Cp437GridCommand,
-    FadeOutCommand, HardResetCommand, Header, LoadBitmapError, Packet,
+    command_code::CommandCode, commands::errors::TryFromPacketError,
+    BitVecCommand, BitmapCommand, BrightnessCommand, BrightnessGridCommand,
+    CharGridCommand, ClearCommand, Cp437GridCommand, FadeOutCommand,
+    HardResetCommand, Header, Packet, TryIntoPacketError,
 };
 
 /// This enum contains all commands provided by the library.
 /// This is useful in case you want one data type for all kinds of commands without using `dyn`.
 ///
 /// Please look at the contained structs for documentation per command.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[allow(missing_docs)]
 pub enum TypedCommand {
     Clear(ClearCommand),
@@ -29,40 +30,9 @@ pub enum TypedCommand {
 
     FadeOut(FadeOutCommand),
 
-    #[allow(deprecated)]
     #[deprecated]
+    #[allow(deprecated)]
     BitmapLegacy(crate::BitmapLegacyCommand),
-}
-
-/// Err values for [TypedCommand::try_from].
-#[derive(Debug, PartialEq, thiserror::Error)]
-pub enum TryFromPacketError {
-    /// the contained command code does not correspond to a known command
-    #[error("The command code {0:?} does not correspond to a known command")]
-    InvalidCommand(u16),
-    /// the expected payload size was n, but size m was found
-    #[error("the expected payload size was {0}, but size {1} was found")]
-    UnexpectedPayloadSize(usize, usize),
-    /// Header fields not needed for the command have been used.
-    ///
-    /// Note that these commands would usually still work on the actual display.
-    #[error("Header fields not needed for the command have been used")]
-    ExtraneousHeaderValues,
-    /// The contained compression code is not known. This could be of disabled features.
-    #[error("The compression code {0:?} does not correspond to a known compression algorithm.")]
-    InvalidCompressionCode(u16),
-    /// Decompression of the payload failed. This can be caused by corrupted packets.
-    #[error("The decompression of the payload failed")]
-    DecompressionFailed,
-    /// The given brightness value is out of bounds
-    #[error("The given brightness value {0} is out of bounds.")]
-    InvalidBrightness(u8),
-    /// Some provided text was not valid UTF-8.
-    #[error(transparent)]
-    InvalidUtf8(#[from] std::string::FromUtf8Error),
-    /// The bitmap contained in the payload could not be loaded
-    #[error(transparent)]
-    LoadBitmapFailed(#[from] LoadBitmapError),
 }
 
 impl TryFrom<Packet> for TypedCommand {
@@ -136,27 +106,33 @@ impl TryFrom<Packet> for TypedCommand {
     }
 }
 
-impl From<TypedCommand> for Packet {
-    fn from(command: TypedCommand) -> Self {
-        match command {
+impl TryFrom<TypedCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: TypedCommand) -> Result<Self, Self::Error> {
+        Ok(match value {
             TypedCommand::Clear(c) => c.into(),
-            TypedCommand::CharGrid(c) => c.into(),
-            TypedCommand::Cp437Grid(c) => c.into(),
-            TypedCommand::Bitmap(c) => c.into(),
+            TypedCommand::CharGrid(c) => c.try_into()?,
+            TypedCommand::Cp437Grid(c) => c.try_into()?,
+            TypedCommand::Bitmap(c) => c.try_into()?,
             TypedCommand::Brightness(c) => c.into(),
-            TypedCommand::BrightnessGrid(c) => c.into(),
-            TypedCommand::BitVec(c) => c.into(),
+            TypedCommand::BrightnessGrid(c) => c.try_into()?,
+            TypedCommand::BitVec(c) => c.try_into()?,
             TypedCommand::HardReset(c) => c.into(),
             TypedCommand::FadeOut(c) => c.into(),
             #[allow(deprecated)]
             TypedCommand::BitmapLegacy(c) => c.into(),
-        }
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{Header, Packet, TryFromPacketError, TypedCommand};
+    use crate::commands::errors::TryFromPacketError;
+    use crate::commands::tests::TestImplementsCommand;
+    use crate::{Header, Packet, TypedCommand};
+
+    impl TestImplementsCommand for TypedCommand {}
 
     #[test]
     fn error_invalid_command() {

@@ -2,7 +2,7 @@ use crate::TILE_SIZE;
 use std::marker::PhantomData;
 
 /// An origin marks the top left position of a window sent to the display.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Origin<Unit: DisplayUnit> {
     /// position in the width direction
     pub x: usize,
@@ -44,11 +44,11 @@ impl<T: DisplayUnit> std::ops::Add<Origin<T>> for Origin<T> {
 pub trait DisplayUnit {}
 
 /// Marks something to be measured in number of pixels.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Pixels();
 
 /// Marks something to be measured in number of iles.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Tiles();
 
 impl DisplayUnit for Pixels {}

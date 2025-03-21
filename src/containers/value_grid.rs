@@ -13,7 +13,7 @@ impl<T: Sized + Default + Copy + Clone + Debug> Value for T {}
 ///
 /// This structure can be used with any type that implements the [Value] trait.
 /// You can also use the concrete type aliases provided in this crate, e.g. [CharGrid] and [ByteGrid].
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ValueGrid<T: Value> {
     width: usize,
     height: usize,

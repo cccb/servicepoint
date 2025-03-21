@@ -23,9 +23,8 @@
 //! let packet = Packet::try_from(bytes).expect("could not read packet from bytes");
 //! ```
 
-use crate::command_code::CommandCode;
-use crate::{Grid, Origin, Tiles};
-use std::mem::size_of;
+use crate::{command_code::CommandCode, Grid, Origin, Tiles};
+use std::{mem::size_of, num::TryFromIntError};
 
 /// A raw header.
 ///
@@ -144,17 +143,17 @@ impl Packet {
         origin: Origin<Tiles>,
         grid: impl Grid<T> + Into<Payload>,
         command_code: CommandCode,
-    ) -> Packet {
-        Packet {
+    ) -> Result<Packet, TryFromIntError> {
+        Ok(Packet {
             header: Header {
                 command_code: command_code.into(),
-                a: origin.x as u16,
-                b: origin.y as u16,
-                c: grid.width() as u16,
-                d: grid.height() as u16,
+                a: origin.x.try_into()?,
+                b: origin.y.try_into()?,
+                c: grid.width().try_into()?,
+                d: grid.height().try_into()?,
             },
             payload: grid.into(),
-        }
+        })
     }
 
     pub(crate) fn command_code_only(c: CommandCode) -> Self {

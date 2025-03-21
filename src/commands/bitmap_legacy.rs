@@ -1,6 +1,6 @@
 use crate::{
     command_code::CommandCode, commands::check_command_code_only,
-    commands::TryFromPacketError, Packet, TypedCommand,
+    commands::errors::TryFromPacketError, Packet, TypedCommand,
 };
 use std::fmt::Debug;
 
@@ -17,7 +17,7 @@ use std::fmt::Debug;
 /// # #[allow(deprecated)]
 /// connection.send(BitmapLegacyCommand).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[deprecated]
 pub struct BitmapLegacyCommand;
 
@@ -54,8 +54,10 @@ impl From<BitmapLegacyCommand> for TypedCommand {
 #[allow(deprecated)]
 mod tests {
     use super::*;
-    use crate::commands::tests::round_trip;
-    use crate::Header;
+    use crate::commands::tests::{round_trip, TestImplementsCommand};
+    use crate::{Command, Header, TryIntoPacket};
+
+    impl TestImplementsCommand for BitmapLegacyCommand {}
 
     #[test]
     fn invalid_fields() {

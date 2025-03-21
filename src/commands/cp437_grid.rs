@@ -1,7 +1,7 @@
 use crate::{
     command_code::CommandCode, commands::check_command_code,
-    commands::TryFromPacketError, Cp437Grid, Header, Origin, Packet, Tiles,
-    TypedCommand,
+    commands::errors::TryFromPacketError, Cp437Grid, Header, Origin, Packet,
+    Tiles, TryIntoPacketError, TypedCommand,
 };
 
 /// Show text on the screen.
@@ -27,7 +27,7 @@ use crate::{
 /// connection.send(Cp437GridCommand{ origin: Origin::new(2, 2), grid }).unwrap();
 /// ```
 /// [CP-437]: https://en.wikipedia.org/wiki/Code_page_437
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Cp437GridCommand {
     /// which tile the text should start
     pub origin: Origin<Tiles>,
@@ -35,13 +35,15 @@ pub struct Cp437GridCommand {
     pub grid: Cp437Grid,
 }
 
-impl From<Cp437GridCommand> for Packet {
-    fn from(value: Cp437GridCommand) -> Self {
-        Packet::origin_grid_to_packet(
+impl TryFrom<Cp437GridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: Cp437GridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_to_packet(
             value.origin,
             value.grid,
             CommandCode::Cp437Data,
-        )
+        )?)
     }
 }
 
@@ -91,7 +93,9 @@ impl From<Cp437GridCommand> for TypedCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::commands::tests::round_trip;
+    use crate::commands::tests::{round_trip, TestImplementsCommand};
+
+    impl TestImplementsCommand for Cp437GridCommand {}
 
     #[test]
     fn round_trip_cp437_data() {

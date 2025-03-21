@@ -1,6 +1,7 @@
 use crate::{
     command_code::CommandCode, commands::check_command_code,
-    commands::TryFromPacketError, Brightness, Header, Packet, TypedCommand,
+    commands::errors::TryFromPacketError, Brightness, Header, Packet,
+    TypedCommand,
 };
 
 /// Set the brightness of all tiles to the same value.
@@ -13,7 +14,7 @@ use crate::{
 /// let command = BrightnessCommand { brightness: Brightness::MAX };
 /// connection.send(command).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BrightnessCommand {
     /// the brightness to set all pixels to
     pub brightness: Brightness,
@@ -85,11 +86,13 @@ impl From<Brightness> for BrightnessCommand {
 #[cfg(test)]
 mod tests {
     use crate::command_code::CommandCode;
-    use crate::commands::tests::round_trip;
+    use crate::commands::errors::TryFromPacketError;
+    use crate::commands::tests::{round_trip, TestImplementsCommand};
     use crate::{
-        commands, Brightness, BrightnessCommand, Header, Packet,
-        TryFromPacketError, TypedCommand,
+        commands, Brightness, BrightnessCommand, Header, Packet, TypedCommand,
     };
+
+    impl TestImplementsCommand for BrightnessCommand {}
 
     #[test]
     fn brightness_as_command() {

@@ -6,6 +6,7 @@ mod brightness_grid;
 mod char_grid;
 mod clear;
 mod cp437_grid;
+mod errors;
 mod fade_out;
 mod hard_reset;
 mod typed;
@@ -22,6 +23,7 @@ pub use brightness_grid::*;
 pub use char_grid::*;
 pub use clear::*;
 pub use cp437_grid::*;
+pub use errors::*;
 pub use fade_out::*;
 pub use hard_reset::*;
 pub use typed::*;
@@ -74,9 +76,12 @@ pub use typed::*;
 /// # let connection = FakeConnection;
 /// connection.send(command).unwrap();
 /// ```
-pub trait Command: Debug + Clone + PartialEq + Into<Packet> {}
+pub trait Command:
+    Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet>
+{
+}
 
-impl<T: Debug + Clone + PartialEq + Into<Packet>> Command for T {}
+impl<T: Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet>> Command for T {}
 
 fn check_command_code_only(
     packet: Packet,
@@ -121,8 +126,10 @@ fn check_command_code(
 mod tests {
     use crate::*;
 
+    pub(crate) trait TestImplementsCommand: Command {}
+
     pub(crate) fn round_trip(original: TypedCommand) {
-        let packet: Packet = original.clone().into();
+        let packet: Packet = original.clone().try_into().unwrap();
         let copy: TypedCommand = match TypedCommand::try_from(packet) {
             Ok(command) => command,
             Err(err) => panic!("could not reload {original:?}: {err:?}"),

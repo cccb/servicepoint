@@ -1,4 +1,5 @@
-use crate::{Connection, Packet};
+use crate::{Connection, Packet, SendError};
+use std::{error::Error, fmt::Debug};
 
 /// A connection using the WebSocket protocol.
 ///
@@ -20,12 +21,27 @@ pub struct WebsocketConnection(
 );
 
 impl Connection for WebsocketConnection {
-    type Error = tungstenite::Error;
+    type TransportError = tungstenite::Error;
 
-    fn send(&self, packet: impl Into<Packet>) -> Result<(), Self::Error> {
-        let data: Vec<u8> = packet.into().into();
+    fn send<P: TryInto<Packet>>(
+        &self,
+        packet: P,
+    ) -> Result<
+        (),
+        SendError<<P as TryInto<Packet>>::Error, Self::TransportError>,
+    >
+    where
+        <P as TryInto<Packet>>::Error: Error + Debug,
+    {
+        let data: Vec<u8> = packet
+            .try_into()
+            .map(Into::<Vec<u8>>::into)
+            .map_err(SendError::IntoPacket)?
+            .into();
         let mut socket = self.0.lock().unwrap();
-        socket.send(tungstenite::Message::Binary(data.into()))
+        socket
+            .send(tungstenite::Message::Binary(data.into()))
+            .map_err(SendError::Transport)
     }
 }
 
@@ -63,6 +79,6 @@ impl WebsocketConnection {
 
 impl Drop for WebsocketConnection {
     fn drop(&mut self) {
-        _ = self.0.try_lock().map(move |mut sock| sock.close(None));
+        drop(self.0.try_lock().map(move |mut sock| sock.close(None)));
     }
 }

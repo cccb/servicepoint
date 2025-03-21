@@ -1,6 +1,5 @@
-use crate::{Connection, Packet};
-use std::fmt::Debug;
-use std::net::UdpSocket;
+use crate::{Connection, Packet, SendError};
+use std::{error::Error, fmt::Debug, net::UdpSocket};
 
 /// A connection using the UDP protocol.
 ///
@@ -39,11 +38,26 @@ impl UdpConnection {
 }
 
 impl Connection for UdpConnection {
-    type Error = std::io::Error;
+    type TransportError = std::io::Error;
 
-    fn send(&self, packet: impl Into<Packet>) -> Result<(), Self::Error> {
-        let data: Vec<u8> = packet.into().into();
-        self.socket.send(&data).map(move |_| ()) // ignore Ok value
+    fn send<P: TryInto<Packet>>(
+        &self,
+        packet: P,
+    ) -> Result<
+        (),
+        SendError<<P as TryInto<Packet>>::Error, Self::TransportError>,
+    >
+    where
+        <P as TryInto<Packet>>::Error: Error + Debug,
+    {
+        let data: Vec<u8> = packet
+            .try_into()
+            .map(Into::<Vec<u8>>::into)
+            .map_err(SendError::IntoPacket)?;
+        self.socket
+            .send(&data)
+            .map(move |_| ())
+            .map_err(SendError::Transport) // ignore Ok value
     }
 }
 
