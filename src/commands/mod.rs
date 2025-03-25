@@ -11,7 +11,7 @@ mod fade_out;
 mod hard_reset;
 mod typed;
 
-use crate::command_code::CommandCode;
+use crate::command_code::{CommandCode, InvalidCommandCodeError};
 use crate::{Header, Packet};
 use std::fmt::Debug;
 
@@ -99,9 +99,7 @@ fn check_command_code_only(
         payload,
     } = packet;
     if packet.header.command_code != u16::from(code) {
-        Some(TryFromPacketError::InvalidCommand(
-            packet.header.command_code,
-        ))
+        Some(InvalidCommandCodeError(packet.header.command_code).into())
     } else if !payload.is_empty() {
         Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
     } else if a != 0 || b != 0 || c != 0 || d != 0 {
@@ -114,11 +112,11 @@ fn check_command_code_only(
 fn check_command_code(
     actual: u16,
     expected: CommandCode,
-) -> Result<(), TryFromPacketError> {
+) -> Result<(), InvalidCommandCodeError> {
     if actual == u16::from(expected) {
         Ok(())
     } else {
-        Err(TryFromPacketError::InvalidCommand(actual))
+        Err(InvalidCommandCodeError(actual))
     }
 }
 
@@ -126,6 +124,10 @@ fn check_command_code(
 mod tests {
     use crate::*;
 
+    #[allow(
+        unused,
+        reason = "false positive, used in submodules that check if structs impl Command"
+    )]
     pub(crate) trait TestImplementsCommand: Command {}
 
     pub(crate) fn round_trip(original: TypedCommand) {

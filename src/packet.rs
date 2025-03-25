@@ -92,15 +92,19 @@ impl From<Packet> for Vec<u8> {
     }
 }
 
+#[derive(Debug, thiserror::Error, Eq, PartialEq)]
+#[error("The provided slice is smaller than the header size, so it cannot be read as a packet.")]
+pub struct SliceSmallerThanHeader;
+
 impl TryFrom<&[u8]> for Packet {
-    type Error = ();
+    type Error = SliceSmallerThanHeader;
 
     /// Tries to interpret the bytes as a [Packet].
     ///
     /// returns: `Error` if slice is not long enough to be a [Packet]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         if value.len() < size_of::<Header>() {
-            return Err(());
+            return Err(SliceSmallerThanHeader);
         }
 
         let header = {
@@ -124,7 +128,7 @@ impl TryFrom<&[u8]> for Packet {
 }
 
 impl TryFrom<Vec<u8>> for Packet {
-    type Error = ();
+    type Error = SliceSmallerThanHeader;
 
     fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
         Self::try_from(value.as_slice())
@@ -203,6 +207,9 @@ mod tests {
     #[test]
     fn too_small() {
         let data = vec![0u8; 4];
-        assert_eq!(Packet::try_from(data.as_slice()), Err(()));
+        assert_eq!(
+            Packet::try_from(data.as_slice()),
+            Err(SliceSmallerThanHeader)
+        );
     }
 }

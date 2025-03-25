@@ -33,8 +33,12 @@ impl From<CommandCode> for u16 {
     }
 }
 
+#[derive(Debug, thiserror::Error, Eq, PartialEq)]
+#[error("The command code {0} is not known.")]
+pub struct InvalidCommandCodeError(pub u16);
+
 impl TryFrom<u16> for CommandCode {
-    type Error = ();
+    type Error = InvalidCommandCodeError;
 
     /// Returns the enum value for the specified `u16` or `Error` if the code is unknown.
     fn try_from(value: u16) -> Result<Self, Self::Error> {
@@ -97,7 +101,7 @@ impl TryFrom<u16> for CommandCode {
             value if value == CommandCode::Utf8Data as u16 => {
                 Ok(CommandCode::Utf8Data)
             }
-            _ => Err(()),
+            _ => Err(InvalidCommandCodeError(value)),
         }
     }
 }

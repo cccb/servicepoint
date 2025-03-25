@@ -1,7 +1,8 @@
 use crate::{
-    command_code::CommandCode, commands::errors::TryFromPacketError,
-    compression::into_compressed, compression::into_decompressed, BitVec,
-    CompressionCode, Header, Offset, Packet, TryIntoPacketError, TypedCommand,
+    command_code::CommandCode, command_code::InvalidCommandCodeError,
+    commands::errors::TryFromPacketError, compression::into_compressed,
+    compression::into_decompressed, BitVec, CompressionCode, Header, Offset,
+    Packet, TryIntoPacketError, TypedCommand,
 };
 
 /// Binary operations for use with the [`BitVecCommand`] command.
@@ -86,29 +87,21 @@ impl TryFrom<Packet> for BitVecCommand {
                 },
             payload,
         } = packet;
-        let command_code = CommandCode::try_from(command_code)
-            .map_err(|()| TryFromPacketError::InvalidCommand(command_code))?;
+        let command_code = CommandCode::try_from(command_code)?;
         let operation = match command_code {
             CommandCode::BitmapLinear => BinaryOperation::Overwrite,
             CommandCode::BitmapLinearAnd => BinaryOperation::And,
             CommandCode::BitmapLinearOr => BinaryOperation::Or,
             CommandCode::BitmapLinearXor => BinaryOperation::Xor,
             _ => {
-                return Err(TryFromPacketError::InvalidCommand(
-                    command_code.into(),
-                ))
+                return Err(InvalidCommandCodeError(command_code.into()).into());
             }
         };
 
         if reserved != 0 {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
         }
-        let compression = match CompressionCode::try_from(sub) {
-            Err(()) => {
-                return Err(TryFromPacketError::InvalidCompressionCode(sub));
-            }
-            Ok(value) => value,
-        };
+        let compression = CompressionCode::try_from(sub)?;
         let payload = match into_decompressed(compression, payload) {
             None => return Err(TryFromPacketError::DecompressionFailed),
             Some(value) => value,
@@ -138,6 +131,7 @@ impl From<BitVecCommand> for TypedCommand {
 mod tests {
     use super::*;
     use crate::commands::tests::{round_trip, TestImplementsCommand};
+    use crate::compression_code::InvalidCompressionCodeError;
     use crate::{commands, Bitmap, BitmapCommand, Origin};
 
     impl TestImplementsCommand for BitVecCommand {}
@@ -152,9 +146,7 @@ mod tests {
                     ..Default::default()
                 }
             }),
-            Err(TryFromPacketError::InvalidCommand(
-                CommandCode::Brightness.into()
-            ))
+            Err(InvalidCommandCodeError(CommandCode::Brightness.into()).into())
         );
     }
 
@@ -285,7 +277,7 @@ mod tests {
         };
         assert_eq!(
             TypedCommand::try_from(p),
-            Err(TryFromPacketError::InvalidCompressionCode(42))
+            Err(InvalidCompressionCodeError(42).into())
         );
     }
 

@@ -1,6 +1,7 @@
 use crate::{
-    command_code::CommandCode, commands::check_command_code_only,
-    commands::errors::TryFromPacketError, Packet, TypedCommand,
+    command_code::CommandCode,
+    commands::{check_command_code_only, errors::TryFromPacketError},
+    Packet, TypedCommand,
 };
 use std::fmt::Debug;
 
@@ -43,6 +44,7 @@ impl From<ClearCommand> for TypedCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::command_code::InvalidCommandCodeError;
     use crate::commands::tests::TestImplementsCommand;
     use crate::Header;
 
@@ -85,9 +87,7 @@ mod tests {
             payload: vec![],
         };
         assert_eq!(
-            Err(TryFromPacketError::InvalidCommand(
-                CommandCode::HardReset.into()
-            )),
+            Err(InvalidCommandCodeError(CommandCode::HardReset.into()).into()),
             ClearCommand::try_from(p)
         );
     }

@@ -1,5 +1,5 @@
 use crate::{
-    command_code::CommandCode,
+    command_code::{CommandCode, InvalidCommandCodeError},
     commands::errors::{TryFromPacketError, TryIntoPacketError},
     compression::into_compressed,
     compression::into_decompressed,
@@ -83,10 +83,7 @@ impl TryFrom<Packet> for BitmapCommand {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
-        let code = CommandCode::try_from(packet.header.command_code).map_err(
-            |()| TryFromPacketError::InvalidCommand(packet.header.command_code),
-        )?;
-
+        let code = CommandCode::try_from(packet.header.command_code)?;
         match code {
             CommandCode::BitmapLinearWinUncompressed => {
                 Self::packet_into_bitmap_win(
@@ -111,9 +108,9 @@ impl TryFrom<Packet> for BitmapCommand {
                 Self::packet_into_bitmap_win(packet, CompressionCode::Zstd)
             }
 
-            _ => Err(TryFromPacketError::InvalidCommand(
-                packet.header.command_code,
-            )),
+            _ => {
+                Err(InvalidCommandCodeError(packet.header.command_code).into())
+            }
         }
     }
 }
@@ -182,9 +179,7 @@ mod tests {
                     ..Default::default()
                 }
             }),
-            Err(TryFromPacketError::InvalidCommand(
-                CommandCode::Brightness.into()
-            ))
+            Err(InvalidCommandCodeError(CommandCode::Brightness.into()).into())
         );
     }
 

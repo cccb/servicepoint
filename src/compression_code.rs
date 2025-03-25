@@ -54,6 +54,10 @@ impl CompressionCode {
     ];
 }
 
+#[derive(Debug, thiserror::Error, Eq, PartialEq)]
+#[error("The compression code {0} is not known.")]
+pub struct InvalidCompressionCodeError(pub u16);
+
 impl From<CompressionCode> for u16 {
     fn from(value: CompressionCode) -> Self {
         value as u16
@@ -61,7 +65,7 @@ impl From<CompressionCode> for u16 {
 }
 
 impl TryFrom<u16> for CompressionCode {
-    type Error = ();
+    type Error = InvalidCompressionCodeError;
 
     fn try_from(value: u16) -> Result<Self, Self::Error> {
         match value {
@@ -84,7 +88,7 @@ impl TryFrom<u16> for CompressionCode {
             value if value == CompressionCode::Zstd as u16 => {
                 Ok(CompressionCode::Zstd)
             }
-            _ => Err(()),
+            _ => Err(InvalidCompressionCodeError(value)),
         }
     }
 }

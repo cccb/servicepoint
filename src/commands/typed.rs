@@ -2,7 +2,7 @@ use crate::{
     command_code::CommandCode, commands::errors::TryFromPacketError,
     BitVecCommand, BitmapCommand, BrightnessCommand, BrightnessGridCommand,
     CharGridCommand, ClearCommand, Cp437GridCommand, FadeOutCommand,
-    HardResetCommand, Header, Packet, TryIntoPacketError,
+    HardResetCommand, Packet, TryIntoPacketError,
 };
 
 /// This enum contains all commands provided by the library.
@@ -31,18 +31,7 @@ impl TryFrom<Packet> for TypedCommand {
 
     /// Try to interpret the [Packet] as one containing a [Command]
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
-        let Packet {
-            header: Header { command_code, .. },
-            ..
-        } = packet;
-        let command_code = match CommandCode::try_from(command_code) {
-            Err(()) => {
-                return Err(TryFromPacketError::InvalidCommand(command_code));
-            }
-            Ok(value) => value,
-        };
-
-        Ok(match command_code {
+        Ok(match CommandCode::try_from(packet.header.command_code)? {
             CommandCode::Clear => {
                 TypedCommand::Clear(crate::ClearCommand::try_from(packet)?)
             }
@@ -119,9 +108,10 @@ impl TryFrom<TypedCommand> for Packet {
 
 #[cfg(test)]
 mod tests {
-    use crate::commands::errors::TryFromPacketError;
-    use crate::commands::tests::TestImplementsCommand;
-    use crate::{Header, Packet, TypedCommand};
+    use crate::{
+        command_code::InvalidCommandCodeError,
+        commands::tests::TestImplementsCommand, Header, Packet, TypedCommand,
+    };
 
     impl TestImplementsCommand for TypedCommand {}
 
@@ -138,9 +128,6 @@ mod tests {
             payload: vec![],
         };
         let result = TypedCommand::try_from(p);
-        assert!(matches!(
-            result,
-            Err(TryFromPacketError::InvalidCommand(0xFF))
-        ));
+        assert_eq!(result, Err(InvalidCommandCodeError(0xFF).into()));
     }
 }
