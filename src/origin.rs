@@ -66,27 +66,6 @@ impl From<&Origin<Tiles>> for Origin<Pixels> {
     }
 }
 
-impl TryFrom<&Origin<Pixels>> for Origin<Tiles> {
-    type Error = ();
-
-    fn try_from(value: &Origin<Pixels>) -> Result<Self, Self::Error> {
-        let (x, x_rem) = (value.x / TILE_SIZE, value.x % TILE_SIZE);
-        if x_rem != 0 {
-            return Err(());
-        }
-        let (y, y_rem) = (value.y / TILE_SIZE, value.y % TILE_SIZE);
-        if y_rem != 0 {
-            return Err(());
-        }
-
-        Ok(Self {
-            x,
-            y,
-            phantom_data: PhantomData,
-        })
-    }
-}
-
 impl<Unit: DisplayUnit> Default for Origin<Unit> {
     fn default() -> Self {
         Self::ZERO
@@ -103,28 +82,6 @@ mod tests {
         let actual: Origin<Pixels> = Origin::from(&tile);
         let expected: Origin<Pixels> = Origin::new(8, 16);
         assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn origin_pixel_to_tile() {
-        let pixel: Origin<Pixels> = Origin::new(8, 16);
-        let actual: Origin<Tiles> = Origin::try_from(&pixel).unwrap();
-        let expected: Origin<Tiles> = Origin::new(1, 2);
-        assert_eq!(actual, expected);
-    }
-
-    #[test]
-    #[should_panic]
-    fn origin_pixel_to_tile_fail_y() {
-        let pixel: Origin<Pixels> = Origin::new(8, 15);
-        let _: Origin<Tiles> = Origin::try_from(&pixel).unwrap();
-    }
-
-    #[test]
-    #[should_panic]
-    fn origin_pixel_to_tile_fail_x() {
-        let pixel: Origin<Pixels> = Origin::new(7, 16);
-        let _: Origin<Tiles> = Origin::try_from(&pixel).unwrap();
     }
 
     #[test]
