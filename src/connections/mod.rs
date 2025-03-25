@@ -21,9 +21,11 @@ pub enum SendError<
     IntoPacketError: Error + Debug,
     TransportError: Error + Debug,
 > {
-    #[error(transparent)]
+    /// An error occurred while sending the bytes via the underlying transport
+    #[error("An error occurred while sending the bytes via the underlying transport: {0:?}")]
     Transport(TransportError),
-    #[error(transparent)]
+    /// An error occurred while preparing the data to send
+    #[error("An error occurred while preparing the data to send: {0:?}")]
     IntoPacket(IntoPacketError),
 }
 

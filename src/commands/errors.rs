@@ -32,6 +32,7 @@ pub enum TryFromPacketError {
     LoadBitmapFailed(#[from] LoadBitmapError),
 }
 
+/// An error that can occur when parsing a raw packet as a command
 #[derive(Debug, PartialEq, thiserror::Error)]
 pub enum TryIntoPacketError {
     /// Compression of the payload failed.
