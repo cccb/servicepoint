@@ -54,14 +54,11 @@ impl WebsocketConnection {
     ///
     /// ```no_run
     /// use tungstenite::http::Uri;
-    /// use servicepoint::{
-    ///     Command,
-    ///     connections::{WebsocketConnection as WebsocketConnection, Connection}
-    /// };
+    /// use servicepoint::{ClearCommand, WebsocketConnection, Connection};
     /// let uri = "ws://localhost:8080".parse().unwrap();
     /// let mut connection = WebsocketConnection::open(uri)
     ///     .expect("could not connect");
-    /// connection.send(Command::Clear)
+    /// connection.send(ClearCommand)
     ///     .expect("send failed");
     /// ```
     pub fn open(uri: tungstenite::http::Uri) -> tungstenite::Result<Self> {
