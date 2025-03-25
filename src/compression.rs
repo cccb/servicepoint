@@ -2,8 +2,9 @@
 use bzip2::read::{BzDecoder, BzEncoder};
 #[cfg(feature = "compression_zlib")]
 use flate2::{FlushCompress, FlushDecompress, Status};
+#[allow(unused, reason = "Traits are used depending on enabled features")]
 use log::error;
-#[allow(unused)]
+#[allow(unused, reason = "Traits are used depending on enabled features")]
 use std::io::{Read, Write};
 #[cfg(feature = "compression_zstd")]
 use zstd::{Decoder as ZstdDecoder, Encoder as ZstdEncoder};
