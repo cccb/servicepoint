@@ -32,10 +32,10 @@ pub enum BinaryOperation {
 /// The contained [BitVec] is always uncompressed.
 #[derive(Clone, PartialEq, Debug, Eq)]
 pub struct BitVecCommand {
-    /// where to start overwriting pixel data
-    pub offset: Offset,
     /// the pixels to send to the display as one long row
     pub bitvec: BitVec,
+    /// where to start overwriting pixel data
+    pub offset: Offset,
     /// The operation to apply on the display per bit comparing old and new state.
     pub operation: BinaryOperation,
     /// how to compress the command when converting to packet

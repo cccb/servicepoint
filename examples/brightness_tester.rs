@@ -18,8 +18,8 @@ fn main() {
     bitmap.fill(true);
 
     let command = BitmapCommand {
-        origin: Origin::ZERO,
         bitmap,
+        origin: Origin::ZERO,
         compression: CompressionCode::default(),
     };
     connection.send(command).expect("send failed");

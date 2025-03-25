@@ -11,27 +11,18 @@ use crate::{
 /// Please look at the contained structs for documentation per command.
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[allow(missing_docs)]
+#[allow(deprecated)]
 pub enum TypedCommand {
     Clear(ClearCommand),
-
     CharGrid(CharGridCommand),
-
     Cp437Grid(Cp437GridCommand),
-
     Bitmap(BitmapCommand),
-
     Brightness(BrightnessCommand),
-
     BrightnessGrid(BrightnessGridCommand),
-
     BitVec(BitVecCommand),
-
     HardReset(HardResetCommand),
-
     FadeOut(FadeOutCommand),
-
     #[deprecated]
-    #[allow(deprecated)]
     BitmapLegacy(crate::BitmapLegacyCommand),
 }
 

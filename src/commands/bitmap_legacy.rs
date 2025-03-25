@@ -54,8 +54,10 @@ impl From<BitmapLegacyCommand> for TypedCommand {
 #[allow(deprecated)]
 mod tests {
     use super::*;
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
-    use crate::{Command, Header, TryIntoPacket};
+    use crate::{
+        commands::tests::{round_trip, TestImplementsCommand},
+        Header
+    };
 
     impl TestImplementsCommand for BitmapLegacyCommand {}
 

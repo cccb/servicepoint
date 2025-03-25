@@ -7,10 +7,10 @@ use crate::{
 /// Set the brightness of individual tiles in a rectangular area of the display.
 #[derive(Clone, PartialEq, Debug, Eq)]
 pub struct BrightnessGridCommand {
-    /// which tile the brightness rectangle should start
-    pub origin: Origin<Tiles>,
     /// the brightness values per tile
     pub grid: BrightnessGrid,
+    /// which tile the brightness rectangle should start
+    pub origin: Origin<Tiles>,
 }
 
 impl TryFrom<BrightnessGridCommand> for Packet {

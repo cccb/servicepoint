@@ -29,8 +29,8 @@ fn main() {
         filled_grid.fill(true);
 
         let command = BitmapCommand {
-            origin: Origin::ZERO,
             bitmap: filled_grid,
+            origin: Origin::ZERO,
             compression: CompressionCode::default(),
         };
         connection.send(command).expect("send failed");

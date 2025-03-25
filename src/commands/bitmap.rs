@@ -32,10 +32,10 @@ use crate::{
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BitmapCommand {
-    /// where to start drawing the pixels
-    pub origin: Origin<Pixels>,
     /// the pixels to send
     pub bitmap: Bitmap,
+    /// where to start drawing the pixels
+    pub origin: Origin<Pixels>,
     /// how to compress the command when converting to packet
     pub compression: CompressionCode,
 }

@@ -23,8 +23,8 @@ fn main() {
 
     loop {
         let command = BitmapCommand {
-            origin: Origin::ZERO,
             bitmap: field.clone(),
+            origin: Origin::ZERO,
             compression: CompressionCode::default(),
         };
         connection.send(command).expect("could not send");

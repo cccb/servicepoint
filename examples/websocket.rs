@@ -12,8 +12,8 @@ fn main() {
     pixels.fill(true);
 
     let command = BitmapCommand {
-        origin: Origin::ZERO,
         bitmap: pixels,
+        origin: Origin::ZERO,
         compression: CompressionCode::default(),
     };
     connection.send(command).unwrap();

@@ -29,10 +29,10 @@ use crate::{
 /// [CP-437]: https://en.wikipedia.org/wiki/Code_page_437
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Cp437GridCommand {
-    /// which tile the text should start
-    pub origin: Origin<Tiles>,
     /// the text to send to the display
     pub grid: Cp437Grid,
+    /// which tile the text should start
+    pub origin: Origin<Tiles>,
 }
 
 impl TryFrom<Cp437GridCommand> for Packet {

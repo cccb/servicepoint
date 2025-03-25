@@ -18,10 +18,10 @@ use crate::{
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CharGridCommand {
-    /// which tile the text should start
-    pub origin: Origin<Tiles>,
     /// the text to send to the display
     pub grid: CharGrid,
+    /// which tile the text should start on
+    pub origin: Origin<Tiles>,
 }
 
 impl TryFrom<CharGridCommand> for Packet {

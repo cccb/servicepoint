@@ -40,8 +40,8 @@ fn main() {
 
     let text = cli.text.join("\n");
     let command = CharGridCommand {
-        origin: Origin::ZERO,
         grid: CharGrid::wrap_str(TILE_WIDTH, &text),
+        origin: Origin::ZERO,
     };
     connection.send(command).expect("sending text failed");
 }

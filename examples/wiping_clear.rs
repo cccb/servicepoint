@@ -33,8 +33,8 @@ fn main() {
         }
 
         let command = BitmapCommand {
-            origin: Origin::ZERO,
             bitmap: enabled_pixels.clone(),
+            origin: Origin::ZERO,
             compression: CompressionCode::default(),
         };
         connection
