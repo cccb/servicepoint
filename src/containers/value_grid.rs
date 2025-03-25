@@ -50,6 +50,7 @@ impl<T: Value> ValueGrid<T> {
     /// - height: size in y-direction
     ///
     /// returns: [ValueGrid] initialized to default value.
+    #[must_use]
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             data: vec![Default::default(); width * height],
@@ -193,6 +194,7 @@ impl<T: Value> ValueGrid<T> {
     /// ```
     /// [Brightness]: [crate::Brightness]
     /// [Command]: [crate::Command]
+    #[must_use]
     pub fn map<TConverted, F>(&self, f: F) -> ValueGrid<TConverted>
     where
         TConverted: Value,
@@ -358,11 +360,13 @@ impl<T: Value> Grid<T> for ValueGrid<T> {
 
 impl<T: Value> DataRef<T> for ValueGrid<T> {
     /// Get the underlying byte rows mutable
+    #[must_use]
     fn data_ref_mut(&mut self) -> &mut [T] {
         self.data.as_mut_slice()
     }
 
     /// Get the underlying byte rows read only
+    #[must_use]
     fn data_ref(&self) -> &[T] {
         self.data.as_slice()
     }
@@ -376,6 +380,7 @@ impl<T: Value> From<ValueGrid<T>> for Vec<T> {
 }
 
 /// An iterator iver the rows in a [ValueGrid]
+#[must_use]
 pub struct IterGridRows<'t, T: Value> {
     grid: &'t ValueGrid<T>,
     row: usize,

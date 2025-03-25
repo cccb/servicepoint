@@ -33,6 +33,7 @@ impl CharGrid {
     /// # use servicepoint::CharGrid;
     /// let grid = CharGrid::wrap_str(2, "abc\ndef");
     /// ```
+    #[must_use]
     pub fn wrap_str(width: usize, text: &str) -> Self {
         let lines = text
             .split('\n')

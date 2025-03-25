@@ -18,6 +18,7 @@ use rand::{
 /// let result = connection.send(BrightnessCommand::from(b));
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
+#[repr(transparent)]
 pub struct Brightness(u8);
 
 impl From<Brightness> for u8 {

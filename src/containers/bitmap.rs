@@ -153,6 +153,7 @@ impl Bitmap {
     ///     pixel.set(index % 2 == 0)
     /// }
     /// ```
+    #[must_use]
     pub fn iter_mut(&mut self) -> IterMut<u8, Msb0> {
         self.bit_vec.iter_mut()
     }
@@ -258,6 +259,7 @@ impl From<&Bitmap> for ValueGrid<bool> {
     }
 }
 
+#[must_use]
 struct IterRows<'t> {
     bitmap: &'t Bitmap,
     row: usize,
