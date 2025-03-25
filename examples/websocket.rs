@@ -1,6 +1,9 @@
 //! Example for how to use the WebSocket connection
 
-use servicepoint::*;
+use servicepoint::{
+    Bitmap, BitmapCommand, ClearCommand, CompressionCode, Connection, Grid,
+    Origin, WebsocketConnection,
+};
 
 fn main() {
     let uri = "ws://localhost:8080".parse().unwrap();

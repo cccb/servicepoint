@@ -3,7 +3,11 @@
 
 use clap::Parser;
 use rand::Rng;
-use servicepoint::*;
+use servicepoint::{
+    Bitmap, BitmapCommand, Brightness, BrightnessCommand, BrightnessGrid,
+    BrightnessGridCommand, CompressionCode, Connection, Grid, Origin,
+    UdpConnection, TILE_HEIGHT, TILE_WIDTH,
+};
 use std::time::Duration;
 
 #[derive(Parser, Debug)]
@@ -38,7 +42,7 @@ fn main() {
 
     // set all pixels to the same random brightness
     let mut rng = rand::thread_rng();
-    let command: BrightnessCommand = rng.gen::<Brightness>().into();
+    let command: BrightnessCommand = rng.r#gen::<Brightness>().into();
     connection.send(command).unwrap();
 
     // continuously update random windows to new random brightness
@@ -55,7 +59,7 @@ fn main() {
 
         for y in 0..h {
             for x in 0..w {
-                luma.set(x, y, rng.gen());
+                luma.set(x, y, rng.r#gen());
             }
         }
 

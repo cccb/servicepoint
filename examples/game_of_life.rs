@@ -2,8 +2,10 @@
 
 use clap::Parser;
 use rand::{distributions, Rng};
-use servicepoint::*;
-use std::net::UdpSocket;
+use servicepoint::{
+    Bitmap, BitmapCommand, CompressionCode, Connection, Grid, Origin,
+    UdpConnection, FRAME_PACING,
+};
 use std::thread;
 
 #[derive(Parser, Debug)]
@@ -40,10 +42,8 @@ fn iteration(field: Bitmap) -> Bitmap {
             let old_state = field.get(x, y);
             let neighbors = count_neighbors(&field, x as i32, y as i32);
 
-            let new_state = matches!(
-                (old_state, neighbors),
-                (true, 2) | (true, 3) | (false, 3)
-            );
+            let new_state =
+                matches!((old_state, neighbors), (true, 2 | 3) | (false, 3));
             next.set(x, y, new_state);
         }
     }

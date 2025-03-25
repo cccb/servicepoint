@@ -6,9 +6,9 @@ use std::{error::Error, fmt::Debug};
 /// Note that you will need to forward the WebSocket messages via UDP to the display.
 /// You can use [servicepoint-websocket-relay] for this.
 ///
-/// To create a new WebSocket automatically, use [Connection::open_websocket].
+/// To create a new WebSocket automatically, use [`Connection::open_websocket`].
 ///
-/// Requires the feature "protocol_websocket" which is disabled by default.
+/// Requires the feature "`protocol_websocket`" which is disabled by default.
 ///
 /// [servicepoint-websocket-relay]: https://github.com/kaesaecracker/servicepoint-websocket-relay
 #[derive(Debug)]
@@ -48,7 +48,7 @@ impl Connection for WebsocketConnection {
 impl WebsocketConnection {
     /// Open a new WebSocket and connect to the provided host.
     ///
-    /// Requires the feature "protocol_websocket" which is disabled by default.
+    /// Requires the feature "`protocol_websocket`" which is disabled by default.
     ///
     /// # Examples
     ///
