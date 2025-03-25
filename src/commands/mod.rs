@@ -115,10 +115,10 @@ fn check_command_code(
     actual: u16,
     expected: CommandCode,
 ) -> Result<(), TryFromPacketError> {
-    if actual != u16::from(expected) {
-        Err(TryFromPacketError::InvalidCommand(actual))
-    } else {
+    if actual == u16::from(expected) {
         Ok(())
+    } else {
+        Err(TryFromPacketError::InvalidCommand(actual))
     }
 }
 

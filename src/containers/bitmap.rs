@@ -33,6 +33,8 @@ impl Bitmap {
     /// - `height`: size in pixels in y-direction
     #[must_use]
     pub fn new(width: usize, height: usize) -> Option<Self> {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
         if width % 8 != 0 {
             return None;
         }
@@ -73,6 +75,8 @@ impl Bitmap {
         height: usize,
         data: &[u8],
     ) -> Result<Self, LoadBitmapError> {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
         if width % 8 != 0 {
             return Err(LoadBitmapError::InvalidWidth);
         }
@@ -103,6 +107,8 @@ impl Bitmap {
         }
         let len = bit_vec.len();
         let height = len / width;
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
         if len % width != 0 {
             return Err(LoadBitmapError::InvalidDataSize);
         }
@@ -154,6 +160,7 @@ impl Bitmap {
     /// }
     /// ```
     #[must_use]
+    #[allow(clippy::iter_without_into_iter)]
     pub fn iter_mut(&mut self) -> IterMut<u8, Msb0> {
         self.bit_vec.iter_mut()
     }

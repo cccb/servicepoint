@@ -52,6 +52,8 @@ impl<T: Value> ValueGrid<T> {
     /// returns: [`ValueGrid`] initialized to default value.
     #[must_use]
     pub fn new(width: usize, height: usize) -> Self {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
         Self {
             data: vec![Default::default(); width * height],
             width,
@@ -65,6 +67,8 @@ impl<T: Value> ValueGrid<T> {
     /// or None if the dimensions do not match the data size.
     #[must_use]
     pub fn load(width: usize, height: usize, data: &[T]) -> Option<Self> {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
         if width * height != data.len() {
             return None;
         }
@@ -92,6 +96,8 @@ impl<T: Value> ValueGrid<T> {
     pub fn from_vec(width: usize, data: Vec<T>) -> Option<Self> {
         let len = data.len();
         let height = len / width;
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
         if len % width != 0 {
             return None;
         }
@@ -171,6 +177,10 @@ impl<T: Value> ValueGrid<T> {
         y: isize,
     ) -> Option<&mut T> {
         if self.is_in_bounds(x, y) {
+            #[expect(
+                clippy::cast_sign_loss,
+                reason = "is_in_bounds already checks this"
+            )]
             Some(&mut self.data[x as usize + y as usize * self.width])
         } else {
             None
@@ -283,14 +293,11 @@ impl<T: Value> ValueGrid<T> {
             });
         }
 
-        let chunk = match self.data.chunks_exact_mut(width).nth(y) {
-            Some(row) => row,
-            None => {
-                return Err(SetValueSeriesError::OutOfBounds {
-                    size: self.height(),
-                    index: y,
-                })
-            }
+        let Some(chunk) = self.data.chunks_exact_mut(width).nth(y) else {
+            return Err(SetValueSeriesError::OutOfBounds {
+                size: self.height(),
+                index: y,
+            });
         };
 
         chunk.copy_from_slice(row);

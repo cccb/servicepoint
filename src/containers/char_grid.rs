@@ -231,7 +231,7 @@ impl From<&CharGrid> for Vec<u8> {
     /// let grid = CharGrid::load_utf8(width, height, grid.into());
     /// ```
     fn from(value: &CharGrid) -> Self {
-        String::from_iter(value.iter()).into_bytes()
+        value.iter().collect::<String>().into_bytes()
     }
 }
 

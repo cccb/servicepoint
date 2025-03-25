@@ -65,18 +65,26 @@ refining_impl_trait_reachable = "warn"
 rust-2024-compatibility = "warn"
 
 [lints.clippy]
+## Categories
 complexity = {level = "warn", priority = -1 }
 perf = {level = "warn", priority = -1 }
 style = {level = "warn", priority = -1 }
 pedantic = {level = "warn", priority = -1 }
 
+## Blacklist
 unwrap_used  = "warn"
 expect_used = "warn"
 panic = "warn"
 incompatible_msrv = "forbid"
+allow_attributes_without_reason = "warn"
 
-# too many false positives as often the module only contains the one struct
+## Whitelist
+# Too many false positives as often a module only contains one struct that is re-exported at top-level
 module_name_repetitions = "allow"
+# The pretty detailed exception types should be enough for now
+missing_errors_doc = "allow"
+# The few places where a panic is triggered in code are inspected and should never panic
+missing_panics_doc = "allow"
 
 [lints.rustdoc]
 private_doc_tests = "warn"
