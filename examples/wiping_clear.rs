@@ -1,7 +1,10 @@
 //! An example on how to modify the image on screen without knowing the current content.
 
 use clap::Parser;
-use servicepoint::*;
+use servicepoint::{
+    Bitmap, BitmapCommand, CompressionCode, Connection, Grid, Origin,
+    UdpConnection, FRAME_PACING, PIXEL_HEIGHT, PIXEL_WIDTH,
+};
 use std::thread;
 use std::time::Duration;
 

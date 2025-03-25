@@ -37,6 +37,6 @@ mod tests {
     fn send_fake() {
         let data: &[u8] = &[0u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         let packet = Packet::try_from(data).unwrap();
-        FakeConnection.send(packet).unwrap()
+        FakeConnection.send(packet).unwrap();
     }
 }

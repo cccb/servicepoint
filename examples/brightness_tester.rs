@@ -1,7 +1,11 @@
 //! Show a brightness level test pattern on screen
 
 use clap::Parser;
-use servicepoint::*;
+use servicepoint::{
+    Bitmap, BitmapCommand, Brightness, BrightnessGrid, BrightnessGridCommand,
+    CompressionCode, Connection, DataRef, Grid, Origin, UdpConnection,
+    TILE_HEIGHT, TILE_WIDTH,
+};
 
 #[derive(Parser, Debug)]
 struct Cli {

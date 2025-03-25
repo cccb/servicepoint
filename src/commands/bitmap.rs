@@ -205,14 +205,17 @@ mod tests {
             } = p;
 
             // mangle it
-            for byte in payload.iter_mut() {
+            for byte in &mut payload {
                 *byte -= *byte / 2;
             }
 
             let p = Packet { header, payload };
             let result = TypedCommand::try_from(p);
             if *compression != CompressionCode::Uncompressed {
-                assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
+                assert_eq!(
+                    result,
+                    Err(TryFromPacketError::DecompressionFailed)
+                );
             } else {
                 assert!(result.is_ok());
             }

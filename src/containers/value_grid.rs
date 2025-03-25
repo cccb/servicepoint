@@ -1,9 +1,9 @@
 use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
 
-use crate::*;
+use crate::{DataRef, Grid};
 
-/// A type that can be stored in a [ValueGrid], e.g. [char], [u8].
+/// A type that can be stored in a [`ValueGrid`], e.g. [char], [u8].
 pub trait Value: Sized + Default + Copy + Clone + Debug {}
 impl<T: Sized + Default + Copy + Clone + Debug> Value for T {}
 
@@ -12,7 +12,7 @@ impl<T: Sized + Default + Copy + Clone + Debug> Value for T {}
 /// The memory layout is the one the display expects in [Command]s.
 ///
 /// This structure can be used with any type that implements the [Value] trait.
-/// You can also use the concrete type aliases provided in this crate, e.g. [CharGrid] and [ByteGrid].
+/// You can also use the concrete type aliases provided in this crate, e.g. [`CharGrid`] and [`ByteGrid`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ValueGrid<T: Value> {
     width: usize,
@@ -42,14 +42,14 @@ pub enum SetValueSeriesError {
 }
 
 impl<T: Value> ValueGrid<T> {
-    /// Creates a new [ValueGrid] with the specified dimensions.
+    /// Creates a new [`ValueGrid`] with the specified dimensions.
     ///
     /// # Arguments
     ///
     /// - width: size in x-direction
     /// - height: size in y-direction
     ///
-    /// returns: [ValueGrid] initialized to default value.
+    /// returns: [`ValueGrid`] initialized to default value.
     #[must_use]
     pub fn new(width: usize, height: usize) -> Self {
         Self {
@@ -59,9 +59,9 @@ impl<T: Value> ValueGrid<T> {
         }
     }
 
-    /// Loads a [ValueGrid] with the specified dimensions from the provided data.
+    /// Loads a [`ValueGrid`] with the specified dimensions from the provided data.
     ///
-    /// returns: [ValueGrid] that contains a copy of the provided data,
+    /// returns: [`ValueGrid`] that contains a copy of the provided data,
     /// or None if the dimensions do not match the data size.
     #[must_use]
     pub fn load(width: usize, height: usize, data: &[T]) -> Option<Self> {
@@ -75,11 +75,11 @@ impl<T: Value> ValueGrid<T> {
         })
     }
 
-    /// Creates a [ValueGrid] with the specified width from the provided data,
+    /// Creates a [`ValueGrid`] with the specified width from the provided data,
     /// wrapping to as many rows as needed,
     /// without copying the vec.
     ///
-    /// returns: [ValueGrid] that contains the provided data,
+    /// returns: [`ValueGrid`] that contains the provided data,
     /// or None if the data size is not divisible by the width.
     ///
     /// # Examples
@@ -96,9 +96,9 @@ impl<T: Value> ValueGrid<T> {
             return None;
         }
         Some(Self {
-            data,
             width,
             height,
+            data,
         })
     }
 
@@ -110,13 +110,13 @@ impl<T: Value> ValueGrid<T> {
     ) -> Self {
         debug_assert_eq!(data.len(), width * height);
         Self {
-            data,
             width,
             height,
+            data,
         }
     }
 
-    /// Iterate over all cells in [ValueGrid].
+    /// Iterate over all cells in [`ValueGrid`].
     ///
     /// Order is equivalent to the following loop:
     /// ```
@@ -132,7 +132,7 @@ impl<T: Value> ValueGrid<T> {
         self.data.iter()
     }
 
-    /// Iterate over all rows in [ValueGrid] top to bottom.
+    /// Iterate over all rows in [`ValueGrid`] top to bottom.
     pub fn iter_rows(&self) -> IterGridRows<T> {
         IterGridRows { grid: self, row: 0 }
     }
@@ -177,9 +177,9 @@ impl<T: Value> ValueGrid<T> {
         }
     }
 
-    /// Convert between ValueGrid types.
+    /// Convert between `ValueGrid` types.
     ///
-    /// See also [Iterator::map].
+    /// See also [`Iterator::map`].
     ///
     /// # Examples
     ///
@@ -215,16 +215,18 @@ impl<T: Value> ValueGrid<T> {
     /// Copies a row from the grid.
     ///
     /// Returns [None] if y is out of bounds.
+    #[must_use]
     pub fn get_row(&self, y: usize) -> Option<Vec<T>> {
         self.data
             .chunks_exact(self.width())
             .nth(y)
-            .map(|row| row.to_vec())
+            .map(<[T]>::to_vec)
     }
 
     /// Copies a column from the grid.
     ///
     /// Returns [None] if x is out of bounds.
+    #[must_use]
     pub fn get_col(&self, x: usize) -> Option<Vec<T>> {
         self.data
             .chunks_exact(self.width())
@@ -480,7 +482,7 @@ mod tests {
         data_ref.copy_from_slice(&[1, 2, 3, 4]);
 
         assert_eq!(vec.data, [1, 2, 3, 4]);
-        assert_eq!(vec.get(1, 0), 2)
+        assert_eq!(vec.get(1, 0), 2);
     }
 
     #[test]

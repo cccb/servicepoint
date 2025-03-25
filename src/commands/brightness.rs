@@ -101,7 +101,7 @@ mod tests {
                 brightness: Brightness::MAX
             },
             Brightness::MAX.into()
-        )
+        );
     }
 
     #[test]
@@ -130,7 +130,7 @@ mod tests {
         assert!(matches!(
             result,
             Err(TryFromPacketError::ExtraneousHeaderValues)
-        ))
+        ));
     }
 
     #[test]

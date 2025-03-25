@@ -3,9 +3,9 @@ use std::string::FromUtf8Error;
 
 /// A grid containing UTF-8 characters.
 ///
-/// To send a CharGrid to the display, use a [crate::CharGridCommand].
+/// To send a `CharGrid` to the display, use a [`crate::CharGridCommand`].
 ///
-/// Also see [ValueGrid] for the non-specialized operations and examples.
+/// Also see [`ValueGrid`] for the non-specialized operations and examples.
 ///
 /// # Examples
 ///
@@ -21,11 +21,11 @@ use std::string::FromUtf8Error;
 pub type CharGrid = ValueGrid<char>;
 
 impl CharGrid {
-    /// Loads a [CharGrid] with the specified width from the provided text, wrapping to as many rows as needed.
+    /// Loads a [`CharGrid`] with the specified width from the provided text, wrapping to as many rows as needed.
     ///
     /// The passed rows are extended with '\0' if needed.
     ///
-    /// returns: [CharGrid] that contains a copy of the provided data.
+    /// returns: [`CharGrid`] that contains a copy of the provided data.
     ///
     /// # Examples
     ///
@@ -54,7 +54,7 @@ impl CharGrid {
         for (row, text_line) in lines.iter().enumerate() {
             #[allow(clippy::unwrap_used)]
             // we calculated the width before setting
-            result.set_row_str(row, text_line).unwrap()
+            result.set_row_str(row, text_line).unwrap();
         }
         result
     }
@@ -70,6 +70,7 @@ impl CharGrid {
     /// let grid = CharGrid::from("ab\ncd");
     /// let col = grid.get_col_str(0).unwrap(); // "ac"
     /// ```
+    #[must_use]
     pub fn get_col_str(&self, x: usize) -> Option<String> {
         Some(String::from_iter(self.get_col(x)?))
     }
@@ -85,13 +86,14 @@ impl CharGrid {
     /// let grid = CharGrid::from("ab\ncd");
     /// let row = grid.get_row_str(0).unwrap(); // "ab"
     /// ```
+    #[must_use]
     pub fn get_row_str(&self, y: usize) -> Option<String> {
         Some(String::from_iter(self.get_row(y)?))
     }
 
     /// Overwrites a row in the grid with a str.
     ///
-    /// Returns [SetValueSeriesError] if y is out of bounds or `row` is not of the correct size.
+    /// Returns [`SetValueSeriesError`] if y is out of bounds or `row` is not of the correct size.
     ///
     /// # Examples
     ///
@@ -110,7 +112,7 @@ impl CharGrid {
 
     /// Overwrites a column in the grid with a str.
     ///
-    /// Returns [SetValueSeriesError] if y is out of bounds or `row` is not of the correct size.
+    /// Returns [`SetValueSeriesError`] if y is out of bounds or `row` is not of the correct size.
     ///
     /// # Examples
     ///
@@ -127,9 +129,9 @@ impl CharGrid {
         self.set_col(x, value.chars().collect::<Vec<_>>().as_ref())
     }
 
-    /// Loads a [CharGrid] with the specified dimensions from the provided UTF-8 bytes.
+    /// Loads a [`CharGrid`] with the specified dimensions from the provided UTF-8 bytes.
     ///
-    /// returns: [CharGrid] that contains the provided data, or [FromUtf8Error] if the data is invalid.
+    /// returns: [`CharGrid`] that contains the provided data, or [`FromUtf8Error`] if the data is invalid.
     ///
     /// # Examples
     ///
@@ -193,7 +195,7 @@ impl From<CharGrid> for String {
 }
 
 impl From<&CharGrid> for String {
-    /// Converts a [CharGrid] into a [String].
+    /// Converts a [`CharGrid`] into a [String].
     ///
     /// Rows are separated by '\n'.
     ///
@@ -215,7 +217,7 @@ impl From<&CharGrid> for String {
 }
 
 impl From<&CharGrid> for Vec<u8> {
-    /// Converts a [CharGrid] into a [`Vec<u8>`].
+    /// Converts a [`CharGrid`] into a [`Vec<u8>`].
     ///
     /// Rows are not separated.
     ///

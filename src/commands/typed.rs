@@ -141,6 +141,6 @@ mod tests {
         assert!(matches!(
             result,
             Err(TryFromPacketError::InvalidCommand(0xFF))
-        ))
+        ));
     }
 }

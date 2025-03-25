@@ -18,7 +18,7 @@ pub struct InvalidCharError {
 }
 
 impl Cp437Grid {
-    /// Load an ASCII-only [&str] into a [Cp437Grid] of specified width.
+    /// Load an ASCII-only [&str] into a [`Cp437Grid`] of specified width.
     ///
     /// # Panics
     ///

@@ -1,7 +1,10 @@
 //! A simple example for how to send pixel data to the display.
 
 use clap::Parser;
-use servicepoint::*;
+use servicepoint::{
+    Bitmap, BitmapCommand, CompressionCode, Connection, Grid, Origin,
+    UdpConnection, FRAME_PACING, PIXEL_HEIGHT, PIXEL_WIDTH,
+};
 use std::thread;
 
 #[derive(Parser, Debug)]

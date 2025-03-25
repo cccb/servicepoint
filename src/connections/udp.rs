@@ -5,7 +5,7 @@ use std::{error::Error, fmt::Debug, net::UdpSocket};
 ///
 /// Use this when sending commands directly to the display.
 ///
-/// Requires the feature "protocol_udp" which is enabled by default.
+/// Requires the feature "`protocol_udp`" which is enabled by default.
 #[derive(Debug)]
 pub struct UdpConnection {
     socket: UdpSocket,

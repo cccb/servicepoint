@@ -12,7 +12,7 @@ mod hard_reset;
 mod typed;
 
 use crate::command_code::CommandCode;
-use crate::*;
+use crate::{Header, Packet};
 use std::fmt::Debug;
 
 pub use bitmap::*;
@@ -34,20 +34,20 @@ pub use typed::*;
 ///
 /// # Available commands
 ///
-/// To send text, take a look at [Cp437GridCommand].
+/// To send text, take a look at [`Cp437GridCommand`].
 ///
-/// To draw pixels, the easiest command to use is [BitmapCommand].
+/// To draw pixels, the easiest command to use is [`BitmapCommand`].
 ///
 /// The other BitmapLinear-Commands operate on a region of pixel memory directly.
-/// [BitVecCommand] overwrites a region.
-/// [BitmapLinearOr], [BitmapLinearAnd] and [BitmapLinearXor] apply logical operations per pixel.
+/// [`BitVecCommand`] overwrites a region.
+/// [`BitmapLinearOr`], [`BitmapLinearAnd`] and [`BitmapLinearXor`] apply logical operations per pixel.
 ///
 /// Out of bounds operations may be truncated or ignored by the display.
 ///
 /// # Compression
 ///
 /// Some commands can contain compressed payloads.
-/// To get started, use [CompressionCode::default].
+/// To get started, use [`CompressionCode::default`].
 ///
 /// If you want to archive the best performance (e.g. latency),
 /// you can try the different compression algorithms for your hardware and use case.

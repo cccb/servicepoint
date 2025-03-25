@@ -19,7 +19,8 @@ use crate::{Brightness, ByteGrid, Grid, ValueGrid};
 pub type BrightnessGrid = ValueGrid<Brightness>;
 
 impl BrightnessGrid {
-    /// Like [Self::load], but ignoring any out-of-range brightness values
+    /// Like [`Self::load`], but ignoring any out-of-range brightness values
+    #[must_use]
     pub fn saturating_load(
         width: usize,
         height: usize,

@@ -47,7 +47,7 @@ mod tests {
     use crate::command_code::CommandCode;
     use crate::commands::errors::TryFromPacketError;
     use crate::commands::tests::{round_trip, TestImplementsCommand};
-    use crate::{ClearCommand, FadeOutCommand, Header, Packet, TypedCommand};
+    use crate::{FadeOutCommand, Header, Packet, TypedCommand};
 
     impl TestImplementsCommand for FadeOutCommand {}
 
@@ -72,7 +72,7 @@ mod tests {
         assert!(matches!(
             result,
             Err(TryFromPacketError::ExtraneousHeaderValues)
-        ))
+        ));
     }
 
     #[test]
@@ -91,6 +91,6 @@ mod tests {
         assert!(matches!(
             result,
             Err(TryFromPacketError::UnexpectedPayloadSize(0, 2))
-        ))
+        ));
     }
 }

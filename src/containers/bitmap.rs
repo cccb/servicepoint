@@ -1,4 +1,4 @@
-use crate::*;
+use crate::{BitVec, DataRef, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH};
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 
 /// A fixed-size 2D grid of booleans.
@@ -25,7 +25,7 @@ impl Bitmap {
     /// Creates a new [Bitmap] with the specified dimensions.
     /// The initial state of the contained pixels is false.
     ///
-    /// The width has to be a multiple of [TILE_SIZE], otherwise this function returns None.
+    /// The width has to be a multiple of [`TILE_SIZE`], otherwise this function returns None.
     ///
     /// # Arguments
     ///
@@ -86,7 +86,7 @@ impl Bitmap {
         })
     }
 
-    /// Creates a [Bitmap] with the specified width from the provided [BitVec] without copying it.
+    /// Creates a [Bitmap] with the specified width from the provided [`BitVec`] without copying it.
     ///
     /// The data cannot be loaded on the following cases:
     /// - when the data size is not divisible by the width (incomplete rows)
@@ -182,7 +182,7 @@ impl Grid<bool> for Bitmap {
     /// When accessing `x` or `y` out of bounds.
     fn set(&mut self, x: usize, y: usize, value: bool) {
         self.assert_in_bounds(x, y);
-        self.bit_vec.set(x + y * self.width, value)
+        self.bit_vec.set(x + y * self.width, value);
     }
 
     fn get(&self, x: usize, y: usize) -> bool {
@@ -227,7 +227,7 @@ impl From<Bitmap> for Vec<u8> {
 }
 
 impl From<Bitmap> for BitVec {
-    /// Turns a [Bitmap] into the underlying [BitVec].
+    /// Turns a [Bitmap] into the underlying [`BitVec`].
     fn from(value: Bitmap) -> Self {
         value.bit_vec
     }
@@ -358,7 +358,7 @@ mod tests {
     #[test]
     fn iter() {
         let grid = Bitmap::new(8, 2).unwrap();
-        assert_eq!(16, grid.iter().count())
+        assert_eq!(16, grid.iter().count());
     }
 
     #[test]
@@ -415,7 +415,7 @@ mod tests {
         assert_eq!(
             Bitmap::load(7, 3, &data),
             Err(LoadBitmapError::InvalidWidth)
-        )
+        );
     }
 
     #[test]
@@ -424,7 +424,7 @@ mod tests {
         assert_eq!(
             Bitmap::load(8, 3, &data),
             Err(LoadBitmapError::InvalidDataSize)
-        )
+        );
     }
 
     #[test]
@@ -433,7 +433,7 @@ mod tests {
         assert_eq!(
             Bitmap::from_bitvec(7, data),
             Err(LoadBitmapError::InvalidWidth)
-        )
+        );
     }
 
     #[test]
@@ -442,7 +442,7 @@ mod tests {
         assert_eq!(
             Bitmap::from_bitvec(8, data),
             Err(LoadBitmapError::InvalidDataSize)
-        )
+        );
     }
 
     #[test]
@@ -453,6 +453,6 @@ mod tests {
 
     #[test]
     fn new_invalid_width() {
-        assert_eq!(Bitmap::new(7, 2), None)
+        assert_eq!(Bitmap::new(7, 2), None);
     }
 }

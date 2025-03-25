@@ -69,7 +69,7 @@ mod tests {
         assert!(matches!(
             result,
             Err(TryFromPacketError::ExtraneousHeaderValues)
-        ))
+        ));
     }
 
     #[test]

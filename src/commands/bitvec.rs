@@ -27,9 +27,9 @@ pub enum BinaryOperation {
 ///
 /// `new_bit = old_bit op sent_bit`
 ///
-/// For example, [BinaryOperation::Or] can be used to turn on some pixels without affecting other pixels.
+/// For example, [`BinaryOperation::Or`] can be used to turn on some pixels without affecting other pixels.
 ///
-/// The contained [BitVec] is always uncompressed.
+/// The contained [`BitVec`] is always uncompressed.
 #[derive(Clone, PartialEq, Debug, Eq)]
 pub struct BitVecCommand {
     /// the pixels to send to the display as one long row
@@ -87,7 +87,7 @@ impl TryFrom<Packet> for BitVecCommand {
             payload,
         } = packet;
         let command_code = CommandCode::try_from(command_code)
-            .map_err(|_| TryFromPacketError::InvalidCommand(command_code))?;
+            .map_err(|()| TryFromPacketError::InvalidCommand(command_code))?;
         let operation = match command_code {
             CommandCode::BitmapLinear => BinaryOperation::Overwrite,
             CommandCode::BitmapLinearAnd => BinaryOperation::And,
@@ -205,14 +205,17 @@ mod tests {
             } = p;
 
             // mangle it
-            for byte in payload.iter_mut() {
+            for byte in &mut payload {
                 *byte -= *byte / 2;
             }
 
             let p = Packet { header, payload };
             let result = TypedCommand::try_from(p);
             if *compression != CompressionCode::Uncompressed {
-                assert_eq!(result, Err(TryFromPacketError::DecompressionFailed))
+                assert_eq!(
+                    result,
+                    Err(TryFromPacketError::DecompressionFailed)
+                );
             } else {
                 // when not compressing, there is no way to detect corrupted data
                 assert!(result.is_ok());

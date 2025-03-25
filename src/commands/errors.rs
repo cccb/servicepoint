@@ -1,7 +1,7 @@
 use crate::LoadBitmapError;
 use std::num::TryFromIntError;
 
-/// Err values for [crate::TypedCommand::try_from].
+/// Err values for [`crate::TypedCommand::try_from`].
 #[derive(Debug, PartialEq, thiserror::Error)]
 pub enum TryFromPacketError {
     /// the contained command code does not correspond to a known command
