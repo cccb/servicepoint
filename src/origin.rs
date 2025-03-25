@@ -86,6 +86,12 @@ impl TryFrom<&Origin<Pixels>> for Origin<Tiles> {
     }
 }
 
+impl<Unit: DisplayUnit> Default for Origin<Unit> {
+    fn default() -> Self {
+        Self::ZERO
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
