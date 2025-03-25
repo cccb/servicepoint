@@ -4,7 +4,7 @@ use crate::{
     CompressionCode, Header, Offset, Packet, TryIntoPacketError, TypedCommand,
 };
 
-/// Binary operations for use with the [BitVecCommand] command.
+/// Binary operations for use with the [`BitVecCommand`] command.
 #[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub enum BinaryOperation {
     /// r := a
@@ -23,7 +23,7 @@ pub enum BinaryOperation {
 /// The screen will continuously overwrite more pixel data without regarding the offset, meaning
 /// once the starting row is full, overwriting will continue on column 0.
 ///
-/// The [BinaryOperation] will be applied on the display comparing old and sent bit.
+/// The [`BinaryOperation`] will be applied on the display comparing old and sent bit.
 ///
 /// `new_bit = old_bit op sent_bit`
 ///

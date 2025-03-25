@@ -316,7 +316,7 @@ pub enum TryLoadValueGridError {
 }
 
 impl<T: Value> Grid<T> for ValueGrid<T> {
-    /// Sets the value of the cell at the specified position in the `ValueGrid.
+    /// Sets the value of the cell at the specified position in the grid.
     ///
     /// # Arguments
     ///
@@ -379,7 +379,7 @@ impl<T: Value> From<ValueGrid<T>> for Vec<T> {
     }
 }
 
-/// An iterator iver the rows in a [ValueGrid]
+/// An iterator iver the rows in a [`ValueGrid`]
 #[must_use]
 pub struct IterGridRows<'t, T: Value> {
     grid: &'t ValueGrid<T>,

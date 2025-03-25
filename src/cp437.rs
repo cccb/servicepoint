@@ -2,8 +2,6 @@
 //!
 //! See <https://en.wikipedia.org/wiki/Code_page_437#Character_set>
 
-#![allow(clippy::module_name_repetitions)] // CP437 is the name of the encoding and thus repeated
-
 use crate::{CharGrid, Cp437Grid};
 use std::collections::HashMap;
 

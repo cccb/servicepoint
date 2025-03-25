@@ -56,7 +56,7 @@ mod tests {
     use super::*;
     use crate::{
         commands::tests::{round_trip, TestImplementsCommand},
-        Header
+        Header,
     };
 
     impl TestImplementsCommand for BitmapLegacyCommand {}

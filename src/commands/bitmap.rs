@@ -84,7 +84,7 @@ impl TryFrom<Packet> for BitmapCommand {
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
         let code = CommandCode::try_from(packet.header.command_code).map_err(
-            |_| TryFromPacketError::InvalidCommand(packet.header.command_code),
+            |()| TryFromPacketError::InvalidCommand(packet.header.command_code),
         )?;
 
         match code {

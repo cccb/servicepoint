@@ -20,6 +20,7 @@ impl<Unit: DisplayUnit> Origin<Unit> {
     };
 
     /// Create a new [Origin] instance for the provided position.
+    #[must_use]
     pub fn new(x: usize, y: usize) -> Self {
         Self {
             x,

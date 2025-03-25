@@ -51,9 +51,10 @@ impl Brightness {
     /// lowest possible brightness value, 0
     pub const MIN: Brightness = Brightness(0);
 
-    /// Create a brightness value without returning an error for brightnesses above [Brightness::MAX].
+    /// Create a brightness value without returning an error for brightnesses above [`Brightness::MAX`].
     ///
-    /// returns: the specified value as a [Brightness], or [Brightness::MAX].
+    /// returns: the specified value as a [Brightness], or [`Brightness::MAX`].
+    #[must_use]
     pub fn saturating_from(value: u8) -> Brightness {
         if value > Brightness::MAX.into() {
             Brightness::MAX

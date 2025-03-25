@@ -55,7 +55,7 @@ pub type Payload = Vec<u8>;
 ///
 /// Contents should probably only be used directly to use features not exposed by the library.
 ///
-/// You may want to use [crate::Command] or [crate::TypedCommand] instead.
+/// You may want to use [`crate::Command`] or [`crate::TypedCommand`] instead.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Packet {
     /// Meta-information for the packed command
