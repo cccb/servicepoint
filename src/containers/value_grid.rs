@@ -417,7 +417,7 @@ pub struct EnumerateGrid<'t, T: Value> {
     column: usize,
 }
 
-impl<'t, T: Value> Iterator for EnumerateGrid<'t, T> {
+impl<T: Value> Iterator for EnumerateGrid<'_, T> {
     type Item = (usize, usize, T);
 
     fn next(&mut self) -> Option<Self::Item> {
