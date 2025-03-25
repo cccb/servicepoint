@@ -1,11 +1,10 @@
-#[allow(unused)]
-use std::io::{Read, Write};
-
 #[cfg(feature = "compression_bzip2")]
 use bzip2::read::{BzDecoder, BzEncoder};
 #[cfg(feature = "compression_zlib")]
 use flate2::{FlushCompress, FlushDecompress, Status};
 use log::error;
+#[allow(unused)]
+use std::io::{Read, Write};
 #[cfg(feature = "compression_zstd")]
 use zstd::{Decoder as ZstdDecoder, Encoder as ZstdEncoder};
 
@@ -22,21 +21,31 @@ pub(crate) fn into_decompressed(
             let mut decompress = flate2::Decompress::new(true);
             let mut buffer = [0u8; 10000];
 
-            let status = match decompress.decompress(
+            match decompress.decompress(
                 &payload,
                 &mut buffer,
                 FlushDecompress::Finish,
             ) {
-                Err(_) => return None,
-                Ok(status) => status,
-            };
-
-            match status {
-                Status::Ok => None,
-                Status::BufError => None,
-                Status::StreamEnd => Some(
-                    buffer[0..(decompress.total_out() as usize)].to_owned(),
-                ),
+                Ok(Status::Ok) => {
+                    error!("input not big enough");
+                    None
+                }
+                Ok(Status::BufError) => {
+                    error!("output buffer is too small");
+                    None
+                }
+                Ok(Status::StreamEnd) =>
+                {
+                    #[allow(
+                        clippy::cast_possible_truncation,
+                        reason = "can never be larger than the fixed buffer size"
+                    )]
+                    Some(buffer[..decompress.total_out() as usize].to_owned())
+                }
+                Err(e) => {
+                    error!("compress returned err: {e}");
+                    None
+                }
             }
         }
         #[cfg(feature = "compression_bzip2")]
@@ -86,18 +95,23 @@ pub(crate) fn into_compressed(
                 FlushCompress::Finish,
             ) {
                 Ok(Status::Ok) => {
-                    error!("buffer not big enough");
+                    error!("output buffer not big enough");
                     None
                 }
                 Ok(Status::BufError) => {
-                    error!("Could not compress: {:?}", Status::BufError);
+                    error!("Could not compress with buffer error");
                     None
                 }
-                Ok(Status::StreamEnd) => {
+                Ok(Status::StreamEnd) =>
+                {
+                    #[allow(
+                        clippy::cast_possible_truncation,
+                        reason = "can never be larger than the fixed buffer size"
+                    )]
                     Some(buffer[..compress.total_out() as usize].to_owned())
                 }
-                Err(_) => {
-                    error!("compress returned err");
+                Err(e) => {
+                    error!("compress returned err: {e}");
                     None
                 }
             }

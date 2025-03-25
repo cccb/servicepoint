@@ -37,7 +37,7 @@ impl Connection for WebsocketConnection {
             .try_into()
             .map(Into::<Vec<u8>>::into)
             .map_err(SendError::IntoPacket)?;
-        #[allow(clippy::unwrap)]
+        #[allow(clippy::unwrap_used)]
         let mut socket = self.0.lock().unwrap();
         socket
             .send(tungstenite::Message::Binary(data.into()))

@@ -85,6 +85,8 @@ module_name_repetitions = "allow"
 missing_errors_doc = "allow"
 # The few places where a panic is triggered in code are inspected and should never panic
 missing_panics_doc = "allow"
+# Does not work for all types, but should probably be fixed at some point
+iter_without_into_iter = "allow"
 
 [lints.rustdoc]
 private_doc_tests = "warn"
