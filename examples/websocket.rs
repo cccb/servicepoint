@@ -1,8 +1,7 @@
 //! Example for how to use the WebSocket connection
 
 use servicepoint::{
-    Bitmap, BitmapCommand, ClearCommand, CompressionCode, Connection, Grid,
-    Origin, WebsocketConnection,
+    Bitmap, BitmapCommand, ClearCommand, Connection, Grid, WebsocketConnection,
 };
 
 fn main() {
@@ -14,10 +13,6 @@ fn main() {
     let mut pixels = Bitmap::max_sized();
     pixels.fill(true);
 
-    let command = BitmapCommand {
-        bitmap: pixels,
-        origin: Origin::ZERO,
-        compression: CompressionCode::default(),
-    };
+    let command = BitmapCommand::from(pixels);
     connection.send(command).unwrap();
 }

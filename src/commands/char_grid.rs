@@ -82,6 +82,15 @@ impl From<CharGridCommand> for TypedCommand {
     }
 }
 
+impl From<CharGrid> for CharGridCommand {
+    fn from(grid: CharGrid) -> Self {
+        Self {
+            grid,
+            origin: Origin::default(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::commands::tests::{round_trip, TestImplementsCommand};

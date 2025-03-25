@@ -2,8 +2,8 @@
 
 use clap::Parser;
 use servicepoint::{
-    Bitmap, BitmapCommand, CompressionCode, Connection, Grid, Origin,
-    UdpConnection, FRAME_PACING, PIXEL_HEIGHT, PIXEL_WIDTH,
+    Bitmap, BitmapCommand, Connection, Grid, UdpConnection, FRAME_PACING,
+    PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use std::thread;
 
@@ -25,11 +25,7 @@ fn main() {
             bitmap.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
 
-        let command = BitmapCommand {
-            bitmap: bitmap.clone(),
-            compression: CompressionCode::default(),
-            origin: Origin::ZERO,
-        };
+        let command = BitmapCommand::from(bitmap.clone());
         connection.send(command).expect("send failed");
         thread::sleep(FRAME_PACING);
     }

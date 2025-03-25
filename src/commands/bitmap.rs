@@ -121,6 +121,16 @@ impl From<BitmapCommand> for TypedCommand {
     }
 }
 
+impl From<Bitmap> for BitmapCommand {
+    fn from(bitmap: Bitmap) -> Self {
+        Self {
+            bitmap,
+            origin: Origin::default(),
+            compression: CompressionCode::default(),
+        }
+    }
+}
+
 impl BitmapCommand {
     fn packet_into_bitmap_win(
         packet: Packet,

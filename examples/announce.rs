@@ -2,7 +2,7 @@
 
 use clap::Parser;
 use servicepoint::{
-    CharGrid, CharGridCommand, ClearCommand, Connection, Origin, UdpConnection,
+    CharGrid, CharGridCommand, ClearCommand, Connection, UdpConnection,
     TILE_WIDTH,
 };
 
@@ -42,9 +42,6 @@ fn main() {
     }
 
     let text = cli.text.join("\n");
-    let command = CharGridCommand {
-        grid: CharGrid::wrap_str(TILE_WIDTH, &text),
-        origin: Origin::ZERO,
-    };
+    let command: CharGridCommand = CharGrid::wrap_str(TILE_WIDTH, &text).into();
     connection.send(command).expect("sending text failed");
 }

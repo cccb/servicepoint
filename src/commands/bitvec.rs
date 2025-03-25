@@ -127,6 +127,17 @@ impl From<BitVecCommand> for TypedCommand {
     }
 }
 
+impl From<BitVec> for BitVecCommand {
+    fn from(bitvec: BitVec) -> Self {
+        Self {
+            bitvec,
+            operation: BinaryOperation::default(),
+            offset: Offset::default(),
+            compression: CompressionCode::default(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

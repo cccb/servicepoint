@@ -5,8 +5,8 @@ use clap::Parser;
 use rand::Rng;
 use servicepoint::{
     Bitmap, BitmapCommand, Brightness, BrightnessCommand, BrightnessGrid,
-    BrightnessGridCommand, CompressionCode, Connection, Grid, Origin,
-    UdpConnection, TILE_HEIGHT, TILE_WIDTH,
+    BrightnessGridCommand, Connection, Grid, Origin, UdpConnection,
+    TILE_HEIGHT, TILE_WIDTH,
 };
 use std::time::Duration;
 
@@ -32,11 +32,7 @@ fn main() {
         let mut filled_grid = Bitmap::max_sized();
         filled_grid.fill(true);
 
-        let command = BitmapCommand {
-            bitmap: filled_grid,
-            origin: Origin::ZERO,
-            compression: CompressionCode::default(),
-        };
+        let command = BitmapCommand::from(filled_grid);
         connection.send(command).expect("send failed");
     }
 

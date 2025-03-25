@@ -106,6 +106,10 @@ mod tests {
     #[cfg(feature = "rand")]
     fn test() {
         let mut rng = rand::thread_rng();
-        assert_ne!(rng.r#gen::<Brightness>(), rng.r#gen());
+        // two so test failure is less likely
+        assert_ne!(
+            [rng.r#gen::<Brightness>(), rng.r#gen()],
+            [rng.r#gen(), rng.r#gen()]
+        );
     }
 }

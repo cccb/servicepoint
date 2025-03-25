@@ -3,8 +3,7 @@
 use clap::Parser;
 use servicepoint::{
     Bitmap, BitmapCommand, Brightness, BrightnessGrid, BrightnessGridCommand,
-    CompressionCode, Connection, DataRef, Grid, Origin, UdpConnection,
-    TILE_HEIGHT, TILE_WIDTH,
+    Connection, DataRef, Grid, UdpConnection, TILE_HEIGHT, TILE_WIDTH,
 };
 
 #[derive(Parser, Debug)]
@@ -21,12 +20,9 @@ fn main() {
     let mut bitmap = Bitmap::max_sized();
     bitmap.fill(true);
 
-    let command = BitmapCommand {
-        bitmap,
-        origin: Origin::ZERO,
-        compression: CompressionCode::default(),
-    };
-    connection.send(command).expect("send failed");
+    connection
+        .send(BitmapCommand::from(bitmap))
+        .expect("send failed");
 
     let max_brightness: u8 = Brightness::MAX.into();
     let mut brightnesses = BrightnessGrid::new(TILE_WIDTH, TILE_HEIGHT);
@@ -35,9 +31,6 @@ fn main() {
         *byte = Brightness::try_from(level).unwrap();
     }
 
-    let command = BrightnessGridCommand {
-        origin: Origin::ZERO,
-        grid: brightnesses,
-    };
+    let command: BrightnessGridCommand = brightnesses.into();
     connection.send(command).expect("send failed");
 }

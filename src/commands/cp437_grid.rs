@@ -90,6 +90,15 @@ impl From<Cp437GridCommand> for TypedCommand {
     }
 }
 
+impl From<Cp437Grid> for Cp437GridCommand {
+    fn from(grid: Cp437Grid) -> Self {
+        Self {
+            grid,
+            origin: Origin::default(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

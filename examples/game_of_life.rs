@@ -3,8 +3,7 @@
 use clap::Parser;
 use rand::{distributions, Rng};
 use servicepoint::{
-    Bitmap, BitmapCommand, CompressionCode, Connection, Grid, Origin,
-    UdpConnection, FRAME_PACING,
+    Bitmap, BitmapCommand, Connection, Grid, UdpConnection, FRAME_PACING,
 };
 use std::thread;
 
@@ -24,11 +23,7 @@ fn main() {
     let mut field = make_random_field(cli.probability);
 
     loop {
-        let command = BitmapCommand {
-            bitmap: field.clone(),
-            origin: Origin::ZERO,
-            compression: CompressionCode::default(),
-        };
+        let command = BitmapCommand::from(field.clone());
         connection.send(command).expect("could not send");
         thread::sleep(FRAME_PACING);
         field = iteration(field);
