@@ -73,12 +73,9 @@ mod connections;
 mod constants;
 mod containers;
 #[cfg(feature = "cp437")]
-mod cp437;
+pub mod cp437;
 mod origin;
 mod packet;
-
-#[cfg(feature = "cp437")]
-pub use crate::cp437::Cp437Converter;
 
 // include README.md in doctest
 #[doc = include_str!("../README.md")]
