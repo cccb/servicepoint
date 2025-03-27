@@ -95,7 +95,6 @@ impl From<CharGrid> for CharGridCommand {
 mod tests {
     use crate::{
         commands::tests::{round_trip, TestImplementsCommand},
-        cp437::cp437_to_char,
         CharGrid, CharGridCommand, Origin, Packet, TryFromPacketError,
     };
 
@@ -113,11 +112,12 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "cp437")]
     fn into_command() {
         let mut grid = CharGrid::new(2, 3);
         grid.iter_mut()
             .enumerate()
-            .for_each(|(index, value)| *value = cp437_to_char(index as u8));
+            .for_each(|(index, value)| *value = crate::cp437::cp437_to_char(index as u8));
 
         assert_eq!(
             CharGridCommand::from(grid.clone()),
