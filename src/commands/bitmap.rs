@@ -173,9 +173,9 @@ impl BitmapCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::command_code::CommandCode;
-    use crate::commands::tests::TestImplementsCommand;
-    use crate::*;
+    use crate::{
+        command_code::CommandCode, commands::tests::TestImplementsCommand,
+    };
 
     impl TestImplementsCommand for BitmapCommand {}
 
@@ -196,7 +196,7 @@ mod tests {
     #[test]
     fn error_decompression_failed_win() {
         for compression in CompressionCode::ALL {
-            let p: Packet = commands::BitmapCommand {
+            let p: Packet = BitmapCommand {
                 origin: Origin::new(16, 8),
                 bitmap: Bitmap::new(8, 8).unwrap(),
                 compression: *compression,
@@ -225,5 +225,20 @@ mod tests {
                 assert!(result.is_ok());
             }
         }
+    }
+
+    #[test]
+    fn into_command() {
+        let mut bitmap = Bitmap::max_sized();
+        bitmap.fill(true);
+
+        assert_eq!(
+            BitmapCommand::from(bitmap.clone()),
+            BitmapCommand {
+                bitmap,
+                origin: Origin::default(),
+                compression: CompressionCode::default()
+            },
+        )
     }
 }

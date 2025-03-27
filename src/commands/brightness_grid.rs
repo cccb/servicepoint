@@ -85,10 +85,11 @@ impl From<BrightnessGridCommand> for TypedCommand {
 
 #[cfg(test)]
 mod tests {
-    use crate::commands::errors::TryFromPacketError;
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
     use crate::{
-        commands, BrightnessGrid, BrightnessGridCommand, Origin, Packet,
+        commands,
+        commands::errors::TryFromPacketError,
+        commands::tests::{round_trip, TestImplementsCommand},
+        Brightness, BrightnessGrid, BrightnessGridCommand, Origin, Packet,
         TypedCommand,
     };
 
@@ -119,5 +120,21 @@ mod tests {
             TypedCommand::try_from(packet),
             Err(TryFromPacketError::InvalidBrightness(23))
         );
+    }
+
+    #[test]
+    fn into_command() {
+        let mut grid = BrightnessGrid::new(2, 3);
+        grid.iter_mut().enumerate().for_each(|(index, value)| {
+            *value = Brightness::saturating_from(index as u8)
+        });
+
+        assert_eq!(
+            BrightnessGridCommand::from(grid.clone()),
+            BrightnessGridCommand {
+                grid,
+                origin: Origin::default(),
+            },
+        )
     }
 }

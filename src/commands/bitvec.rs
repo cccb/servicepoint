@@ -141,9 +141,12 @@ impl From<BitVec> for BitVecCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
-    use crate::compression_code::InvalidCompressionCodeError;
-    use crate::{commands, Bitmap, BitmapCommand, Origin};
+    use crate::{
+        commands,
+        commands::tests::{round_trip, TestImplementsCommand},
+        compression_code::InvalidCompressionCodeError,
+        Bitmap, BitmapCommand, Origin, PIXEL_WIDTH,
+    };
 
     impl TestImplementsCommand for BitVecCommand {}
 
@@ -326,5 +329,21 @@ mod tests {
                 length as usize,
             ))
         );
+    }
+
+    #[test]
+    fn into_command() {
+        let mut bitvec = BitVec::repeat(true, PIXEL_WIDTH);
+        bitvec.fill(true);
+
+        assert_eq!(
+            BitVecCommand::from(bitvec.clone()),
+            BitVecCommand {
+                bitvec,
+                offset: 0,
+                compression: CompressionCode::default(),
+                operation: BinaryOperation::Overwrite,
+            },
+        )
     }
 }

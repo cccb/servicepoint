@@ -116,4 +116,20 @@ mod tests {
             .into(),
         );
     }
+
+    #[test]
+    fn into_command() {
+        let mut grid = Cp437Grid::new(2, 3);
+        grid.iter_mut()
+            .enumerate()
+            .for_each(|(index, value)| *value = index as u8);
+
+        assert_eq!(
+            Cp437GridCommand::from(grid.clone()),
+            Cp437GridCommand {
+                grid,
+                origin: Origin::default(),
+            },
+        )
+    }
 }

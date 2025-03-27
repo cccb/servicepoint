@@ -93,8 +93,11 @@ impl From<CharGrid> for CharGridCommand {
 
 #[cfg(test)]
 mod tests {
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
-    use crate::{CharGrid, CharGridCommand, Origin};
+    use crate::{
+        commands::tests::{round_trip, TestImplementsCommand},
+        cp437::cp437_to_char,
+        CharGrid, CharGridCommand, Origin,
+    };
 
     impl TestImplementsCommand for CharGridCommand {}
 
@@ -107,5 +110,21 @@ mod tests {
             }
             .into(),
         );
+    }
+
+    #[test]
+    fn into_command() {
+        let mut grid = CharGrid::new(2, 3);
+        grid.iter_mut()
+            .enumerate()
+            .for_each(|(index, value)| *value = cp437_to_char(index as u8));
+
+        assert_eq!(
+            CharGridCommand::from(grid.clone()),
+            CharGridCommand {
+                grid,
+                origin: Origin::default(),
+            },
+        )
     }
 }

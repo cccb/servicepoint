@@ -85,11 +85,12 @@ impl From<Brightness> for BrightnessCommand {
 
 #[cfg(test)]
 mod tests {
-    use crate::command_code::CommandCode;
-    use crate::commands::errors::TryFromPacketError;
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
     use crate::{
-        commands, Brightness, BrightnessCommand, Header, Packet, TypedCommand,
+        command_code::CommandCode,
+        commands,
+        commands::errors::TryFromPacketError,
+        commands::tests::{round_trip, TestImplementsCommand},
+        Brightness, BrightnessCommand, Header, Packet, TypedCommand,
     };
 
     impl TestImplementsCommand for BrightnessCommand {}
@@ -176,5 +177,15 @@ mod tests {
             TypedCommand::try_from(packet),
             Err(TryFromPacketError::InvalidBrightness(42))
         );
+    }
+
+    #[test]
+    fn into_command() {
+        assert_eq!(
+            BrightnessCommand::from(Brightness::MIN),
+            BrightnessCommand {
+                brightness: Brightness::MIN,
+            },
+        )
     }
 }
