@@ -80,7 +80,7 @@ impl TryFrom<Packet> for BitVecCommand {
                 Header {
                     command_code,
                     a: offset,
-                    b: length,
+                    b: expected_len,
                     c: sub,
                     d: reserved,
                     ..
@@ -106,11 +106,11 @@ impl TryFrom<Packet> for BitVecCommand {
             None => return Err(TryFromPacketError::DecompressionFailed),
             Some(value) => value,
         };
-        if payload.len() != length as usize {
-            return Err(TryFromPacketError::UnexpectedPayloadSize(
-                length as usize,
-                payload.len(),
-            ));
+        if payload.len() != expected_len as usize {
+            return Err(TryFromPacketError::UnexpectedPayloadSize {
+                expected: expected_len as usize,
+                actual: payload.len(),
+            });
         }
         Ok(Self {
             offset: offset as Offset,
@@ -324,10 +324,10 @@ mod tests {
         };
         assert_eq!(
             TypedCommand::try_from(p),
-            Err(TryFromPacketError::UnexpectedPayloadSize(
-                420,
-                length as usize,
-            ))
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                expected: 420,
+                actual: length as usize,
+            })
         );
     }
 

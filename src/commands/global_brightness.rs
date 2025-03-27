@@ -11,17 +11,17 @@ use crate::{
 /// ```rust
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
-/// let command = BrightnessCommand { brightness: Brightness::MAX };
+/// let command = GlobalBrightnessCommand { brightness: Brightness::MAX };
 /// connection.send(command).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BrightnessCommand {
+pub struct GlobalBrightnessCommand {
     /// the brightness to set all pixels to
     pub brightness: Brightness,
 }
 
-impl From<BrightnessCommand> for Packet {
-    fn from(command: BrightnessCommand) -> Self {
+impl From<GlobalBrightnessCommand> for Packet {
+    fn from(command: GlobalBrightnessCommand) -> Self {
         Self {
             header: Header {
                 command_code: CommandCode::Brightness.into(),
@@ -35,7 +35,7 @@ impl From<BrightnessCommand> for Packet {
     }
 }
 
-impl TryFrom<Packet> for BrightnessCommand {
+impl TryFrom<Packet> for GlobalBrightnessCommand {
     type Error = TryFromPacketError;
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
@@ -54,10 +54,10 @@ impl TryFrom<Packet> for BrightnessCommand {
         check_command_code(command_code, CommandCode::Brightness)?;
 
         if payload.len() != 1 {
-            return Err(TryFromPacketError::UnexpectedPayloadSize(
-                1,
-                payload.len(),
-            ));
+            return Err(TryFromPacketError::UnexpectedPayloadSize {
+                expected: 1,
+                actual: payload.len(),
+            });
         }
 
         if a != 0 || b != 0 || c != 0 || d != 0 {
@@ -71,15 +71,15 @@ impl TryFrom<Packet> for BrightnessCommand {
     }
 }
 
-impl From<BrightnessCommand> for TypedCommand {
-    fn from(command: BrightnessCommand) -> Self {
+impl From<GlobalBrightnessCommand> for TypedCommand {
+    fn from(command: GlobalBrightnessCommand) -> Self {
         Self::Brightness(command)
     }
 }
 
-impl From<Brightness> for BrightnessCommand {
+impl From<Brightness> for GlobalBrightnessCommand {
     fn from(brightness: Brightness) -> Self {
-        BrightnessCommand { brightness }
+        GlobalBrightnessCommand { brightness }
     }
 }
 
@@ -87,18 +87,19 @@ impl From<Brightness> for BrightnessCommand {
 mod tests {
     use crate::{
         command_code::CommandCode,
-        commands,
-        commands::errors::TryFromPacketError,
-        commands::tests::{round_trip, TestImplementsCommand},
-        Brightness, BrightnessCommand, Header, Packet, TypedCommand,
+        commands::{
+            errors::TryFromPacketError,
+            tests::{round_trip, TestImplementsCommand},
+        },
+        Brightness, GlobalBrightnessCommand, Header, Packet, TypedCommand,
     };
 
-    impl TestImplementsCommand for BrightnessCommand {}
+    impl TestImplementsCommand for GlobalBrightnessCommand {}
 
     #[test]
     fn brightness_as_command() {
         assert_eq!(
-            BrightnessCommand {
+            GlobalBrightnessCommand {
                 brightness: Brightness::MAX
             },
             Brightness::MAX.into()
@@ -108,7 +109,7 @@ mod tests {
     #[test]
     fn round_trip_brightness() {
         round_trip(
-            BrightnessCommand {
+            GlobalBrightnessCommand {
                 brightness: Brightness::try_from(6).unwrap(),
             }
             .into(),
@@ -147,7 +148,10 @@ mod tests {
                 },
                 payload: vec!()
             }),
-            Err(TryFromPacketError::UnexpectedPayloadSize(1, 0))
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                expected: 1,
+                actual: 0
+            })
         );
 
         assert_eq!(
@@ -161,13 +165,16 @@ mod tests {
                 },
                 payload: vec!(0, 0)
             }),
-            Err(TryFromPacketError::UnexpectedPayloadSize(1, 2))
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                expected: 1,
+                actual: 2
+            })
         );
     }
 
     #[test]
     fn packet_into_brightness_invalid() {
-        let mut packet: Packet = commands::BrightnessCommand {
+        let mut packet: Packet = GlobalBrightnessCommand {
             brightness: Brightness::MAX,
         }
         .into();
@@ -182,8 +189,8 @@ mod tests {
     #[test]
     fn into_command() {
         assert_eq!(
-            BrightnessCommand::from(Brightness::MIN),
-            BrightnessCommand {
+            GlobalBrightnessCommand::from(Brightness::MIN),
+            GlobalBrightnessCommand {
                 brightness: Brightness::MIN,
             },
         )

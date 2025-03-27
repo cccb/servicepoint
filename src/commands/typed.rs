@@ -1,7 +1,7 @@
 use crate::{
     command_code::CommandCode, commands::errors::TryFromPacketError,
-    BitVecCommand, BitmapCommand, BrightnessCommand, BrightnessGridCommand,
-    CharGridCommand, ClearCommand, Cp437GridCommand, FadeOutCommand,
+    BitVecCommand, BitmapCommand, BrightnessGridCommand, CharGridCommand,
+    ClearCommand, Cp437GridCommand, FadeOutCommand, GlobalBrightnessCommand,
     HardResetCommand, Packet, TryIntoPacketError,
 };
 
@@ -17,7 +17,7 @@ pub enum TypedCommand {
     CharGrid(CharGridCommand),
     Cp437Grid(Cp437GridCommand),
     Bitmap(BitmapCommand),
-    Brightness(BrightnessCommand),
+    Brightness(GlobalBrightnessCommand),
     BrightnessGrid(BrightnessGridCommand),
     BitVec(BitVecCommand),
     HardReset(HardResetCommand),
@@ -36,7 +36,7 @@ impl TryFrom<Packet> for TypedCommand {
                 TypedCommand::Clear(crate::ClearCommand::try_from(packet)?)
             }
             CommandCode::Brightness => TypedCommand::Brightness(
-                crate::BrightnessCommand::try_from(packet)?,
+                crate::GlobalBrightnessCommand::try_from(packet)?,
             ),
             CommandCode::HardReset => TypedCommand::HardReset(
                 crate::HardResetCommand::try_from(packet)?,

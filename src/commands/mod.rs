@@ -1,13 +1,13 @@
 mod bitmap;
 mod bitmap_legacy;
 mod bitvec;
-mod brightness;
 mod brightness_grid;
 mod char_grid;
 mod clear;
 mod cp437_grid;
 mod errors;
 mod fade_out;
+mod global_brightness;
 mod hard_reset;
 mod typed;
 
@@ -18,13 +18,13 @@ use std::fmt::Debug;
 pub use bitmap::*;
 pub use bitmap_legacy::*;
 pub use bitvec::*;
-pub use brightness::*;
 pub use brightness_grid::*;
 pub use char_grid::*;
 pub use clear::*;
 pub use cp437_grid::*;
 pub use errors::*;
 pub use fade_out::*;
+pub use global_brightness::*;
 pub use hard_reset::*;
 pub use typed::*;
 
@@ -61,7 +61,7 @@ pub use typed::*;
 /// use servicepoint::*;
 ///
 /// // create command
-/// let command = BrightnessCommand{ brightness: Brightness::MAX };
+/// let command = GlobalBrightnessCommand{ brightness: Brightness::MAX };
 ///
 /// // turn command into Packet
 /// let packet: Packet = command.clone().into();
@@ -101,7 +101,10 @@ fn check_command_code_only(
     if packet.header.command_code != u16::from(code) {
         Some(InvalidCommandCodeError(packet.header.command_code).into())
     } else if !payload.is_empty() {
-        Some(TryFromPacketError::UnexpectedPayloadSize(0, payload.len()))
+        Some(TryFromPacketError::UnexpectedPayloadSize {
+            expected: 0,
+            actual: payload.len(),
+        })
     } else if a != 0 || b != 0 || c != 0 || d != 0 {
         Some(TryFromPacketError::ExtraneousHeaderValues)
     } else {

@@ -11,8 +11,15 @@ pub enum TryFromPacketError {
     #[error(transparent)]
     InvalidCommand(#[from] InvalidCommandCodeError),
     /// the expected payload size was n, but size m was found
-    #[error("the expected payload size was {0}, but size {1} was found")]
-    UnexpectedPayloadSize(usize, usize),
+    #[error(
+        "the expected payload size was {actual}, but size {expected} was found"
+    )]
+    UnexpectedPayloadSize {
+        /// size of the provided payload
+        actual: usize,
+        /// expected size according to command or header values
+        expected: usize,
+    },
     /// Header fields not needed for the command have been used.
     ///
     /// Note that these commands would usually still work on the actual display.

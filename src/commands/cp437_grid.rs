@@ -65,12 +65,12 @@ impl TryFrom<Packet> for Cp437GridCommand {
 
         check_command_code(command_code, CommandCode::Cp437Data)?;
 
-        let expected_size = width as usize * height as usize;
-        if payload.len() != expected_size {
-            return Err(TryFromPacketError::UnexpectedPayloadSize(
-                expected_size,
-                payload.len(),
-            ));
+        let expected = width as usize * height as usize;
+        if payload.len() != expected {
+            return Err(TryFromPacketError::UnexpectedPayloadSize {
+                expected,
+                actual: payload.len(),
+            });
         }
 
         Ok(Self {
@@ -131,5 +131,22 @@ mod tests {
                 origin: Origin::default(),
             },
         )
+    }
+
+    #[test]
+    fn invalid_size() {
+        let command: Cp437GridCommand = Cp437Grid::new(2, 3).into();
+        let packet: Packet = command.try_into().unwrap();
+        let packet = Packet {
+            header: packet.header,
+            payload: packet.payload[..5].to_vec(),
+        };
+        assert_eq!(
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                actual: 5,
+                expected: 6
+            }),
+            Cp437GridCommand::try_from(packet)
+        );
     }
 }

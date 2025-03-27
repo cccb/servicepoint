@@ -57,12 +57,12 @@ impl TryFrom<Packet> for CharGridCommand {
         let payload: Vec<_> =
             String::from_utf8(payload.clone())?.chars().collect();
 
-        let expected_size = width as usize * height as usize;
-        if payload.len() != expected_size {
-            return Err(TryFromPacketError::UnexpectedPayloadSize(
-                expected_size,
-                payload.len(),
-            ));
+        let expected = width as usize * height as usize;
+        if payload.len() != expected {
+            return Err(TryFromPacketError::UnexpectedPayloadSize {
+                expected,
+                actual: payload.len(),
+            });
         }
 
         Ok(Self {
@@ -96,7 +96,7 @@ mod tests {
     use crate::{
         commands::tests::{round_trip, TestImplementsCommand},
         cp437::cp437_to_char,
-        CharGrid, CharGridCommand, Origin,
+        CharGrid, CharGridCommand, Origin, Packet, TryFromPacketError,
     };
 
     impl TestImplementsCommand for CharGridCommand {}
@@ -126,5 +126,22 @@ mod tests {
                 origin: Origin::default(),
             },
         )
+    }
+
+    #[test]
+    fn invalid_size() {
+        let command: CharGridCommand = CharGrid::new(2, 3).into();
+        let packet: Packet = command.try_into().unwrap();
+        let packet = Packet {
+            header: packet.header,
+            payload: packet.payload[..5].to_vec(),
+        };
+        assert_eq!(
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                actual: 5,
+                expected: 6
+            }),
+            CharGridCommand::try_from(packet)
+        );
     }
 }
