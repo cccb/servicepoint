@@ -9,10 +9,10 @@ impl<T: Sized + Default + Copy + Clone + Debug> Value for T {}
 
 /// A 2D grid of values.
 ///
-/// The memory layout is the one the display expects in [Command]s.
+/// The memory layout is the one the display expects in [`crate::Command`]s.
 ///
 /// This structure can be used with any type that implements the [Value] trait.
-/// You can also use the concrete type aliases provided in this crate, e.g. [`CharGrid`] and [`ByteGrid`].
+/// You can also use the concrete type aliases provided in this crate, e.g. [`crate::CharGrid`] and [`crate::ByteGrid`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ValueGrid<T: Value> {
     width: usize,
@@ -369,13 +369,11 @@ impl<T: Value> Grid<T> for ValueGrid<T> {
 
 impl<T: Value> DataRef<T> for ValueGrid<T> {
     /// Get the underlying byte rows mutable
-    #[must_use]
     fn data_ref_mut(&mut self) -> &mut [T] {
         self.data.as_mut_slice()
     }
 
     /// Get the underlying byte rows read only
-    #[must_use]
     fn data_ref(&self) -> &[T] {
         self.data.as_slice()
     }

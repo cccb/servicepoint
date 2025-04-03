@@ -22,10 +22,10 @@ pub struct Bitmap {
 }
 
 impl Bitmap {
-    /// Creates a new [Bitmap] with the specified dimensions.
+    /// Creates a new [`Bitmap`] with the specified dimensions.
     /// The initial state of the contained pixels is false.
     ///
-    /// The width has to be a multiple of [`TILE_SIZE`], otherwise this function returns None.
+    /// The width has to be a multiple of [`crate::TILE_SIZE`], otherwise this function returns None.
     ///
     /// # Arguments
     ///

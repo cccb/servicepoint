@@ -1,5 +1,9 @@
 use crate::{Connection, Packet, SendError};
-use std::{error::Error, fmt::Debug, net::UdpSocket};
+use std::{
+    error::Error,
+    fmt::Debug,
+    net::{SocketAddr, UdpSocket},
+};
 
 /// A connection using the UDP protocol.
 ///
@@ -31,7 +35,7 @@ impl UdpConnection {
         addr: impl std::net::ToSocketAddrs + Debug,
     ) -> std::io::Result<Self> {
         log::info!("connecting to {addr:?}");
-        let socket = UdpSocket::bind("0.0.0.0:0")?;
+        let socket = UdpSocket::bind(SocketAddr::from(([0, 0, 0, 0], 0)))?;
         socket.connect(addr)?;
         Ok(Self { socket })
     }

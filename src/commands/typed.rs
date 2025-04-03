@@ -29,7 +29,7 @@ pub enum TypedCommand {
 impl TryFrom<Packet> for TypedCommand {
     type Error = TryFromPacketError;
 
-    /// Try to interpret the [Packet] as one containing a [Command]
+    /// Try to interpret the [Packet] as one containing a [`TypedCommand`]
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
         Ok(match CommandCode::try_from(packet.header.command_code)? {
             CommandCode::Clear => {

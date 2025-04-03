@@ -78,6 +78,8 @@ You can choose to (not) include them by toggling the related features.
 | protocol_websocket | false   | `Connection::WebSocket`                      | [tungstenite](https://crates.io/crates/tungstenite) |
 | rand               | false   | `impl Distribution<Brightness> for Standard` | [rand](https://crates.io/crates/rand)               |
 
+If you are looking at features to minimize binary size: take a look at the `tiny_announce`-example!
+
 ## Supported language bindings
 
 | Language  | Support level | Repo                                                                                                                                             |
