@@ -1,4 +1,4 @@
-use crate::{BitVec, DataRef, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH};
+use crate::{BitVecU8Msb0, DataRef, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH};
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 
 /// A fixed-size 2D grid of booleans.
@@ -18,7 +18,7 @@ use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 pub struct Bitmap {
     width: usize,
     height: usize,
-    bit_vec: BitVec,
+    bit_vec: BitVecU8Msb0,
 }
 
 impl Bitmap {
@@ -52,7 +52,7 @@ impl Bitmap {
         Self {
             width,
             height,
-            bit_vec: BitVec::repeat(false, width * height),
+            bit_vec: BitVecU8Msb0::repeat(false, width * height),
         }
     }
 
@@ -86,11 +86,11 @@ impl Bitmap {
         Ok(Self {
             width,
             height,
-            bit_vec: BitVec::from_slice(data),
+            bit_vec: BitVecU8Msb0::from_slice(data),
         })
     }
 
-    /// Creates a [Bitmap] with the specified width from the provided [`BitVec`] without copying it.
+    /// Creates a [Bitmap] with the specified width from the provided [`BitVecU8Msb0`] without copying it.
     ///
     /// The data cannot be loaded on the following cases:
     /// - when the data size is not divisible by the width (incomplete rows)
@@ -100,7 +100,7 @@ impl Bitmap {
     /// Otherwise, this returns a [Bitmap] that contains the provided data.
     pub fn from_bitvec(
         width: usize,
-        bit_vec: BitVec,
+        bit_vec: BitVecU8Msb0,
     ) -> Result<Self, LoadBitmapError> {
         if width % 8 != 0 {
             return Err(LoadBitmapError::InvalidWidth);
@@ -233,8 +233,8 @@ impl From<Bitmap> for Vec<u8> {
     }
 }
 
-impl From<Bitmap> for BitVec {
-    /// Turns a [Bitmap] into the underlying [`BitVec`].
+impl From<Bitmap> for BitVecU8Msb0 {
+    /// Turns a [Bitmap] into the underlying [`BitVecU8Msb0`].
     fn from(value: Bitmap) -> Self {
         value.bit_vec
     }
@@ -302,7 +302,7 @@ pub enum LoadBitmapError {
 
 #[cfg(test)]
 mod tests {
-    use crate::{BitVec, Bitmap, DataRef, Grid, LoadBitmapError, ValueGrid};
+    use crate::{BitVecU8Msb0, Bitmap, DataRef, Grid, LoadBitmapError, ValueGrid};
 
     #[test]
     fn fill() {
@@ -399,7 +399,7 @@ mod tests {
     fn to_bitvec() {
         let mut grid = Bitmap::new(8, 2).unwrap();
         grid.set(0, 0, true);
-        let bitvec: BitVec = grid.into();
+        let bitvec: BitVecU8Msb0 = grid.into();
         assert_eq!(bitvec.as_raw_slice(), [0x80, 0x00]);
     }
 
@@ -418,7 +418,7 @@ mod tests {
 
     #[test]
     fn load_invalid_width() {
-        let data = BitVec::repeat(false, 7 * 3).into_vec();
+        let data = BitVecU8Msb0::repeat(false, 7 * 3).into_vec();
         assert_eq!(
             Bitmap::load(7, 3, &data),
             Err(LoadBitmapError::InvalidWidth)
@@ -427,7 +427,7 @@ mod tests {
 
     #[test]
     fn load_invalid_size() {
-        let data = BitVec::repeat(false, 8 * 4).into_vec();
+        let data = BitVecU8Msb0::repeat(false, 8 * 4).into_vec();
         assert_eq!(
             Bitmap::load(8, 3, &data),
             Err(LoadBitmapError::InvalidDataSize)
@@ -436,7 +436,7 @@ mod tests {
 
     #[test]
     fn from_vec_invalid_width() {
-        let data = BitVec::repeat(false, 7 * 3);
+        let data = BitVecU8Msb0::repeat(false, 7 * 3);
         assert_eq!(
             Bitmap::from_bitvec(7, data),
             Err(LoadBitmapError::InvalidWidth)
@@ -445,7 +445,7 @@ mod tests {
 
     #[test]
     fn from_vec_invalid_size() {
-        let data = BitVec::repeat(false, 7 * 4);
+        let data = BitVecU8Msb0::repeat(false, 7 * 4);
         assert_eq!(
             Bitmap::from_bitvec(8, data),
             Err(LoadBitmapError::InvalidDataSize)
