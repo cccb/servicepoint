@@ -32,6 +32,8 @@ use std::{mem::size_of, num::TryFromIntError};
 /// payload, where applicable.
 ///
 /// Because the meaning of most fields depend on the command, there are no speaking names for them.
+///
+/// The contained values are in platform endian-ness and may need to be converted before sending.
 #[derive(Copy, Clone, Debug, PartialEq, Default)]
 #[repr(C)]
 pub struct Header {
@@ -68,28 +70,9 @@ pub struct Packet {
 impl From<Packet> for Vec<u8> {
     /// Turn the packet into raw bytes ready to send
     fn from(value: Packet) -> Self {
-        let Packet {
-            header:
-                Header {
-                    command_code: mode,
-                    a,
-                    b,
-                    c,
-                    d,
-                },
-            payload,
-        } = value;
-
-        let mut packet = vec![0u8; 10 + payload.len()];
-        packet[0..=1].copy_from_slice(&u16::to_be_bytes(mode));
-        packet[2..=3].copy_from_slice(&u16::to_be_bytes(a));
-        packet[4..=5].copy_from_slice(&u16::to_be_bytes(b));
-        packet[6..=7].copy_from_slice(&u16::to_be_bytes(c));
-        packet[8..=9].copy_from_slice(&u16::to_be_bytes(d));
-
-        packet[10..].copy_from_slice(&payload);
-
-        packet
+        let mut vec = vec![0u8; value.size()];
+        value.serialize_to(vec.as_mut_slice());
+        vec
     }
 }
 
@@ -137,6 +120,42 @@ impl TryFrom<Vec<u8>> for Packet {
 }
 
 impl Packet {
+    /// Serialize packet into pre-allocated buffer.
+    ///
+    /// returns false if the buffer is too small before writing any values.
+    pub fn serialize_to(&self, slice: &mut [u8]) -> bool {
+        if slice.len() < self.size() {
+            return false;
+        }
+
+        let Packet {
+            header:
+            Header {
+                command_code,
+                a,
+                b,
+                c,
+                d,
+            },
+            payload,
+        } = self;
+
+        slice[0..=1].copy_from_slice(&u16::to_be_bytes(*command_code));
+        slice[2..=3].copy_from_slice(&u16::to_be_bytes(*a));
+        slice[4..=5].copy_from_slice(&u16::to_be_bytes(*b));
+        slice[6..=7].copy_from_slice(&u16::to_be_bytes(*c));
+        slice[8..=9].copy_from_slice(&u16::to_be_bytes(*d));
+
+        slice[10..].copy_from_slice(payload);
+        true
+    }
+
+    /// Returns the amount of bytes this packet takes up when serialized.
+    #[must_use]
+    pub fn size(&self) -> usize {
+        size_of::<Header>() + self.payload.len()
+    }
+
     fn u16_from_be_slice(slice: &[u8]) -> u16 {
         let mut bytes = [0u8; 2];
         bytes[0] = slice[0];

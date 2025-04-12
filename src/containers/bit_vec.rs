@@ -5,6 +5,6 @@
 pub type BitVecU8Msb0 = bitvec::BitVec<u8, bitvec::Msb0>;
 
 pub mod bitvec {
-    //! Re-export of the used library [::bitvec].
+    //! Re-export of the used library [`::bitvec`].
     pub use ::bitvec::prelude::*;
 }
