@@ -33,6 +33,7 @@ use std::{mem::size_of, num::TryFromIntError};
 ///
 /// Because the meaning of most fields depend on the command, there are no speaking names for them.
 #[derive(Copy, Clone, Debug, PartialEq, Default)]
+#[repr(C)]
 pub struct Header {
     /// The first two bytes specify which command this packet represents.
     pub command_code: u16,
