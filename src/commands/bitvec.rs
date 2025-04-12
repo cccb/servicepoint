@@ -1,8 +1,8 @@
 use crate::{
     command_code::CommandCode, command_code::InvalidCommandCodeError,
     commands::errors::TryFromPacketError, compression::into_compressed,
-    compression::into_decompressed, BitVecU8Msb0, CompressionCode, Header, Offset,
-    Packet, TryIntoPacketError, TypedCommand,
+    compression::into_decompressed, BitVecU8Msb0, CompressionCode, Header,
+    Offset, Packet, TryIntoPacketError, TypedCommand,
 };
 
 /// Binary operations for use with the [`BitVecCommand`] command.

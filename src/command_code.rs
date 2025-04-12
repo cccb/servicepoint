@@ -1,7 +1,8 @@
 /// The u16 command codes used for the [Command]s.
 #[repr(u16)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub(crate) enum CommandCode {
+#[allow(missing_docs)]
+pub enum CommandCode {
     Clear = 0x0002,
     Cp437Data = 0x0003,
     CharBrightness = 0x0005,

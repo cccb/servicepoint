@@ -130,13 +130,13 @@ impl Packet {
 
         let Packet {
             header:
-            Header {
-                command_code,
-                a,
-                b,
-                c,
-                d,
-            },
+                Header {
+                    command_code,
+                    a,
+                    b,
+                    c,
+                    d,
+                },
             payload,
         } = self;
 

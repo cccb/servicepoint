@@ -1,4 +1,6 @@
-use crate::{BitVecU8Msb0, DataRef, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH};
+use crate::{
+    BitVecU8Msb0, DataRef, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
+};
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 
 /// A fixed-size 2D grid of booleans.
@@ -302,7 +304,9 @@ pub enum LoadBitmapError {
 
 #[cfg(test)]
 mod tests {
-    use crate::{BitVecU8Msb0, Bitmap, DataRef, Grid, LoadBitmapError, ValueGrid};
+    use crate::{
+        BitVecU8Msb0, Bitmap, DataRef, Grid, LoadBitmapError, ValueGrid,
+    };
 
     #[test]
     fn fill() {

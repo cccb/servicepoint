@@ -56,6 +56,7 @@
 //! ```
 
 pub use crate::brightness::Brightness;
+pub use crate::command_code::CommandCode;
 pub use crate::commands::*;
 pub use crate::compression_code::CompressionCode;
 pub use crate::connections::*;

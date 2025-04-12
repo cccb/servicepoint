@@ -36,7 +36,11 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let connection = UdpConnection::open(addr).unwrap();
     connection.send(ClearCommand).unwrap();
 
-    let grid = CharGrid::from_vec(5, vec!['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd']).unwrap();
+    let grid = CharGrid::from_vec(
+        5,
+        vec!['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd'],
+    )
+    .unwrap();
 
     connection.send(CharGridCommand::from(grid)).unwrap();
     0
