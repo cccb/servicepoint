@@ -16,7 +16,7 @@ use std::string::FromUtf8Error;
 ///
 /// # let connection = FakeConnection;
 /// let command = CharGridCommand { origin: Origin::ZERO, grid };
-/// connection.send(command).unwrap()
+/// connection.send_command(command).unwrap()
 /// ```
 pub type CharGrid = ValueGrid<char>;
 

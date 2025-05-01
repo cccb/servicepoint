@@ -3,8 +3,9 @@
 use clap::Parser;
 use servicepoint::{
     Bitmap, BitmapCommand, Brightness, BrightnessGrid, BrightnessGridCommand,
-    Connection, DataRef, Grid, UdpConnection, TILE_HEIGHT, TILE_WIDTH,
+    DataRef, Grid, SendCommandExt, TILE_HEIGHT, TILE_WIDTH,
 };
+use std::net::UdpSocket;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -14,14 +15,14 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
-    let connection = UdpConnection::open(cli.destination)
-        .expect("could not connect to display");
+    let connection =
+        UdpSocket::bind(cli.destination).expect("could not connect to display");
 
     let mut bitmap = Bitmap::max_sized();
     bitmap.fill(true);
 
     connection
-        .send(BitmapCommand::from(bitmap))
+        .send_command(BitmapCommand::from(bitmap))
         .expect("send failed");
 
     let max_brightness: u8 = Brightness::MAX.into();
@@ -32,5 +33,5 @@ fn main() {
     }
 
     let command: BrightnessGridCommand = brightnesses.into();
-    connection.send(command).expect("send failed");
+    connection.send_command(command).expect("send failed");
 }

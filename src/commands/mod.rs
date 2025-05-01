@@ -73,7 +73,7 @@ pub use typed::*;
 ///
 /// // send command
 /// # let connection = FakeConnection;
-/// connection.send(command).unwrap();
+/// connection.send_command(command).unwrap();
 /// ```
 pub trait Command:
     Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet>

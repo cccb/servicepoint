@@ -14,7 +14,7 @@ use crate::{
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
 /// let grid = CharGrid::from("Hello,\nWorld!");
-/// connection.send(CharGridCommand { origin: Origin::ZERO, grid }).expect("send failed");
+/// connection.send_command(CharGridCommand { origin: Origin::ZERO, grid }).expect("send failed");
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CharGridCommand {

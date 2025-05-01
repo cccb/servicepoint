@@ -15,7 +15,7 @@ use rand::{
 ///
 /// let b = Brightness::try_from(7).unwrap();
 /// # let connection = FakeConnection;
-/// let result = connection.send(GlobalBrightnessCommand::from(b));
+/// let result = connection.send_command(GlobalBrightnessCommand::from(b));
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 #[repr(transparent)]

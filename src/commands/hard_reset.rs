@@ -13,7 +13,7 @@ use std::fmt::Debug;
 /// ```rust
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
-/// connection.send(HardResetCommand).unwrap();
+/// connection.send_command(HardResetCommand).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HardResetCommand;

@@ -60,7 +60,7 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 ///
 ///    // Change pixels here
 ///
-///    connection.send(BitmapCommand {
+///    connection.send_command(BitmapCommand {
 ///            origin: Origin::new(0,0),
 ///            bitmap: pixels,
 ///            compression: CompressionCode::default()

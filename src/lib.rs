@@ -9,22 +9,25 @@
 //! ### Clear display
 //!
 //! ```rust
+//! use std::net::UdpSocket;
 //! use servicepoint::*;
 //!
 //! // establish a connection
-//! let connection = UdpConnection::open("127.0.0.1:2342")
+//! let connection = UdpSocket::bind("127.0.0.1:2342")
 //!     .expect("connection failed");
 //!
+//!  # let connection = FakeConnection; // do not fail tests
 //!  // turn off all pixels on display
-//!  connection.send(ClearCommand)
+//!  connection.send_command(ClearCommand)
 //!     .expect("send failed");
 //! ```
 //!
 //! ### Set all pixels to on
 //!
 //! ```rust
+//! # use std::net::UdpSocket;
 //! # use servicepoint::*;
-//! # let connection = UdpConnection::open("127.0.0.1:2342").expect("connection failed");
+//! # let connection = FakeConnection;
 //!  // turn on all pixels in a grid
 //!  let mut pixels = Bitmap::max_sized();
 //!  pixels.fill(true);
@@ -37,14 +40,15 @@
 //!  };
 //!
 //!  // send command to display
-//!  connection.send(command).expect("send failed");
+//!  connection.send_command(command).expect("send failed");
 //! ```
 //!
 //! ### Send text
 //!
 //! ```rust
+//! # use std::net::UdpSocket;
 //! # use servicepoint::*;
-//! # let connection = UdpConnection::open("127.0.0.1:2342").expect("connection failed");
+//! # let connection = FakeConnection;
 //! // create a text grid
 //! let mut grid = CharGrid::from("Hello\nCCCB?");
 //! // modify the grid
@@ -52,14 +56,14 @@
 //! // create the command to send the data
 //! let command = CharGridCommand { origin: Origin::ZERO, grid };
 //! // send command to display
-//! connection.send(command).expect("send failed");
+//! connection.send_command(command).expect("send failed");
 //! ```
 
 pub use crate::brightness::Brightness;
 pub use crate::command_code::CommandCode;
 pub use crate::commands::*;
 pub use crate::compression_code::CompressionCode;
-pub use crate::connections::*;
+pub use crate::connection::*;
 pub use crate::constants::*;
 pub use crate::containers::*;
 pub use crate::origin::{Origin, Pixels, Tiles};
@@ -70,7 +74,7 @@ mod command_code;
 mod commands;
 mod compression;
 mod compression_code;
-mod connections;
+mod connection;
 mod constants;
 mod containers;
 #[cfg(feature = "cp437")]

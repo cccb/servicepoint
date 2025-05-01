@@ -2,9 +2,9 @@
 
 use clap::Parser;
 use servicepoint::{
-    CharGrid, CharGridCommand, ClearCommand, Connection, UdpConnection,
-    TILE_WIDTH,
+    CharGrid, CharGridCommand, ClearCommand, SendCommandExt, TILE_WIDTH,
 };
+use std::net::UdpSocket;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -34,14 +34,18 @@ fn main() {
         cli.text.push("Hello, CCCB!".to_string());
     }
 
-    let connection = UdpConnection::open(&cli.destination)
+    let connection = UdpSocket::bind(&cli.destination)
         .expect("could not connect to display");
 
     if cli.clear {
-        connection.send(ClearCommand).expect("sending clear failed");
+        connection
+            .send_command(ClearCommand)
+            .expect("sending clear failed");
     }
 
     let text = cli.text.join("\n");
     let command: CharGridCommand = CharGrid::wrap_str(TILE_WIDTH, &text).into();
-    connection.send(command).expect("sending text failed");
+    connection
+        .send_command(command)
+        .expect("sending text failed");
 }

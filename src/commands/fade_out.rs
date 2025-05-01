@@ -13,7 +13,7 @@ use std::fmt::Debug;
 /// ```rust
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
-/// connection.send(FadeOutCommand).unwrap();
+/// connection.send_command(FadeOutCommand).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FadeOutCommand;

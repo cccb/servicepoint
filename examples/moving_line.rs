@@ -2,10 +2,10 @@
 
 use clap::Parser;
 use servicepoint::{
-    Bitmap, BitmapCommand, Connection, Grid, UdpConnection, FRAME_PACING,
-    PIXEL_HEIGHT, PIXEL_WIDTH,
+    Bitmap, BitmapCommand, Grid, SendCommandExt, FRAME_PACING, PIXEL_HEIGHT,
+    PIXEL_WIDTH,
 };
-use std::thread;
+use std::{net::UdpSocket, thread};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -14,7 +14,7 @@ struct Cli {
 }
 
 fn main() {
-    let connection = UdpConnection::open(Cli::parse().destination)
+    let connection = UdpSocket::bind(Cli::parse().destination)
         .expect("could not connect to display");
 
     let mut bitmap = Bitmap::max_sized();
@@ -26,7 +26,7 @@ fn main() {
         }
 
         let command = BitmapCommand::from(bitmap.clone());
-        connection.send(command).expect("send failed");
+        connection.send_command(command).expect("send failed");
         thread::sleep(FRAME_PACING);
     }
 }

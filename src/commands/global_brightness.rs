@@ -12,7 +12,7 @@ use crate::{
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
 /// let command = GlobalBrightnessCommand { brightness: Brightness::MAX };
-/// connection.send(command).unwrap();
+/// connection.send_command(command).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlobalBrightnessCommand {

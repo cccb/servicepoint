@@ -17,14 +17,14 @@ use crate::{
 /// # let connection = FakeConnection;
 /// let grid = CharGrid::from("Hello,\nWorld!");
 /// let grid = Cp437Grid::from(&grid);
-/// connection.send(Cp437GridCommand{ origin: Origin::ZERO, grid }).expect("send failed");
+/// connection.send_command(Cp437GridCommand{ origin: Origin::ZERO, grid }).expect("send failed");
 /// ```
 ///
 /// ```rust
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
 /// let grid = Cp437Grid::load_ascii("Hello\nWorld", 5, false).unwrap();
-/// connection.send(Cp437GridCommand{ origin: Origin::new(2, 2), grid }).unwrap();
+/// connection.send_command(Cp437GridCommand{ origin: Origin::new(2, 2), grid }).unwrap();
 /// ```
 /// [CP-437]: https://en.wikipedia.org/wiki/Code_page_437
 #[derive(Clone, Debug, PartialEq, Eq)]

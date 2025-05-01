@@ -2,10 +2,8 @@
 
 use clap::Parser;
 use rand::{distributions, Rng};
-use servicepoint::{
-    Bitmap, BitmapCommand, Connection, Grid, UdpConnection, FRAME_PACING,
-};
-use std::thread;
+use servicepoint::{Bitmap, BitmapCommand, Grid, SendCommandExt, FRAME_PACING};
+use std::{net::UdpSocket, thread};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -18,13 +16,13 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = UdpConnection::open(&cli.destination)
+    let connection = UdpSocket::bind(&cli.destination)
         .expect("could not connect to display");
     let mut field = make_random_field(cli.probability);
 
     loop {
         let command = BitmapCommand::from(field.clone());
-        connection.send(command).expect("could not send");
+        connection.send_command(command).expect("could not send");
         thread::sleep(FRAME_PACING);
         field = iteration(field);
     }

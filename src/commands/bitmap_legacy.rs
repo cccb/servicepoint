@@ -15,7 +15,7 @@ use std::fmt::Debug;
 /// # let connection = FakeConnection;
 /// // this sends a packet that does nothing
 /// # #[allow(deprecated)]
-/// connection.send(BitmapLegacyCommand).unwrap();
+/// connection.send_command(BitmapLegacyCommand).unwrap();
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[deprecated]

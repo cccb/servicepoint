@@ -19,16 +19,17 @@ The [GitHub repository](https://github.com/cccb/servicepoint) remains available 
 ## Examples
 
 ```rust no_run
+use std::net::UdpSocket;
 // everything you need is in the top-level
 use servicepoint::*;
 
 fn main() {
   // establish connection
-  let connection = UdpConnection::open("172.23.42.29:2342")
+  let connection = UdpSocket::bind("172.23.42.29:2342")
           .expect("connection failed");
 
   // clear screen content
-  connection.send(ClearCommand).expect("send failed");
+  connection.send_command(ClearCommand).expect("send failed");
 }
 ```
 

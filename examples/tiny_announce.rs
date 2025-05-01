@@ -21,10 +21,8 @@
 
 #![no_main]
 
-use servicepoint::{
-    CharGrid, CharGridCommand, ClearCommand, Connection, UdpConnection,
-};
-use std::net::SocketAddr;
+use servicepoint::{CharGrid, CharGridCommand, ClearCommand, SendCommandExt};
+use std::net::{SocketAddr, UdpSocket};
 
 /// This is the entry point of the example.
 /// `#![no_main]` is used to remove the default rust main
@@ -33,8 +31,8 @@ use std::net::SocketAddr;
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let addr = SocketAddr::from(([172, 23, 42, 29], 2342));
 
-    let connection = UdpConnection::open(addr).unwrap();
-    connection.send(ClearCommand).unwrap();
+    let connection = UdpSocket::bind(addr).unwrap();
+    connection.send_command(ClearCommand).unwrap();
 
     let grid = CharGrid::from_vec(
         5,
@@ -42,6 +40,8 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
     )
     .unwrap();
 
-    connection.send(CharGridCommand::from(grid)).unwrap();
+    connection
+        .send_command(CharGridCommand::from(grid))
+        .unwrap();
     0
 }

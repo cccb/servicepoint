@@ -22,20 +22,17 @@ bzip2 = { version = "0.5", optional = true }
 zstd = { version = "0.13", optional = true }
 rust-lzma = { version = "0.6", optional = true }
 rand = { version = "0.8", optional = true }
-tungstenite = { version = "0.26", optional = true }
 once_cell = { version = "1.20", optional = true }
 thiserror = "2.0"
 
 [features]
-default = ["compression_lzma", "protocol_udp", "cp437"]
+default = ["compression_lzma", "cp437"]
 compression_zlib = ["dep:flate2"]
 compression_bzip2 = ["dep:bzip2"]
 compression_lzma = ["dep:rust-lzma"]
 compression_zstd = ["dep:zstd"]
 all_compressions = ["compression_zlib", "compression_bzip2", "compression_lzma", "compression_zstd"]
 rand = ["dep:rand"]
-protocol_udp = []
-protocol_websocket = ["dep:tungstenite"]
 cp437 = ["dep:once_cell"]
 
 [[example]]
@@ -45,10 +42,6 @@ required-features = ["rand"]
 [[example]]
 name = "game_of_life"
 required-features = ["rand"]
-
-[[example]]
-name = "websocket"
-required-features = ["protocol_websocket"]
 
 [dev-dependencies]
 # for examples

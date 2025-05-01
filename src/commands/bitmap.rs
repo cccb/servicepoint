@@ -28,7 +28,7 @@ use crate::{
 ///     compression: CompressionCode::Uncompressed
 /// };
 ///
-/// connection.send(command).expect("send failed");
+/// connection.send_command(command).expect("send failed");
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BitmapCommand {

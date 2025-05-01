@@ -11,7 +11,7 @@ use crate::{Brightness, ByteGrid, Grid, ValueGrid};
 /// grid.set(1, 1, Brightness::MIN);
 ///
 /// # let connection = FakeConnection;
-/// connection.send(BrightnessGridCommand {
+/// connection.send_command(BrightnessGridCommand {
 ///     origin: Origin::new(3, 7),
 ///     grid
 /// }).unwrap()
