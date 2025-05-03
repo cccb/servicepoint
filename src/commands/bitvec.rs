@@ -1,7 +1,7 @@
 use crate::{
     command_code::CommandCode, command_code::InvalidCommandCodeError,
     commands::errors::TryFromPacketError, compression::into_compressed,
-    compression::into_decompressed, BitVecU8Msb0, CompressionCode, Header,
+    compression::into_decompressed, DisplayBitVec, CompressionCode, Header,
     Offset, Packet, TryIntoPacketError, TypedCommand,
 };
 
@@ -31,11 +31,11 @@ pub enum BinaryOperation {
 ///
 /// For example, [`BinaryOperation::Or`] can be used to turn on some pixels without affecting other pixels.
 ///
-/// The contained [`BitVecU8Msb0`] is always uncompressed.
+/// The contained [`DisplayBitVec`] is always uncompressed.
 #[derive(Clone, PartialEq, Debug, Eq)]
 pub struct BitVecCommand {
     /// the pixels to send to the display as one long row
-    pub bitvec: BitVecU8Msb0,
+    pub bitvec: DisplayBitVec,
     /// where to start overwriting pixel data
     pub offset: Offset,
     /// The operation to apply on the display per bit comparing old and new state.
@@ -115,7 +115,7 @@ impl TryFrom<Packet> for BitVecCommand {
         }
         Ok(Self {
             offset: offset as Offset,
-            bitvec: BitVecU8Msb0::from_vec(payload),
+            bitvec: DisplayBitVec::from_vec(payload),
             compression,
             operation,
         })
@@ -128,8 +128,8 @@ impl From<BitVecCommand> for TypedCommand {
     }
 }
 
-impl From<BitVecU8Msb0> for BitVecCommand {
-    fn from(bitvec: BitVecU8Msb0) -> Self {
+impl From<DisplayBitVec> for BitVecCommand {
+    fn from(bitvec: DisplayBitVec) -> Self {
         Self {
             bitvec,
             operation: BinaryOperation::default(),
@@ -177,7 +177,7 @@ mod tests {
                 round_trip(
                     BitVecCommand {
                         offset: 23,
-                        bitvec: BitVecU8Msb0::repeat(false, 40),
+                        bitvec: DisplayBitVec::repeat(false, 40),
                         compression: *compression,
                         operation,
                     }
@@ -200,7 +200,7 @@ mod tests {
         for compression in CompressionCode::ALL {
             let p: Packet = commands::BitVecCommand {
                 offset: 0,
-                bitvec: BitVecU8Msb0::repeat(false, 8),
+                bitvec: DisplayBitVec::repeat(false, 8),
                 compression: *compression,
                 operation: BinaryOperation::Overwrite,
             }
@@ -234,7 +234,7 @@ mod tests {
     fn error_reserved_used() {
         let Packet { header, payload } = commands::BitVecCommand {
             offset: 0,
-            bitvec: BitVecU8Msb0::repeat(false, 8),
+            bitvec: DisplayBitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
             operation: BinaryOperation::Or,
         }
@@ -267,7 +267,7 @@ mod tests {
     fn error_invalid_compression() {
         let Packet { header, payload } = commands::BitVecCommand {
             offset: 0,
-            bitvec: BitVecU8Msb0::repeat(false, 8),
+            bitvec: DisplayBitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
             operation: BinaryOperation::And,
         }
@@ -300,7 +300,7 @@ mod tests {
     fn error_unexpected_size() {
         let Packet { header, payload } = commands::BitVecCommand {
             offset: 0,
-            bitvec: BitVecU8Msb0::repeat(false, 8),
+            bitvec: DisplayBitVec::repeat(false, 8),
             compression: CompressionCode::Uncompressed,
             operation: BinaryOperation::Xor,
         }
@@ -334,7 +334,7 @@ mod tests {
 
     #[test]
     fn into_command() {
-        let mut bitvec = BitVecU8Msb0::repeat(true, PIXEL_WIDTH);
+        let mut bitvec = DisplayBitVec::repeat(true, PIXEL_WIDTH);
         bitvec.fill(true);
 
         assert_eq!(

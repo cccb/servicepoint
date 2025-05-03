@@ -8,7 +8,7 @@ mod data_ref;
 mod grid;
 mod value_grid;
 
-pub use bit_vec::{bitvec, BitVecU8Msb0};
+pub use bit_vec::{bitvec, DisplayBitVec};
 pub use bitmap::*;
 pub use brightness_grid::BrightnessGrid;
 pub use byte_grid::ByteGrid;
