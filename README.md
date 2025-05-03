@@ -1,9 +1,11 @@
 # servicepoint
 
+[![Release](https://git.berlin.ccc.de/servicepoint/servicepoint/badges/release.svg)](https://git.berlin.ccc.de/servicepoint/servicepoint/releases)
 [![crates.io](https://img.shields.io/crates/v/servicepoint.svg)](https://crates.io/crates/servicepoint)
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/servicepoint)](https://crates.io/crates/servicepoint)
 [![docs.rs](https://img.shields.io/docsrs/servicepoint)](https://docs.rs/servicepoint/latest/servicepoint/)
 [![GPLv3 licensed](https://img.shields.io/crates/l/servicepoint)](./LICENSE)
+[![CI](https://git.berlin.ccc.de/servicepoint/servicepoint/badges/workflows/rust.yml/badge.svg)](https://git.berlin.ccc.de/servicepoint/servicepoint)
 
 In [CCCB](https://berlin.ccc.de/), there is a big pixel matrix hanging on the wall. It is called  "Service Point
 Display" or "Airport Display".
@@ -11,10 +13,6 @@ Display" or "Airport Display".
 This crate contains a library for parsing, encoding and sending packets to this display via UDP.
 The library itself is written in Rust, but can be used from multiple languages
 via [language bindings](#supported-language-bindings).
-
-This project moved
-to [git.berlin.ccc.de/servicepoint/servicepoint](https://git.berlin.ccc.de/servicepoint/servicepoint).
-The [GitHub repository](https://github.com/cccb/servicepoint) remains available as a mirror.
 
 ## Examples
 
@@ -24,11 +22,13 @@ use std::net::UdpSocket;
 use servicepoint::*;
 
 fn main() {
-  // establish connection
-  let connection = UdpSocket::bind("172.23.42.29:2342")
-          .expect("connection failed");
+  // this should be the IP of the real display @CCCB
+  let destination = "172.23.42.29:2342";
 
-  // clear screen content
+  // establish connection
+  let connection = UdpSocket::bind(destination).expect("connection failed");
+
+  // clear screen content using the UdpSocketExt
   connection.send_command(ClearCommand).expect("send failed");
 }
 ```
@@ -46,7 +46,7 @@ or
 
 ```toml
 [dependencies]
-servicepoint = "0.13.2"
+servicepoint = "0.14.0"
 ```
 
 ## Note on stability
@@ -63,21 +63,28 @@ All of this means for you: please specify the full version including patch in yo
 
 Release notes are published [here](https://git.berlin.ccc.de/servicepoint/servicepoint/releases), please check them before updating.
 
+Currently, this crate requires Rust [v1.70](https://releases.rs/docs/1.70.0/) from June 2023.
+
 ## Features
 
 This library has multiple optional dependencies.
 You can choose to (not) include them by toggling the related features.
 
-| Name               | Default | Description                                  | Dependencies                                        |
-|--------------------|---------|----------------------------------------------|-----------------------------------------------------|
-| protocol_udp       | true    | `Connection::Udp`                            |                                                     |
-| cp437              | true    | Conversion to and from CP-437                | [once_cell](https://crates.io/crates/once_cell)     |
-| compression_lzma   | true    | Enable additional compression algo           | [rust-lzma](https://crates.io/crates/rust-lzma)     |
-| compression_zlib   | false   | Enable additional compression algo           | [flate2](https://crates.io/crates/flate2)           |
-| compression_bzip2  | false   | Enable additional compression algo           | [bzip2](https://crates.io/crates/bzip2)             |
-| compression_zstd   | false   | Enable additional compression algo           | [zstd](https://crates.io/crates/zstd)               |
-| protocol_websocket | false   | `Connection::WebSocket`                      | [tungstenite](https://crates.io/crates/tungstenite) |
-| rand               | false   | `impl Distribution<Brightness> for Standard` | [rand](https://crates.io/crates/rand)               |
+| Name              | Default | Description                                  | Dependencies                                    |
+|-------------------|---------|----------------------------------------------|-------------------------------------------------|
+| cp437             | true    | Conversion to and from CP-437                | [once_cell](https://crates.io/crates/once_cell) |
+| compression_lzma  | true    | Enable additional compression algorithm      | [rust-lzma](https://crates.io/crates/rust-lzma) |
+| compression_zlib  | false   | Enable additional compression algorithm      | [flate2](https://crates.io/crates/flate2)       |
+| compression_bzip2 | false   | Enable additional compression algorithm      | [bzip2](https://crates.io/crates/bzip2)         |
+| compression_zstd  | false   | Enable additional compression algorithm      | [zstd](https://crates.io/crates/zstd)           |
+| rand              | false   | `impl Distribution<Brightness> for Standard` | [rand](https://crates.io/crates/rand)           |
+
+Es an example, if you only want zlib compression:
+
+```toml
+[dependencies]
+servicepoint = { version = "0.14.0", default-features = false, features = ["compression_zlib"] }
+```
 
 If you are looking at features to minimize binary size: take a look at the `tiny_announce`-example!
 
@@ -95,17 +102,14 @@ If you are looking at features to minimize binary size: take a look at the `tiny
 
 ## Projects using the library
 
-- screen simulator (rust): [servicepoint-simulator](https://git.berlin.ccc.de/servicepoint/servicepoint-simulator)
-- A bunch of projects (C): [arfst23/ServicePoint](https://github.com/arfst23/ServicePoint), including
-    - a CLI tool to display image files on the display or use the display as a TTY
-    - a BSD games robots clone
-    - a split-flap-display simulator
-    - animations that play on the display
-- tanks game (C#): [servicepoint-tanks](https://github.com/kaesaecracker/cccb-tanks-cs)
-- cellular automata slideshow (rust): [servicepoint-life](https://github.com/kaesaecracker/servicepoint-life)
-- partial typescript implementation inspired by this library and browser
-  stream: [cccb-servicepoint-browser](https://github.com/SamuelScheit/cccb-servicepoint-browser)
-- a CLI, can also share your screen: [servicepoint-cli](https://git.berlin.ccc.de/servicepoint/servicepoint-cli)
+- [servicepoint-simulator](https://git.berlin.ccc.de/servicepoint/servicepoint-simulator): a screen simulator written in rust 
+- [servicepoint-tanks](https://git.berlin.ccc.de/vinzenz/servicepoint-tanks): a multiplayer game written in C# with a second screen in the browser written in React/Typescript 
+- [servicepoint-life](https://git.berlin.ccc.de/vinzenz/servicepoint-life): a cellular automata slideshow written in rust 
+- [servicepoint-cli](https://git.berlin.ccc.de/servicepoint/servicepoint-cli): a CLI that can:
+    - share (stream) your screen
+    - send image files with dithering
+    - clear the display
+    - ...
 
 To add yourself to the list, open a pull request.
 
@@ -114,10 +118,28 @@ bigger collection of projects, including some not related to this library.
 
 If you have access, there is even more software linked in [the wiki](https://wiki.berlin.ccc.de/LED-Riesendisplay).
 
+Some more related projects:
+
+- [cccb-servicepoint-browser](https://github.com/SamuelScheit/cccb-servicepoint-browser): a partial typescript implementation inspired by this library and browser stream
+- [arfst23/ServicePoint](https://github.com/arfst23/ServicePoint): a bunch of projects in C that [used to](https://zerforschen.plus/posts/tiny-binaries-rust/) use the C bindings
+    - a CLI tool to display image files on the display or use the display as a TTY
+    - a BSD games robots clone
+    - a split-flap-display simulator
+    - animations that play on the display
+
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+You are welcome to contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## What happened to servicepoint2?
+## History
 
-After `servicepoint2` has been merged into `servicepoint`, `servicepoint2` will not continue to get any updates.
+### Move to Forgejo
+
+This project moved
+to [git.berlin.ccc.de/servicepoint/servicepoint](https://git.berlin.ccc.de/servicepoint/servicepoint).
+The [GitHub repository](https://github.com/cccb/servicepoint) remains available as a mirror.
+
+
+### What happened to servicepoint2?
+
+`servicepoint2` was a fork of `servicepoint`. Since `servicepoint2` has been merged into `servicepoint`, `servicepoint2` did not get any updates.
