@@ -3,8 +3,12 @@
 
 use clap::Parser;
 use rand::Rng;
-use servicepoint::*;
-use std::time::Duration;
+use servicepoint::{
+    Bitmap, BitmapCommand, Brightness, BrightnessGrid, BrightnessGridCommand,
+    GlobalBrightnessCommand, Grid, Origin, UdpSocketExt,
+    TILE_HEIGHT, TILE_WIDTH,
+};
+use std::{net::UdpSocket, time::Duration};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -19,7 +23,7 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = Connection::open(cli.destination)
+    let connection = UdpSocket::bind_connect(cli.destination)
         .expect("could not connect to display");
     let wait_duration = Duration::from_millis(cli.wait_ms);
 
@@ -28,17 +32,14 @@ fn main() {
         let mut filled_grid = Bitmap::max_sized();
         filled_grid.fill(true);
 
-        let command = Command::BitmapLinearWin(
-            Origin::ZERO,
-            filled_grid,
-            CompressionCode::default(),
-        );
-        connection.send(command).expect("send failed");
+        let command = BitmapCommand::from(filled_grid);
+        connection.send_command(command).expect("send failed");
     }
 
     // set all pixels to the same random brightness
     let mut rng = rand::thread_rng();
-    connection.send(Command::Brightness(rng.gen())).unwrap();
+    let command: GlobalBrightnessCommand = rng.r#gen::<Brightness>().into();
+    connection.send_command(command).unwrap();
 
     // continuously update random windows to new random brightness
     loop {
@@ -54,12 +55,12 @@ fn main() {
 
         for y in 0..h {
             for x in 0..w {
-                luma.set(x, y, rng.gen());
+                luma.set(x, y, rng.r#gen());
             }
         }
 
         connection
-            .send(Command::CharBrightness(origin, luma))
+            .send_command(BrightnessGridCommand { origin, grid: luma })
             .unwrap();
         std::thread::sleep(wait_duration);
     }

@@ -5,3 +5,4 @@ out
 .envrc
 result
 mutants.*
+tarpaulin-report.html

@@ -1,27 +1,33 @@
-use crate::brightness::Brightness;
-use crate::grid::Grid;
-use crate::value_grid::ValueGrid;
-use crate::ByteGrid;
+use crate::{Brightness, ByteGrid, Grid, ValueGrid};
 
 /// A grid containing brightness values.
 ///
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{Brightness, BrightnessGrid, Command, Connection, Grid, Origin};
+/// # use servicepoint::*;
 /// let mut grid = BrightnessGrid::new(2,2);
 /// grid.set(0, 0, Brightness::MIN);
 /// grid.set(1, 1, Brightness::MIN);
 ///
-/// # let connection = Connection::Fake;
-/// connection.send(Command::CharBrightness(Origin::new(3, 7), grid)).unwrap()
+/// # let connection = FakeConnection;
+/// connection.send_command(BrightnessGridCommand {
+///     origin: Origin::new(3, 7),
+///     grid
+/// }).unwrap()
 /// ```
 pub type BrightnessGrid = ValueGrid<Brightness>;
 
 impl BrightnessGrid {
-    /// Like [Self::load], but ignoring any out-of-range brightness values
-    pub fn saturating_load(width: usize, height: usize, data: &[u8]) -> Self {
-        ValueGrid::load(width, height, data).map(Brightness::saturating_from)
+    /// Like [`Self::load`], but ignoring any out-of-range brightness values
+    #[must_use]
+    pub fn saturating_load(
+        width: usize,
+        height: usize,
+        data: &[u8],
+    ) -> Option<Self> {
+        ValueGrid::load(width, height, data)
+            .map(move |grid| grid.map(Brightness::saturating_from))
     }
 }
 
@@ -40,7 +46,7 @@ impl From<&BrightnessGrid> for ByteGrid {
             .iter()
             .map(|brightness| (*brightness).into())
             .collect::<Vec<u8>>();
-        ValueGrid::load(value.width(), value.height(), &u8s)
+        Self::from_raw_parts_unchecked(value.width(), value.height(), u8s)
     }
 }
 
@@ -52,18 +58,17 @@ impl TryFrom<ByteGrid> for BrightnessGrid {
             .iter()
             .map(|b| Brightness::try_from(*b))
             .collect::<Result<Vec<_>, _>>()?;
-        Ok(BrightnessGrid::load(
+        Ok(Self::from_raw_parts_unchecked(
             value.width(),
             value.height(),
-            &brightnesses,
+            brightnesses,
         ))
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::value_grid::ValueGrid;
-    use crate::{Brightness, BrightnessGrid, DataRef, Grid};
+    use crate::{Brightness, BrightnessGrid, DataRef, Grid, ValueGrid};
 
     #[test]
     fn to_u8_grid() {
@@ -86,8 +91,9 @@ mod tests {
                     Brightness::MIN,
                     Brightness::MAX
                 ]
-            ),
-            BrightnessGrid::saturating_load(2, 2, &[255u8, 23, 0, 42])
+            )
+            .unwrap(),
+            BrightnessGrid::saturating_load(2, 2, &[255u8, 23, 0, 42]).unwrap()
         );
     }
 }

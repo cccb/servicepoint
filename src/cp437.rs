@@ -1,10 +1,9 @@
+//! Contains functions to convert between UTF-8 and Codepage 437.
+//!
+//! See <https://en.wikipedia.org/wiki/Code_page_437#Character_set>
+
 use crate::{CharGrid, Cp437Grid};
 use std::collections::HashMap;
-
-/// Contains functions to convert between UTF-8 and Codepage 437.
-///
-/// See <https://en.wikipedia.org/wiki/Code_page_437#Character_set>
-pub struct Cp437Converter;
 
 /// An array of 256 elements, mapping most of the CP437 values to UTF-8 characters
 ///
@@ -34,47 +33,47 @@ const CP437_TO_UTF8: [char; 256] = [
 ];
 static UTF8_TO_CP437: once_cell::sync::Lazy<HashMap<char, u8>> =
     once_cell::sync::Lazy::new(|| {
-        let pairs = CP437_TO_UTF8
+        CP437_TO_UTF8
             .iter()
             .enumerate()
-            .map(move |(index, char)| (*char, index as u8));
-        HashMap::from_iter(pairs)
+            .map(
+                #[allow(clippy::cast_possible_truncation)]
+                move |(index, char)| (*char, index as u8),
+            )
+            .collect::<HashMap<_, _>>()
     });
 
-impl Cp437Converter {
-    const MISSING_CHAR_CP437: u8 = 0x3F; // '?'
+const MISSING_CHAR_CP437: u8 = 0x3F; // '?'
 
-    /// Convert the provided bytes to UTF-8.
-    pub fn cp437_to_str(cp437: &[u8]) -> String {
-        cp437
-            .iter()
-            .map(move |char| Self::cp437_to_char(*char))
-            .collect()
-    }
+/// Convert the provided bytes to UTF-8.
+#[must_use]
+pub fn cp437_to_str(cp437: &[u8]) -> String {
+    cp437.iter().map(move |char| cp437_to_char(*char)).collect()
+}
 
-    /// Convert a single CP-437 character to UTF-8.
-    pub fn cp437_to_char(cp437: u8) -> char {
-        CP437_TO_UTF8[cp437 as usize]
-    }
+/// Convert a single CP-437 character to UTF-8.
+#[must_use]
+pub fn cp437_to_char(cp437: u8) -> char {
+    CP437_TO_UTF8[cp437 as usize]
+}
 
-    /// Convert the provided text to CP-437 bytes.
-    ///
-    /// Characters that are not available are mapped to '?'.
-    pub fn str_to_cp437(utf8: &str) -> Vec<u8> {
-        utf8.chars().map(Self::char_to_cp437).collect()
-    }
+/// Convert the provided text to CP-437 bytes.
+///
+/// Characters that are not available are mapped to '?'.
+#[must_use]
+pub fn str_to_cp437(utf8: &str) -> Vec<u8> {
+    utf8.chars().map(char_to_cp437).collect()
+}
 
-    /// Convert a single UTF-8 character to CP-437.
-    pub fn char_to_cp437(utf8: char) -> u8 {
-        *UTF8_TO_CP437
-            .get(&utf8)
-            .unwrap_or(&Self::MISSING_CHAR_CP437)
-    }
+/// Convert a single UTF-8 character to CP-437.
+#[must_use]
+pub fn char_to_cp437(utf8: char) -> u8 {
+    *UTF8_TO_CP437.get(&utf8).unwrap_or(&MISSING_CHAR_CP437)
 }
 
 impl From<&Cp437Grid> for CharGrid {
     fn from(value: &Cp437Grid) -> Self {
-        value.map(Cp437Converter::cp437_to_char)
+        value.map(cp437_to_char)
     }
 }
 
@@ -86,7 +85,7 @@ impl From<Cp437Grid> for CharGrid {
 
 impl From<&CharGrid> for Cp437Grid {
     fn from(value: &CharGrid) -> Self {
-        value.map(Cp437Converter::char_to_cp437)
+        value.map(char_to_cp437)
     }
 }
 
@@ -125,22 +124,19 @@ mod tests_feature_cp437 {
         │dx ≡ Σ √x²ⁿ·δx
         ⌡"#;
 
-        let cp437 = Cp437Converter::str_to_cp437(utf8);
-        let actual = Cp437Converter::cp437_to_str(&cp437);
-        assert_eq!(utf8, actual)
+        let cp437 = str_to_cp437(utf8);
+        let actual = cp437_to_str(&cp437);
+        assert_eq!(utf8, actual);
     }
 
     #[test]
     fn convert_invalid() {
-        assert_eq!(
-            Cp437Converter::cp437_to_char(Cp437Converter::char_to_cp437('😜')),
-            '?'
-        );
+        assert_eq!(cp437_to_char(char_to_cp437('😜')), '?');
     }
 
     #[test]
     fn round_trip_cp437() {
-        let utf8 = CharGrid::load(2, 2, &['Ä', 'x', '\n', '$']);
+        let utf8 = CharGrid::load(2, 2, &['Ä', 'x', '\n', '$']).unwrap();
         let cp437 = Cp437Grid::from(utf8.clone());
         let actual = CharGrid::from(cp437);
         assert_eq!(actual, utf8);

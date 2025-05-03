@@ -1,19 +1,19 @@
 use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
 
-use crate::*;
+use crate::{DataRef, Grid};
 
-/// A type that can be stored in a [ValueGrid], e.g. [char], [u8].
+/// A type that can be stored in a [`ValueGrid`], e.g. [char], [u8].
 pub trait Value: Sized + Default + Copy + Clone + Debug {}
 impl<T: Sized + Default + Copy + Clone + Debug> Value for T {}
 
 /// A 2D grid of values.
 ///
-/// The memory layout is the one the display expects in [Command]s.
+/// The memory layout is the one the display expects in [`crate::Command`]s.
 ///
 /// This structure can be used with any type that implements the [Value] trait.
-/// You can also use the concrete type aliases provided in this crate, e.g. [CharGrid] and [ByteGrid].
-#[derive(Debug, Clone, PartialEq)]
+/// You can also use the concrete type aliases provided in this crate, e.g. [`crate::CharGrid`] and [`crate::ByteGrid`].
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ValueGrid<T: Value> {
     width: usize,
     height: usize,
@@ -42,15 +42,18 @@ pub enum SetValueSeriesError {
 }
 
 impl<T: Value> ValueGrid<T> {
-    /// Creates a new [ValueGrid] with the specified dimensions.
+    /// Creates a new [`ValueGrid`] with the specified dimensions.
     ///
     /// # Arguments
     ///
     /// - width: size in x-direction
     /// - height: size in y-direction
     ///
-    /// returns: [ValueGrid] initialized to default value.
+    /// returns: [`ValueGrid`] initialized to default value.
+    #[must_use]
     pub fn new(width: usize, height: usize) -> Self {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
         Self {
             data: vec![Default::default(); width * height],
             width,
@@ -58,91 +61,68 @@ impl<T: Value> ValueGrid<T> {
         }
     }
 
-    /// Loads a [ValueGrid] with the specified dimensions from the provided data.
+    /// Loads a [`ValueGrid`] with the specified dimensions from the provided data.
     ///
-    /// returns: [ValueGrid] that contains a copy of the provided data
-    ///
-    /// # Panics
-    ///
-    /// - when the dimensions and data size do not match exactly.
+    /// returns: [`ValueGrid`] that contains a copy of the provided data,
+    /// or None if the dimensions do not match the data size.
     #[must_use]
-    pub fn load(width: usize, height: usize, data: &[T]) -> Self {
-        assert_eq!(
-            width * height,
-            data.len(),
-            "dimension mismatch for data {data:?}"
-        );
-        Self {
-            data: Vec::from(data),
-            width,
-            height,
-        }
-    }
-
-    /// Creates a [ValueGrid] with the specified width from the provided data without copying it.
-    ///
-    /// returns: [ValueGrid] that contains the provided data.
-    ///
-    /// # Panics
-    ///
-    /// - when the data size is not dividable by the width.
-    #[must_use]
-    pub fn from_vec(width: usize, data: Vec<T>) -> Self {
-        let len = data.len();
-        let height = len / width;
-        assert_eq!(
-            0,
-            len % width,
-            "dimension mismatch - len {len} is not dividable by {width}"
-        );
-        Self {
-            data,
-            width,
-            height,
-        }
-    }
-
-    /// Loads a [ValueGrid] with the specified width from the provided data, wrapping to as many rows as needed.
-    ///
-    /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use servicepoint::ValueGrid;
-    /// let grid = ValueGrid::wrap(2, &[0, 1, 2, 3, 4, 5]).unwrap();
-    /// ```
-    pub fn wrap(
-        width: usize,
-        data: &[T],
-    ) -> Result<Self, TryLoadValueGridError> {
-        let len = data.len();
-        if len % width != 0 {
-            return Err(TryLoadValueGridError::InvalidDimensions);
-        }
-        Ok(Self::load(width, len / width, data))
-    }
-
-    /// Loads a [ValueGrid] with the specified dimensions from the provided data.
-    ///
-    /// returns: [ValueGrid] that contains a copy of the provided data or [TryLoadValueGridError].
-    pub fn try_load(
-        width: usize,
-        height: usize,
-        data: Vec<T>,
-    ) -> Result<Self, TryLoadValueGridError> {
+    pub fn load(width: usize, height: usize, data: &[T]) -> Option<Self> {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
         if width * height != data.len() {
-            return Err(TryLoadValueGridError::InvalidDimensions);
+            return None;
         }
-
-        Ok(Self {
-            data,
+        Some(Self {
+            data: Vec::from(data),
             width,
             height,
         })
     }
 
-    /// Iterate over all cells in [ValueGrid].
+    /// Creates a [`ValueGrid`] with the specified width from the provided data,
+    /// wrapping to as many rows as needed,
+    /// without copying the vec.
+    ///
+    /// returns: [`ValueGrid`] that contains the provided data,
+    /// or None if the data size is not divisible by the width.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use servicepoint::ValueGrid;
+    /// let grid = ValueGrid::from_vec(2, vec![0, 1, 2, 3, 4, 5]).unwrap();
+    /// ```
+    #[must_use]
+    pub fn from_vec(width: usize, data: Vec<T>) -> Option<Self> {
+        let len = data.len();
+        let height = len / width;
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
+        if len % width != 0 {
+            return None;
+        }
+        Some(Self {
+            width,
+            height,
+            data,
+        })
+    }
+
+    #[must_use]
+    pub(crate) fn from_raw_parts_unchecked(
+        width: usize,
+        height: usize,
+        data: Vec<T>,
+    ) -> Self {
+        debug_assert_eq!(data.len(), width * height);
+        Self {
+            width,
+            height,
+            data,
+        }
+    }
+
+    /// Iterate over all cells in [`ValueGrid`].
     ///
     /// Order is equivalent to the following loop:
     /// ```
@@ -154,16 +134,13 @@ impl<T: Value> ValueGrid<T> {
     ///     }
     /// }
     /// ```
-    pub fn iter(&self) -> Iter<T> {
+    pub fn iter(&self) -> impl Iterator<Item = &T> {
         self.data.iter()
     }
 
-    /// Iterate over all rows in [ValueGrid] top to bottom.
+    /// Iterate over all rows in [`ValueGrid`] top to bottom.
     pub fn iter_rows(&self) -> IterGridRows<T> {
-        IterGridRows {
-            byte_grid: self,
-            row: 0,
-        }
+        IterGridRows { grid: self, row: 0 }
     }
 
     /// Returns an iterator that allows modifying each value.
@@ -200,29 +177,34 @@ impl<T: Value> ValueGrid<T> {
         y: isize,
     ) -> Option<&mut T> {
         if self.is_in_bounds(x, y) {
+            #[expect(
+                clippy::cast_sign_loss,
+                reason = "is_in_bounds already checks this"
+            )]
             Some(&mut self.data[x as usize + y as usize * self.width])
         } else {
             None
         }
     }
 
-    /// Convert between ValueGrid types.
+    /// Convert between `ValueGrid` types.
     ///
-    /// See also [Iterator::map].
+    /// See also [`Iterator::map`].
     ///
     /// # Examples
     ///
     /// Use logic written for u8s and then convert to [Brightness] values for sending in a [Command].
     /// ```
     /// # fn foo(grid: &mut ByteGrid) {}
-    /// # use servicepoint::{Brightness, BrightnessGrid, ByteGrid, Command, Origin, TILE_HEIGHT, TILE_WIDTH};
+    /// # use servicepoint::*;
     /// let mut grid: ByteGrid = ByteGrid::new(TILE_WIDTH, TILE_HEIGHT);
     /// foo(&mut grid);
     /// let grid: BrightnessGrid = grid.map(Brightness::saturating_from);
-    /// let command = Command::CharBrightness(Origin::ZERO, grid);
+    /// let command = BrightnessGridCommand { origin: Origin::ZERO, grid };
     /// ```
     /// [Brightness]: [crate::Brightness]
     /// [Command]: [crate::Command]
+    #[must_use]
     pub fn map<TConverted, F>(&self, f: F) -> ValueGrid<TConverted>
     where
         TConverted: Value,
@@ -233,22 +215,28 @@ impl<T: Value> ValueGrid<T> {
             .iter()
             .map(|elem| f(*elem))
             .collect::<Vec<_>>();
-        ValueGrid::load(self.width(), self.height(), &data)
+        ValueGrid {
+            width: self.width(),
+            height: self.height(),
+            data,
+        }
     }
 
     /// Copies a row from the grid.
     ///
     /// Returns [None] if y is out of bounds.
+    #[must_use]
     pub fn get_row(&self, y: usize) -> Option<Vec<T>> {
         self.data
             .chunks_exact(self.width())
             .nth(y)
-            .map(|row| row.to_vec())
+            .map(<[T]>::to_vec)
     }
 
     /// Copies a column from the grid.
     ///
     /// Returns [None] if x is out of bounds.
+    #[must_use]
     pub fn get_col(&self, x: usize) -> Option<Vec<T>> {
         self.data
             .chunks_exact(self.width())
@@ -305,18 +293,26 @@ impl<T: Value> ValueGrid<T> {
             });
         }
 
-        let chunk = match self.data.chunks_exact_mut(width).nth(y) {
-            Some(row) => row,
-            None => {
-                return Err(SetValueSeriesError::OutOfBounds {
-                    size: self.height(),
-                    index: y,
-                })
-            }
+        let Some(chunk) = self.data.chunks_exact_mut(width).nth(y) else {
+            return Err(SetValueSeriesError::OutOfBounds {
+                size: self.height(),
+                index: y,
+            });
         };
 
         chunk.copy_from_slice(row);
         Ok(())
+    }
+
+    /// Enumerates all values in the grid.
+    pub fn enumerate(
+        &self,
+    ) -> impl Iterator<Item = (usize, usize, T)> + use<'_, T> {
+        EnumerateGrid {
+            grid: self,
+            column: 0,
+            row: 0,
+        }
     }
 }
 
@@ -329,7 +325,7 @@ pub enum TryLoadValueGridError {
 }
 
 impl<T: Value> Grid<T> for ValueGrid<T> {
-    /// Sets the value of the cell at the specified position in the `ValueGrid.
+    /// Sets the value of the cell at the specified position in the grid.
     ///
     /// # Arguments
     ///
@@ -390,9 +386,10 @@ impl<T: Value> From<ValueGrid<T>> for Vec<T> {
     }
 }
 
-/// An iterator iver the rows in a [ValueGrid]
+/// An iterator iver the rows in a [`ValueGrid`]
+#[must_use]
 pub struct IterGridRows<'t, T: Value> {
-    byte_grid: &'t ValueGrid<T>,
+    grid: &'t ValueGrid<T>,
     row: usize,
 }
 
@@ -400,24 +397,46 @@ impl<'t, T: Value> Iterator for IterGridRows<'t, T> {
     type Item = Iter<'t, T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.row >= self.byte_grid.height {
+        if self.row >= self.grid.height {
             return None;
         }
 
-        let start = self.row * self.byte_grid.width;
-        let end = start + self.byte_grid.width;
-        let result = self.byte_grid.data[start..end].iter();
+        let start = self.row * self.grid.width;
+        let end = start + self.grid.width;
+        let result = self.grid.data[start..end].iter();
         self.row += 1;
         Some(result)
     }
 }
 
+pub struct EnumerateGrid<'t, T: Value> {
+    grid: &'t ValueGrid<T>,
+    row: usize,
+    column: usize,
+}
+
+impl<T: Value> Iterator for EnumerateGrid<'_, T> {
+    type Item = (usize, usize, T);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.row >= self.grid.height {
+            return None;
+        }
+
+        let result =
+            Some((self.column, self.row, self.grid.get(self.column, self.row)));
+        self.column += 1;
+        if self.column == self.grid.width {
+            self.column = 0;
+            self.row += 1;
+        }
+        result
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{
-        value_grid::{SetValueSeriesError, ValueGrid},
-        *,
-    };
+    use crate::{SetValueSeriesError, ValueGrid, *};
 
     #[test]
     fn fill() {
@@ -456,7 +475,7 @@ mod tests {
 
         let data: Vec<u8> = grid.into();
 
-        let grid = ValueGrid::load(2, 3, &data);
+        let grid = ValueGrid::load(2, 3, &data).unwrap();
         assert_eq!(grid.data, [0, 1, 1, 2, 2, 3]);
     }
 
@@ -468,7 +487,7 @@ mod tests {
         data_ref.copy_from_slice(&[1, 2, 3, 4]);
 
         assert_eq!(vec.data, [1, 2, 3, 4]);
-        assert_eq!(vec.get(1, 0), 2)
+        assert_eq!(vec.get(1, 0), 2);
     }
 
     #[test]
@@ -495,7 +514,7 @@ mod tests {
 
     #[test]
     fn iter_rows() {
-        let vec = ValueGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]);
+        let vec = ValueGrid::load(2, 3, &[0, 1, 1, 2, 2, 3]).unwrap();
         for (y, row) in vec.iter_rows().enumerate() {
             for (x, val) in row.enumerate() {
                 assert_eq!(*val, (x + y) as u8);
@@ -506,20 +525,21 @@ mod tests {
     #[test]
     #[should_panic]
     fn out_of_bounds_x() {
-        let mut vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
         vec.set(2, 1, 5);
     }
 
     #[test]
     #[should_panic]
     fn out_of_bounds_y() {
-        let vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
+        let vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
         vec.get(1, 2);
     }
 
     #[test]
     fn ref_mut() {
-        let mut vec = ValueGrid::from_vec(3, vec![0, 1, 2, 3, 4, 5, 6, 7, 8]);
+        let mut vec =
+            ValueGrid::from_vec(3, vec![0, 1, 2, 3, 4, 5, 6, 7, 8]).unwrap();
 
         let top_left = vec.get_ref_mut(0, 0);
         *top_left += 5;
@@ -535,7 +555,7 @@ mod tests {
 
     #[test]
     fn optional() {
-        let mut grid = ValueGrid::load(2, 2, &[0, 1, 2, 3]);
+        let mut grid = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
         grid.set_optional(0, 0, 5);
         grid.set_optional(-1, 0, 8);
         grid.set_optional(0, 8, 42);
@@ -547,7 +567,7 @@ mod tests {
 
     #[test]
     fn col() {
-        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]).unwrap();
         assert_eq!(grid.get_col(0), Some(vec![0, 2, 4]));
         assert_eq!(grid.get_col(1), Some(vec![1, 3, 5]));
         assert_eq!(grid.get_col(2), None);
@@ -568,7 +588,7 @@ mod tests {
 
     #[test]
     fn row() {
-        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]);
+        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]).unwrap();
         assert_eq!(grid.get_row(0), Some(vec![0, 1]));
         assert_eq!(grid.get_row(2), Some(vec![4, 5]));
         assert_eq!(grid.get_row(3), None);
@@ -589,10 +609,32 @@ mod tests {
 
     #[test]
     fn wrap() {
-        let grid = ValueGrid::wrap(2, &[0, 1, 2, 3, 4, 5]).unwrap();
+        let grid = ValueGrid::from_vec(2, vec![0, 1, 2, 3, 4, 5]).unwrap();
         assert_eq!(grid.height(), 3);
 
-        let grid = ValueGrid::wrap(4, &[0, 1, 2, 3, 4, 5]);
-        assert_eq!(grid.err(), Some(TryLoadValueGridError::InvalidDimensions));
+        let grid = ValueGrid::from_vec(4, vec![0, 1, 2, 3, 4, 5]);
+        assert_eq!(grid, None);
+    }
+
+    #[test]
+    fn load_invalid_size() {
+        assert_eq!(ValueGrid::load(2, 2, &[1, 2, 3]), None);
+    }
+
+    #[test]
+    fn enumerate() {
+        let grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]).unwrap();
+        let values = grid.enumerate().collect::<Vec<_>>();
+        assert_eq!(
+            values,
+            vec![
+                (0, 0, 0),
+                (1, 0, 1),
+                (0, 1, 2),
+                (1, 1, 3),
+                (0, 2, 4),
+                (1, 2, 5)
+            ]
+        );
     }
 }

@@ -137,6 +137,9 @@
                   clippy
                   cargo-expand
                   cargo-tarpaulin
+                  cargo-semver-checks
+                  cargo-show-asm
+                  cargo-flamegraph
                 ];
               })
             ];

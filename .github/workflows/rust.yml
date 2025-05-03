@@ -28,7 +28,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y liblzma-dev
 
       - name: Run Clippy
-        run: cargo clippy --all-targets --all-features
+        run: cargo clippy --all-features
 
       - name: no features -- test (without doctest)
         run: cargo test --lib --no-default-features

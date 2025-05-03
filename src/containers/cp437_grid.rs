@@ -1,9 +1,9 @@
-use crate::Grid;
+use crate::{Grid, ValueGrid};
 
 /// A grid containing codepage 437 characters.
 ///
 /// The encoding is currently not enforced.
-pub type Cp437Grid = crate::value_grid::ValueGrid<u8>;
+pub type Cp437Grid = ValueGrid<u8>;
 
 /// The error occurring when loading an invalid character
 #[derive(Debug, PartialEq, thiserror::Error)]
@@ -18,7 +18,7 @@ pub struct InvalidCharError {
 }
 
 impl Cp437Grid {
-    /// Load an ASCII-only [&str] into a [Cp437Grid] of specified width.
+    /// Load an ASCII-only [&str] into a [`Cp437Grid`] of specified width.
     ///
     /// # Panics
     ///
@@ -86,7 +86,7 @@ mod tests {
     fn load_ascii_nowrap() {
         let chars = ['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd']
             .map(move |c| c as u8);
-        let expected = Cp437Grid::load(5, 2, &chars);
+        let expected = Cp437Grid::load(5, 2, &chars).unwrap();
 
         let actual = Cp437Grid::load_ascii("Hello,\nWorld!", 5, false).unwrap();
         // comma will be removed because line is too long and wrap is off
@@ -97,7 +97,7 @@ mod tests {
     fn load_ascii_wrap() {
         let chars = ['H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd']
             .map(move |c| c as u8);
-        let expected = Cp437Grid::load(5, 2, &chars);
+        let expected = Cp437Grid::load(5, 2, &chars).unwrap();
 
         let actual = Cp437Grid::load_ascii("HelloWorld", 5, true).unwrap();
         // line break will be added

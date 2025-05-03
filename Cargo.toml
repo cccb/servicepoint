@@ -1,6 +1,6 @@
 [package]
 name = "servicepoint"
-version = "0.13.2"
+version = "0.14.0"
 publish = true
 edition = "2021"
 license = "GPL-3.0-or-later"
@@ -9,6 +9,7 @@ homepage = "https://docs.rs/crate/servicepoint"
 repository = "https://git.berlin.ccc.de/servicepoint/servicepoint"
 readme = "README.md"
 keywords = ["cccb", "cccb-servicepoint"]
+rust-version = "1.70.0"
 
 [lib]
 crate-type = ["rlib"]
@@ -21,20 +22,17 @@ bzip2 = { version = "0.5", optional = true }
 zstd = { version = "0.13", optional = true }
 rust-lzma = { version = "0.6", optional = true }
 rand = { version = "0.8", optional = true }
-tungstenite = { version = "0.26", optional = true }
 once_cell = { version = "1.20", optional = true }
 thiserror = "2.0"
 
 [features]
-default = ["compression_lzma", "protocol_udp", "cp437"]
+default = ["compression_lzma", "cp437"]
 compression_zlib = ["dep:flate2"]
 compression_bzip2 = ["dep:bzip2"]
 compression_lzma = ["dep:rust-lzma"]
 compression_zstd = ["dep:zstd"]
 all_compressions = ["compression_zlib", "compression_bzip2", "compression_lzma", "compression_zstd"]
 rand = ["dep:rand"]
-protocol_udp = []
-protocol_websocket = ["dep:tungstenite"]
 cp437 = ["dep:once_cell"]
 
 [[example]]
@@ -45,16 +43,55 @@ required-features = ["rand"]
 name = "game_of_life"
 required-features = ["rand"]
 
-[[example]]
-name = "websocket"
-required-features = ["protocol_websocket"]
-
 [dev-dependencies]
 # for examples
 clap = { version = "4.5", features = ["derive"] }
 
 [lints.rust]
 missing-docs = "warn"
+deprecated-safe = "warn"
+future-incompatible = "warn"
+keyword-idents = "warn"
+let-underscore = "warn"
+nonstandard-style = "warn"
+refining_impl_trait_reachable = "warn"
+rust-2024-compatibility = "warn"
+
+[lints.clippy]
+## Categories
+complexity = {level = "warn", priority = -1 }
+perf = {level = "warn", priority = -1 }
+style = {level = "warn", priority = -1 }
+pedantic = {level = "warn", priority = -1 }
+
+## Blacklist
+unwrap_used  = "warn"
+expect_used = "warn"
+panic = "warn"
+incompatible_msrv = "forbid"
+allow_attributes_without_reason = "warn"
+
+## Whitelist
+# Too many false positives as often a module only contains one struct that is re-exported at top-level
+module_name_repetitions = "allow"
+# The pretty detailed exception types should be enough for now
+missing_errors_doc = "allow"
+# The few places where a panic is triggered in code are inspected and should never panic
+missing_panics_doc = "allow"
+# Does not work for all types, but should probably be fixed at some point
+iter_without_into_iter = "allow"
+
+[lints.rustdoc]
+private_doc_tests = "warn"
+unescaped_backticks = "warn"
 
 [package.metadata.docs.rs]
 all-features = true
+
+[profile.size-optimized]
+inherits = "release"
+opt-level = 'z'     # Optimize for size
+lto = true          # Enable link-time optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations
+panic = 'abort'     # Abort on panic
+strip = true        # Strip symbols from binary

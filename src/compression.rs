@@ -1,10 +1,11 @@
-#[allow(unused)]
-use std::io::{Read, Write};
-
 #[cfg(feature = "compression_bzip2")]
 use bzip2::read::{BzDecoder, BzEncoder};
 #[cfg(feature = "compression_zlib")]
 use flate2::{FlushCompress, FlushDecompress, Status};
+#[allow(unused, reason = "used depending on enabled features")]
+use log::error;
+#[allow(unused, reason = "used depending on enabled features")]
+use std::io::{Read, Write};
 #[cfg(feature = "compression_zstd")]
 use zstd::{Decoder as ZstdDecoder, Encoder as ZstdEncoder};
 
@@ -21,21 +22,31 @@ pub(crate) fn into_decompressed(
             let mut decompress = flate2::Decompress::new(true);
             let mut buffer = [0u8; 10000];
 
-            let status = match decompress.decompress(
+            match decompress.decompress(
                 &payload,
                 &mut buffer,
                 FlushDecompress::Finish,
             ) {
-                Err(_) => return None,
-                Ok(status) => status,
-            };
-
-            match status {
-                Status::Ok => None,
-                Status::BufError => None,
-                Status::StreamEnd => Some(
-                    buffer[0..(decompress.total_out() as usize)].to_owned(),
-                ),
+                Ok(Status::Ok) => {
+                    error!("input not big enough");
+                    None
+                }
+                Ok(Status::BufError) => {
+                    error!("output buffer is too small");
+                    None
+                }
+                Ok(Status::StreamEnd) =>
+                {
+                    #[allow(
+                        clippy::cast_possible_truncation,
+                        reason = "can never be larger than the fixed buffer size"
+                    )]
+                    Some(buffer[..decompress.total_out() as usize].to_owned())
+                }
+                Err(e) => {
+                    error!("failed to decompress data: {e}");
+                    None
+                }
             }
         }
         #[cfg(feature = "compression_bzip2")]
@@ -43,24 +54,36 @@ pub(crate) fn into_decompressed(
             let mut decoder = BzDecoder::new(&*payload);
             let mut decompressed = vec![];
             match decoder.read_to_end(&mut decompressed) {
-                Err(_) => None,
                 Ok(_) => Some(decompressed),
+                Err(e) => {
+                    error!("failed to decompress data: {e}");
+                    None
+                }
             }
         }
         #[cfg(feature = "compression_lzma")]
         CompressionCode::Lzma => match lzma::decompress(&payload) {
-            Err(_) => None,
-            Ok(decompressed) => Some(decompressed),
+            Err(e) => {
+                error!("failed to decompress data: {e}");
+                None
+            }
+            Ok(result) => Some(result),
         },
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
             let mut decoder = match ZstdDecoder::new(&*payload) {
-                Err(_) => return None,
                 Ok(value) => value,
+                Err(e) => {
+                    error!("failed to create zstd decoder: {e}");
+                    return None;
+                }
             };
             let mut decompressed = vec![];
             match decoder.read_to_end(&mut decompressed) {
-                Err(_) => None,
+                Err(e) => {
+                    error!("failed to decompress data: {e}");
+                    None
+                }
                 Ok(_) => Some(decompressed),
             }
         }
@@ -70,24 +93,41 @@ pub(crate) fn into_decompressed(
 pub(crate) fn into_compressed(
     kind: CompressionCode,
     payload: Payload,
-) -> Payload {
+) -> Option<Payload> {
     match kind {
-        CompressionCode::Uncompressed => payload,
+        CompressionCode::Uncompressed => Some(payload),
         #[cfg(feature = "compression_zlib")]
         CompressionCode::Zlib => {
             let mut compress =
                 flate2::Compress::new(flate2::Compression::fast(), true);
             let mut buffer = [0u8; 10000];
 
-            match compress
-                .compress(&payload, &mut buffer, FlushCompress::Finish)
-                .expect("compress failed")
-            {
-                Status::Ok => panic!("buffer should be big enough"),
-                Status::BufError => panic!("BufError"),
-                Status::StreamEnd => {}
-            };
-            buffer[..compress.total_out() as usize].to_owned()
+            match compress.compress(
+                &payload,
+                &mut buffer,
+                FlushCompress::Finish,
+            ) {
+                Ok(Status::Ok) => {
+                    error!("output buffer not big enough");
+                    None
+                }
+                Ok(Status::BufError) => {
+                    error!("Could not compress with buffer error");
+                    None
+                }
+                Ok(Status::StreamEnd) =>
+                {
+                    #[allow(
+                        clippy::cast_possible_truncation,
+                        reason = "can never be larger than the fixed buffer size"
+                    )]
+                    Some(buffer[..compress.total_out() as usize].to_owned())
+                }
+                Err(e) => {
+                    error!("failed to compress data: {e}");
+                    None
+                }
+            }
         }
         #[cfg(feature = "compression_bzip2")]
         CompressionCode::Bzip2 => {
@@ -95,21 +135,39 @@ pub(crate) fn into_compressed(
                 BzEncoder::new(&*payload, bzip2::Compression::fast());
             let mut compressed = vec![];
             match encoder.read_to_end(&mut compressed) {
-                Err(err) => panic!("could not compress payload: {}", err),
-                Ok(_) => compressed,
+                Err(e) => {
+                    error!("failed to compress data: {e}");
+                    None
+                }
+                Ok(_) => Some(compressed),
             }
         }
         #[cfg(feature = "compression_lzma")]
-        CompressionCode::Lzma => lzma::compress(&payload, 6).unwrap(),
+        CompressionCode::Lzma => match lzma::compress(&payload, 6) {
+            Ok(payload) => Some(payload),
+            Err(e) => {
+                error!("failed to compress data: {e}");
+                None
+            }
+        },
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
+            let buf = Vec::with_capacity(payload.len());
             let mut encoder =
-                ZstdEncoder::new(vec![], zstd::DEFAULT_COMPRESSION_LEVEL)
-                    .expect("could not create encoder");
-            encoder
-                .write_all(&payload)
-                .expect("could not compress payload");
-            encoder.finish().expect("could not finish encoding")
+                match ZstdEncoder::new(buf, zstd::DEFAULT_COMPRESSION_LEVEL) {
+                    Err(e) => {
+                        error!("failed to create zstd encoder: {e}");
+                        return None;
+                    }
+                    Ok(encoder) => encoder,
+                };
+
+            if let Err(e) = encoder.write_all(&payload) {
+                error!("failed to compress data: {e}");
+                return None;
+            }
+
+            encoder.finish().ok()
         }
     }
 }

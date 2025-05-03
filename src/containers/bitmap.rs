@@ -1,9 +1,7 @@
-use crate::data_ref::DataRef;
-use crate::BitVec;
-use crate::*;
-use ::bitvec::order::Msb0;
-use ::bitvec::prelude::BitSlice;
-use ::bitvec::slice::IterMut;
+use crate::{
+    DisplayBitVec, DataRef, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
+};
+use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 
 /// A fixed-size 2D grid of booleans.
 ///
@@ -22,100 +20,106 @@ use ::bitvec::slice::IterMut;
 pub struct Bitmap {
     width: usize,
     height: usize,
-    bit_vec: BitVec,
+    bit_vec: DisplayBitVec,
 }
 
 impl Bitmap {
-    /// Creates a new [Bitmap] with the specified dimensions.
+    /// Creates a new [`Bitmap`] with the specified dimensions.
+    /// The initial state of the contained pixels is false.
+    ///
+    /// The width has to be a multiple of [`crate::TILE_SIZE`], otherwise this function returns None.
     ///
     /// # Arguments
     ///
     /// - `width`: size in pixels in x-direction
     /// - `height`: size in pixels in y-direction
-    ///
-    /// returns: [Bitmap] initialized to all pixels off
-    ///
-    /// # Panics
-    ///
-    /// - when the width is not dividable by 8
-    pub fn new(width: usize, height: usize) -> Self {
-        assert_eq!(
-            width % 8,
-            0,
-            "width must be a multiple of 8, but is {width}"
-        );
-        Self {
-            width,
-            height,
-            bit_vec: BitVec::repeat(false, width * height),
+    #[must_use]
+    pub fn new(width: usize, height: usize) -> Option<Self> {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
+        if width % 8 != 0 {
+            return None;
         }
+        Some(Self::new_unchecked(width, height))
     }
 
     /// Creates a new pixel grid with the size of the whole screen.
     #[must_use]
     pub fn max_sized() -> Self {
-        Self::new(PIXEL_WIDTH, PIXEL_HEIGHT)
+        Self::new_unchecked(PIXEL_WIDTH, PIXEL_HEIGHT)
+    }
+
+    #[must_use]
+    fn new_unchecked(width: usize, height: usize) -> Self {
+        Self {
+            width,
+            height,
+            bit_vec: DisplayBitVec::repeat(false, width * height),
+        }
     }
 
     /// Loads a [Bitmap] with the specified dimensions from the provided data.
+    ///
+    /// The data cannot be loaded on the following cases:
+    /// - when the dimensions and data size do not match exactly.
+    /// - when the width is not dividable by 8
+    ///
+    /// In those cases, an Err is returned.
+    ///
+    /// Otherwise, this returns a [Bitmap] that contains a copy of the provided data
     ///
     /// # Arguments
     ///
     /// - `width`: size in pixels in x-direction
     /// - `height`: size in pixels in y-direction
-    ///
-    /// returns: [Bitmap] that contains a copy of the provided data
-    ///
-    /// # Panics
-    ///
-    /// - when the dimensions and data size do not match exactly.
-    /// - when the width is not dividable by 8
-    #[must_use]
-    pub fn load(width: usize, height: usize, data: &[u8]) -> Self {
-        assert_eq!(
-            width % 8,
-            0,
-            "width must be a multiple of 8, but is {width}"
-        );
-        assert_eq!(
-            data.len(),
-            height * width / 8,
-            "data length must match dimensions, with 8 pixels per byte."
-        );
-        Self {
+    pub fn load(
+        width: usize,
+        height: usize,
+        data: &[u8],
+    ) -> Result<Self, LoadBitmapError> {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
+        if width % 8 != 0 {
+            return Err(LoadBitmapError::InvalidWidth);
+        }
+        if data.len() != height * width / 8 {
+            return Err(LoadBitmapError::InvalidDataSize);
+        }
+        Ok(Self {
             width,
             height,
-            bit_vec: BitVec::from_slice(data),
-        }
+            bit_vec: DisplayBitVec::from_slice(data),
+        })
     }
 
-    /// Creates a [Bitmap] with the specified width from the provided [BitVec] without copying it.
+    /// Creates a [Bitmap] with the specified width from the provided [`DisplayBitVec`] without copying it.
     ///
-    /// returns: [Bitmap] that contains the provided data.
-    ///
-    /// # Panics
-    ///
-    /// - when the bitvec size is not dividable by the provided width
+    /// The data cannot be loaded on the following cases:
+    /// - when the data size is not divisible by the width (incomplete rows)
     /// - when the width is not dividable by 8
-    #[must_use]
-    pub fn from_bitvec(width: usize, bit_vec: BitVec) -> Self {
-        assert_eq!(
-            width % 8,
-            0,
-            "width must be a multiple of 8, but is {width}"
-        );
+    ///
+    /// In those cases, an Err is returned.
+    /// Otherwise, this returns a [Bitmap] that contains the provided data.
+    pub fn from_bitvec(
+        width: usize,
+        bit_vec: DisplayBitVec,
+    ) -> Result<Self, LoadBitmapError> {
+        if width % 8 != 0 {
+            return Err(LoadBitmapError::InvalidWidth);
+        }
         let len = bit_vec.len();
         let height = len / width;
-        assert_eq!(
-            0,
-            len % width,
-            "dimension mismatch - len {len} is not dividable by {width}"
-        );
-        Self {
+        assert!(width < isize::MAX as usize);
+        assert!(height < isize::MAX as usize);
+        if len % width != 0 {
+            return Err(LoadBitmapError::InvalidDataSize);
+        }
+
+        Ok(Self {
             width,
             height,
             bit_vec,
-        }
+        })
     }
 
     /// Iterate over all cells in [Bitmap].
@@ -123,7 +127,7 @@ impl Bitmap {
     /// Order is equivalent to the following loop:
     /// ```
     /// # use servicepoint::{Bitmap, Grid};
-    /// # let grid = Bitmap::new(8,2);
+    /// # let grid = Bitmap::new(8, 2).unwrap();
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
     ///         grid.get(x, y);
@@ -139,7 +143,7 @@ impl Bitmap {
     /// Order is equivalent to the following loop:
     /// ```
     /// # use servicepoint::{Bitmap, Grid};
-    /// # let mut grid = Bitmap::new(8,2);
+    /// # let mut grid = Bitmap::new(8, 2).unwrap();
     /// # let value = false;
     /// for y in 0..grid.height() {
     ///     for x in 0..grid.width() {
@@ -151,18 +155,20 @@ impl Bitmap {
     /// # Example
     /// ```
     /// # use servicepoint::{Bitmap, Grid};
-    /// # let mut grid = Bitmap::new(8,2);
+    /// # let mut grid = Bitmap::new(8, 2).unwrap();
     /// # let value = false;
     /// for (index, mut pixel) in grid.iter_mut().enumerate() {
     ///     pixel.set(index % 2 == 0)
     /// }
     /// ```
+    #[must_use]
+    #[allow(clippy::iter_without_into_iter)]
     pub fn iter_mut(&mut self) -> IterMut<u8, Msb0> {
         self.bit_vec.iter_mut()
     }
 
     /// Iterate over all rows in [Bitmap] top to bottom.
-    pub fn iter_rows(&self) -> IterRows {
+    pub fn iter_rows(&self) -> impl Iterator<Item = &BitSlice<u8, Msb0>> {
         IterRows {
             bitmap: self,
             row: 0,
@@ -185,7 +191,7 @@ impl Grid<bool> for Bitmap {
     /// When accessing `x` or `y` out of bounds.
     fn set(&mut self, x: usize, y: usize, value: bool) {
         self.assert_in_bounds(x, y);
-        self.bit_vec.set(x + y * self.width, value)
+        self.bit_vec.set(x + y * self.width, value);
     }
 
     fn get(&self, x: usize, y: usize) -> bool {
@@ -229,25 +235,25 @@ impl From<Bitmap> for Vec<u8> {
     }
 }
 
-impl From<Bitmap> for BitVec {
-    /// Turns a [Bitmap] into the underlying [BitVec].
+impl From<Bitmap> for DisplayBitVec {
+    /// Turns a [Bitmap] into the underlying [`DisplayBitVec`].
     fn from(value: Bitmap) -> Self {
         value.bit_vec
     }
 }
 
-impl From<&ValueGrid<bool>> for Bitmap {
+impl TryFrom<&ValueGrid<bool>> for Bitmap {
+    type Error = ();
+
     /// Converts a grid of [bool]s into a [Bitmap].
     ///
-    /// # Panics
-    ///
-    /// - when the width of `value` is not dividable by 8
-    fn from(value: &ValueGrid<bool>) -> Self {
-        let mut result = Self::new(value.width(), value.height());
+    /// Returns Err if the width of `value` is not dividable by 8
+    fn try_from(value: &ValueGrid<bool>) -> Result<Self, Self::Error> {
+        let mut result = Self::new(value.width(), value.height()).ok_or(())?;
         for (mut to, from) in result.iter_mut().zip(value.iter()) {
             *to = *from;
         }
-        result
+        Ok(result)
     }
 }
 
@@ -262,7 +268,8 @@ impl From<&Bitmap> for ValueGrid<bool> {
     }
 }
 
-pub struct IterRows<'t> {
+#[must_use]
+struct IterRows<'t> {
     bitmap: &'t Bitmap,
     row: usize,
 }
@@ -282,13 +289,28 @@ impl<'t> Iterator for IterRows<'t> {
     }
 }
 
+/// Errors that can happen when loading a bitmap.
+#[derive(thiserror::Error, Debug, PartialEq)]
+pub enum LoadBitmapError {
+    /// The provided width is not divisible by 8.
+    #[error("The provided width is not divisible by 8.")]
+    InvalidWidth,
+    /// The provided data has an incorrect size for the provided dimensions.
+    #[error(
+        "The provided data has an incorrect size for the provided dimensions."
+    )]
+    InvalidDataSize,
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{BitVec, Bitmap, DataRef, Grid, ValueGrid};
+    use crate::{
+        DisplayBitVec, Bitmap, DataRef, Grid, LoadBitmapError, ValueGrid,
+    };
 
     #[test]
     fn fill() {
-        let mut grid = Bitmap::new(8, 2);
+        let mut grid = Bitmap::new(8, 2).unwrap();
         assert_eq!(grid.data_ref(), [0x00, 0x00]);
 
         grid.fill(true);
@@ -300,7 +322,7 @@ mod tests {
 
     #[test]
     fn get_set() {
-        let mut grid = Bitmap::new(8, 2);
+        let mut grid = Bitmap::new(8, 2).unwrap();
         assert!(!grid.get(0, 0));
         assert!(!grid.get(1, 1));
 
@@ -315,7 +337,7 @@ mod tests {
 
     #[test]
     fn load() {
-        let mut grid = Bitmap::new(8, 3);
+        let mut grid = Bitmap::new(8, 3).unwrap();
         for x in 0..grid.width {
             for y in 0..grid.height {
                 grid.set(x, y, (x + y) % 2 == 0);
@@ -326,33 +348,33 @@ mod tests {
 
         let data: Vec<u8> = grid.into();
 
-        let grid = Bitmap::load(8, 3, &data);
+        let grid = Bitmap::load(8, 3, &data).unwrap();
         assert_eq!(grid.data_ref(), [0xAA, 0x55, 0xAA]);
     }
 
     #[test]
     #[should_panic]
     fn out_of_bounds_x() {
-        let vec = Bitmap::new(8, 2);
+        let vec = Bitmap::new(8, 2).unwrap();
         vec.get(8, 1);
     }
 
     #[test]
     #[should_panic]
     fn out_of_bounds_y() {
-        let mut vec = Bitmap::new(8, 2);
+        let mut vec = Bitmap::new(8, 2).unwrap();
         vec.set(1, 2, false);
     }
 
     #[test]
     fn iter() {
-        let grid = Bitmap::new(8, 2);
-        assert_eq!(16, grid.iter().count())
+        let grid = Bitmap::new(8, 2).unwrap();
+        assert_eq!(16, grid.iter().count());
     }
 
     #[test]
     fn iter_rows() {
-        let grid = Bitmap::load(8, 2, &[0x04, 0x40]);
+        let grid = Bitmap::load(8, 2, &[0x04, 0x40]).unwrap();
         let mut iter = grid.iter_rows();
 
         assert_eq!(iter.next().unwrap().count_ones(), 1);
@@ -362,7 +384,7 @@ mod tests {
 
     #[test]
     fn iter_mut() {
-        let mut grid = Bitmap::new(8, 2);
+        let mut grid = Bitmap::new(8, 2).unwrap();
         for (index, mut pixel) in grid.iter_mut().enumerate() {
             pixel.set(index % 2 == 0);
         }
@@ -371,7 +393,7 @@ mod tests {
 
     #[test]
     fn data_ref_mut() {
-        let mut grid = Bitmap::new(8, 2);
+        let mut grid = Bitmap::new(8, 2).unwrap();
         let data = grid.data_ref_mut();
         data[1] = 0x0F;
         assert!(grid.get(7, 1));
@@ -379,9 +401,9 @@ mod tests {
 
     #[test]
     fn to_bitvec() {
-        let mut grid = Bitmap::new(8, 2);
+        let mut grid = Bitmap::new(8, 2).unwrap();
         grid.set(0, 0, true);
-        let bitvec: BitVec = grid.into();
+        let bitvec: DisplayBitVec = grid.into();
         assert_eq!(bitvec.as_raw_slice(), [0x80, 0x00]);
     }
 
@@ -391,9 +413,57 @@ mod tests {
             8,
             1,
             &[true, false, true, false, true, false, true, false],
-        );
-        let converted = Bitmap::from(&original);
+        )
+        .unwrap();
+        let converted = Bitmap::try_from(&original).unwrap();
         let reconverted = ValueGrid::from(&converted);
         assert_eq!(original, reconverted);
+    }
+
+    #[test]
+    fn load_invalid_width() {
+        let data = DisplayBitVec::repeat(false, 7 * 3).into_vec();
+        assert_eq!(
+            Bitmap::load(7, 3, &data),
+            Err(LoadBitmapError::InvalidWidth)
+        );
+    }
+
+    #[test]
+    fn load_invalid_size() {
+        let data = DisplayBitVec::repeat(false, 8 * 4).into_vec();
+        assert_eq!(
+            Bitmap::load(8, 3, &data),
+            Err(LoadBitmapError::InvalidDataSize)
+        );
+    }
+
+    #[test]
+    fn from_vec_invalid_width() {
+        let data = DisplayBitVec::repeat(false, 7 * 3);
+        assert_eq!(
+            Bitmap::from_bitvec(7, data),
+            Err(LoadBitmapError::InvalidWidth)
+        );
+    }
+
+    #[test]
+    fn from_vec_invalid_size() {
+        let data = DisplayBitVec::repeat(false, 7 * 4);
+        assert_eq!(
+            Bitmap::from_bitvec(8, data),
+            Err(LoadBitmapError::InvalidDataSize)
+        );
+    }
+
+    #[test]
+    fn from_vec() {
+        let orig = Bitmap::new(8, 3).unwrap();
+        assert_eq!(Bitmap::from_bitvec(8, orig.bit_vec.clone()).unwrap(), orig);
+    }
+
+    #[test]
+    fn new_invalid_width() {
+        assert_eq!(Bitmap::new(7, 2), None);
     }
 }

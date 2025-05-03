@@ -1,8 +1,11 @@
 //! An example on how to modify the image on screen without knowing the current content.
+
 use clap::Parser;
-use servicepoint::*;
-use std::thread;
-use std::time::Duration;
+use servicepoint::{
+    Bitmap, BitmapCommand, Grid, UdpSocketExt, FRAME_PACING, PIXEL_HEIGHT,
+    PIXEL_WIDTH,
+};
+use std::{net::UdpSocket, thread, time::Duration};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -20,8 +23,8 @@ fn main() {
         Duration::from_millis(cli.time / PIXEL_WIDTH as u64),
     );
 
-    let connection = Connection::open(cli.destination)
-        .expect("could not connect to display");
+    let connection =
+        UdpSocket::bind(cli.destination).expect("could not connect to display");
 
     let mut enabled_pixels = Bitmap::max_sized();
     enabled_pixels.fill(true);
@@ -31,12 +34,9 @@ fn main() {
             enabled_pixels.set(x_offset % PIXEL_WIDTH, y, false);
         }
 
+        let command = BitmapCommand::from(enabled_pixels.clone());
         connection
-            .send(Command::BitmapLinearWin(
-                Origin::ZERO,
-                enabled_pixels.clone(),
-                CompressionCode::default(),
-            ))
+            .send_command(command)
             .expect("could not send command to display");
         thread::sleep(sleep_duration);
     }

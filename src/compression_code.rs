@@ -3,17 +3,25 @@
 /// # Examples
 ///
 /// ```rust
-/// # use servicepoint::{Command, CompressionCode, Origin, Bitmap};
+/// # use servicepoint::*;
 /// // create command without payload compression
 /// # let pixels = Bitmap::max_sized();
-/// _ = Command::BitmapLinearWin(Origin::ZERO, pixels, CompressionCode::Uncompressed);
+/// _ = BitmapCommand {
+///     origin: Origin::ZERO,
+///     bitmap: pixels,
+///     compression: CompressionCode::Uncompressed
+/// };
 ///
 /// // create command with payload compressed with lzma and appropriate header flags
 /// # let pixels = Bitmap::max_sized();
-/// _ = Command::BitmapLinearWin(Origin::ZERO, pixels, CompressionCode::Lzma);
+/// _ = BitmapCommand {
+///     origin: Origin::ZERO,
+///     bitmap: pixels,
+///     compression: CompressionCode::Lzma
+/// };
 /// ```
 #[repr(u16)]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompressionCode {
     /// no compression
     Uncompressed = 0x0,
@@ -31,6 +39,25 @@ pub enum CompressionCode {
     Zstd = 0x7a73,
 }
 
+impl CompressionCode {
+    /// All available compression codes (depending on features).
+    pub const ALL: &'static [CompressionCode] = &[
+        Self::Uncompressed,
+        #[cfg(feature = "compression_zlib")]
+        Self::Zlib,
+        #[cfg(feature = "compression_bzip2")]
+        Self::Bzip2,
+        #[cfg(feature = "compression_lzma")]
+        Self::Lzma,
+        #[cfg(feature = "compression_zstd")]
+        Self::Zstd,
+    ];
+}
+
+#[derive(Debug, thiserror::Error, Eq, PartialEq)]
+#[error("The compression code {0} is not known.")]
+pub struct InvalidCompressionCodeError(pub u16);
+
 impl From<CompressionCode> for u16 {
     fn from(value: CompressionCode) -> Self {
         value as u16
@@ -38,7 +65,7 @@ impl From<CompressionCode> for u16 {
 }
 
 impl TryFrom<u16> for CompressionCode {
-    type Error = ();
+    type Error = InvalidCompressionCodeError;
 
     fn try_from(value: u16) -> Result<Self, Self::Error> {
         match value {
@@ -61,7 +88,7 @@ impl TryFrom<u16> for CompressionCode {
             value if value == CompressionCode::Zstd as u16 => {
                 Ok(CompressionCode::Zstd)
             }
-            _ => Err(()),
+            _ => Err(InvalidCompressionCodeError(value)),
         }
     }
 }

@@ -1,7 +1,10 @@
 //! An example for how to send text to the display.
 
 use clap::Parser;
-use servicepoint::*;
+use servicepoint::{
+    CharGrid, CharGridCommand, ClearCommand, UdpSocketExt, TILE_WIDTH,
+};
+use std::net::UdpSocket;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -31,18 +34,18 @@ fn main() {
         cli.text.push("Hello, CCCB!".to_string());
     }
 
-    let connection = Connection::open(&cli.destination)
+    let connection = UdpSocket::bind(&cli.destination)
         .expect("could not connect to display");
 
     if cli.clear {
         connection
-            .send(Command::Clear)
+            .send_command(ClearCommand)
             .expect("sending clear failed");
     }
 
     let text = cli.text.join("\n");
-    let grid = CharGrid::wrap_str(TILE_WIDTH, &text);
+    let command: CharGridCommand = CharGrid::wrap_str(TILE_WIDTH, &text).into();
     connection
-        .send(Command::Utf8Data(Origin::ZERO, grid))
+        .send_command(command)
         .expect("sending text failed");
 }

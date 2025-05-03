@@ -9,15 +9,16 @@ use rand::{
 /// # Examples
 ///
 /// ```
-/// # use servicepoint::{Brightness, Command, Connection};
+/// # use servicepoint::*;
 /// let b = Brightness::MAX;
 /// let val: u8 = b.into();
 ///
 /// let b = Brightness::try_from(7).unwrap();
-/// # let connection = Connection::Fake;
-/// let result = connection.send(Command::Brightness(b));
+/// # let connection = FakeConnection;
+/// let result = connection.send_command(GlobalBrightnessCommand::from(b));
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
+#[repr(transparent)]
 pub struct Brightness(u8);
 
 impl From<Brightness> for u8 {
@@ -50,9 +51,10 @@ impl Brightness {
     /// lowest possible brightness value, 0
     pub const MIN: Brightness = Brightness(0);
 
-    /// Create a brightness value without returning an error for brightnesses above [Brightness::MAX].
+    /// Create a brightness value without returning an error for brightnesses above [`Brightness::MAX`].
     ///
-    /// returns: the specified value as a [Brightness], or [Brightness::MAX].
+    /// returns: the specified value as a [Brightness], or [`Brightness::MAX`].
+    #[must_use]
     pub fn saturating_from(value: u8) -> Brightness {
         if value > Brightness::MAX.into() {
             Brightness::MAX
@@ -90,7 +92,7 @@ mod tests {
     fn rand_brightness() {
         let mut rng = rand::thread_rng();
         for _ in 0..100 {
-            let _: Brightness = rng.gen();
+            let _: Brightness = rng.r#gen();
         }
     }
 
@@ -104,6 +106,10 @@ mod tests {
     #[cfg(feature = "rand")]
     fn test() {
         let mut rng = rand::thread_rng();
-        assert_ne!(rng.gen::<Brightness>(), rng.gen());
+        // two so test failure is less likely
+        assert_ne!(
+            [rng.r#gen::<Brightness>(), rng.r#gen()],
+            [rng.r#gen(), rng.r#gen()]
+        );
     }
 }

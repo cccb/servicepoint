@@ -1,8 +1,11 @@
 //! A simple example for how to send pixel data to the display.
 
 use clap::Parser;
-use servicepoint::*;
-use std::thread;
+use servicepoint::{
+    Bitmap, BitmapCommand, Grid, UdpSocketExt, FRAME_PACING, PIXEL_HEIGHT,
+    PIXEL_WIDTH,
+};
+use std::{net::UdpSocket, thread};
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -11,23 +14,19 @@ struct Cli {
 }
 
 fn main() {
-    let connection = Connection::open(Cli::parse().destination)
+    let connection = UdpSocket::bind(Cli::parse().destination)
         .expect("could not connect to display");
 
-    let mut pixels = Bitmap::max_sized();
+    let mut bitmap = Bitmap::max_sized();
     for x_offset in 0..usize::MAX {
-        pixels.fill(false);
+        bitmap.fill(false);
 
         for y in 0..PIXEL_HEIGHT {
-            pixels.set((y + x_offset) % PIXEL_WIDTH, y, true);
+            bitmap.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
 
-        let command = Command::BitmapLinearWin(
-            Origin::ZERO,
-            pixels.clone(),
-            CompressionCode::default(),
-        );
-        connection.send(command).expect("send failed");
+        let command = BitmapCommand::from(bitmap.clone());
+        connection.send_command(command).expect("send failed");
         thread::sleep(FRAME_PACING);
     }
 }

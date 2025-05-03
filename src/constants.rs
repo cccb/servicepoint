@@ -52,19 +52,19 @@ pub const PIXEL_COUNT: usize = PIXEL_WIDTH * PIXEL_HEIGHT;
 ///
 /// ```rust
 /// # use std::time::Instant;
-/// # use servicepoint::{Command, CompressionCode, FRAME_PACING, Origin, Bitmap};
-/// # let connection = servicepoint::Connection::Fake;
+/// # use servicepoint::*;
+/// # let connection = FakeConnection;
 /// # let pixels = Bitmap::max_sized();
 /// loop {
 ///    let start = Instant::now();
 ///
 ///    // Change pixels here
 ///
-///    connection.send(Command::BitmapLinearWin(
-///            Origin::new(0,0),
-///            pixels,
-///            CompressionCode::default()
-///        ))
+///    connection.send_command(BitmapCommand {
+///            origin: Origin::new(0,0),
+///            bitmap: pixels,
+///            compression: CompressionCode::default()
+///        })
 ///        .expect("send failed");
 ///
 ///    // warning: will crash if resulting duration is negative, e.g. when resuming from standby

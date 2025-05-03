@@ -1,7 +1,11 @@
 //! Show a brightness level test pattern on screen
 
 use clap::Parser;
-use servicepoint::*;
+use servicepoint::{
+    Bitmap, BitmapCommand, Brightness, BrightnessGrid, BrightnessGridCommand,
+    DataRef, Grid, UdpSocketExt, TILE_HEIGHT, TILE_WIDTH,
+};
+use std::net::UdpSocket;
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -11,27 +15,23 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
-    let connection = Connection::open(cli.destination)
-        .expect("could not connect to display");
+    let connection =
+        UdpSocket::bind(cli.destination).expect("could not connect to display");
 
-    let mut pixels = Bitmap::max_sized();
-    pixels.fill(true);
+    let mut bitmap = Bitmap::max_sized();
+    bitmap.fill(true);
 
-    let command = Command::BitmapLinearWin(
-        Origin::ZERO,
-        pixels,
-        CompressionCode::default(),
-    );
-    connection.send(command).expect("send failed");
+    connection
+        .send_command(BitmapCommand::from(bitmap))
+        .expect("send failed");
 
     let max_brightness: u8 = Brightness::MAX.into();
     let mut brightnesses = BrightnessGrid::new(TILE_WIDTH, TILE_HEIGHT);
     for (index, byte) in brightnesses.data_ref_mut().iter_mut().enumerate() {
-        let level = index as u8 % max_brightness;
+        let level = (index % u8::MAX as usize) as u8 % max_brightness;
         *byte = Brightness::try_from(level).unwrap();
     }
 
-    connection
-        .send(Command::CharBrightness(Origin::ZERO, brightnesses))
-        .expect("send failed");
+    let command: BrightnessGridCommand = brightnesses.into();
+    connection.send_command(command).expect("send failed");
 }
