@@ -68,7 +68,7 @@ pub(crate) fn into_decompressed(
                 None
             }
             Ok(result) => Some(result),
-        }
+        },
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
             let mut decoder = match ZstdDecoder::new(&*payload) {

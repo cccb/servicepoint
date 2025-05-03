@@ -3,7 +3,7 @@
 use clap::Parser;
 use servicepoint::{
     Bitmap, BitmapCommand, Brightness, BrightnessGrid, BrightnessGridCommand,
-    DataRef, Grid, SendCommandExt, TILE_HEIGHT, TILE_WIDTH,
+    DataRef, Grid, UdpSocketExt, TILE_HEIGHT, TILE_WIDTH,
 };
 use std::net::UdpSocket;
 
@@ -28,7 +28,7 @@ fn main() {
     let max_brightness: u8 = Brightness::MAX.into();
     let mut brightnesses = BrightnessGrid::new(TILE_WIDTH, TILE_HEIGHT);
     for (index, byte) in brightnesses.data_ref_mut().iter_mut().enumerate() {
-        let level = index as u8 % max_brightness;
+        let level = (index % u8::MAX as usize) as u8 % max_brightness;
         *byte = Brightness::try_from(level).unwrap();
     }
 

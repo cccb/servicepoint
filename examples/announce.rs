@@ -2,7 +2,7 @@
 
 use clap::Parser;
 use servicepoint::{
-    CharGrid, CharGridCommand, ClearCommand, SendCommandExt, TILE_WIDTH,
+    CharGrid, CharGridCommand, ClearCommand, UdpSocketExt, TILE_WIDTH,
 };
 use std::net::UdpSocket;
 

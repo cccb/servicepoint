@@ -2,7 +2,7 @@
 
 use clap::Parser;
 use servicepoint::{
-    Bitmap, BitmapCommand, Grid, SendCommandExt, FRAME_PACING, PIXEL_HEIGHT,
+    Bitmap, BitmapCommand, Grid, UdpSocketExt, FRAME_PACING, PIXEL_HEIGHT,
     PIXEL_WIDTH,
 };
 use std::{net::UdpSocket, thread};

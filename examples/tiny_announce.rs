@@ -21,7 +21,7 @@
 
 #![no_main]
 
-use servicepoint::{CharGrid, CharGridCommand, ClearCommand, SendCommandExt};
+use servicepoint::{CharGrid, CharGridCommand, ClearCommand, UdpSocketExt};
 use std::net::{SocketAddr, UdpSocket};
 
 /// This is the entry point of the example.
