@@ -14,7 +14,7 @@ struct Cli {
 }
 
 fn main() {
-    let connection = UdpSocket::bind(Cli::parse().destination)
+    let connection = UdpSocket::bind_connect(Cli::parse().destination)
         .expect("could not connect to display");
 
     let mut bitmap = Bitmap::max_sized();
