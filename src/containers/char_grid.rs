@@ -43,7 +43,7 @@ impl CharGrid {
                     .chunks(width)
                     .map(|c| {
                         let mut s = String::from_iter(c);
-                        s.push_str(&"\0".repeat(width - s.chars().count()));
+                        s.push_str(&" ".repeat(width - s.chars().count()));
                         s
                     })
                     .collect::<Vec<String>>()
@@ -291,7 +291,7 @@ mod test {
 
     #[test]
     fn round_trip_string() {
-        let grid = CharGrid::from("Hello\0\nWorld!\n...\0\0\0");
+        let grid = CharGrid::from("Hello \nWorld!\n...   ");
         let str: String = grid.clone().into();
         let copy = CharGrid::from(str);
         assert_eq!(grid, copy);
@@ -301,6 +301,7 @@ mod test {
     fn wrap_str() {
         let grid = CharGrid::wrap_str(2, "abc\ndef");
         assert_eq!(4, grid.height());
-        assert_eq!("ab\nc\0\nde\nf\0", String::from(grid));
+        assert_eq!(2, grid.width());
+        assert_eq!("ab\nc \nde\nf ", String::from(grid));
     }
 }
