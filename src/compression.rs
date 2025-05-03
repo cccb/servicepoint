@@ -2,9 +2,9 @@
 use bzip2::read::{BzDecoder, BzEncoder};
 #[cfg(feature = "compression_zlib")]
 use flate2::{FlushCompress, FlushDecompress, Status};
-#[allow(unused, reason = "Traits are used depending on enabled features")]
+#[allow(unused, reason = "used depending on enabled features")]
 use log::error;
-#[allow(unused, reason = "Traits are used depending on enabled features")]
+#[allow(unused, reason = "used depending on enabled features")]
 use std::io::{Read, Write};
 #[cfg(feature = "compression_zstd")]
 use zstd::{Decoder as ZstdDecoder, Encoder as ZstdEncoder};
@@ -44,7 +44,7 @@ pub(crate) fn into_decompressed(
                     Some(buffer[..decompress.total_out() as usize].to_owned())
                 }
                 Err(e) => {
-                    error!("compress returned err: {e}");
+                    error!("failed to decompress data: {e}");
                     None
                 }
             }
@@ -54,21 +54,36 @@ pub(crate) fn into_decompressed(
             let mut decoder = BzDecoder::new(&*payload);
             let mut decompressed = vec![];
             match decoder.read_to_end(&mut decompressed) {
-                Err(_) => None,
                 Ok(_) => Some(decompressed),
+                Err(e) => {
+                    error!("failed to decompress data: {e}");
+                    None
+                }
             }
         }
         #[cfg(feature = "compression_lzma")]
-        CompressionCode::Lzma => lzma::decompress(&payload).ok(),
+        CompressionCode::Lzma => match lzma::decompress(&payload) {
+            Err(e) => {
+                error!("failed to decompress data: {e}");
+                None
+            }
+            Ok(result) => Some(result),
+        }
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
             let mut decoder = match ZstdDecoder::new(&*payload) {
-                Err(_) => return None,
                 Ok(value) => value,
+                Err(e) => {
+                    error!("failed to create zstd decoder: {e}");
+                    return None;
+                }
             };
             let mut decompressed = vec![];
             match decoder.read_to_end(&mut decompressed) {
-                Err(_) => None,
+                Err(e) => {
+                    error!("failed to decompress data: {e}");
+                    None
+                }
                 Ok(_) => Some(decompressed),
             }
         }
@@ -109,7 +124,7 @@ pub(crate) fn into_compressed(
                     Some(buffer[..compress.total_out() as usize].to_owned())
                 }
                 Err(e) => {
-                    error!("compress returned err: {e}");
+                    error!("failed to compress data: {e}");
                     None
                 }
             }
@@ -120,8 +135,8 @@ pub(crate) fn into_compressed(
                 BzEncoder::new(&*payload, bzip2::Compression::fast());
             let mut compressed = vec![];
             match encoder.read_to_end(&mut compressed) {
-                Err(err) => {
-                    error!("Could not compress: {:?}", err);
+                Err(e) => {
+                    error!("failed to compress data: {e}");
                     None
                 }
                 Ok(_) => Some(compressed),
@@ -131,7 +146,7 @@ pub(crate) fn into_compressed(
         CompressionCode::Lzma => match lzma::compress(&payload, 6) {
             Ok(payload) => Some(payload),
             Err(e) => {
-                error!("Could not compress: {e:?}");
+                error!("failed to compress data: {e}");
                 None
             }
         },
@@ -141,14 +156,14 @@ pub(crate) fn into_compressed(
             let mut encoder =
                 match ZstdEncoder::new(buf, zstd::DEFAULT_COMPRESSION_LEVEL) {
                     Err(e) => {
-                        error!("failed to create decoder: {e:?}");
+                        error!("failed to create zstd encoder: {e}");
                         return None;
                     }
                     Ok(encoder) => encoder,
                 };
 
             if let Err(e) = encoder.write_all(&payload) {
-                error!("failed to decompress payload: {e:?}");
+                error!("failed to compress data: {e}");
                 return None;
             }
 
