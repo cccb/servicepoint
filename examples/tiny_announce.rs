@@ -31,7 +31,7 @@ use std::net::{SocketAddr, UdpSocket};
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let addr = SocketAddr::from(([172, 23, 42, 29], 2342));
 
-    let connection = UdpSocket::bind(addr).unwrap();
+    let connection = UdpSocket::bind_connect(addr).unwrap();
     connection.send_command(ClearCommand).unwrap();
 
     let grid = CharGrid::from_vec(

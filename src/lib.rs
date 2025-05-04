@@ -13,7 +13,7 @@
 //! use servicepoint::*;
 //!
 //! // establish a connection
-//! let connection = UdpSocket::bind("127.0.0.1:2342")
+//! let connection = UdpSocket::bind_connect("127.0.0.1:2342")
 //!     .expect("connection failed");
 //!
 //!  # let connection = FakeConnection; // do not fail tests

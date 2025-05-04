@@ -34,7 +34,7 @@ fn main() {
         cli.text.push("Hello, CCCB!".to_string());
     }
 
-    let connection = UdpSocket::bind(&cli.destination)
+    let connection = UdpSocket::bind_connect(&cli.destination)
         .expect("could not connect to display");
 
     if cli.clear {

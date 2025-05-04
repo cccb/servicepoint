@@ -19,14 +19,14 @@ via [language bindings](#supported-language-bindings).
 ```rust no_run
 use std::net::UdpSocket;
 // everything you need is in the top-level
-use servicepoint::*;
+use servicepoint::{ClearCommand, UdpSocketExt};
 
 fn main() {
   // this should be the IP of the real display @CCCB
   let destination = "172.23.42.29:2342";
 
   // establish connection
-  let connection = UdpSocket::bind(destination).expect("connection failed");
+  let connection = UdpSocket::bind_connect(destination).expect("connection failed");
 
   // clear screen content using the UdpSocketExt
   connection.send_command(ClearCommand).expect("send failed");
@@ -46,7 +46,7 @@ or
 
 ```toml
 [dependencies]
-servicepoint = "0.14.0"
+servicepoint = "0.14.1"
 ```
 
 ## Note on stability
@@ -83,7 +83,7 @@ Es an example, if you only want zlib compression:
 
 ```toml
 [dependencies]
-servicepoint = { version = "0.14.0", default-features = false, features = ["compression_zlib"] }
+servicepoint = { version = "0.14.1", default-features = false, features = ["compression_zlib"] }
 ```
 
 If you are looking at features to minimize binary size: take a look at the `tiny_announce`-example!

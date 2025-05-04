@@ -16,7 +16,7 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let connection = UdpSocket::bind(&cli.destination)
+    let connection = UdpSocket::bind_connect(&cli.destination)
         .expect("could not connect to display");
     let mut field = make_random_field(cli.probability);
 

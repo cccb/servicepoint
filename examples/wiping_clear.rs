@@ -24,7 +24,7 @@ fn main() {
     );
 
     let connection =
-        UdpSocket::bind(cli.destination).expect("could not connect to display");
+        UdpSocket::bind_connect(cli.destination).expect("could not connect to display");
 
     let mut enabled_pixels = Bitmap::max_sized();
     enabled_pixels.fill(true);
