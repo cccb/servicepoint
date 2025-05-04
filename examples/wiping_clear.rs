@@ -23,8 +23,8 @@ fn main() {
         Duration::from_millis(cli.time / PIXEL_WIDTH as u64),
     );
 
-    let connection =
-        UdpSocket::bind_connect(cli.destination).expect("could not connect to display");
+    let connection = UdpSocket::bind_connect(cli.destination)
+        .expect("could not connect to display");
 
     let mut enabled_pixels = Bitmap::max_sized();
     enabled_pixels.fill(true);

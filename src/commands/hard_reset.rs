@@ -66,7 +66,7 @@ mod test {
                 c: 0x00,
                 d: 0x01,
             },
-            payload: vec![],
+            payload: None,
         };
         let result = TypedCommand::try_from(p);
         assert!(matches!(

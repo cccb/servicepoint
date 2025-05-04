@@ -49,6 +49,8 @@ pub struct Header {
     pub d: u16,
 }
 
+pub const HEADER_SIZE: usize = size_of::<Header>();
+
 /// The raw payload.
 ///
 /// Should probably only be used directly to use features not exposed by the library.
@@ -64,7 +66,7 @@ pub struct Packet {
     /// Meta-information for the packed command
     pub header: Header,
     /// The data for the packed command
-    pub payload: Payload,
+    pub payload: Option<Payload>,
 }
 
 impl From<Packet> for Vec<u8> {
@@ -87,7 +89,7 @@ impl TryFrom<&[u8]> for Packet {
     ///
     /// returns: `Error` if slice is not long enough to be a [Packet]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-        if value.len() < size_of::<Header>() {
+        if value.len() < HEADER_SIZE {
             return Err(SliceSmallerThanHeader);
         }
 
@@ -105,7 +107,12 @@ impl TryFrom<&[u8]> for Packet {
                 d,
             }
         };
-        let payload = value[10..].to_vec();
+
+        let payload = if value.len() < HEADER_SIZE {
+            None
+        } else {
+            Some(value[HEADER_SIZE..].to_vec())
+        };
 
         Ok(Packet { header, payload })
     }
@@ -146,14 +153,17 @@ impl Packet {
         slice[6..=7].copy_from_slice(&u16::to_be_bytes(*c));
         slice[8..=9].copy_from_slice(&u16::to_be_bytes(*d));
 
-        slice[10..].copy_from_slice(payload);
+        if let Some(payload) = payload {
+            slice[10..].copy_from_slice(payload);
+        }
+
         true
     }
 
     /// Returns the amount of bytes this packet takes up when serialized.
     #[must_use]
     pub fn size(&self) -> usize {
-        size_of::<Header>() + self.payload.len()
+        HEADER_SIZE + self.payload.as_ref().map(Vec::len).unwrap_or(0)
     }
 
     fn u16_from_be_slice(slice: &[u8]) -> u16 {
@@ -176,7 +186,7 @@ impl Packet {
                 c: grid.width().try_into()?,
                 d: grid.height().try_into()?,
             },
-            payload: grid.into(),
+            payload: Some(grid.into()),
         })
     }
 
@@ -186,7 +196,7 @@ impl Packet {
                 command_code: c.into(),
                 ..Default::default()
             },
-            payload: vec![],
+            payload: None,
         }
     }
 }
@@ -205,7 +215,7 @@ mod tests {
                 c: 3,
                 d: 4,
             },
-            payload: vec![42u8; 23],
+            payload: Some(vec![42u8; 23]),
         };
         let data: Vec<u8> = p.into();
         let p = Packet::try_from(data).unwrap();
@@ -219,7 +229,7 @@ mod tests {
                     c: 3,
                     d: 4
                 },
-                payload: vec![42u8; 23]
+                payload: Some(vec![42u8; 23])
             }
         );
     }

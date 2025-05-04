@@ -1,5 +1,5 @@
 use crate::{
-    DisplayBitVec, DataRef, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
+    DataRef, DisplayBitVec, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 
@@ -305,7 +305,7 @@ pub enum LoadBitmapError {
 #[cfg(test)]
 mod tests {
     use crate::{
-        DisplayBitVec, Bitmap, DataRef, Grid, LoadBitmapError, ValueGrid,
+        Bitmap, DataRef, DisplayBitVec, Grid, LoadBitmapError, ValueGrid,
     };
 
     #[test]

@@ -74,7 +74,7 @@ impl TryFrom<BitmapCommand> for Packet {
                 c: tile_w,
                 d: pixel_h,
             },
-            payload,
+            payload: Some(payload),
         })
     }
 }
@@ -148,6 +148,16 @@ impl BitmapCommand {
             payload,
         } = packet;
 
+        let expected = tile_w as usize * pixel_h as usize;
+        let payload = match payload {
+            None => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    actual: 0,
+                    expected,
+                })
+            }
+            Some(payload) => payload,
+        };
         let payload = match into_decompressed(compression, payload) {
             None => return Err(TryFromPacketError::DecompressionFailed),
             Some(decompressed) => decompressed,
@@ -183,7 +193,7 @@ mod tests {
     fn command_code() {
         assert_eq!(
             BitmapCommand::try_from(Packet {
-                payload: vec![],
+                payload: None,
                 header: Header {
                     command_code: CommandCode::Brightness.into(),
                     ..Default::default()
@@ -204,17 +214,18 @@ mod tests {
             .try_into()
             .unwrap();
 
-            let Packet {
-                header,
-                mut payload,
-            } = p;
+            let Packet { header, payload } = p;
+            let mut payload = payload.unwrap();
 
             // mangle it
             for byte in &mut payload {
                 *byte -= *byte / 2;
             }
 
-            let p = Packet { header, payload };
+            let p = Packet {
+                header,
+                payload: Some(payload),
+            };
             let result = TypedCommand::try_from(p);
             if *compression != CompressionCode::Uncompressed {
                 assert_eq!(

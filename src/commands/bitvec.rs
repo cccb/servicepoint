@@ -1,7 +1,7 @@
 use crate::{
     command_code::CommandCode, command_code::InvalidCommandCodeError,
     commands::errors::TryFromPacketError, compression::into_compressed,
-    compression::into_decompressed, DisplayBitVec, CompressionCode, Header,
+    compression::into_decompressed, CompressionCode, DisplayBitVec, Header,
     Offset, Packet, TryIntoPacketError, TypedCommand,
 };
 
@@ -67,7 +67,7 @@ impl TryFrom<BitVecCommand> for Packet {
                 c: value.compression.into(),
                 d: 0,
             },
-            payload,
+            payload: Some(payload),
         })
     }
 }
@@ -103,6 +103,15 @@ impl TryFrom<Packet> for BitVecCommand {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
         }
         let compression = CompressionCode::try_from(sub)?;
+        let payload = match payload {
+            None => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected: expected_len as usize,
+                    actual: 0,
+                })
+            }
+            Some(payload) => payload,
+        };
         let payload = match into_decompressed(compression, payload) {
             None => return Err(TryFromPacketError::DecompressionFailed),
             Some(value) => value,
@@ -155,7 +164,7 @@ mod tests {
     fn command_code() {
         assert_eq!(
             BitVecCommand::try_from(Packet {
-                payload: vec![],
+                payload: None,
                 header: Header {
                     command_code: CommandCode::Brightness.into(),
                     ..Default::default()
@@ -206,17 +215,18 @@ mod tests {
             }
             .try_into()
             .unwrap();
-            let Packet {
-                header,
-                mut payload,
-            } = p;
+            let Packet { header, payload } = p;
 
+            let mut payload = payload.unwrap();
             // mangle it
             for byte in &mut payload {
                 *byte -= *byte / 2;
             }
 
-            let p = Packet { header, payload };
+            let p = Packet {
+                header,
+                payload: Some(payload),
+            };
             let result = TypedCommand::try_from(p);
             if *compression != CompressionCode::Uncompressed {
                 assert_eq!(

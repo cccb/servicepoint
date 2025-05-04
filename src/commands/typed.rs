@@ -125,7 +125,7 @@ mod tests {
                 c: 0x00,
                 d: 0x00,
             },
-            payload: vec![],
+            payload: None,
         };
         let result = TypedCommand::try_from(p);
         assert_eq!(result, Err(InvalidCommandCodeError(0xFF).into()));

@@ -99,7 +99,7 @@ fn check_command_code_only(
     } = packet;
     if packet.header.command_code != u16::from(code) {
         Some(InvalidCommandCodeError(packet.header.command_code).into())
-    } else if !payload.is_empty() {
+    } else if let Some(payload) = payload {
         Some(TryFromPacketError::UnexpectedPayloadSize {
             expected: 0,
             actual: payload.len(),

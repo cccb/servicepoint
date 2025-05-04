@@ -54,16 +54,24 @@ impl TryFrom<Packet> for CharGridCommand {
 
         check_command_code(command_code, CommandCode::Utf8Data)?;
 
-        let payload: Vec<_> =
-            String::from_utf8(payload.clone())?.chars().collect();
-
         let expected = width as usize * height as usize;
-        if payload.len() != expected {
-            return Err(TryFromPacketError::UnexpectedPayloadSize {
-                expected,
-                actual: payload.len(),
-            });
-        }
+        let payload = match payload {
+            None => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected,
+                    actual: 0,
+                })
+            }
+            Some(payload) if payload.len() != expected => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected,
+                    actual: payload.len(),
+                })
+            }
+            Some(payload) => {
+                String::from_utf8(payload.clone())?.chars().collect()
+            }
+        };
 
         Ok(Self {
             origin: Origin::new(origin_x as usize, origin_y as usize),
@@ -134,7 +142,7 @@ mod tests {
         let packet: Packet = command.try_into().unwrap();
         let packet = Packet {
             header: packet.header,
-            payload: packet.payload[..5].to_vec(),
+            payload: Some(packet.payload.as_ref().unwrap()[..5].to_vec()),
         };
         assert_eq!(
             Err(TryFromPacketError::UnexpectedPayloadSize {

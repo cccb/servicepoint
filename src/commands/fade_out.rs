@@ -70,7 +70,7 @@ mod tests {
                 c: 0x00,
                 d: 0x01,
             },
-            payload: vec![],
+            payload: None,
         };
         let result = TypedCommand::try_from(p);
         assert!(matches!(
@@ -89,7 +89,7 @@ mod tests {
                 c: 0x00,
                 d: 0x00,
             },
-            payload: vec![5, 7],
+            payload: Some(vec![5, 7]),
         };
         let result = TypedCommand::try_from(p);
         assert!(matches!(

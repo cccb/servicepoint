@@ -70,7 +70,7 @@ mod tests {
                     a: 1,
                     ..Default::default()
                 },
-                payload: vec![],
+                payload: None,
             }),
             Err(TryFromPacketError::ExtraneousHeaderValues)
         );
