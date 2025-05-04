@@ -46,7 +46,7 @@ or
 
 ```toml
 [dependencies]
-servicepoint = "0.14.0"
+servicepoint = "0.14.1"
 ```
 
 ## Note on stability
@@ -83,7 +83,7 @@ Es an example, if you only want zlib compression:
 
 ```toml
 [dependencies]
-servicepoint = { version = "0.14.0", default-features = false, features = ["compression_zlib"] }
+servicepoint = { version = "0.14.1", default-features = false, features = ["compression_zlib"] }
 ```
 
 If you are looking at features to minimize binary size: take a look at the `tiny_announce`-example!
