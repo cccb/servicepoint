@@ -6,7 +6,7 @@ use crate::{
 };
 
 /// Binary operations for use with the [`BitVecCommand`] command.
-#[derive(Clone, PartialEq, Eq, Debug, Default)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
 #[repr(u8)]
 pub enum BinaryOperation {
     /// r := a
