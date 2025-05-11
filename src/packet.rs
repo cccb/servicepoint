@@ -130,9 +130,10 @@ impl Packet {
     /// Serialize packet into pre-allocated buffer.
     ///
     /// returns false if the buffer is too small before writing any values.
-    pub fn serialize_to(&self, slice: &mut [u8]) -> bool {
-        if slice.len() < self.size() {
-            return false;
+    pub fn serialize_to(&self, slice: &mut [u8]) -> Option<usize> {
+        let size = self.size();
+        if slice.len() < size {
+            return None;
         }
 
         let Packet {
@@ -154,10 +155,10 @@ impl Packet {
         slice[8..=9].copy_from_slice(&u16::to_be_bytes(*d));
 
         if let Some(payload) = payload {
-            slice[10..].copy_from_slice(payload);
+            slice[10..][..payload.len()].copy_from_slice(payload);
         }
 
-        true
+        Some(size)
     }
 
     /// Returns the amount of bytes this packet takes up when serialized.

@@ -107,7 +107,30 @@ impl CharGrid {
         y: usize,
         value: &str,
     ) -> Result<(), SetValueSeriesError> {
-        self.set_row(y, value.chars().collect::<Vec<_>>().as_ref())
+        let width = self.width();
+        
+        let len = value.len();
+        if len > width {
+            return  Err(SetValueSeriesError::InvalidLength {
+                actual: len,
+                expected: width,
+            })
+        }
+
+        let height = self.height();
+        if y >= height {
+            return Err(SetValueSeriesError::OutOfBounds {
+                index: y,
+                size: height,
+            })
+        }
+
+        let chars = value.chars().take(width);
+        for (x, c) in chars.enumerate() {
+            self.set(x, y, c);
+        }
+
+        Ok(())
     }
 
     /// Overwrites a column in the grid with a str.
@@ -126,7 +149,30 @@ impl CharGrid {
         x: usize,
         value: &str,
     ) -> Result<(), SetValueSeriesError> {
-        self.set_col(x, value.chars().collect::<Vec<_>>().as_ref())
+        let height = self.height();
+
+        let len = value.len();
+        if len > height {
+            return  Err(SetValueSeriesError::InvalidLength {
+                actual: len,
+                expected: height,
+            })
+        }
+
+        let width = self.width();
+        if x >= width {
+            return Err(SetValueSeriesError::OutOfBounds {
+                index: x,
+                size: width,
+            })
+        }
+
+        let chars = value.chars().take(height);
+        for (y, c) in chars.enumerate() {
+            self.set(x, y, c);
+        }
+
+        Ok(())
     }
 
     /// Loads a [`CharGrid`] with the specified dimensions from the provided UTF-8 bytes.
