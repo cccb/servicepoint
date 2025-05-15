@@ -1,14 +1,14 @@
-use servicepoint::{Brightness, GlobalBrightnessCommand, Header, Packet, UdpSocketExt};
-use std::{fmt::Debug, net::UdpSocket};
 use rand::Rng;
+use servicepoint::{
+    Brightness, GlobalBrightnessCommand, Header, Packet, UdpSocketExt,
+};
+use std::{fmt::Debug, net::UdpSocket};
 
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct ZeroBrightnessCommand;
 
-impl TryInto<Packet> for ZeroBrightnessCommand {
-    type Error = ();
-
-    fn try_into(self) -> Result<Packet, Self::Error> {
+impl Into<Packet> for ZeroBrightnessCommand {
+    fn into(self) -> Packet {
         GlobalBrightnessCommand::from(Brightness::MIN).into()
     }
 }
@@ -24,18 +24,18 @@ impl TryInto<Packet> for FuzzyCommand {
         Ok(Packet {
             payload: None,
             header: Header {
-                command_code: rng.gen(),
-                a: rng.gen(),
-                b: rng.gen(),
-                c: rng.gen(),
-                d: rng.gen(),
-            }
+                command_code: rng.r#gen(),
+                a: rng.r#gen(),
+                b: rng.r#gen(),
+                c: rng.r#gen(),
+                d: rng.r#gen(),
+            },
         })
     }
 }
 
 fn main() {
-    let connection = UdpSocket::bind_connect("localhost:2342")
+    let connection = UdpSocket::bind_connect("172.23.42.29:2342")
         .expect("could not connect to display");
 
     for _ in 0..100 {

@@ -40,18 +40,19 @@ pub struct BitmapCommand {
     pub compression: CompressionCode,
 }
 
-impl TryFrom<BitmapCommand> for Packet {
+impl TryFrom<&BitmapCommand> for Packet {
     type Error = TryIntoPacketError;
 
-    fn try_from(value: BitmapCommand) -> Result<Self, Self::Error> {
+    fn try_from(value: &BitmapCommand) -> Result<Self, Self::Error> {
         assert_eq!(value.origin.x % 8, 0);
         assert_eq!(value.bitmap.width() % 8, 0);
 
         let tile_x = (value.origin.x / TILE_SIZE).try_into()?;
         let tile_w = (value.bitmap.width() / TILE_SIZE).try_into()?;
         let pixel_h = value.bitmap.height().try_into()?;
-        let payload = into_compressed(value.compression, value.bitmap.into())
-            .ok_or(TryIntoPacketError::CompressionFailed)?;
+        let payload =
+            into_compressed(value.compression, (&value.bitmap).into())
+                .ok_or(TryIntoPacketError::CompressionFailed)?;
         let command = match value.compression {
             CompressionCode::Uncompressed => {
                 CommandCode::BitmapLinearWinUncompressed
@@ -76,6 +77,14 @@ impl TryFrom<BitmapCommand> for Packet {
             },
             payload: Some(payload),
         })
+    }
+}
+
+impl TryFrom<BitmapCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: BitmapCommand) -> Result<Self, Self::Error> {
+        (&value).try_into()
     }
 }
 

@@ -1,5 +1,5 @@
 use crate::{
-    DataRef, DisplayBitVec, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
+    DataRef, DisplayBitVec, Grid, Payload, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 
@@ -265,6 +265,12 @@ impl From<&Bitmap> for ValueGrid<bool> {
             *to = *from;
         }
         result
+    }
+}
+
+impl From<&Bitmap> for Payload {
+    fn from(value: &Bitmap) -> Self {
+        value.bit_vec.as_raw_slice().into()
     }
 }
 

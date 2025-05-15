@@ -108,13 +108,13 @@ impl CharGrid {
         value: &str,
     ) -> Result<(), SetValueSeriesError> {
         let width = self.width();
-        
+
         let len = value.len();
         if len > width {
-            return  Err(SetValueSeriesError::InvalidLength {
+            return Err(SetValueSeriesError::InvalidLength {
                 actual: len,
                 expected: width,
-            })
+            });
         }
 
         let height = self.height();
@@ -122,7 +122,7 @@ impl CharGrid {
             return Err(SetValueSeriesError::OutOfBounds {
                 index: y,
                 size: height,
-            })
+            });
         }
 
         let chars = value.chars().take(width);
@@ -153,10 +153,10 @@ impl CharGrid {
 
         let len = value.len();
         if len > height {
-            return  Err(SetValueSeriesError::InvalidLength {
+            return Err(SetValueSeriesError::InvalidLength {
                 actual: len,
                 expected: height,
-            })
+            });
         }
 
         let width = self.width();
@@ -164,7 +164,7 @@ impl CharGrid {
             return Err(SetValueSeriesError::OutOfBounds {
                 index: x,
                 size: width,
-            })
+            });
         }
 
         let chars = value.chars().take(height);

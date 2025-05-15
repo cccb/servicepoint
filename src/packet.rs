@@ -69,12 +69,18 @@ pub struct Packet {
     pub payload: Option<Payload>,
 }
 
-impl From<Packet> for Vec<u8> {
+impl From<&Packet> for Vec<u8> {
     /// Turn the packet into raw bytes ready to send
-    fn from(value: Packet) -> Self {
+    fn from(value: &Packet) -> Self {
         let mut vec = vec![0u8; value.size()];
         value.serialize_to(vec.as_mut_slice());
         vec
+    }
+}
+
+impl From<Packet> for Vec<u8> {
+    fn from(value: Packet) -> Self {
+        (&value).into()
     }
 }
 
