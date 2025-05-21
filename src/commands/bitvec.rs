@@ -115,18 +115,14 @@ impl TryFrom<Packet> for BitVecCommand {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
         }
         let compression = CompressionCode::try_from(sub)?;
-        let payload = match payload {
-            None => {
-                return Err(TryFromPacketError::UnexpectedPayloadSize {
-                    expected: expected_len as usize,
-                    actual: 0,
-                })
-            }
-            Some(payload) => payload,
-        };
+        let payload =
+            payload.ok_or(TryFromPacketError::UnexpectedPayloadSize {
+                expected: expected_len as usize,
+                actual: 0,
+            })?;
         let payload = match decompress(compression, &payload) {
             Ok(payload) => payload,
-            Err(CompressionError::NoCompression) => payload.to_vec(),
+            Err(CompressionError::NoCompression) => payload.clone(),
             Err(_) => return Err(TryFromPacketError::DecompressionFailed),
         };
         if payload.len() != expected_len as usize {

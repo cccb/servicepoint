@@ -172,7 +172,7 @@ impl Packet {
     /// Returns the amount of bytes this packet takes up when serialized.
     #[must_use]
     pub fn size(&self) -> usize {
-        HEADER_SIZE + self.payload.as_ref().map(Vec::len).unwrap_or(0)
+        HEADER_SIZE + self.payload.as_ref().map_or(0, Vec::len)
     }
 
     fn u16_from_be_slice(slice: &[u8]) -> u16 {

@@ -85,9 +85,7 @@ impl TryFrom<Packet> for BitmapCommand {
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
         let code = CommandCode::try_from(packet.header.command_code)?;
         let compression = BitmapCommand::compression_for_command_code(code)
-            .ok_or_else(|| {
-                InvalidCommandCodeError(packet.header.command_code)
-            })?;
+            .ok_or(InvalidCommandCodeError(packet.header.command_code))?;
 
         let Packet {
             header:
@@ -102,12 +100,11 @@ impl TryFrom<Packet> for BitmapCommand {
         } = packet;
 
         let expected = tile_w as usize * pixel_h as usize;
-        let payload = payload.ok_or_else(|| {
-            TryFromPacketError::UnexpectedPayloadSize {
+        let payload =
+            payload.ok_or(TryFromPacketError::UnexpectedPayloadSize {
                 actual: 0,
                 expected,
-            }
-        })?;
+            })?;
         let payload = match decompress(compression, &payload) {
             Ok(payload) => payload,
             Err(CompressionError::NoCompression) => payload,
@@ -122,8 +119,8 @@ impl TryFrom<Packet> for BitmapCommand {
             Origin::new(tiles_x as usize * TILE_SIZE, pixels_y as usize);
 
         Ok(Self {
-            origin,
             bitmap,
+            origin,
             compression,
         })
     }

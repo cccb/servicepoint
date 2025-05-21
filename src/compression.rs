@@ -34,7 +34,7 @@ pub(crate) fn decompress(
             let mut buffer = [0u8; 10000];
 
             match decompress.decompress(
-                &payload,
+                payload,
                 &mut buffer,
                 FlushDecompress::Finish,
             ) {
@@ -62,7 +62,7 @@ pub(crate) fn decompress(
         }
         #[cfg(feature = "compression_bzip2")]
         CompressionCode::Bzip2 => {
-            let mut decoder = BzDecoder::new(&payload[..]);
+            let mut decoder = BzDecoder::new(payload);
             let mut decompressed = vec![];
             match decoder.read_to_end(&mut decompressed) {
                 Ok(_) => Ok(decompressed),
@@ -73,13 +73,13 @@ pub(crate) fn decompress(
             }
         }
         #[cfg(feature = "compression_lzma")]
-        CompressionCode::Lzma => lzma::decompress(&payload).map_err(|e| {
+        CompressionCode::Lzma => lzma::decompress(payload).map_err(|e| {
             error!("failed to decompress data: {e}");
             CompressionError::CompressionFailed
         }),
         #[cfg(feature = "compression_zstd")]
         CompressionCode::Zstd => {
-            let mut decoder = match ZstdDecoder::new(&payload[..]) {
+            let mut decoder = match ZstdDecoder::new(payload) {
                 Ok(value) => value,
                 Err(e) => {
                     error!("failed to create zstd decoder: {e}");
@@ -111,7 +111,7 @@ pub(crate) fn compress(
             let mut buffer = [0u8; 10000];
 
             match compress.compress(
-                &payload,
+                payload,
                 &mut buffer,
                 FlushCompress::Finish,
             ) {
@@ -140,7 +140,7 @@ pub(crate) fn compress(
         #[cfg(feature = "compression_bzip2")]
         CompressionCode::Bzip2 => {
             let mut encoder =
-                BzEncoder::new(&payload[..], bzip2::Compression::fast());
+                BzEncoder::new(payload, bzip2::Compression::fast());
             let mut compressed = vec![];
             match encoder.read_to_end(&mut compressed) {
                 Ok(_) => Ok(compressed),
@@ -151,7 +151,7 @@ pub(crate) fn compress(
             }
         }
         #[cfg(feature = "compression_lzma")]
-        CompressionCode::Lzma => lzma::compress(&payload, 6).map_err(|e| {
+        CompressionCode::Lzma => lzma::compress(payload, 6).map_err(|e| {
             error!("failed to compress data: {e}");
             CompressionError::CompressionFailed
         }),
@@ -165,7 +165,7 @@ pub(crate) fn compress(
                         CompressionError::LibraryError
                     })?;
 
-            if let Err(e) = encoder.write_all(&payload) {
+            if let Err(e) = encoder.write_all(payload) {
                 error!("failed to compress data: {e}");
                 return Err(CompressionError::CompressionFailed);
             }
