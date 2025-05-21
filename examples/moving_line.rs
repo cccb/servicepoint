@@ -2,8 +2,8 @@
 
 use clap::Parser;
 use servicepoint::{
-    Bitmap, BitmapCommand, Grid, UdpSocketExt, FRAME_PACING, PIXEL_HEIGHT,
-    PIXEL_WIDTH,
+    Bitmap, BitmapCommand, CompressionCode, Grid, UdpSocketExt, FRAME_PACING,
+    PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use std::{net::UdpSocket, thread};
 
@@ -25,7 +25,8 @@ fn main() {
             bitmap.set((y + x_offset) % PIXEL_WIDTH, y, true);
         }
 
-        let command = BitmapCommand::from(bitmap.clone());
+        let mut command = BitmapCommand::from(bitmap.clone());
+        command.compression = CompressionCode::Uncompressed;
         connection.send_command(command).expect("send failed");
         thread::sleep(FRAME_PACING);
     }

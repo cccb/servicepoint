@@ -24,6 +24,7 @@
 //! ```
 
 use crate::{command_code::CommandCode, Grid, Origin, Tiles};
+use log::trace;
 use std::{mem::size_of, num::TryFromIntError};
 
 /// A raw header.
@@ -120,6 +121,7 @@ impl TryFrom<&[u8]> for Packet {
             Some(value[HEADER_SIZE..].to_vec())
         };
 
+        trace!("loaded packet {header:?}");
         Ok(Packet { header, payload })
     }
 }

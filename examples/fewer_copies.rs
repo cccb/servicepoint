@@ -41,12 +41,15 @@ fn main() {
             command.bitmap.set((x_offset + y) % PIXEL_WIDTH, y, false);
         }
 
-        let packet: Packet = (&command).try_into().unwrap();
-        packet.serialize_to(&mut buf);
-
+        let packet: Packet = Packet::try_from(&command)
+            .expect("could not turn command into packet");
+        let size = packet
+            .serialize_to(&mut buf)
+            .expect("failed to serialize packet");
         connection
-            .send_command(&command)
+            .send(&buf[..size])
             .expect("could not send command to display");
+
         thread::sleep(sleep_duration);
     }
 }
