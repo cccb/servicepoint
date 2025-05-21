@@ -1,3 +1,5 @@
+//! An example on how to use the provided infrastructure to implement custom commands.
+
 use rand::Rng;
 use servicepoint::{
     Brightness, GlobalBrightnessCommand, Header, Packet, UdpSocketExt,
@@ -20,15 +22,15 @@ impl TryInto<Packet> for FuzzyCommand {
     type Error = ();
 
     fn try_into(self) -> Result<Packet, Self::Error> {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         Ok(Packet {
             payload: None,
             header: Header {
-                command_code: rng.r#gen(),
-                a: rng.r#gen(),
-                b: rng.r#gen(),
-                c: rng.r#gen(),
-                d: rng.r#gen(),
+                command_code: rng.random(),
+                a: rng.random(),
+                b: rng.random(),
+                c: rng.random(),
+                d: rng.random(),
             },
         })
     }

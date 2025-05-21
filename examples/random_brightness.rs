@@ -37,25 +37,25 @@ fn main() {
     }
 
     // set all pixels to the same random brightness
-    let mut rng = rand::thread_rng();
-    let command: GlobalBrightnessCommand = rng.r#gen::<Brightness>().into();
+    let mut rng = rand::rng();
+    let command: GlobalBrightnessCommand = rng.random::<Brightness>().into();
     connection.send_command(command).unwrap();
 
     // continuously update random windows to new random brightness
     loop {
         let min_size = 1;
-        let x = rng.gen_range(0..TILE_WIDTH - min_size);
-        let y = rng.gen_range(0..TILE_HEIGHT - min_size);
+        let x = rng.random_range(0..TILE_WIDTH - min_size);
+        let y = rng.random_range(0..TILE_HEIGHT - min_size);
 
-        let w = rng.gen_range(min_size..=TILE_WIDTH - x);
-        let h = rng.gen_range(min_size..=TILE_HEIGHT - y);
+        let w = rng.random_range(min_size..=TILE_WIDTH - x);
+        let h = rng.random_range(min_size..=TILE_HEIGHT - y);
 
         let origin = Origin::new(x, y);
         let mut luma = BrightnessGrid::new(w, h);
 
         for y in 0..h {
             for x in 0..w {
-                luma.set(x, y, rng.r#gen());
+                luma.set(x, y, rng.random());
             }
         }
 

@@ -1,7 +1,7 @@
 //! A simple game of life implementation to show how to render graphics to the display.
 
 use clap::Parser;
-use rand::{distributions, Rng};
+use rand::{Rng};
 use servicepoint::{Bitmap, BitmapCommand, Grid, UdpSocketExt, FRAME_PACING};
 use std::{net::UdpSocket, thread};
 
@@ -72,8 +72,8 @@ fn count_neighbors(field: &Bitmap, x: i32, y: i32) -> i32 {
 
 fn make_random_field(probability: f64) -> Bitmap {
     let mut field = Bitmap::max_sized();
-    let mut rng = rand::thread_rng();
-    let d = distributions::Bernoulli::new(probability).unwrap();
+    let mut rng = rand::rng();
+    let d = rand::distr::Bernoulli::new(probability).unwrap();
     for x in 0..field.width() {
         for y in 0..field.height() {
             field.set(x, y, rng.sample(d));

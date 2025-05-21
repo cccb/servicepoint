@@ -1,7 +1,7 @@
 #[cfg(feature = "rand")]
 use rand::{
-    distributions::{Distribution, Standard},
     Rng,
+    distr::{StandardUniform, Distribution},
 };
 
 /// A display brightness value, checked for correct value range
@@ -71,9 +71,9 @@ impl Default for Brightness {
 }
 
 #[cfg(feature = "rand")]
-impl Distribution<Brightness> for Standard {
+impl Distribution<Brightness> for StandardUniform {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Brightness {
-        Brightness(rng.gen_range(Brightness::MIN.0..=Brightness::MAX.0))
+        Brightness(rng.random_range(Brightness::MIN.0..=Brightness::MAX.0))
     }
 }
 
@@ -90,9 +90,9 @@ mod tests {
     #[test]
     #[cfg(feature = "rand")]
     fn rand_brightness() {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         for _ in 0..100 {
-            let _: Brightness = rng.r#gen();
+            let _: Brightness = rng.random();
         }
     }
 
@@ -105,11 +105,11 @@ mod tests {
     #[test]
     #[cfg(feature = "rand")]
     fn test() {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         // two so test failure is less likely
         assert_ne!(
-            [rng.r#gen::<Brightness>(), rng.r#gen()],
-            [rng.r#gen(), rng.r#gen()]
+            [rng.random::<Brightness>(), rng.random()],
+            [rng.random(), rng.random()]
         );
     }
 }
