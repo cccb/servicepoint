@@ -1,9 +1,8 @@
 use crate::{
     command_code::{CommandCode, InvalidCommandCodeError},
     commands::errors::{TryFromPacketError, TryIntoPacketError},
-    compression::into_compressed,
-    compression::into_decompressed,
-    Bitmap, CompressionCode, Grid, Header, Origin, Packet, Pixels,
+    compression::{compress, decompress, CompressionError},
+    Bitmap, CompressionCode, DataRef, Grid, Header, Origin, Packet, Pixels,
     TypedCommand, TILE_SIZE,
 };
 
@@ -50,21 +49,13 @@ impl TryFrom<&BitmapCommand> for Packet {
         let tile_x = (value.origin.x / TILE_SIZE).try_into()?;
         let tile_w = (value.bitmap.width() / TILE_SIZE).try_into()?;
         let pixel_h = value.bitmap.height().try_into()?;
-        let payload =
-            into_compressed(value.compression, (&value.bitmap).into())
-                .ok_or(TryIntoPacketError::CompressionFailed)?;
-        let command = match value.compression {
-            CompressionCode::Uncompressed => {
-                CommandCode::BitmapLinearWinUncompressed
-            }
-            #[cfg(feature = "compression_zlib")]
-            CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
-            #[cfg(feature = "compression_bzip2")]
-            CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
-            #[cfg(feature = "compression_lzma")]
-            CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
-            #[cfg(feature = "compression_zstd")]
-            CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
+        let command =
+            BitmapCommand::command_code_for_compression(value.compression);
+        let data_ref = value.bitmap.data_ref();
+        let payload = match compress(value.compression, data_ref) {
+            Ok(payload) => payload,
+            Err(CompressionError::NoCompression) => data_ref.to_vec(),
+            Err(_) => return Err(TryIntoPacketError::CompressionFailed),
         };
 
         Ok(Packet {
@@ -84,7 +75,7 @@ impl TryFrom<BitmapCommand> for Packet {
     type Error = TryIntoPacketError;
 
     fn try_from(value: BitmapCommand) -> Result<Self, Self::Error> {
-        (&value).try_into()
+        Packet::try_from(&value)
     }
 }
 
@@ -93,34 +84,48 @@ impl TryFrom<Packet> for BitmapCommand {
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
         let code = CommandCode::try_from(packet.header.command_code)?;
-        match code {
-            CommandCode::BitmapLinearWinUncompressed => {
-                Self::packet_into_bitmap_win(
-                    packet,
-                    CompressionCode::Uncompressed,
-                )
-            }
-            #[cfg(feature = "compression_zlib")]
-            CommandCode::BitmapLinearWinZlib => {
-                Self::packet_into_bitmap_win(packet, CompressionCode::Zlib)
-            }
-            #[cfg(feature = "compression_bzip2")]
-            CommandCode::BitmapLinearWinBzip2 => {
-                Self::packet_into_bitmap_win(packet, CompressionCode::Bzip2)
-            }
-            #[cfg(feature = "compression_lzma")]
-            CommandCode::BitmapLinearWinLzma => {
-                Self::packet_into_bitmap_win(packet, CompressionCode::Lzma)
-            }
-            #[cfg(feature = "compression_zstd")]
-            CommandCode::BitmapLinearWinZstd => {
-                Self::packet_into_bitmap_win(packet, CompressionCode::Zstd)
-            }
+        let compression = BitmapCommand::compression_for_command_code(code)
+            .ok_or_else(|| {
+                InvalidCommandCodeError(packet.header.command_code)
+            })?;
 
-            _ => {
-                Err(InvalidCommandCodeError(packet.header.command_code).into())
+        let Packet {
+            header:
+                Header {
+                    command_code: _,
+                    a: tiles_x,
+                    b: pixels_y,
+                    c: tile_w,
+                    d: pixel_h,
+                },
+            payload,
+        } = packet;
+
+        let expected = tile_w as usize * pixel_h as usize;
+        let payload = payload.ok_or_else(|| {
+            TryFromPacketError::UnexpectedPayloadSize {
+                actual: 0,
+                expected,
             }
-        }
+        })?;
+        let payload = match decompress(compression, &payload) {
+            Ok(payload) => payload,
+            Err(CompressionError::NoCompression) => payload,
+            Err(_) => return Err(TryFromPacketError::DecompressionFailed),
+        };
+        let bitmap = Bitmap::load(
+            tile_w as usize * TILE_SIZE,
+            pixel_h as usize,
+            &payload,
+        )?;
+        let origin =
+            Origin::new(tiles_x as usize * TILE_SIZE, pixels_y as usize);
+
+        Ok(Self {
+            origin,
+            bitmap,
+            compression,
+        })
     }
 }
 
@@ -141,50 +146,40 @@ impl From<Bitmap> for BitmapCommand {
 }
 
 impl BitmapCommand {
-    fn packet_into_bitmap_win(
-        packet: Packet,
-        compression: CompressionCode,
-    ) -> Result<Self, TryFromPacketError> {
-        let Packet {
-            header:
-                Header {
-                    command_code: _,
-                    a: tiles_x,
-                    b: pixels_y,
-                    c: tile_w,
-                    d: pixel_h,
-                },
-            payload,
-        } = packet;
-
-        let expected = tile_w as usize * pixel_h as usize;
-        let payload = match payload {
-            None => {
-                return Err(TryFromPacketError::UnexpectedPayloadSize {
-                    actual: 0,
-                    expected,
-                })
+    fn command_code_for_compression(
+        compression_code: CompressionCode,
+    ) -> CommandCode {
+        match compression_code {
+            CompressionCode::Uncompressed => {
+                CommandCode::BitmapLinearWinUncompressed
             }
-            Some(payload) => payload,
-        };
-        let payload = match into_decompressed(compression, payload) {
-            None => return Err(TryFromPacketError::DecompressionFailed),
-            Some(decompressed) => decompressed,
-        };
+            #[cfg(feature = "compression_zlib")]
+            CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
+            #[cfg(feature = "compression_bzip2")]
+            CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
+            #[cfg(feature = "compression_lzma")]
+            CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
+            #[cfg(feature = "compression_zstd")]
+            CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
+        }
+    }
 
-        let bitmap = Bitmap::load(
-            tile_w as usize * TILE_SIZE,
-            pixel_h as usize,
-            &payload,
-        )?;
-
-        Ok(Self {
-            origin: Origin::new(
-                tiles_x as usize * TILE_SIZE,
-                pixels_y as usize,
-            ),
-            bitmap,
-            compression,
+    fn compression_for_command_code(
+        command_code: CommandCode,
+    ) -> Option<CompressionCode> {
+        Some(match command_code {
+            CommandCode::BitmapLinearWinUncompressed => {
+                CompressionCode::Uncompressed
+            }
+            #[cfg(feature = "compression_zlib")]
+            CommandCode::BitmapLinearWinZlib => CompressionCode::Zlib,
+            #[cfg(feature = "compression_bzip2")]
+            CommandCode::BitmapLinearWinBzip2 => CompressionCode::Bzip2,
+            #[cfg(feature = "compression_lzma")]
+            CommandCode::BitmapLinearWinLzma => CompressionCode::Lzma,
+            #[cfg(feature = "compression_zstd")]
+            CommandCode::BitmapLinearWinZstd => CompressionCode::Zstd,
+            _ => return None,
         })
     }
 }

@@ -1,8 +1,9 @@
 use crate::{
-    command_code::CommandCode, command_code::InvalidCommandCodeError,
-    commands::errors::TryFromPacketError, compression::into_compressed,
-    compression::into_decompressed, CompressionCode, DisplayBitVec, Header,
-    Offset, Packet, TryIntoPacketError, TypedCommand,
+    command_code::{CommandCode, InvalidCommandCodeError},
+    commands::errors::TryFromPacketError,
+    compression::{compress, decompress, CompressionError},
+    CompressionCode, DisplayBitVec, Header, Offset, Packet, TryIntoPacketError,
+    TypedCommand,
 };
 
 /// Binary operations for use with the [`BitVecCommand`] command.
@@ -48,6 +49,14 @@ impl TryFrom<BitVecCommand> for Packet {
     type Error = TryIntoPacketError;
 
     fn try_from(value: BitVecCommand) -> Result<Self, Self::Error> {
+        Packet::try_from(&value)
+    }
+}
+
+impl TryFrom<&BitVecCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: &BitVecCommand) -> Result<Self, Self::Error> {
         let command_code = match value.operation {
             BinaryOperation::Overwrite => CommandCode::BitmapLinear,
             BinaryOperation::And => CommandCode::BitmapLinearAnd,
@@ -55,10 +64,13 @@ impl TryFrom<BitVecCommand> for Packet {
             BinaryOperation::Xor => CommandCode::BitmapLinearXor,
         };
 
-        let payload: Vec<_> = value.bitvec.into();
-        let length = payload.len().try_into()?;
-        let payload = into_compressed(value.compression, payload)
-            .ok_or(TryIntoPacketError::CompressionFailed)?;
+        let data_ref = value.bitvec.as_raw_slice();
+        let length = data_ref.len().try_into()?;
+        let payload = match compress(value.compression, data_ref) {
+            Ok(payload) => payload,
+            Err(CompressionError::NoCompression) => data_ref.to_vec(),
+            Err(_) => return Err(TryIntoPacketError::CompressionFailed),
+        };
         Ok(Packet {
             header: Header {
                 command_code: command_code.into(),
@@ -112,9 +124,10 @@ impl TryFrom<Packet> for BitVecCommand {
             }
             Some(payload) => payload,
         };
-        let payload = match into_decompressed(compression, payload) {
-            None => return Err(TryFromPacketError::DecompressionFailed),
-            Some(value) => value,
+        let payload = match decompress(compression, &payload) {
+            Ok(payload) => payload,
+            Err(CompressionError::NoCompression) => payload.to_vec(),
+            Err(_) => return Err(TryFromPacketError::DecompressionFailed),
         };
         if payload.len() != expected_len as usize {
             return Err(TryFromPacketError::UnexpectedPayloadSize {
