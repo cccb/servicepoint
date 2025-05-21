@@ -15,7 +15,7 @@ use std::fmt::Debug;
 /// # let connection = FakeConnection;
 /// connection.send_command(HardResetCommand).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct HardResetCommand;
 
 impl TryFrom<Packet> for HardResetCommand {

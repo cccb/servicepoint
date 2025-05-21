@@ -14,7 +14,7 @@ use crate::{
 /// let command = GlobalBrightnessCommand { brightness: Brightness::MAX };
 /// connection.send_command(command).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct GlobalBrightnessCommand {
     /// the brightness to set all pixels to
     pub brightness: Brightness,

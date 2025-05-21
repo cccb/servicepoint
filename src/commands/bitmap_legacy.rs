@@ -17,7 +17,7 @@ use std::fmt::Debug;
 /// # #[allow(deprecated)]
 /// connection.send_command(BitmapLegacyCommand).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[deprecated]
 pub struct BitmapLegacyCommand;
 

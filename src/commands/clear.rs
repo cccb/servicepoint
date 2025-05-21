@@ -13,7 +13,7 @@ use std::fmt::Debug;
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
 /// connection.send_command(ClearCommand).unwrap();
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 /// ```
 pub struct ClearCommand;
 
