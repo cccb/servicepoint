@@ -19,11 +19,13 @@ pub(crate) enum CompressionError {
     #[allow(unused, reason = "depends on features")]
     LibraryError,
     #[error("Compression/decompression operation failed")]
+    #[allow(unused, reason = "depends on features")]
     CompressionFailed,
 }
 
 pub(crate) fn decompress(
     kind: CompressionCode,
+    #[allow(unused, reason = "depends on features")]
     payload: &[u8],
 ) -> Result<Payload, CompressionError> {
     match kind {
@@ -100,6 +102,7 @@ pub(crate) fn decompress(
 
 pub(crate) fn compress(
     kind: CompressionCode,
+    #[allow(unused, reason = "depends on features")]
     payload: &[u8],
 ) -> Result<Payload, CompressionError> {
     match kind {

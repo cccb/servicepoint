@@ -43,9 +43,6 @@ impl TryFrom<&BitmapCommand> for Packet {
     type Error = TryIntoPacketError;
 
     fn try_from(value: &BitmapCommand) -> Result<Self, Self::Error> {
-        assert_eq!(value.origin.x % 8, 0);
-        assert_eq!(value.bitmap.width() % 8, 0);
-
         let tile_x = (value.origin.x / TILE_SIZE).try_into()?;
         let tile_w = (value.bitmap.width() / TILE_SIZE).try_into()?;
         let pixel_h = value.bitmap.height().try_into()?;
@@ -252,5 +249,25 @@ mod tests {
                 compression: CompressionCode::default()
             },
         )
+    }
+
+    #[test]
+    fn into_packet_out_of_range() {
+        let mut cmd = BitmapCommand::from(Bitmap::max_sized());
+        cmd.origin.x = usize::MAX;
+        assert!(matches!(Packet::try_from(cmd), Err(TryIntoPacketError::ConversionError(_))));
+    }
+
+    #[test]
+    fn into_packet_invalid_alignment() {
+        let mut cmd = BitmapCommand::from(Bitmap::max_sized());
+        cmd.origin.x = 5;
+        let packet = Packet::try_from(cmd).unwrap();
+        assert_eq!(packet.header, Header { command_code: 25, a: 0, b: 0, c: 56, d: 160 });
+        
+        let mut cmd = BitmapCommand::from(Bitmap::max_sized());
+        cmd.origin.x = 11;
+        let packet = Packet::try_from(cmd).unwrap();
+        assert_eq!(packet.header, Header { command_code: 25, a: 1, b: 0, c: 56, d: 160 });
     }
 }

@@ -164,4 +164,18 @@ mod tests {
             BrightnessGridCommand::try_from(packet)
         );
     }
+
+    #[test]
+    fn missing_payload() {
+        let command: BrightnessGridCommand = BrightnessGrid::new(2, 3).into();
+        let mut packet: Packet = command.try_into().unwrap();
+        packet.payload = None;
+        assert_eq!(
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                actual: 0,
+                expected: 6
+            }),
+            BrightnessGridCommand::try_from(packet)
+        );
+    }
 }
