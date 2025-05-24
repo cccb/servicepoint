@@ -15,7 +15,7 @@ use std::fmt::Debug;
 /// # let connection = FakeConnection;
 /// connection.send_command(HardResetCommand).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct HardResetCommand;
 
 impl TryFrom<Packet> for HardResetCommand {
@@ -32,7 +32,13 @@ impl TryFrom<Packet> for HardResetCommand {
 }
 
 impl From<HardResetCommand> for Packet {
-    fn from(_: HardResetCommand) -> Self {
+    fn from(value: HardResetCommand) -> Self {
+        Packet::from(&value)
+    }
+}
+
+impl From<&HardResetCommand> for Packet {
+    fn from(_: &HardResetCommand) -> Self {
         Packet::command_code_only(CommandCode::HardReset)
     }
 }
@@ -46,14 +52,19 @@ impl From<HardResetCommand> for TypedCommand {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
+    use crate::commands::tests::TestImplementsCommand;
     use crate::Header;
 
     impl TestImplementsCommand for HardResetCommand {}
 
     #[test]
-    fn round_trip_hard_reset() {
-        round_trip(HardResetCommand.into());
+    fn round_trip() {
+        crate::commands::tests::round_trip(HardResetCommand.into());
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(&HardResetCommand.into());
     }
 
     #[test]
@@ -66,7 +77,7 @@ mod test {
                 c: 0x00,
                 d: 0x01,
             },
-            payload: vec![],
+            payload: None,
         };
         let result = TypedCommand::try_from(p);
         assert!(matches!(

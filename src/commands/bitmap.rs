@@ -1,9 +1,8 @@
 use crate::{
     command_code::{CommandCode, InvalidCommandCodeError},
     commands::errors::{TryFromPacketError, TryIntoPacketError},
-    compression::into_compressed,
-    compression::into_decompressed,
-    Bitmap, CompressionCode, Grid, Header, Origin, Packet, Pixels,
+    compression::{compress, decompress, CompressionError},
+    Bitmap, CompressionCode, DataRef, Grid, Header, Origin, Packet, Pixels,
     TypedCommand, TILE_SIZE,
 };
 
@@ -40,30 +39,20 @@ pub struct BitmapCommand {
     pub compression: CompressionCode,
 }
 
-impl TryFrom<BitmapCommand> for Packet {
+impl TryFrom<&BitmapCommand> for Packet {
     type Error = TryIntoPacketError;
 
-    fn try_from(value: BitmapCommand) -> Result<Self, Self::Error> {
-        assert_eq!(value.origin.x % 8, 0);
-        assert_eq!(value.bitmap.width() % 8, 0);
-
+    fn try_from(value: &BitmapCommand) -> Result<Self, Self::Error> {
         let tile_x = (value.origin.x / TILE_SIZE).try_into()?;
         let tile_w = (value.bitmap.width() / TILE_SIZE).try_into()?;
         let pixel_h = value.bitmap.height().try_into()?;
-        let payload = into_compressed(value.compression, value.bitmap.into())
-            .ok_or(TryIntoPacketError::CompressionFailed)?;
-        let command = match value.compression {
-            CompressionCode::Uncompressed => {
-                CommandCode::BitmapLinearWinUncompressed
-            }
-            #[cfg(feature = "compression_zlib")]
-            CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
-            #[cfg(feature = "compression_bzip2")]
-            CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
-            #[cfg(feature = "compression_lzma")]
-            CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
-            #[cfg(feature = "compression_zstd")]
-            CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
+        let command =
+            BitmapCommand::command_code_for_compression(value.compression);
+        let data_ref = value.bitmap.data_ref();
+        let payload = match compress(value.compression, data_ref) {
+            Ok(payload) => payload,
+            Err(CompressionError::NoCompression) => data_ref.to_vec(),
+            Err(_) => return Err(TryIntoPacketError::CompressionFailed),
         };
 
         Ok(Packet {
@@ -74,8 +63,16 @@ impl TryFrom<BitmapCommand> for Packet {
                 c: tile_w,
                 d: pixel_h,
             },
-            payload,
+            payload: Some(payload),
         })
+    }
+}
+
+impl TryFrom<BitmapCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: BitmapCommand) -> Result<Self, Self::Error> {
+        Packet::try_from(&value)
     }
 }
 
@@ -84,34 +81,45 @@ impl TryFrom<Packet> for BitmapCommand {
 
     fn try_from(packet: Packet) -> Result<Self, Self::Error> {
         let code = CommandCode::try_from(packet.header.command_code)?;
-        match code {
-            CommandCode::BitmapLinearWinUncompressed => {
-                Self::packet_into_bitmap_win(
-                    packet,
-                    CompressionCode::Uncompressed,
-                )
-            }
-            #[cfg(feature = "compression_zlib")]
-            CommandCode::BitmapLinearWinZlib => {
-                Self::packet_into_bitmap_win(packet, CompressionCode::Zlib)
-            }
-            #[cfg(feature = "compression_bzip2")]
-            CommandCode::BitmapLinearWinBzip2 => {
-                Self::packet_into_bitmap_win(packet, CompressionCode::Bzip2)
-            }
-            #[cfg(feature = "compression_lzma")]
-            CommandCode::BitmapLinearWinLzma => {
-                Self::packet_into_bitmap_win(packet, CompressionCode::Lzma)
-            }
-            #[cfg(feature = "compression_zstd")]
-            CommandCode::BitmapLinearWinZstd => {
-                Self::packet_into_bitmap_win(packet, CompressionCode::Zstd)
-            }
+        let compression = BitmapCommand::compression_for_command_code(code)
+            .ok_or(InvalidCommandCodeError(packet.header.command_code))?;
 
-            _ => {
-                Err(InvalidCommandCodeError(packet.header.command_code).into())
-            }
-        }
+        let Packet {
+            header:
+                Header {
+                    command_code: _,
+                    a: tiles_x,
+                    b: pixels_y,
+                    c: tile_w,
+                    d: pixel_h,
+                },
+            payload,
+        } = packet;
+
+        let expected = tile_w as usize * pixel_h as usize;
+        let payload =
+            payload.ok_or(TryFromPacketError::UnexpectedPayloadSize {
+                actual: 0,
+                expected,
+            })?;
+        let payload = match decompress(compression, &payload) {
+            Ok(payload) => payload,
+            Err(CompressionError::NoCompression) => payload,
+            Err(_) => return Err(TryFromPacketError::DecompressionFailed),
+        };
+        let bitmap = Bitmap::load(
+            tile_w as usize * TILE_SIZE,
+            pixel_h as usize,
+            &payload,
+        )?;
+        let origin =
+            Origin::new(tiles_x as usize * TILE_SIZE, pixels_y as usize);
+
+        Ok(Self {
+            bitmap,
+            origin,
+            compression,
+        })
     }
 }
 
@@ -132,40 +140,40 @@ impl From<Bitmap> for BitmapCommand {
 }
 
 impl BitmapCommand {
-    fn packet_into_bitmap_win(
-        packet: Packet,
-        compression: CompressionCode,
-    ) -> Result<Self, TryFromPacketError> {
-        let Packet {
-            header:
-                Header {
-                    command_code: _,
-                    a: tiles_x,
-                    b: pixels_y,
-                    c: tile_w,
-                    d: pixel_h,
-                },
-            payload,
-        } = packet;
+    fn command_code_for_compression(
+        compression_code: CompressionCode,
+    ) -> CommandCode {
+        match compression_code {
+            CompressionCode::Uncompressed => {
+                CommandCode::BitmapLinearWinUncompressed
+            }
+            #[cfg(feature = "compression_zlib")]
+            CompressionCode::Zlib => CommandCode::BitmapLinearWinZlib,
+            #[cfg(feature = "compression_bzip2")]
+            CompressionCode::Bzip2 => CommandCode::BitmapLinearWinBzip2,
+            #[cfg(feature = "compression_lzma")]
+            CompressionCode::Lzma => CommandCode::BitmapLinearWinLzma,
+            #[cfg(feature = "compression_zstd")]
+            CompressionCode::Zstd => CommandCode::BitmapLinearWinZstd,
+        }
+    }
 
-        let payload = match into_decompressed(compression, payload) {
-            None => return Err(TryFromPacketError::DecompressionFailed),
-            Some(decompressed) => decompressed,
-        };
-
-        let bitmap = Bitmap::load(
-            tile_w as usize * TILE_SIZE,
-            pixel_h as usize,
-            &payload,
-        )?;
-
-        Ok(Self {
-            origin: Origin::new(
-                tiles_x as usize * TILE_SIZE,
-                pixels_y as usize,
-            ),
-            bitmap,
-            compression,
+    fn compression_for_command_code(
+        command_code: CommandCode,
+    ) -> Option<CompressionCode> {
+        Some(match command_code {
+            CommandCode::BitmapLinearWinUncompressed => {
+                CompressionCode::Uncompressed
+            }
+            #[cfg(feature = "compression_zlib")]
+            CommandCode::BitmapLinearWinZlib => CompressionCode::Zlib,
+            #[cfg(feature = "compression_bzip2")]
+            CommandCode::BitmapLinearWinBzip2 => CompressionCode::Bzip2,
+            #[cfg(feature = "compression_lzma")]
+            CommandCode::BitmapLinearWinLzma => CompressionCode::Lzma,
+            #[cfg(feature = "compression_zstd")]
+            CommandCode::BitmapLinearWinZstd => CompressionCode::Zstd,
+            _ => return None,
         })
     }
 }
@@ -183,7 +191,7 @@ mod tests {
     fn command_code() {
         assert_eq!(
             BitmapCommand::try_from(Packet {
-                payload: vec![],
+                payload: None,
                 header: Header {
                     command_code: CommandCode::Brightness.into(),
                     ..Default::default()
@@ -204,17 +212,18 @@ mod tests {
             .try_into()
             .unwrap();
 
-            let Packet {
-                header,
-                mut payload,
-            } = p;
+            let Packet { header, payload } = p;
+            let mut payload = payload.unwrap();
 
             // mangle it
             for byte in &mut payload {
                 *byte -= *byte / 2;
             }
 
-            let p = Packet { header, payload };
+            let p = Packet {
+                header,
+                payload: Some(payload),
+            };
             let result = TypedCommand::try_from(p);
             if *compression != CompressionCode::Uncompressed {
                 assert_eq!(
@@ -240,5 +249,80 @@ mod tests {
                 compression: CompressionCode::default()
             },
         )
+    }
+
+    #[test]
+    fn into_packet_out_of_range() {
+        let mut cmd = BitmapCommand::from(Bitmap::max_sized());
+        cmd.origin.x = usize::MAX;
+        assert!(matches!(
+            Packet::try_from(cmd),
+            Err(TryIntoPacketError::ConversionError(_))
+        ));
+    }
+
+    #[test]
+    fn into_packet_invalid_alignment() {
+        let cmd = BitmapCommand {
+            bitmap: Bitmap::max_sized(),
+            compression: CompressionCode::Uncompressed,
+            origin: Origin::new(5, 0),
+        };
+        let packet = Packet::try_from(cmd).unwrap();
+        assert_eq!(
+            packet.header,
+            Header {
+                command_code: 19,
+                a: 0,
+                b: 0,
+                c: 56,
+                d: 160
+            }
+        );
+
+        let cmd = BitmapCommand{
+            bitmap: Bitmap::max_sized(),
+            compression: CompressionCode::Uncompressed,
+            origin: Origin::new(11, 0),
+        };
+        let packet = Packet::try_from(cmd).unwrap();
+        assert_eq!(
+            packet.header,
+            Header {
+                command_code: 19,
+                a: 1,
+                b: 0,
+                c: 56,
+                d: 160
+            }
+        );
+    }
+
+    #[test]
+    fn round_trip() {
+        for compression in CompressionCode::ALL {
+            crate::commands::tests::round_trip(
+                BitmapCommand {
+                    origin: Origin::ZERO,
+                    bitmap: Bitmap::max_sized(),
+                    compression: *compression,
+                }
+                .into(),
+            );
+        }
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        for compression in CompressionCode::ALL {
+            crate::commands::tests::round_trip_ref(
+                &BitmapCommand {
+                    origin: Origin::ZERO,
+                    bitmap: Bitmap::max_sized(),
+                    compression: *compression,
+                }
+                .into(),
+            );
+        }
     }
 }

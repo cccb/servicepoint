@@ -2,8 +2,8 @@
 
 use clap::Parser;
 use servicepoint::{
-    Bitmap, BitmapCommand, Grid, UdpSocketExt, FRAME_PACING, PIXEL_HEIGHT,
-    PIXEL_WIDTH,
+    Bitmap, BitmapCommand, CompressionCode, Grid, Origin, Packet, UdpSocketExt,
+    FRAME_PACING, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use std::{net::UdpSocket, thread, time::Duration};
 
@@ -26,18 +26,29 @@ fn main() {
     let connection = UdpSocket::bind_connect(cli.destination)
         .expect("could not connect to display");
 
-    let mut enabled_pixels = Bitmap::max_sized();
-    enabled_pixels.fill(true);
+    let mut command = BitmapCommand {
+        compression: CompressionCode::Uncompressed,
+        bitmap: Bitmap::max_sized(),
+        origin: Origin::ZERO,
+    };
 
+    command.bitmap.fill(true);
+
+    let mut buf = [0u8; 10000];
     for x_offset in 0..PIXEL_WIDTH {
         for y in 0..PIXEL_HEIGHT {
-            enabled_pixels.set(x_offset % PIXEL_WIDTH, y, false);
+            command.bitmap.set((x_offset + y) % PIXEL_WIDTH, y, false);
         }
 
-        let command = BitmapCommand::from(enabled_pixels.clone());
+        let packet: Packet = Packet::try_from(&command)
+            .expect("could not turn command into packet");
+        let size = packet
+            .serialize_to(&mut buf)
+            .expect("failed to serialize packet");
         connection
-            .send_command(command)
+            .send(&buf[..size])
             .expect("could not send command to display");
+
         thread::sleep(sleep_duration);
     }
 }

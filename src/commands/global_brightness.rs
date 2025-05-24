@@ -14,14 +14,20 @@ use crate::{
 /// let command = GlobalBrightnessCommand { brightness: Brightness::MAX };
 /// connection.send_command(command).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct GlobalBrightnessCommand {
     /// the brightness to set all pixels to
     pub brightness: Brightness,
 }
 
 impl From<GlobalBrightnessCommand> for Packet {
-    fn from(command: GlobalBrightnessCommand) -> Self {
+    fn from(value: GlobalBrightnessCommand) -> Self {
+        Packet::from(&value)
+    }
+}
+
+impl From<&GlobalBrightnessCommand> for Packet {
+    fn from(command: &GlobalBrightnessCommand) -> Self {
         Self {
             header: Header {
                 command_code: CommandCode::Brightness.into(),
@@ -30,7 +36,7 @@ impl From<GlobalBrightnessCommand> for Packet {
                 c: 0x0000,
                 d: 0x0000,
             },
-            payload: vec![command.brightness.into()],
+            payload: Some(vec![command.brightness.into()]),
         }
     }
 }
@@ -53,20 +59,29 @@ impl TryFrom<Packet> for GlobalBrightnessCommand {
 
         check_command_code(command_code, CommandCode::Brightness)?;
 
-        if payload.len() != 1 {
-            return Err(TryFromPacketError::UnexpectedPayloadSize {
-                expected: 1,
-                actual: payload.len(),
-            });
-        }
-
         if a != 0 || b != 0 || c != 0 || d != 0 {
             return Err(TryFromPacketError::ExtraneousHeaderValues);
         }
 
-        match Brightness::try_from(payload[0]) {
+        let brightness = match payload {
+            None => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected: 1,
+                    actual: 0,
+                })
+            }
+            Some(payload) if payload.len() == 1 => payload[0],
+            Some(payload) => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected: 1,
+                    actual: payload.len(),
+                });
+            }
+        };
+
+        match Brightness::try_from(brightness) {
             Ok(brightness) => Ok(Self { brightness }),
-            Err(_) => Err(TryFromPacketError::InvalidBrightness(payload[0])),
+            Err(_) => Err(TryFromPacketError::InvalidBrightness(brightness)),
         }
     }
 }
@@ -87,10 +102,7 @@ impl From<Brightness> for GlobalBrightnessCommand {
 mod tests {
     use crate::{
         command_code::CommandCode,
-        commands::{
-            errors::TryFromPacketError,
-            tests::{round_trip, TestImplementsCommand},
-        },
+        commands::{errors::TryFromPacketError, tests::TestImplementsCommand},
         Brightness, GlobalBrightnessCommand, Header, Packet, TypedCommand,
     };
 
@@ -107,9 +119,19 @@ mod tests {
     }
 
     #[test]
-    fn round_trip_brightness() {
-        round_trip(
+    fn round_trip() {
+        crate::commands::tests::round_trip(
             GlobalBrightnessCommand {
+                brightness: Brightness::try_from(6).unwrap(),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(
+            &GlobalBrightnessCommand {
                 brightness: Brightness::try_from(6).unwrap(),
             }
             .into(),
@@ -126,7 +148,7 @@ mod tests {
                 c: 0x37,
                 d: 0x00,
             },
-            payload: vec![5],
+            payload: Some(vec![5]),
         };
         let result = TypedCommand::try_from(p);
         assert!(matches!(
@@ -146,7 +168,7 @@ mod tests {
                     c: 0,
                     d: 0,
                 },
-                payload: vec!()
+                payload: None
             }),
             Err(TryFromPacketError::UnexpectedPayloadSize {
                 expected: 1,
@@ -163,7 +185,7 @@ mod tests {
                     c: 0,
                     d: 0,
                 },
-                payload: vec!(0, 0)
+                payload: Some(vec!(0, 0))
             }),
             Err(TryFromPacketError::UnexpectedPayloadSize {
                 expected: 1,
@@ -178,7 +200,7 @@ mod tests {
             brightness: Brightness::MAX,
         }
         .into();
-        let slot = packet.payload.get_mut(0).unwrap();
+        let slot = packet.payload.as_mut().unwrap().get_mut(0).unwrap();
         *slot = 42;
         assert_eq!(
             TypedCommand::try_from(packet),

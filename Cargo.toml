@@ -1,6 +1,6 @@
 [package]
 name = "servicepoint"
-version = "0.14.1"
+version = "0.15.0"
 publish = true
 edition = "2021"
 license = "GPL-3.0-or-later"
@@ -21,7 +21,7 @@ flate2 = { version = "1.0", optional = true }
 bzip2 = { version = "0.5", optional = true }
 zstd = { version = "0.13", optional = true }
 rust-lzma = { version = "0.6", optional = true }
-rand = { version = "0.8", optional = true }
+rand = { version = "0.9", optional = true }
 once_cell = { version = "1.20", optional = true }
 thiserror = "2.0"
 
@@ -41,6 +41,10 @@ required-features = ["rand"]
 
 [[example]]
 name = "game_of_life"
+required-features = ["rand"]
+
+[[example]]
+name = "own_command"
 required-features = ["rand"]
 
 [dev-dependencies]

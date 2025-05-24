@@ -24,6 +24,7 @@
 //! ```
 
 use crate::{command_code::CommandCode, Grid, Origin, Tiles};
+use log::trace;
 use std::{mem::size_of, num::TryFromIntError};
 
 /// A raw header.
@@ -49,6 +50,8 @@ pub struct Header {
     pub d: u16,
 }
 
+pub const HEADER_SIZE: usize = size_of::<Header>();
+
 /// The raw payload.
 ///
 /// Should probably only be used directly to use features not exposed by the library.
@@ -64,15 +67,21 @@ pub struct Packet {
     /// Meta-information for the packed command
     pub header: Header,
     /// The data for the packed command
-    pub payload: Payload,
+    pub payload: Option<Payload>,
 }
 
-impl From<Packet> for Vec<u8> {
+impl From<&Packet> for Vec<u8> {
     /// Turn the packet into raw bytes ready to send
-    fn from(value: Packet) -> Self {
+    fn from(value: &Packet) -> Self {
         let mut vec = vec![0u8; value.size()];
         value.serialize_to(vec.as_mut_slice());
         vec
+    }
+}
+
+impl From<Packet> for Vec<u8> {
+    fn from(value: Packet) -> Self {
+        (&value).into()
     }
 }
 
@@ -87,7 +96,7 @@ impl TryFrom<&[u8]> for Packet {
     ///
     /// returns: `Error` if slice is not long enough to be a [Packet]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-        if value.len() < size_of::<Header>() {
+        if value.len() < HEADER_SIZE {
             return Err(SliceSmallerThanHeader);
         }
 
@@ -105,8 +114,14 @@ impl TryFrom<&[u8]> for Packet {
                 d,
             }
         };
-        let payload = value[10..].to_vec();
 
+        let payload = if value.len() < HEADER_SIZE {
+            None
+        } else {
+            Some(value[HEADER_SIZE..].to_vec())
+        };
+
+        trace!("loaded packet {header:?}");
         Ok(Packet { header, payload })
     }
 }
@@ -123,9 +138,10 @@ impl Packet {
     /// Serialize packet into pre-allocated buffer.
     ///
     /// returns false if the buffer is too small before writing any values.
-    pub fn serialize_to(&self, slice: &mut [u8]) -> bool {
-        if slice.len() < self.size() {
-            return false;
+    pub fn serialize_to(&self, slice: &mut [u8]) -> Option<usize> {
+        let size = self.size();
+        if slice.len() < size {
+            return None;
         }
 
         let Packet {
@@ -146,14 +162,17 @@ impl Packet {
         slice[6..=7].copy_from_slice(&u16::to_be_bytes(*c));
         slice[8..=9].copy_from_slice(&u16::to_be_bytes(*d));
 
-        slice[10..].copy_from_slice(payload);
-        true
+        if let Some(payload) = payload {
+            slice[10..][..payload.len()].copy_from_slice(payload);
+        }
+
+        Some(size)
     }
 
     /// Returns the amount of bytes this packet takes up when serialized.
     #[must_use]
     pub fn size(&self) -> usize {
-        size_of::<Header>() + self.payload.len()
+        HEADER_SIZE + self.payload.as_ref().map_or(0, Vec::len)
     }
 
     fn u16_from_be_slice(slice: &[u8]) -> u16 {
@@ -169,14 +188,36 @@ impl Packet {
         command_code: CommandCode,
     ) -> Result<Packet, TryFromIntError> {
         Ok(Packet {
-            header: Header {
-                command_code: command_code.into(),
-                a: origin.x.try_into()?,
-                b: origin.y.try_into()?,
-                c: grid.width().try_into()?,
-                d: grid.height().try_into()?,
-            },
-            payload: grid.into(),
+            header: Self::origin_grid_header(origin, &grid, command_code)?,
+            payload: Some(grid.into()),
+        })
+    }
+
+    pub(crate) fn origin_grid_as_packet<T, G: Grid<T>>(
+        origin: Origin<Tiles>,
+        grid: &G,
+        command_code: CommandCode,
+    ) -> Result<Packet, TryFromIntError>
+    where
+        for<'a> &'a G: Into<Payload>,
+    {
+        Ok(Packet {
+            header: Self::origin_grid_header(origin, grid, command_code)?,
+            payload: Some(grid.into()),
+        })
+    }
+
+    fn origin_grid_header<T>(
+        origin: Origin<Tiles>,
+        grid: &impl Grid<T>,
+        command_code: CommandCode,
+    ) -> Result<Header, TryFromIntError> {
+        Ok(Header {
+            command_code: command_code.into(),
+            a: origin.x.try_into()?,
+            b: origin.y.try_into()?,
+            c: grid.width().try_into()?,
+            d: grid.height().try_into()?,
         })
     }
 
@@ -186,7 +227,7 @@ impl Packet {
                 command_code: c.into(),
                 ..Default::default()
             },
-            payload: vec![],
+            payload: None,
         }
     }
 }
@@ -205,7 +246,7 @@ mod tests {
                 c: 3,
                 d: 4,
             },
-            payload: vec![42u8; 23],
+            payload: Some(vec![42u8; 23]),
         };
         let data: Vec<u8> = p.into();
         let p = Packet::try_from(data).unwrap();
@@ -219,7 +260,7 @@ mod tests {
                     c: 3,
                     d: 4
                 },
-                payload: vec![42u8; 23]
+                payload: Some(vec![42u8; 23])
             }
         );
     }

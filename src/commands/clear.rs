@@ -13,7 +13,7 @@ use std::fmt::Debug;
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
 /// connection.send_command(ClearCommand).unwrap();
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 /// ```
 pub struct ClearCommand;
 
@@ -30,7 +30,13 @@ impl TryFrom<Packet> for ClearCommand {
 }
 
 impl From<ClearCommand> for Packet {
-    fn from(_: ClearCommand) -> Self {
+    fn from(value: ClearCommand) -> Self {
+        Packet::from(&value)
+    }
+}
+
+impl From<&ClearCommand> for Packet {
+    fn from(_: &ClearCommand) -> Self {
         Packet::command_code_only(CommandCode::Clear)
     }
 }
@@ -56,6 +62,11 @@ mod tests {
     }
 
     #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(&ClearCommand.into());
+    }
+
+    #[test]
     fn extraneous_header_values() {
         let p = Packet {
             header: Header {
@@ -65,7 +76,7 @@ mod tests {
                 c: 0x00,
                 d: 0x00,
             },
-            payload: vec![],
+            payload: None,
         };
         let result = TypedCommand::try_from(p);
         assert!(matches!(
@@ -84,7 +95,7 @@ mod tests {
                 c: 0x00,
                 d: 0x00,
             },
-            payload: vec![],
+            payload: None,
         };
         assert_eq!(
             Err(InvalidCommandCodeError(CommandCode::HardReset.into()).into()),

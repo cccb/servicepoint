@@ -16,8 +16,10 @@ use crate::{
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
 /// let grid = CharGrid::from("Hello,\nWorld!");
+/// # #[cfg(feature = "cp437")] {
 /// let grid = Cp437Grid::from(&grid);
 /// connection.send_command(Cp437GridCommand{ origin: Origin::ZERO, grid }).expect("send failed");
+/// # }
 /// ```
 ///
 /// ```rust
@@ -47,6 +49,18 @@ impl TryFrom<Cp437GridCommand> for Packet {
     }
 }
 
+impl TryFrom<&Cp437GridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: &Cp437GridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_as_packet(
+            value.origin,
+            &value.grid,
+            CommandCode::Cp437Data,
+        )?)
+    }
+}
+
 impl TryFrom<Packet> for Cp437GridCommand {
     type Error = TryFromPacketError;
 
@@ -66,12 +80,21 @@ impl TryFrom<Packet> for Cp437GridCommand {
         check_command_code(command_code, CommandCode::Cp437Data)?;
 
         let expected = width as usize * height as usize;
-        if payload.len() != expected {
-            return Err(TryFromPacketError::UnexpectedPayloadSize {
-                expected,
-                actual: payload.len(),
-            });
-        }
+        let payload = match payload {
+            None => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected,
+                    actual: 0,
+                })
+            }
+            Some(payload) if payload.len() != expected => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected,
+                    actual: payload.len(),
+                })
+            }
+            Some(payload) => payload,
+        };
 
         Ok(Self {
             origin: Origin::new(origin_x as usize, origin_y as usize),
@@ -102,14 +125,25 @@ impl From<Cp437Grid> for Cp437GridCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
+    use crate::commands::tests::TestImplementsCommand;
 
     impl TestImplementsCommand for Cp437GridCommand {}
 
     #[test]
-    fn round_trip_cp437_data() {
-        round_trip(
+    fn round_trip() {
+        crate::commands::tests::round_trip(
             Cp437GridCommand {
+                origin: Origin::new(5, 2),
+                grid: Cp437Grid::new(7, 5),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(
+            &Cp437GridCommand {
                 origin: Origin::new(5, 2),
                 grid: Cp437Grid::new(7, 5),
             }
@@ -139,11 +173,25 @@ mod tests {
         let packet: Packet = command.try_into().unwrap();
         let packet = Packet {
             header: packet.header,
-            payload: packet.payload[..5].to_vec(),
+            payload: Some(packet.payload.as_ref().unwrap()[..5].to_vec()),
         };
         assert_eq!(
             Err(TryFromPacketError::UnexpectedPayloadSize {
                 actual: 5,
+                expected: 6
+            }),
+            Cp437GridCommand::try_from(packet)
+        );
+    }
+
+    #[test]
+    fn missing_payload() {
+        let command: Cp437GridCommand = Cp437Grid::new(2, 3).into();
+        let mut packet: Packet = command.try_into().unwrap();
+        packet.payload = None;
+        assert_eq!(
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                actual: 0,
                 expected: 6
             }),
             Cp437GridCommand::try_from(packet)

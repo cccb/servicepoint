@@ -15,7 +15,7 @@ use std::fmt::Debug;
 /// # let connection = FakeConnection;
 /// connection.send_command(FadeOutCommand).unwrap();
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct FadeOutCommand;
 
 impl TryFrom<Packet> for FadeOutCommand {
@@ -31,7 +31,13 @@ impl TryFrom<Packet> for FadeOutCommand {
 }
 
 impl From<FadeOutCommand> for Packet {
-    fn from(_: FadeOutCommand) -> Self {
+    fn from(value: FadeOutCommand) -> Self {
+        Packet::from(&value)
+    }
+}
+
+impl From<&FadeOutCommand> for Packet {
+    fn from(_: &FadeOutCommand) -> Self {
         Packet::command_code_only(CommandCode::FadeOut)
     }
 }
@@ -46,18 +52,20 @@ impl From<FadeOutCommand> for TypedCommand {
 mod tests {
     use crate::{
         command_code::CommandCode,
-        commands::{
-            errors::TryFromPacketError,
-            tests::{round_trip, TestImplementsCommand},
-        },
+        commands::{errors::TryFromPacketError, tests::TestImplementsCommand},
         FadeOutCommand, Header, Packet, TypedCommand,
     };
 
     impl TestImplementsCommand for FadeOutCommand {}
 
     #[test]
-    fn round_trip_fade_out() {
-        round_trip(FadeOutCommand.into());
+    fn round_trip() {
+        crate::commands::tests::round_trip(FadeOutCommand.into());
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(&FadeOutCommand.into());
     }
 
     #[test]
@@ -70,7 +78,7 @@ mod tests {
                 c: 0x00,
                 d: 0x01,
             },
-            payload: vec![],
+            payload: None,
         };
         let result = TypedCommand::try_from(p);
         assert!(matches!(
@@ -89,7 +97,7 @@ mod tests {
                 c: 0x00,
                 d: 0x00,
             },
-            payload: vec![5, 7],
+            payload: Some(vec![5, 7]),
         };
         let result = TypedCommand::try_from(p);
         assert!(matches!(

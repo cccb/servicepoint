@@ -1,5 +1,5 @@
 use crate::{
-    DisplayBitVec, DataRef, Grid, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
+    DataRef, DisplayBitVec, Grid, Payload, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 
@@ -268,6 +268,12 @@ impl From<&Bitmap> for ValueGrid<bool> {
     }
 }
 
+impl From<&Bitmap> for Payload {
+    fn from(value: &Bitmap) -> Self {
+        value.bit_vec.as_raw_slice().into()
+    }
+}
+
 #[must_use]
 struct IterRows<'t> {
     bitmap: &'t Bitmap,
@@ -305,7 +311,7 @@ pub enum LoadBitmapError {
 #[cfg(test)]
 mod tests {
     use crate::{
-        DisplayBitVec, Bitmap, DataRef, Grid, LoadBitmapError, ValueGrid,
+        Bitmap, DataRef, DisplayBitVec, Grid, LoadBitmapError, ValueGrid,
     };
 
     #[test]

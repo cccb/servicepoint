@@ -106,6 +106,26 @@ impl TryFrom<TypedCommand> for Packet {
     }
 }
 
+impl TryFrom<&TypedCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: &TypedCommand) -> Result<Self, Self::Error> {
+        Ok(match value {
+            TypedCommand::Clear(c) => c.into(),
+            TypedCommand::CharGrid(c) => c.try_into()?,
+            TypedCommand::Cp437Grid(c) => c.try_into()?,
+            TypedCommand::Bitmap(c) => c.try_into()?,
+            TypedCommand::Brightness(c) => c.into(),
+            TypedCommand::BrightnessGrid(c) => c.try_into()?,
+            TypedCommand::BitVec(c) => c.try_into()?,
+            TypedCommand::HardReset(c) => c.into(),
+            TypedCommand::FadeOut(c) => c.into(),
+            #[allow(deprecated)]
+            TypedCommand::BitmapLegacy(c) => c.into(),
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
@@ -125,7 +145,7 @@ mod tests {
                 c: 0x00,
                 d: 0x00,
             },
-            payload: vec![],
+            payload: None,
         };
         let result = TypedCommand::try_from(p);
         assert_eq!(result, Err(InvalidCommandCodeError(0xFF).into()));

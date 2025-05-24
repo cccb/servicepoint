@@ -25,6 +25,18 @@ impl TryFrom<BrightnessGridCommand> for Packet {
     }
 }
 
+impl TryFrom<&BrightnessGridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: &BrightnessGridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_as_packet(
+            value.origin,
+            &value.grid,
+            CommandCode::CharBrightness,
+        )?)
+    }
+}
+
 impl From<BrightnessGrid> for BrightnessGridCommand {
     fn from(grid: BrightnessGrid) -> Self {
         Self {
@@ -53,12 +65,21 @@ impl TryFrom<Packet> for BrightnessGridCommand {
         check_command_code(command_code, CommandCode::CharBrightness)?;
 
         let expected_size = width as usize * height as usize;
-        if payload.len() != expected_size {
-            return Err(TryFromPacketError::UnexpectedPayloadSize {
-                actual: payload.len(),
-                expected: expected_size,
-            });
-        }
+        let payload = match payload {
+            None => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    actual: 0,
+                    expected: expected_size,
+                })
+            }
+            Some(payload) if payload.len() != expected_size => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    actual: payload.len(),
+                    expected: expected_size,
+                })
+            }
+            Some(payload) => payload,
+        };
 
         let grid = ByteGrid::from_raw_parts_unchecked(
             width as usize,
@@ -86,10 +107,7 @@ impl From<BrightnessGridCommand> for TypedCommand {
 #[cfg(test)]
 mod tests {
     use crate::{
-        commands::{
-            errors::TryFromPacketError,
-            tests::{round_trip, TestImplementsCommand},
-        },
+        commands::{errors::TryFromPacketError, tests::TestImplementsCommand},
         Brightness, BrightnessGrid, BrightnessGridCommand, Origin, Packet,
         TypedCommand,
     };
@@ -97,9 +115,20 @@ mod tests {
     impl TestImplementsCommand for BrightnessGridCommand {}
 
     #[test]
-    fn round_trip_char_brightness() {
-        round_trip(
+    fn round_trip() {
+        crate::commands::tests::round_trip(
             BrightnessGridCommand {
+                origin: Origin::new(5, 2),
+                grid: BrightnessGrid::new(7, 5),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(
+            &BrightnessGridCommand {
                 origin: Origin::new(5, 2),
                 grid: BrightnessGrid::new(7, 5),
             }
@@ -115,7 +144,7 @@ mod tests {
             grid,
         };
         let mut packet: Packet = command.try_into().unwrap();
-        let slot = packet.payload.get_mut(1).unwrap();
+        let slot = packet.payload.as_mut().unwrap().get_mut(1).unwrap();
         *slot = 23;
         assert_eq!(
             TypedCommand::try_from(packet),
@@ -145,11 +174,25 @@ mod tests {
         let packet: Packet = command.try_into().unwrap();
         let packet = Packet {
             header: packet.header,
-            payload: packet.payload[..5].to_vec(),
+            payload: Some(packet.payload.as_ref().unwrap()[..5].to_vec()),
         };
         assert_eq!(
             Err(TryFromPacketError::UnexpectedPayloadSize {
                 actual: 5,
+                expected: 6
+            }),
+            BrightnessGridCommand::try_from(packet)
+        );
+    }
+
+    #[test]
+    fn missing_payload() {
+        let command: BrightnessGridCommand = BrightnessGrid::new(2, 3).into();
+        let mut packet: Packet = command.try_into().unwrap();
+        packet.payload = None;
+        assert_eq!(
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                actual: 0,
                 expected: 6
             }),
             BrightnessGridCommand::try_from(packet)

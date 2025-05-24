@@ -36,6 +36,18 @@ impl TryFrom<CharGridCommand> for Packet {
     }
 }
 
+impl TryFrom<&CharGridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: &CharGridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_as_packet(
+            value.origin,
+            &value.grid,
+            CommandCode::Utf8Data,
+        )?)
+    }
+}
+
 impl TryFrom<Packet> for CharGridCommand {
     type Error = TryFromPacketError;
 
@@ -54,16 +66,24 @@ impl TryFrom<Packet> for CharGridCommand {
 
         check_command_code(command_code, CommandCode::Utf8Data)?;
 
-        let payload: Vec<_> =
-            String::from_utf8(payload.clone())?.chars().collect();
-
         let expected = width as usize * height as usize;
-        if payload.len() != expected {
-            return Err(TryFromPacketError::UnexpectedPayloadSize {
-                expected,
-                actual: payload.len(),
-            });
-        }
+        let payload = match payload {
+            None => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected,
+                    actual: 0,
+                })
+            }
+            Some(payload) if payload.len() != expected => {
+                return Err(TryFromPacketError::UnexpectedPayloadSize {
+                    expected,
+                    actual: payload.len(),
+                })
+            }
+            Some(payload) => {
+                String::from_utf8(payload.clone())?.chars().collect()
+            }
+        };
 
         Ok(Self {
             origin: Origin::new(origin_x as usize, origin_y as usize),
@@ -94,16 +114,27 @@ impl From<CharGrid> for CharGridCommand {
 #[cfg(test)]
 mod tests {
     use crate::{
-        commands::tests::{round_trip, TestImplementsCommand},
-        CharGrid, CharGridCommand, Origin, Packet, TryFromPacketError,
+        commands::tests::TestImplementsCommand, CharGrid, CharGridCommand,
+        Origin, Packet, TryFromPacketError,
     };
 
     impl TestImplementsCommand for CharGridCommand {}
 
     #[test]
-    fn round_trip_utf8_data() {
-        round_trip(
+    fn round_trip() {
+        crate::commands::tests::round_trip(
             CharGridCommand {
+                origin: Origin::new(5, 2),
+                grid: CharGrid::new(7, 5),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(
+            &CharGridCommand {
                 origin: Origin::new(5, 2),
                 grid: CharGrid::new(7, 5),
             }
@@ -134,11 +165,25 @@ mod tests {
         let packet: Packet = command.try_into().unwrap();
         let packet = Packet {
             header: packet.header,
-            payload: packet.payload[..5].to_vec(),
+            payload: Some(packet.payload.as_ref().unwrap()[..5].to_vec()),
         };
         assert_eq!(
             Err(TryFromPacketError::UnexpectedPayloadSize {
                 actual: 5,
+                expected: 6
+            }),
+            CharGridCommand::try_from(packet)
+        );
+    }
+
+    #[test]
+    fn missing_payload() {
+        let command: CharGridCommand = CharGrid::new(2, 3).into();
+        let mut packet: Packet = command.try_into().unwrap();
+        packet.payload = None;
+        assert_eq!(
+            Err(TryFromPacketError::UnexpectedPayloadSize {
+                actual: 0,
                 expected: 6
             }),
             CharGridCommand::try_from(packet)

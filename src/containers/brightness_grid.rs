@@ -31,12 +31,37 @@ impl BrightnessGrid {
     }
 }
 
-impl From<BrightnessGrid> for Vec<u8> {
-    fn from(value: BrightnessGrid) -> Self {
+impl From<&BrightnessGrid> for Vec<u8> {
+    fn from(value: &BrightnessGrid) -> Self {
         value
             .iter()
             .map(|brightness| (*brightness).into())
             .collect()
+    }
+}
+
+impl From<BrightnessGrid> for Vec<u8> {
+    fn from(value: BrightnessGrid) -> Self {
+        // look mom, zero copies!
+
+        let mut vec =
+            std::mem::ManuallyDrop::new(Vec::<Brightness>::from(value));
+
+        // Safety: this is safe because Brightness is repr(transparent) and only contains one u8.
+        // Also see https://doc.rust-lang.org/std/mem/fn.transmute.html
+        unsafe {
+            // this makes sure the operation is safe at compile time
+            const _: () = assert!(
+                size_of::<Brightness>() == size_of::<u8>()
+                    && align_of::<Brightness>() == align_of::<u8>()
+            );
+
+            Vec::from_raw_parts(
+                vec.as_mut_ptr().cast(),
+                vec.len(),
+                vec.capacity(),
+            )
+        }
     }
 }
 
