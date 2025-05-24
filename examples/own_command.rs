@@ -6,6 +6,7 @@ use servicepoint::{
 };
 use std::{fmt::Debug, net::UdpSocket};
 
+/// Command that sets the brightness to zero globally.
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct ZeroBrightnessCommand;
 
@@ -15,6 +16,7 @@ impl Into<Packet> for ZeroBrightnessCommand {
     }
 }
 
+/// Command that turns into a random packet.
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct FuzzyCommand;
 

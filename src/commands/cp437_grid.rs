@@ -16,8 +16,10 @@ use crate::{
 /// # use servicepoint::*;
 /// # let connection = FakeConnection;
 /// let grid = CharGrid::from("Hello,\nWorld!");
+/// # #[cfg(feature = "cp437")] {
 /// let grid = Cp437Grid::from(&grid);
 /// connection.send_command(Cp437GridCommand{ origin: Origin::ZERO, grid }).expect("send failed");
+/// # }
 /// ```
 ///
 /// ```rust

@@ -263,13 +263,16 @@ mod tests {
 
     #[test]
     fn into_packet_invalid_alignment() {
-        let mut cmd = BitmapCommand::from(Bitmap::max_sized());
-        cmd.origin.x = 5;
+        let cmd = BitmapCommand {
+            bitmap: Bitmap::max_sized(),
+            compression: CompressionCode::Uncompressed,
+            origin: Origin::new(5, 0),
+        };
         let packet = Packet::try_from(cmd).unwrap();
         assert_eq!(
             packet.header,
             Header {
-                command_code: 25,
+                command_code: 19,
                 a: 0,
                 b: 0,
                 c: 56,
@@ -277,13 +280,16 @@ mod tests {
             }
         );
 
-        let mut cmd = BitmapCommand::from(Bitmap::max_sized());
-        cmd.origin.x = 11;
+        let cmd = BitmapCommand{
+            bitmap: Bitmap::max_sized(),
+            compression: CompressionCode::Uncompressed,
+            origin: Origin::new(11, 0),
+        };
         let packet = Packet::try_from(cmd).unwrap();
         assert_eq!(
             packet.header,
             Header {
-                command_code: 25,
+                command_code: 19,
                 a: 1,
                 b: 0,
                 c: 56,

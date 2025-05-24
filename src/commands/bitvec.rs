@@ -383,6 +383,7 @@ mod tests {
     fn into_packet_invalid_alignment() {
         let mut cmd = BitVecCommand::from(DisplayBitVec::repeat(false, 32));
         cmd.offset = 5;
+        cmd.compression = CompressionCode::Uncompressed;
         let packet = Packet::try_from(cmd).unwrap();
         assert_eq!(
             packet.header,
@@ -390,13 +391,17 @@ mod tests {
                 command_code: 18,
                 a: 5,
                 b: 4,
-                c: 27770,
+                c: 0,
                 d: 0
             }
         );
 
-        let mut cmd = BitVecCommand::from(DisplayBitVec::repeat(false, 32));
-        cmd.offset = 11;
+        let cmd = BitVecCommand {
+            bitvec: DisplayBitVec::repeat(false, 32),
+            offset: 11,
+            operation: BinaryOperation::Overwrite,
+            compression: CompressionCode::Uncompressed,
+        };
         let packet = Packet::try_from(cmd).unwrap();
         assert_eq!(
             packet.header,
@@ -404,7 +409,7 @@ mod tests {
                 command_code: 18,
                 a: 11,
                 b: 4,
-                c: 27770,
+                c: 0,
                 d: 0
             }
         );
