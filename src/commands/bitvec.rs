@@ -161,10 +161,8 @@ impl From<DisplayBitVec> for BitVecCommand {
 mod tests {
     use super::*;
     use crate::{
-        commands,
-        commands::tests::{round_trip, TestImplementsCommand},
-        compression_code::InvalidCompressionCodeError,
-        Bitmap, BitmapCommand, Origin, PIXEL_WIDTH,
+        commands, commands::tests::TestImplementsCommand,
+        compression_code::InvalidCompressionCodeError, PIXEL_WIDTH,
     };
 
     impl TestImplementsCommand for BitVecCommand {}
@@ -184,7 +182,7 @@ mod tests {
     }
 
     #[test]
-    fn round_trip_bitmap_linear() {
+    fn round_trip() {
         for compression in CompressionCode::ALL {
             for operation in [
                 BinaryOperation::Overwrite,
@@ -192,7 +190,7 @@ mod tests {
                 BinaryOperation::Or,
                 BinaryOperation::Xor,
             ] {
-                round_trip(
+                crate::commands::tests::round_trip(
                     BitVecCommand {
                         offset: 23,
                         bitvec: DisplayBitVec::repeat(false, 40),
@@ -202,14 +200,28 @@ mod tests {
                     .into(),
                 );
             }
-            round_trip(
-                BitmapCommand {
-                    origin: Origin::ZERO,
-                    bitmap: Bitmap::max_sized(),
-                    compression: *compression,
-                }
-                .into(),
-            );
+        }
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        for compression in CompressionCode::ALL {
+            for operation in [
+                BinaryOperation::Overwrite,
+                BinaryOperation::And,
+                BinaryOperation::Or,
+                BinaryOperation::Xor,
+            ] {
+                crate::commands::tests::round_trip(
+                    BitVecCommand {
+                        offset: 23,
+                        bitvec: DisplayBitVec::repeat(false, 40),
+                        compression: *compression,
+                        operation,
+                    }
+                    .into(),
+                );
+            }
         }
     }
 
@@ -372,11 +384,29 @@ mod tests {
         let mut cmd = BitVecCommand::from(DisplayBitVec::repeat(false, 32));
         cmd.offset = 5;
         let packet = Packet::try_from(cmd).unwrap();
-        assert_eq!(packet.header, Header { command_code: 18, a: 5, b: 4, c: 27770, d: 0 });
+        assert_eq!(
+            packet.header,
+            Header {
+                command_code: 18,
+                a: 5,
+                b: 4,
+                c: 27770,
+                d: 0
+            }
+        );
 
         let mut cmd = BitVecCommand::from(DisplayBitVec::repeat(false, 32));
         cmd.offset = 11;
         let packet = Packet::try_from(cmd).unwrap();
-        assert_eq!(packet.header, Header { command_code: 18, a: 11, b: 4, c: 27770, d: 0 });
+        assert_eq!(
+            packet.header,
+            Header {
+                command_code: 18,
+                a: 11,
+                b: 4,
+                c: 27770,
+                d: 0
+            }
+        );
     }
 }

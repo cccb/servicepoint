@@ -197,7 +197,10 @@ impl Packet {
         origin: Origin<Tiles>,
         grid: &G,
         command_code: CommandCode,
-    ) -> Result<Packet, TryFromIntError> where for<'a> &'a G: Into<Payload>{
+    ) -> Result<Packet, TryFromIntError>
+    where
+        for<'a> &'a G: Into<Payload>,
+    {
         Ok(Packet {
             header: Self::origin_grid_header(origin, grid, command_code)?,
             payload: Some(grid.into()),

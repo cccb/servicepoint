@@ -52,14 +52,19 @@ impl From<HardResetCommand> for TypedCommand {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
+    use crate::commands::tests::TestImplementsCommand;
     use crate::Header;
 
     impl TestImplementsCommand for HardResetCommand {}
 
     #[test]
-    fn round_trip_hard_reset() {
-        round_trip(HardResetCommand.into());
+    fn round_trip() {
+        crate::commands::tests::round_trip(HardResetCommand.into());
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(&HardResetCommand.into());
     }
 
     #[test]

@@ -25,8 +25,7 @@ pub(crate) enum CompressionError {
 
 pub(crate) fn decompress(
     kind: CompressionCode,
-    #[allow(unused, reason = "depends on features")]
-    payload: &[u8],
+    #[allow(unused, reason = "depends on features")] payload: &[u8],
 ) -> Result<Payload, CompressionError> {
     match kind {
         CompressionCode::Uncompressed => Err(CompressionError::NoCompression),
@@ -102,8 +101,7 @@ pub(crate) fn decompress(
 
 pub(crate) fn compress(
     kind: CompressionCode,
-    #[allow(unused, reason = "depends on features")]
-    payload: &[u8],
+    #[allow(unused, reason = "depends on features")] payload: &[u8],
 ) -> Result<Payload, CompressionError> {
     match kind {
         CompressionCode::Uncompressed => Err(CompressionError::NoCompression),
@@ -113,11 +111,8 @@ pub(crate) fn compress(
                 flate2::Compress::new(flate2::Compression::fast(), true);
             let mut buffer = [0u8; 10000];
 
-            match compress.compress(
-                payload,
-                &mut buffer,
-                FlushCompress::Finish,
-            ) {
+            match compress.compress(payload, &mut buffer, FlushCompress::Finish)
+            {
                 Ok(Status::Ok) => {
                     error!("output buffer not big enough");
                     Err(CompressionError::CompressionFailed)

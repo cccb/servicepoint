@@ -56,10 +56,7 @@ impl From<BitmapLegacyCommand> for TypedCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        commands::tests::{round_trip, TestImplementsCommand},
-        Header,
-    };
+    use crate::{commands::tests::TestImplementsCommand, Header};
 
     impl TestImplementsCommand for BitmapLegacyCommand {}
 
@@ -79,7 +76,12 @@ mod tests {
     }
 
     #[test]
-    fn round_trip_bitmap_legacy() {
-        round_trip(BitmapLegacyCommand.into());
+    fn round_trip() {
+        crate::commands::tests::round_trip(BitmapLegacyCommand.into());
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(&BitmapLegacyCommand.into());
     }
 }

@@ -140,4 +140,13 @@ mod tests {
         };
         assert_eq!(copy, original);
     }
+
+    pub(crate) fn round_trip_ref(original: &TypedCommand) {
+        let packet: Packet = original.try_into().unwrap();
+        let copy: TypedCommand = match TypedCommand::try_from(packet) {
+            Ok(command) => command,
+            Err(err) => panic!("could not reload {original:?}: {err:?}"),
+        };
+        assert_eq!(&copy, original);
+    }
 }

@@ -52,18 +52,20 @@ impl From<FadeOutCommand> for TypedCommand {
 mod tests {
     use crate::{
         command_code::CommandCode,
-        commands::{
-            errors::TryFromPacketError,
-            tests::{round_trip, TestImplementsCommand},
-        },
+        commands::{errors::TryFromPacketError, tests::TestImplementsCommand},
         FadeOutCommand, Header, Packet, TypedCommand,
     };
 
     impl TestImplementsCommand for FadeOutCommand {}
 
     #[test]
-    fn round_trip_fade_out() {
-        round_trip(FadeOutCommand.into());
+    fn round_trip() {
+        crate::commands::tests::round_trip(FadeOutCommand.into());
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(&FadeOutCommand.into());
     }
 
     #[test]

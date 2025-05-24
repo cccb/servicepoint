@@ -62,6 +62,11 @@ mod tests {
     }
 
     #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(&ClearCommand.into());
+    }
+
+    #[test]
     fn extraneous_header_values() {
         let p = Packet {
             header: Header {

@@ -102,10 +102,7 @@ impl From<Brightness> for GlobalBrightnessCommand {
 mod tests {
     use crate::{
         command_code::CommandCode,
-        commands::{
-            errors::TryFromPacketError,
-            tests::{round_trip, TestImplementsCommand},
-        },
+        commands::{errors::TryFromPacketError, tests::TestImplementsCommand},
         Brightness, GlobalBrightnessCommand, Header, Packet, TypedCommand,
     };
 
@@ -122,9 +119,19 @@ mod tests {
     }
 
     #[test]
-    fn round_trip_brightness() {
-        round_trip(
+    fn round_trip() {
+        crate::commands::tests::round_trip(
             GlobalBrightnessCommand {
+                brightness: Brightness::try_from(6).unwrap(),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(
+            &GlobalBrightnessCommand {
                 brightness: Brightness::try_from(6).unwrap(),
             }
             .into(),

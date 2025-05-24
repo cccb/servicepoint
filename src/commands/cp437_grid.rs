@@ -123,14 +123,25 @@ impl From<Cp437Grid> for Cp437GridCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::commands::tests::{round_trip, TestImplementsCommand};
+    use crate::commands::tests::TestImplementsCommand;
 
     impl TestImplementsCommand for Cp437GridCommand {}
 
     #[test]
-    fn round_trip_cp437_data() {
-        round_trip(
+    fn round_trip() {
+        crate::commands::tests::round_trip(
             Cp437GridCommand {
+                origin: Origin::new(5, 2),
+                grid: Cp437Grid::new(7, 5),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(
+            &Cp437GridCommand {
                 origin: Origin::new(5, 2),
                 grid: Cp437Grid::new(7, 5),
             }

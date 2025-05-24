@@ -1,7 +1,7 @@
 //! A simple game of life implementation to show how to render graphics to the display.
 
 use clap::Parser;
-use rand::{Rng};
+use rand::Rng;
 use servicepoint::{Bitmap, BitmapCommand, Grid, UdpSocketExt, FRAME_PACING};
 use std::{net::UdpSocket, thread};
 
@@ -18,7 +18,7 @@ fn main() {
 
     let connection = UdpSocket::bind_connect(&cli.destination)
         .expect("could not connect to display");
-    
+
     let mut command = BitmapCommand::from(make_random_field(cli.probability));
     loop {
         connection.send_command(&command).expect("could not send");

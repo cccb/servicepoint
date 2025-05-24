@@ -114,16 +114,27 @@ impl From<CharGrid> for CharGridCommand {
 #[cfg(test)]
 mod tests {
     use crate::{
-        commands::tests::{round_trip, TestImplementsCommand},
-        CharGrid, CharGridCommand, Origin, Packet, TryFromPacketError,
+        commands::tests::TestImplementsCommand, CharGrid, CharGridCommand,
+        Origin, Packet, TryFromPacketError,
     };
 
     impl TestImplementsCommand for CharGridCommand {}
 
     #[test]
-    fn round_trip_utf8_data() {
-        round_trip(
+    fn round_trip() {
+        crate::commands::tests::round_trip(
             CharGridCommand {
+                origin: Origin::new(5, 2),
+                grid: CharGrid::new(7, 5),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(
+            &CharGridCommand {
                 origin: Origin::new(5, 2),
                 grid: CharGrid::new(7, 5),
             }

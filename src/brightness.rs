@@ -1,7 +1,7 @@
 #[cfg(feature = "rand")]
 use rand::{
+    distr::{Distribution, StandardUniform},
     Rng,
-    distr::{StandardUniform, Distribution},
 };
 
 /// A display brightness value, checked for correct value range

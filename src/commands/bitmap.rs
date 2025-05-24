@@ -255,7 +255,10 @@ mod tests {
     fn into_packet_out_of_range() {
         let mut cmd = BitmapCommand::from(Bitmap::max_sized());
         cmd.origin.x = usize::MAX;
-        assert!(matches!(Packet::try_from(cmd), Err(TryIntoPacketError::ConversionError(_))));
+        assert!(matches!(
+            Packet::try_from(cmd),
+            Err(TryIntoPacketError::ConversionError(_))
+        ));
     }
 
     #[test]
@@ -263,11 +266,57 @@ mod tests {
         let mut cmd = BitmapCommand::from(Bitmap::max_sized());
         cmd.origin.x = 5;
         let packet = Packet::try_from(cmd).unwrap();
-        assert_eq!(packet.header, Header { command_code: 25, a: 0, b: 0, c: 56, d: 160 });
+        assert_eq!(
+            packet.header,
+            Header {
+                command_code: 25,
+                a: 0,
+                b: 0,
+                c: 56,
+                d: 160
+            }
+        );
 
         let mut cmd = BitmapCommand::from(Bitmap::max_sized());
         cmd.origin.x = 11;
         let packet = Packet::try_from(cmd).unwrap();
-        assert_eq!(packet.header, Header { command_code: 25, a: 1, b: 0, c: 56, d: 160 });
+        assert_eq!(
+            packet.header,
+            Header {
+                command_code: 25,
+                a: 1,
+                b: 0,
+                c: 56,
+                d: 160
+            }
+        );
+    }
+
+    #[test]
+    fn round_trip() {
+        for compression in CompressionCode::ALL {
+            crate::commands::tests::round_trip(
+                BitmapCommand {
+                    origin: Origin::ZERO,
+                    bitmap: Bitmap::max_sized(),
+                    compression: *compression,
+                }
+                .into(),
+            );
+        }
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        for compression in CompressionCode::ALL {
+            crate::commands::tests::round_trip_ref(
+                &BitmapCommand {
+                    origin: Origin::ZERO,
+                    bitmap: Bitmap::max_sized(),
+                    compression: *compression,
+                }
+                .into(),
+            );
+        }
     }
 }

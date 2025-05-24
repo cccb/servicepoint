@@ -107,10 +107,7 @@ impl From<BrightnessGridCommand> for TypedCommand {
 #[cfg(test)]
 mod tests {
     use crate::{
-        commands::{
-            errors::TryFromPacketError,
-            tests::{round_trip, TestImplementsCommand},
-        },
+        commands::{errors::TryFromPacketError, tests::TestImplementsCommand},
         Brightness, BrightnessGrid, BrightnessGridCommand, Origin, Packet,
         TypedCommand,
     };
@@ -118,9 +115,20 @@ mod tests {
     impl TestImplementsCommand for BrightnessGridCommand {}
 
     #[test]
-    fn round_trip_char_brightness() {
-        round_trip(
+    fn round_trip() {
+        crate::commands::tests::round_trip(
             BrightnessGridCommand {
+                origin: Origin::new(5, 2),
+                grid: BrightnessGrid::new(7, 5),
+            }
+            .into(),
+        );
+    }
+
+    #[test]
+    fn round_trip_ref() {
+        crate::commands::tests::round_trip_ref(
+            &BrightnessGridCommand {
                 origin: Origin::new(5, 2),
                 grid: BrightnessGrid::new(7, 5),
             }
