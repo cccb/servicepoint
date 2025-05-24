@@ -25,6 +25,18 @@ impl TryFrom<BrightnessGridCommand> for Packet {
     }
 }
 
+impl TryFrom<&BrightnessGridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: &BrightnessGridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_as_packet(
+            value.origin,
+            &value.grid,
+            CommandCode::CharBrightness,
+        )?)
+    }
+}
+
 impl From<BrightnessGrid> for BrightnessGridCommand {
     fn from(grid: BrightnessGrid) -> Self {
         Self {

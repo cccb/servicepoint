@@ -21,7 +21,13 @@ pub struct GlobalBrightnessCommand {
 }
 
 impl From<GlobalBrightnessCommand> for Packet {
-    fn from(command: GlobalBrightnessCommand) -> Self {
+    fn from(value: GlobalBrightnessCommand) -> Self {
+        Packet::from(&value)
+    }
+}
+
+impl From<&GlobalBrightnessCommand> for Packet {
+    fn from(command: &GlobalBrightnessCommand) -> Self {
         Self {
             header: Header {
                 command_code: CommandCode::Brightness.into(),

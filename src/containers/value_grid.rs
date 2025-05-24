@@ -386,6 +386,13 @@ impl<T: Value> From<ValueGrid<T>> for Vec<T> {
     }
 }
 
+impl<T: Value> From<&ValueGrid<T>> for Vec<T> {
+    /// Turn into the underlying [`Vec<u8>`] containing the rows of bytes.
+    fn from(value: &ValueGrid<T>) -> Self {
+        value.data.clone()
+    }
+}
+
 /// An iterator iver the rows in a [`ValueGrid`]
 #[must_use]
 pub struct IterGridRows<'t, T: Value> {

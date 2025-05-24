@@ -36,6 +36,18 @@ impl TryFrom<CharGridCommand> for Packet {
     }
 }
 
+impl TryFrom<&CharGridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: &CharGridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_as_packet(
+            value.origin,
+            &value.grid,
+            CommandCode::Utf8Data,
+        )?)
+    }
+}
+
 impl TryFrom<Packet> for CharGridCommand {
     type Error = TryFromPacketError;
 

@@ -35,7 +35,6 @@ fn main() {
     command.bitmap.fill(true);
 
     let mut buf = [0u8; 10000];
-
     for x_offset in 0..PIXEL_WIDTH {
         for y in 0..PIXEL_HEIGHT {
             command.bitmap.set((x_offset + y) % PIXEL_WIDTH, y, false);

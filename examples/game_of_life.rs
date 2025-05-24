@@ -18,13 +18,12 @@ fn main() {
 
     let connection = UdpSocket::bind_connect(&cli.destination)
         .expect("could not connect to display");
-    let mut field = make_random_field(cli.probability);
-
+    
+    let mut command = BitmapCommand::from(make_random_field(cli.probability));
     loop {
-        let command = BitmapCommand::from(field.clone());
-        connection.send_command(command).expect("could not send");
+        connection.send_command(&command).expect("could not send");
         thread::sleep(FRAME_PACING);
-        field = iteration(field);
+        command.bitmap = iteration(command.bitmap);
     }
 }
 

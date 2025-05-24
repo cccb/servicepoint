@@ -30,7 +30,13 @@ impl TryFrom<Packet> for ClearCommand {
 }
 
 impl From<ClearCommand> for Packet {
-    fn from(_: ClearCommand) -> Self {
+    fn from(value: ClearCommand) -> Self {
+        Packet::from(&value)
+    }
+}
+
+impl From<&ClearCommand> for Packet {
+    fn from(_: &ClearCommand) -> Self {
         Packet::command_code_only(CommandCode::Clear)
     }
 }

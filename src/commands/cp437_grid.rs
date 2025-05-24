@@ -47,6 +47,18 @@ impl TryFrom<Cp437GridCommand> for Packet {
     }
 }
 
+impl TryFrom<&Cp437GridCommand> for Packet {
+    type Error = TryIntoPacketError;
+
+    fn try_from(value: &Cp437GridCommand) -> Result<Self, Self::Error> {
+        Ok(Packet::origin_grid_as_packet(
+            value.origin,
+            &value.grid,
+            CommandCode::Cp437Data,
+        )?)
+    }
+}
+
 impl TryFrom<Packet> for Cp437GridCommand {
     type Error = TryFromPacketError;
 

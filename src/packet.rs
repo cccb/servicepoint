@@ -188,14 +188,33 @@ impl Packet {
         command_code: CommandCode,
     ) -> Result<Packet, TryFromIntError> {
         Ok(Packet {
-            header: Header {
-                command_code: command_code.into(),
-                a: origin.x.try_into()?,
-                b: origin.y.try_into()?,
-                c: grid.width().try_into()?,
-                d: grid.height().try_into()?,
-            },
+            header: Self::origin_grid_header(origin, &grid, command_code)?,
             payload: Some(grid.into()),
+        })
+    }
+
+    pub(crate) fn origin_grid_as_packet<T, G: Grid<T>>(
+        origin: Origin<Tiles>,
+        grid: &G,
+        command_code: CommandCode,
+    ) -> Result<Packet, TryFromIntError> where for<'a> &'a G: Into<Payload>{
+        Ok(Packet {
+            header: Self::origin_grid_header(origin, grid, command_code)?,
+            payload: Some(grid.into()),
+        })
+    }
+
+    fn origin_grid_header<T>(
+        origin: Origin<Tiles>,
+        grid: &impl Grid<T>,
+        command_code: CommandCode,
+    ) -> Result<Header, TryFromIntError> {
+        Ok(Header {
+            command_code: command_code.into(),
+            a: origin.x.try_into()?,
+            b: origin.y.try_into()?,
+            c: grid.width().try_into()?,
+            d: grid.height().try_into()?,
         })
     }
 

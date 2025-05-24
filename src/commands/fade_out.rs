@@ -31,7 +31,13 @@ impl TryFrom<Packet> for FadeOutCommand {
 }
 
 impl From<FadeOutCommand> for Packet {
-    fn from(_: FadeOutCommand) -> Self {
+    fn from(value: FadeOutCommand) -> Self {
+        Packet::from(&value)
+    }
+}
+
+impl From<&FadeOutCommand> for Packet {
+    fn from(_: &FadeOutCommand) -> Self {
         Packet::command_code_only(CommandCode::FadeOut)
     }
 }

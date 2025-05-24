@@ -32,7 +32,13 @@ impl TryFrom<Packet> for HardResetCommand {
 }
 
 impl From<HardResetCommand> for Packet {
-    fn from(_: HardResetCommand) -> Self {
+    fn from(value: HardResetCommand) -> Self {
+        Packet::from(&value)
+    }
+}
+
+impl From<&HardResetCommand> for Packet {
+    fn from(_: &HardResetCommand) -> Self {
         Packet::command_code_only(CommandCode::HardReset)
     }
 }

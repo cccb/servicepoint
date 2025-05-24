@@ -264,7 +264,7 @@ mod tests {
         cmd.origin.x = 5;
         let packet = Packet::try_from(cmd).unwrap();
         assert_eq!(packet.header, Header { command_code: 25, a: 0, b: 0, c: 56, d: 160 });
-        
+
         let mut cmd = BitmapCommand::from(Bitmap::max_sized());
         cmd.origin.x = 11;
         let packet = Packet::try_from(cmd).unwrap();
