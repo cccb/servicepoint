@@ -341,7 +341,7 @@ dependencies = [
 
 [[package]]
 name = "servicepoint"
-version = "0.15.0"
+version = "0.15.1"
 dependencies = [
  "bitvec",
  "bzip2",
