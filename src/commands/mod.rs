@@ -14,7 +14,7 @@ mod typed;
 use crate::command_code::{CommandCode, InvalidCommandCodeError};
 use crate::{Header, Packet};
 use std::fmt::Debug;
-
+use std::hash::Hash;
 pub use bitmap::*;
 pub use bitmap_legacy::*;
 pub use bitvec::*;
@@ -76,11 +76,11 @@ pub use typed::*;
 /// connection.send_command(command).unwrap();
 /// ```
 pub trait Command:
-    Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet>
+    Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet> + Hash
 {
 }
 
-impl<T: Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet>> Command for T {}
+impl<T: Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet> + Hash> Command for T {}
 
 fn check_command_code_only(
     packet: Packet,

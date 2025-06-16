@@ -16,7 +16,7 @@ use crate::{
 /// let grid = CharGrid::from("Hello,\nWorld!");
 /// connection.send_command(CharGridCommand { origin: Origin::ZERO, grid }).expect("send failed");
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CharGridCommand {
     /// the text to send to the display
     pub grid: CharGrid,

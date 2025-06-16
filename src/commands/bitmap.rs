@@ -29,7 +29,7 @@ use crate::{
 ///
 /// connection.send_command(command).expect("send failed");
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct BitmapCommand {
     /// the pixels to send
     pub bitmap: Bitmap,

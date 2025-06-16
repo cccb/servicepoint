@@ -29,7 +29,7 @@ use crate::{
 /// connection.send_command(Cp437GridCommand{ origin: Origin::new(2, 2), grid }).unwrap();
 /// ```
 /// [CP-437]: https://en.wikipedia.org/wiki/Code_page_437
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Cp437GridCommand {
     /// the text to send to the display
     pub grid: Cp437Grid,

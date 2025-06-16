@@ -16,7 +16,7 @@ use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 /// let mut bitmap = Bitmap::new(8, 2);
 ///
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Bitmap {
     width: usize,
     height: usize,

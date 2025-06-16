@@ -35,7 +35,7 @@ use std::{mem::size_of, num::TryFromIntError};
 /// Because the meaning of most fields depend on the command, there are no speaking names for them.
 ///
 /// The contained values are in platform endian-ness and may need to be converted before sending.
-#[derive(Copy, Clone, Debug, PartialEq, Default)]
+#[derive(Copy, Clone, Debug, PartialEq, Default, Hash)]
 #[repr(C)]
 pub struct Header {
     /// The first two bytes specify which command this packet represents.
@@ -62,7 +62,7 @@ pub type Payload = Vec<u8>;
 /// Contents should probably only be used directly to use features not exposed by the library.
 ///
 /// You may want to use [`crate::Command`] or [`crate::TypedCommand`] instead.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Hash)]
 pub struct Packet {
     /// Meta-information for the packed command
     pub header: Header,
