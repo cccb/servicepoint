@@ -1,28 +1,3 @@
-//! Raw packet manipulation.
-//!
-//! Should probably only be used directly to use features not exposed by the library.
-//!
-//! # Examples
-//!
-//! Converting a packet to a command and back:
-//!
-//! ```rust
-//! use servicepoint::{Command, Packet, TypedCommand};
-//! # let command = servicepoint::ClearCommand;
-//! let packet: Packet = command.into();
-//! let command = TypedCommand::try_from(packet).expect("could not read command from packet");
-//! ```
-//!
-//! Converting a packet to bytes and back:
-//!
-//! ```rust
-//! use servicepoint::{Command, Packet};
-//! # let command = servicepoint::ClearCommand;
-//! # let packet: Packet = command.into();
-//! let bytes: Vec<u8> = packet.into();
-//! let packet = Packet::try_from(bytes).expect("could not read packet from bytes");
-//! ```
-
 use crate::{command_code::CommandCode, Grid, Origin, Tiles};
 use log::trace;
 use std::{mem::size_of, num::TryFromIntError};

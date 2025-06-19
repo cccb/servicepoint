@@ -280,7 +280,7 @@ mod tests {
             }
         );
 
-        let cmd = BitmapCommand{
+        let cmd = BitmapCommand {
             bitmap: Bitmap::max_sized(),
             compression: CompressionCode::Uncompressed,
             origin: Origin::new(11, 0),

@@ -2,6 +2,7 @@ use crate::{
     DataRef, DisplayBitVec, Grid, Payload, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
+use inherent::inherent;
 
 /// A fixed-size 2D grid of booleans.
 ///
@@ -176,6 +177,7 @@ impl Bitmap {
     }
 }
 
+#[inherent]
 impl Grid<bool> for Bitmap {
     /// Sets the value of the specified position in the [Bitmap].
     ///
@@ -189,11 +191,13 @@ impl Grid<bool> for Bitmap {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
+    #[allow(unused, reason = "False positive because of #[inherent]")]
     fn set(&mut self, x: usize, y: usize, value: bool) {
         self.assert_in_bounds(x, y);
         self.bit_vec.set(x + y * self.width, value);
     }
 
+    #[allow(unused, reason = "False positive because of #[inherent]")]
     fn get(&self, x: usize, y: usize) -> bool {
         self.assert_in_bounds(x, y);
         self.bit_vec[x + y * self.width]
@@ -205,6 +209,7 @@ impl Grid<bool> for Bitmap {
     ///
     /// - `this`: instance to write to
     /// - `value`: the value to set all pixels to
+    #[allow(unused, reason = "False positive because of #[inherent]")]
     fn fill(&mut self, value: bool) {
         self.bit_vec.fill(value);
     }
@@ -311,7 +316,7 @@ pub enum LoadBitmapError {
 #[cfg(test)]
 mod tests {
     use crate::{
-        Bitmap, DataRef, DisplayBitVec, Grid, LoadBitmapError, ValueGrid,
+        Bitmap, DataRef, DisplayBitVec, LoadBitmapError, ValueGrid,
     };
 
     #[test]

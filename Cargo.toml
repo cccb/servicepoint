@@ -24,6 +24,7 @@ rust-lzma = { version = "0.6", optional = true }
 rand = { version = "0.9", optional = true }
 once_cell = { version = "1.20", optional = true }
 thiserror = "2.0"
+inherent = "1.0"
 
 [features]
 default = ["compression_lzma", "cp437"]
