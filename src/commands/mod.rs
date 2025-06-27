@@ -11,10 +11,10 @@ mod global_brightness;
 mod hard_reset;
 mod typed;
 
-use crate::command_code::{CommandCode, InvalidCommandCodeError};
-use crate::{Header, Packet};
-use std::fmt::Debug;
-
+use crate::{
+    command_code::{CommandCode, InvalidCommandCodeError},
+    Header, Packet,
+};
 pub use bitmap::*;
 pub use bitmap_legacy::*;
 pub use bitvec::*;
@@ -26,11 +26,12 @@ pub use errors::*;
 pub use fade_out::*;
 pub use global_brightness::*;
 pub use hard_reset::*;
+use std::{fmt::Debug, hash::Hash};
 pub use typed::*;
 
 /// This trait represents a command that can be sent to the display.
 ///
-/// To send a [Command], use a [connection][crate::Connection].
+/// To send a [Command], use a [connection][std::net::UdpSocket].
 ///
 /// # Available commands
 ///
@@ -46,7 +47,7 @@ pub use typed::*;
 /// # Compression
 ///
 /// Some commands can contain compressed payloads.
-/// To get started, use [`CompressionCode::default()`].
+/// To get started, use `CompressionCode::default()`.
 ///
 /// If you want to archive the best performance (e.g. latency),
 /// you can try the different compression algorithms for your hardware and use case.
@@ -76,11 +77,14 @@ pub use typed::*;
 /// connection.send_command(command).unwrap();
 /// ```
 pub trait Command:
-    Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet>
+    Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet> + Hash
 {
 }
 
-impl<T: Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet>> Command for T {}
+impl<T: Debug + Clone + Eq + TryInto<Packet> + TryFrom<Packet> + Hash> Command
+    for T
+{
+}
 
 fn check_command_code_only(
     packet: Packet,

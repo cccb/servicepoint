@@ -1,4 +1,4 @@
-/// The u16 command codes used for the [Command]s.
+/// The u16 command codes used for the [`crate::Command`]s.
 #[repr(u16)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[allow(missing_docs)]

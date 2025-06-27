@@ -1,7 +1,7 @@
+use crate::{DataRef, Grid};
+use inherent::inherent;
 use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
-
-use crate::{DataRef, Grid};
 
 /// A type that can be stored in a [`ValueGrid`], e.g. [char], [u8].
 pub trait Value: Sized + Default + Copy + Clone + Debug {}
@@ -13,7 +13,7 @@ impl<T: Sized + Default + Copy + Clone + Debug> Value for T {}
 ///
 /// This structure can be used with any type that implements the [Value] trait.
 /// You can also use the concrete type aliases provided in this crate, e.g. [`crate::CharGrid`] and [`crate::ByteGrid`].
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ValueGrid<T: Value> {
     width: usize,
     height: usize,
@@ -324,6 +324,7 @@ pub enum TryLoadValueGridError {
     InvalidDimensions,
 }
 
+#[inherent]
 impl<T: Value> Grid<T> for ValueGrid<T> {
     /// Sets the value of the cell at the specified position in the grid.
     ///
@@ -335,6 +336,7 @@ impl<T: Value> Grid<T> for ValueGrid<T> {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
+    #[allow(unused, reason = "False positive because of #[inherent]")]
     fn set(&mut self, x: usize, y: usize, value: T) {
         self.assert_in_bounds(x, y);
         self.data[x + y * self.width] = value;
@@ -349,11 +351,13 @@ impl<T: Value> Grid<T> for ValueGrid<T> {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
+    #[allow(unused, reason = "False positive because of #[inherent]")]
     fn get(&self, x: usize, y: usize) -> T {
         self.assert_in_bounds(x, y);
         self.data[x + y * self.width]
     }
 
+    #[allow(unused, reason = "False positive because of #[inherent]")]
     fn fill(&mut self, value: T) {
         self.data.fill(value);
     }

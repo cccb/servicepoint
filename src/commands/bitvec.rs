@@ -7,7 +7,7 @@ use crate::{
 };
 
 /// Binary operations for use with the [`BitVecCommand`] command.
-#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default, Hash)]
 #[repr(u8)]
 pub enum BinaryOperation {
     /// r := a
@@ -33,7 +33,7 @@ pub enum BinaryOperation {
 /// For example, [`BinaryOperation::Or`] can be used to turn on some pixels without affecting other pixels.
 ///
 /// The contained [`DisplayBitVec`] is always uncompressed.
-#[derive(Clone, PartialEq, Debug, Eq)]
+#[derive(Clone, PartialEq, Debug, Eq, Hash)]
 pub struct BitVecCommand {
     /// the pixels to send to the display as one long row
     pub bitvec: DisplayBitVec,

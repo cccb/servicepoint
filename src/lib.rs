@@ -1,7 +1,7 @@
 //! Abstractions for the UDP protocol of the CCCB servicepoint display.
 //!
-//! Your starting point is a [Connection] to the display.
-//! With a connection, you can send [Command]s.
+//! Your starting point is a [`std::net::UdpSocket`] connected to the display.
+//! With a socket, you can send [Command]s.
 //! When received, the display will update the state of its pixels.
 //!
 //! # Examples
@@ -57,6 +57,25 @@
 //! let command = CharGridCommand { origin: Origin::ZERO, grid };
 //! // send command to display
 //! connection.send_command(command).expect("send failed");
+//! ```
+//!
+//! ### Convert a packet to a command and back
+//!
+//! ```rust
+//! use servicepoint::{Command, Packet, TypedCommand};
+//! # let command = servicepoint::ClearCommand;
+//! let packet: Packet = command.into();
+//! let command = TypedCommand::try_from(packet).expect("could not read command from packet");
+//! ```
+//!
+//! ### Convert a packet to bytes and back
+//!
+//! ```rust
+//! use servicepoint::{Command, Packet};
+//! # let command = servicepoint::ClearCommand;
+//! # let packet: Packet = command.into();
+//! let bytes: Vec<u8> = packet.into();
+//! let packet = Packet::try_from(bytes).expect("could not read packet from bytes");
 //! ```
 
 pub use crate::brightness::Brightness;

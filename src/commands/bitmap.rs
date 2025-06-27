@@ -29,7 +29,7 @@ use crate::{
 ///
 /// connection.send_command(command).expect("send failed");
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct BitmapCommand {
     /// the pixels to send
     pub bitmap: Bitmap,
@@ -280,7 +280,7 @@ mod tests {
             }
         );
 
-        let cmd = BitmapCommand{
+        let cmd = BitmapCommand {
             bitmap: Bitmap::max_sized(),
             compression: CompressionCode::Uncompressed,
             origin: Origin::new(11, 0),

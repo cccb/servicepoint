@@ -5,7 +5,7 @@ use crate::{
 };
 
 /// Set the brightness of individual tiles in a rectangular area of the display.
-#[derive(Clone, PartialEq, Debug, Eq)]
+#[derive(Clone, PartialEq, Debug, Eq, Hash)]
 pub struct BrightnessGridCommand {
     /// the brightness values per tile
     pub grid: BrightnessGrid,

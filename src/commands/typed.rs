@@ -9,7 +9,7 @@ use crate::{
 /// This is useful in case you want one data type for all kinds of commands without using `dyn`.
 ///
 /// Please look at the contained structs for documentation per command.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 #[allow(missing_docs)]
 #[allow(deprecated)]
 pub enum TypedCommand {
