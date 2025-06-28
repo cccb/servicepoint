@@ -173,15 +173,11 @@ impl<T: Value> ValueGrid<T> {
     /// returns: Reference to cell or None
     pub fn get_ref_mut_optional(
         &mut self,
-        x: isize,
-        y: isize,
+        x: usize,
+        y: usize,
     ) -> Option<&mut T> {
         if self.is_in_bounds(x, y) {
-            #[expect(
-                clippy::cast_sign_loss,
-                reason = "is_in_bounds already checks this"
-            )]
-            Some(&mut self.data[x as usize + y as usize * self.width])
+            Some(&mut self.data[x + y * self.width])
         } else {
             None
         }
@@ -568,7 +564,6 @@ mod tests {
     fn optional() {
         let mut grid = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
         grid.set_optional(0, 0, 5);
-        grid.set_optional(-1, 0, 8);
         grid.set_optional(0, 8, 42);
         assert_eq!(grid.data, [5, 1, 2, 3]);
 

@@ -29,13 +29,9 @@ pub trait Grid<T> {
     /// - `x` and `y`: position of the cell to read
     ///
     /// returns: Value at position or None
-    fn get_optional(&self, x: isize, y: isize) -> Option<T> {
+    fn get_optional(&self, x: usize, y: usize) -> Option<T> {
         if self.is_in_bounds(x, y) {
-            #[expect(
-                clippy::cast_sign_loss,
-                reason = "is_in_bounds already checks this"
-            )]
-            Some(self.get(x as usize, y as usize))
+            Some(self.get(x, y))
         } else {
             None
         }
@@ -48,13 +44,9 @@ pub trait Grid<T> {
     /// - `x` and `y`: position of the cell to read
     ///
     /// returns: the old value or None
-    fn set_optional(&mut self, x: isize, y: isize, value: T) -> bool {
+    fn set_optional(&mut self, x: usize, y: usize, value: T) -> bool {
         if self.is_in_bounds(x, y) {
-            #[expect(
-                clippy::cast_sign_loss,
-                reason = "is_in_bounds already checks this"
-            )]
-            self.set(x as usize, y as usize, value);
+            self.set(x, y, value);
             true
         } else {
             false
@@ -71,15 +63,8 @@ pub trait Grid<T> {
     fn height(&self) -> usize;
 
     /// Checks whether the specified signed position is in grid bounds
-    #[expect(
-        clippy::cast_possible_wrap,
-        reason = "implementing types only allow 0..isize::MAX"
-    )]
-    fn is_in_bounds(&self, x: isize, y: isize) -> bool {
-        x >= 0
-            && x < self.width() as isize
-            && y >= 0
-            && y < self.height() as isize
+    fn is_in_bounds(&self, x: usize, y: usize) -> bool {
+        x < self.width() && y < self.height()
     }
 
     /// Asserts that the specified unsigned position is in grid bounds.
