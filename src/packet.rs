@@ -90,7 +90,7 @@ impl TryFrom<&[u8]> for Packet {
             }
         };
 
-        let payload = if value.len() < HEADER_SIZE {
+        let payload = if value.len() <= HEADER_SIZE {
             None
         } else {
             Some(value[HEADER_SIZE..].to_vec())
