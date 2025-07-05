@@ -105,7 +105,7 @@ mod tests {
         let mut bitmap = Bitmap::new(8, 4).unwrap();
 
         // non-byte-aligned views work
-        let mut view = WindowMut::new(&mut bitmap, 3, 1, 4, 2).unwrap();
+        let mut view = bitmap.window_mut(3, 1, 4, 2).unwrap();
         view.fill(true);
 
         assert_eq!(bitmap.data_ref(), &[0, 30, 30, 0]);
@@ -113,7 +113,7 @@ mod tests {
         assert_eq!(bitmap.set_optional(99, 99, false), false);
 
         // full size view works
-        _ = Window::new(&mut bitmap, 0, 0, 8, 4).unwrap();
+        bitmap.window(0, 0, 8, 4).unwrap();
 
         // zero size view does not work
         assert!(Window::new(&mut bitmap, 1, 2, 3, 0).is_none());
@@ -130,12 +130,13 @@ mod tests {
         let mut grid = CharGrid::new(3, 4);
         grid.fill(' ');
 
-        let mut view = WindowMut::new(&mut grid, 1, 1, 1, 2).unwrap();
+        let mut view = WindowMut::new(&mut grid, 1, 1, 1, 3).unwrap();
         view.fill('#');
+        view.set(0,0, '!');
 
         assert_eq!(
             grid.data_ref(),
-            &[' ', ' ', ' ', ' ', '#', ' ', ' ', '#', ' ', ' ', ' ', ' ']
+            &[' ', ' ', ' ', ' ', '!', ' ', ' ', '#', ' ', ' ', '#', ' ']
         );
 
         // full size view works

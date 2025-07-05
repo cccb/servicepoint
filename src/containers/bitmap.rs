@@ -1,6 +1,6 @@
 use crate::{
     DataRef, DisplayBitVec, Grid, GridMut, Payload, ValueGrid, Window,
-    PIXEL_HEIGHT, PIXEL_WIDTH,
+    WindowMut, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 use inherent::inherent;
@@ -175,6 +175,32 @@ impl Bitmap {
             bitmap: self,
             row: 0,
         }
+    }
+
+    /// Creates a window into the bitmap.
+    ///
+    /// Returns None in case the window does not fit.
+    pub fn window(
+        &self,
+        x: usize,
+        y: usize,
+        width: usize,
+        height: usize,
+    ) -> Option<Window<bool, Self>> {
+        Window::new(self, x, y, width, height)
+    }
+
+    /// Creates a mutable window into the bitmap.
+    ///
+    /// Returns None in case the window does not fit.
+    pub fn window_mut(
+        &mut self,
+        x: usize,
+        y: usize,
+        width: usize,
+        height: usize,
+    ) -> Option<WindowMut<bool, Self>> {
+        WindowMut::new(self, x, y, width, height)
     }
 }
 

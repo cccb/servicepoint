@@ -1,4 +1,4 @@
-use crate::{DataRef, Grid, GridMut, Window};
+use crate::{DataRef, Grid, GridMut, Window, WindowMut};
 use inherent::inherent;
 use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
@@ -309,6 +309,32 @@ impl<T: Value> ValueGrid<T> {
             column: 0,
             row: 0,
         }
+    }
+
+    /// Creates a window into the grid.
+    ///
+    /// Returns None in case the window does not fit.
+    pub fn window(
+        &self,
+        x: usize,
+        y: usize,
+        width: usize,
+        height: usize,
+    ) -> Option<Window<T, Self>> {
+        Window::new(self, x, y, width, height)
+    }
+
+    /// Creates a mutable window into the grid.
+    ///
+    /// Returns None in case the window does not fit.
+    pub fn window_mut(
+        &mut self,
+        x: usize,
+        y: usize,
+        width: usize,
+        height: usize,
+    ) -> Option<WindowMut<T, Self>> {
+        WindowMut::new(self, x, y, width, height)
     }
 }
 
