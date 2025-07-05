@@ -1,4 +1,7 @@
-use crate::{Grid, GridMut};
+use crate::{
+    containers::char_grid::{CharGridExt, CharGridMutExt},
+    Grid, GridMut,
+};
 use std::marker::PhantomData;
 
 macro_rules! define_window {
@@ -70,6 +73,9 @@ macro_rules! define_window {
                 self.height
             }
         }
+
+        #[inherent::inherent]
+        impl<TGrid: Grid<char>> CharGridExt for $name<'_, char, TGrid> {}
     };
 }
 
@@ -94,6 +100,9 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> GridMut<TElement>
         }
     }
 }
+
+#[inherent::inherent]
+impl<TGrid: GridMut<char>> CharGridMutExt for WindowMut<'_, char, TGrid> {}
 
 #[cfg(test)]
 mod tests {
@@ -132,7 +141,7 @@ mod tests {
 
         let mut view = WindowMut::new(&mut grid, 1, 1, 1, 3).unwrap();
         view.fill('#');
-        view.set(0,0, '!');
+        view.set(0, 0, '!');
 
         assert_eq!(
             grid.data_ref(),
