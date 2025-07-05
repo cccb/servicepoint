@@ -1,4 +1,4 @@
-use crate::{DataRef, Grid};
+use crate::{DataRef, Grid, WindowMut};
 use inherent::inherent;
 use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
@@ -436,6 +436,18 @@ impl<T: Value> Iterator for EnumerateGrid<'_, T> {
         if self.column == self.grid.width {
             self.column = 0;
             self.row += 1;
+        }
+        result
+    }
+}
+
+impl<E: Value> From<&WindowMut<'_, E, Self>> for ValueGrid<E> {
+    fn from(value: &WindowMut<'_, E, Self>) -> Self {
+        let mut result = Self::new(value.width(), value.height());
+        for y in 0..value.height() {
+            for x in 0..value.width() {
+                result.set(x, y, value.get(x, y));
+            }
         }
         result
     }

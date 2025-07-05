@@ -1,5 +1,6 @@
 use crate::{
-    DataRef, DisplayBitVec, Grid, Payload, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
+    DataRef, DisplayBitVec, Grid, Payload, ValueGrid, WindowMut, PIXEL_HEIGHT,
+    PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 use inherent::inherent;
@@ -262,6 +263,20 @@ impl TryFrom<&ValueGrid<bool>> for Bitmap {
     }
 }
 
+impl<G: Grid<bool>> TryFrom<&WindowMut<'_, bool, G>> for Bitmap {
+    type Error = ();
+
+    fn try_from(value: &WindowMut<'_, bool, G>) -> Result<Self, Self::Error> {
+        let mut result = Self::new(value.width(), value.height()).ok_or(())?;
+        for y in 0..value.height() {
+            for x in 0..value.width() {
+                result.set(x, y, value.get(x, y));
+            }
+        }
+        Ok(result)
+    }
+}
+
 impl From<&Bitmap> for ValueGrid<bool> {
     /// Converts a [Bitmap] into a grid of [bool]s.
     fn from(value: &Bitmap) -> Self {
@@ -315,9 +330,7 @@ pub enum LoadBitmapError {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        Bitmap, DataRef, DisplayBitVec, LoadBitmapError, ValueGrid,
-    };
+    use crate::{Bitmap, DataRef, DisplayBitVec, LoadBitmapError, ValueGrid};
 
     #[test]
     fn fill() {

@@ -6,6 +6,7 @@ mod char_grid;
 mod cp437_grid;
 mod data_ref;
 mod grid;
+mod grid_view;
 mod value_grid;
 
 pub use bit_vec::{bitvec, DisplayBitVec};
@@ -16,6 +17,7 @@ pub use char_grid::CharGrid;
 pub use cp437_grid::Cp437Grid;
 pub use data_ref::DataRef;
 pub use grid::Grid;
+pub use grid_view::WindowMut;
 pub use value_grid::{
     IterGridRows, SetValueSeriesError, TryLoadValueGridError, Value, ValueGrid,
 };
