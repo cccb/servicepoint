@@ -1,4 +1,4 @@
-use crate::{DataRef, Grid, WindowMut};
+use crate::{DataRef, Grid, GridMut, Window};
 use inherent::inherent;
 use std::fmt::Debug;
 use std::slice::{Iter, IterMut};
@@ -322,6 +322,35 @@ pub enum TryLoadValueGridError {
 
 #[inherent]
 impl<T: Value> Grid<T> for ValueGrid<T> {
+    /// Gets the current value at the specified position.
+    ///
+    /// # Arguments
+    ///
+    /// - `x` and `y`: position of the cell to read
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
+    #[must_use]
+    #[allow(unused, reason = "False positive because of #[inherent]")]
+    pub fn get(&self, x: usize, y: usize) -> T {
+        self.assert_in_bounds(x, y);
+        self.data[x + y * self.width]
+    }
+
+    #[must_use]
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    #[must_use]
+    pub fn height(&self) -> usize {
+        self.height
+    }
+}
+
+#[inherent]
+impl<T: Value> GridMut<T> for ValueGrid<T> {
     /// Sets the value of the cell at the specified position in the grid.
     ///
     /// # Arguments
@@ -333,37 +362,14 @@ impl<T: Value> Grid<T> for ValueGrid<T> {
     ///
     /// When accessing `x` or `y` out of bounds.
     #[allow(unused, reason = "False positive because of #[inherent]")]
-    fn set(&mut self, x: usize, y: usize, value: T) {
+    pub fn set(&mut self, x: usize, y: usize, value: T) {
         self.assert_in_bounds(x, y);
         self.data[x + y * self.width] = value;
     }
 
-    /// Gets the current value at the specified position.
-    ///
-    /// # Arguments
-    ///
-    /// - `x` and `y`: position of the cell to read
-    ///
-    /// # Panics
-    ///
-    /// When accessing `x` or `y` out of bounds.
     #[allow(unused, reason = "False positive because of #[inherent]")]
-    fn get(&self, x: usize, y: usize) -> T {
-        self.assert_in_bounds(x, y);
-        self.data[x + y * self.width]
-    }
-
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    fn fill(&mut self, value: T) {
+    pub fn fill(&mut self, value: T) {
         self.data.fill(value);
-    }
-
-    fn width(&self) -> usize {
-        self.width
-    }
-
-    fn height(&self) -> usize {
-        self.height
     }
 }
 
@@ -441,8 +447,8 @@ impl<T: Value> Iterator for EnumerateGrid<'_, T> {
     }
 }
 
-impl<E: Value> From<&WindowMut<'_, E, Self>> for ValueGrid<E> {
-    fn from(value: &WindowMut<'_, E, Self>) -> Self {
+impl<E: Value> From<&Window<'_, E, Self>> for ValueGrid<E> {
+    fn from(value: &Window<'_, E, Self>) -> Self {
         let mut result = Self::new(value.width(), value.height());
         for y in 0..value.height() {
             for x in 0..value.width() {
@@ -552,7 +558,7 @@ mod tests {
     #[should_panic]
     fn out_of_bounds_y() {
         let vec = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
-        vec.get(1, 2);
+        _ = vec.get(1, 2);
     }
 
     #[test]
@@ -575,8 +581,8 @@ mod tests {
     #[test]
     fn optional() {
         let mut grid = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
-        grid.set_optional(0, 0, 5);
-        grid.set_optional(0, 8, 42);
+        assert!(grid.set_optional(0, 0, 5));
+        assert!(!grid.set_optional(0, 8, 42));
         assert_eq!(grid.data, [5, 1, 2, 3]);
 
         assert_eq!(grid.get_optional(0, 0), Some(5));

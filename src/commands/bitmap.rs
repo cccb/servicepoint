@@ -2,7 +2,7 @@ use crate::{
     command_code::{CommandCode, InvalidCommandCodeError},
     commands::errors::{TryFromPacketError, TryIntoPacketError},
     compression::{compress, decompress, CompressionError},
-    Bitmap, CompressionCode, DataRef, Grid, Header, Origin, Packet, Pixels,
+    Bitmap, CompressionCode, DataRef, Header, Origin, Packet, Pixels,
     TypedCommand, TILE_SIZE,
 };
 
@@ -304,7 +304,7 @@ mod tests {
             crate::commands::tests::round_trip(
                 BitmapCommand {
                     origin: Origin::ZERO,
-                    bitmap: Bitmap::max_sized(),
+                    bitmap: Bitmap::new(8, 2).unwrap(),
                     compression: *compression,
                 }
                 .into(),

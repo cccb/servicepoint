@@ -1,16 +1,5 @@
-/// A two-dimensional grid of `T`
+/// A two-dimensional readonly grid of `T`
 pub trait Grid<T> {
-    /// Sets the value at the specified position
-    ///
-    /// # Arguments
-    ///
-    /// - `x` and `y`: position of the cell to read
-    ///
-    /// # Panics
-    ///
-    /// When accessing `x` or `y` out of bounds.
-    fn set(&mut self, x: usize, y: usize, value: T);
-
     /// Get the current value at the specified position
     ///
     /// # Arguments
@@ -20,6 +9,7 @@ pub trait Grid<T> {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
+    #[must_use]
     fn get(&self, x: usize, y: usize) -> T;
 
     /// Get the current value at the specified position if the position is inside of bounds
@@ -29,6 +19,7 @@ pub trait Grid<T> {
     /// - `x` and `y`: position of the cell to read
     ///
     /// returns: Value at position or None
+    #[must_use]
     fn get_optional(&self, x: usize, y: usize) -> Option<T> {
         if self.is_in_bounds(x, y) {
             Some(self.get(x, y))
@@ -37,32 +28,16 @@ pub trait Grid<T> {
         }
     }
 
-    /// Sets the value at the specified position if the position is inside of bounds
-    ///
-    /// # Arguments
-    ///
-    /// - `x` and `y`: position of the cell to read
-    ///
-    /// returns: the old value or None
-    fn set_optional(&mut self, x: usize, y: usize, value: T) -> bool {
-        if self.is_in_bounds(x, y) {
-            self.set(x, y, value);
-            true
-        } else {
-            false
-        }
-    }
-
-    /// Sets all cells in the grid to the specified value
-    fn fill(&mut self, value: T);
-
     /// the size in x-direction
+    #[must_use]
     fn width(&self) -> usize;
 
     /// the height in y-direction
+    #[must_use]
     fn height(&self) -> usize;
 
     /// Checks whether the specified signed position is in grid bounds
+    #[must_use]
     fn is_in_bounds(&self, x: usize, y: usize) -> bool {
         x < self.width() && y < self.height()
     }
@@ -78,4 +53,38 @@ pub trait Grid<T> {
         let height = self.height();
         assert!(y < height, "cannot access index [{x}, {y}] because y is outside of bounds [0..{height})");
     }
+}
+
+/// A two-dimensional mutable grid of `T`
+pub trait GridMut<T>: Grid<T> {
+    /// Sets the value at the specified position
+    ///
+    /// # Arguments
+    ///
+    /// - `x` and `y`: position of the cell to read
+    ///
+    /// # Panics
+    ///
+    /// When accessing `x` or `y` out of bounds.
+    fn set(&mut self, x: usize, y: usize, value: T);
+
+    /// Sets the value at the specified position if the position is inside of bounds
+    ///
+    /// # Arguments
+    ///
+    /// - `x` and `y`: position of the cell to read
+    ///
+    /// returns: true if the value has been set
+    #[must_use]
+    fn set_optional(&mut self, x: usize, y: usize, value: T) -> bool {
+        if self.is_in_bounds(x, y) {
+            self.set(x, y, value);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Sets all cells in the grid to the specified value
+    fn fill(&mut self, value: T);
 }
