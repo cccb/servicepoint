@@ -311,6 +311,7 @@ impl<T: Value> ValueGrid<T> {
         }
     }
 
+    #[must_use]
     /// Creates a window into the grid.
     ///
     /// Returns None in case the window does not fit.

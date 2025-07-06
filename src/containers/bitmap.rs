@@ -180,6 +180,7 @@ impl Bitmap {
     /// Creates a window into the bitmap.
     ///
     /// Returns None in case the window does not fit.
+    #[must_use]
     pub fn window(
         &self,
         x: usize,
