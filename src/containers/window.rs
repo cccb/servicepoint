@@ -59,8 +59,11 @@ macro_rules! define_window {
                 y: usize,
                 width: usize,
                 height: usize,
-            ) -> Option<Window<TElement, Self>> {
-                Window::new(self, x, y, width, height)
+            ) -> Option<Window<TElement, TGrid>> {
+                if x + width >= self.width || y + height >= self.height {
+                    return None;
+                }
+                Window::new(self.grid, self.x + x, self.y + y, width, height)
             }
 
             pub fn split_horizontal(
@@ -165,8 +168,11 @@ impl<'t, TElement: Copy, TGrid: GridMut<TElement>>
         y: usize,
         width: usize,
         height: usize,
-    ) -> Option<WindowMut<TElement, Self>> {
-        WindowMut::new(self, x, y, width, height)
+    ) -> Option<WindowMut<TElement, TGrid>> {
+        if x + width >= self.width || y + height >= self.height {
+            return None;
+        }
+        WindowMut::new(self.grid, self.x + x, self.y + y, width, height)
     }
 
     pub fn split_horizontal_mut(
