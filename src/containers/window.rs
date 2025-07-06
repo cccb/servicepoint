@@ -49,6 +49,55 @@ macro_rules! define_window {
                     phantom: PhantomData,
                 })
             }
+
+            /// Creates a window into the window.
+            ///
+            /// Returns None in case the window does not fit.
+            pub fn window(
+                &self,
+                x: usize,
+                y: usize,
+                width: usize,
+                height: usize,
+            ) -> Option<Window<TElement, Self>> {
+                Window::new(self, x, y, width, height)
+            }
+
+            pub fn split_horizontal(
+                self,
+                left_width: usize,
+            ) -> Option<(
+                Window<'t, TElement, TGrid>,
+                Window<'t, TElement, TGrid>,
+            )> {
+                let left = Window::new(self.grid, 0, 0, left_width, self.height)?;
+                let right = Window::new(
+                    self.grid,
+                    left_width,
+                    0,
+                    self.width - left_width,
+                    self.height,
+                )?;
+                Some((left, right))
+            }
+
+            pub fn split_vertical(
+                self,
+                top_height: usize,
+            ) -> Option<(
+                Window<'t, TElement, TGrid>,
+                Window<'t, TElement, TGrid>,
+            )> {
+                let top = Window::new(self.grid, 0, 0, self.width, top_height)?;
+                let bottom = Window::new(
+                    self.grid,
+                    0,
+                    top_height,
+                    self.width,
+                    self.height - top_height,
+                )?;
+                Some((top, bottom))
+            }
         }
 
         #[inherent::inherent]
@@ -103,6 +152,59 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> GridMut<TElement>
 
 #[inherent::inherent]
 impl<TGrid: GridMut<char>> CharGridMutExt for WindowMut<'_, char, TGrid> {}
+
+impl<'t, TElement: Copy, TGrid: GridMut<TElement>>
+    WindowMut<'t, TElement, TGrid>
+{
+    /// Creates a mutable window into the grid.
+    ///
+    /// Returns None in case the window does not fit.
+    pub fn window_mut(
+        &mut self,
+        x: usize,
+        y: usize,
+        width: usize,
+        height: usize,
+    ) -> Option<WindowMut<TElement, Self>> {
+        WindowMut::new(self, x, y, width, height)
+    }
+
+    pub fn split_horizontal_mut(
+        self,
+        left_width: usize,
+    ) -> Option<(
+        WindowMut<'t, TElement, TGrid>,
+        WindowMut<'t, TElement, TGrid>,
+    )> {
+        let (grid1, grid2) = unsafe { Self::duplicate_mutable_ref(self.grid) };
+        let left = WindowMut::new(grid1, 0, 0, left_width, self.height)?;
+        let right =
+            WindowMut::new(grid2, left_width, 0, self.width - left_width, self.height)?;
+        Some((left, right))
+    }
+
+    pub fn split_vertical_mut(
+        self,
+        top_height: usize,
+    ) -> Option<(
+        WindowMut<'t, TElement, TGrid>,
+        WindowMut<'t, TElement, TGrid>,
+    )> {
+        let (grid1, grid2) = unsafe { Self::duplicate_mutable_ref(self.grid) };
+        let top = WindowMut::new(grid1, 0, 0, self.width, top_height)?;
+        let bottom =
+            WindowMut::new(grid2, 0, top_height, self.width, self.height - top_height)?;
+        Some((top, bottom))
+    }
+
+    /// SAFETY: the returned windows do not alias
+    /// Does not work if the grid uses the same memory location for multiple cells internally.
+    /// That means for e.g. a Bitmap, middle must be byte aligned or bit refs only used with the alias flag on.
+    unsafe fn duplicate_mutable_ref<T>(it: &mut T) -> (&mut T, &mut T) {
+        let mut ptr = std::ptr::NonNull::from(it);
+        unsafe { (ptr.as_mut(), ptr.as_mut()) }
+    }
+}
 
 #[cfg(test)]
 mod tests {
