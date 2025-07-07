@@ -1,8 +1,15 @@
 use crate::{
-    containers::char_grid::{CharGridExt, CharGridMutExt},
+    containers::{
+        absolute_bounds_to_abs_range,
+        char_grid::{CharGridExt, CharGridMutExt},
+        relative_bounds_to_abs_range,
+    },
     Grid, GridMut,
 };
-use std::{marker::PhantomData, ops::Range};
+use std::{
+    marker::PhantomData,
+    ops::{Range, RangeBounds},
+};
 
 macro_rules! define_window {
     ($name:ident, $grid:ty) => {
@@ -26,13 +33,11 @@ macro_rules! define_window {
             #[allow(unused, reason = "False positive because of #[inherent]")]
             pub fn new(
                 grid: $grid,
-                xs: Range<usize>,
-                ys: Range<usize>,
+                xs: impl RangeBounds<usize>,
+                ys: impl RangeBounds<usize>,
             ) -> Option<Self> {
-                if !grid.is_in_bounds(xs.end - 1, ys.end - 1) {
-                    return None;
-                }
-
+                let xs = absolute_bounds_to_abs_range(xs, grid.width())?;
+                let ys = absolute_bounds_to_abs_range(ys, grid.height())?;
                 Some(Self {
                     grid,
                     xs,
@@ -47,18 +52,12 @@ macro_rules! define_window {
             /// Returns None in case the window does not fit.
             pub fn window(
                 &self,
-                xs: Range<usize>,
-                ys: Range<usize>,
+                xs: impl RangeBounds<usize>,
+                ys: impl RangeBounds<usize>,
             ) -> Option<Window<TElement, TGrid>> {
-                if !self.is_in_bounds(xs.end - 1, ys.end - 1) {
-                    return None;
-                }
-                Window::new(
-                    self.grid,
-                    // TODO off by one
-                    (self.xs.start + xs.start)..(self.xs.end + xs.end),
-                    (self.ys.start + ys.start)..(self.ys.end + ys.end),
-                )
+                let xs = relative_bounds_to_abs_range(xs, self.xs.clone())?;
+                let ys = relative_bounds_to_abs_range(ys, self.ys.clone())?;
+                Window::new(self.grid, xs, ys)
             }
 
             #[must_use]
@@ -159,18 +158,12 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
     /// Returns None in case the window does not fit.
     pub fn window_mut(
         &mut self,
-        xs: Range<usize>,
-        ys: Range<usize>,
+        xs: impl RangeBounds<usize>,
+        ys: impl RangeBounds<usize>,
     ) -> Option<WindowMut<TElement, TGrid>> {
-        if self.is_in_bounds(xs.end - 1, ys.end - 1) {
-            return None;
-        }
-
-        WindowMut::new(
-            self.grid,
-            (self.xs.start + xs.start)..(self.xs.end + xs.end),
-            (self.ys.start + ys.start)..(self.ys.end + ys.end),
-        )
+        let xs = relative_bounds_to_abs_range(xs, self.xs.clone())?;
+        let ys = relative_bounds_to_abs_range(ys, self.ys.clone())?;
+        WindowMut::new(self.grid, xs, ys)
     }
 
     pub fn deref_assign<O: Grid<TElement>>(&mut self, other: &O) {
@@ -296,7 +289,7 @@ mod tests {
     #[test]
     fn split_horizontal() {
         let grid = ByteGrid::new(4, 5);
-        let window = grid.window(0..grid.width(), 0..grid.height()).unwrap();
+        let window = grid.window(.., ..).unwrap();
 
         let (top, bottom) = window.split_horizontal(3).unwrap();
         assert_eq!(3, top.width());
@@ -311,23 +304,23 @@ mod tests {
         grid.fill(1);
 
         let mut w1 = grid
-            .window_mut(1..grid.width() - 2, 1..grid.height() - 2)
+            .window_mut(1..grid.width() - 1, 1..grid.height() - 1)
             .unwrap();
         w1.fill(2);
 
-        let w1_1 = w1.window(0..w1.width(), 0..w1.height()).unwrap();
+        let w1_1 = w1.window(.., ..).unwrap();
         assert_eq!(w1_1.get(0, 0), 2);
 
-        assert!(matches!(w1.window(0..w1.width(), 1..w1.height()), None));
+        assert!(matches!(w1.window(.., 0..=w1.height()), None));
 
         let mut w2 = w1
-            .window_mut(1..w1.width() - 2, 1..w1.height() - 2)
+            .window_mut(1..w1.width() - 1, 1..w1.height() - 1)
             .unwrap();
         w2.fill(3);
 
         // zero-sized
         let mut w3 = w2
-            .window_mut(1..w2.width() - 2, 1..w2.height() - 2)
+            .window_mut(1..w2.width() - 1, 1..w2.height() - 1)
             .unwrap();
         w3.fill(4);
 
@@ -349,10 +342,10 @@ mod tests {
     #[test]
     fn width_height() {
         let grid = ByteGrid::new(4, 4);
-        let w1 = grid.window(0..grid.width(), 0..grid.height()).unwrap();
+        let w1 = grid.window(0.., ..grid.height()).unwrap();
         assert_eq!(grid.width(), w1.width());
         assert_eq!(grid.height(), w1.height());
-        let w2 = w1.window(0..w1.width(), 0..w1.height()).unwrap();
+        let w2 = w1.window(.., 0..w1.height()).unwrap();
         assert_eq!(grid.width(), w2.width());
         assert_eq!(grid.height(), w2.height());
     }

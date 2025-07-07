@@ -22,3 +22,43 @@ pub use value_grid::{
     Value, ValueGrid,
 };
 pub use window::{Window, WindowMut};
+
+use std::{
+    collections::Bound,
+    ops::{Range, RangeBounds},
+};
+
+pub(crate) fn absolute_bounds_to_abs_range(
+    bounds: impl RangeBounds<usize>,
+    len: usize,
+) -> Option<Range<usize>> {
+    let start = match bounds.start_bound() {
+        Bound::Included(start) => *start,
+        Bound::Excluded(start) => start + 1,
+        Bound::Unbounded => 0,
+    };
+
+    let end = match bounds.end_bound() {
+        Bound::Included(end) => end + 1,
+        Bound::Excluded(end) => *end,
+        Bound::Unbounded => len,
+    };
+    if end > len {
+        return None;
+    }
+
+    Some(start..end)
+}
+
+pub(crate) fn relative_bounds_to_abs_range(
+    bounds: impl RangeBounds<usize>,
+    range: Range<usize>,
+) -> Option<Range<usize>> {
+    let relative = absolute_bounds_to_abs_range(bounds, range.len())?;
+    let start = range.start + relative.start;
+    let end = range.start + relative.end;
+    if end > range.end {
+        return None;
+    }
+    Some(start..end)
+}

@@ -1,8 +1,11 @@
-use crate::{DataRef, Grid, GridMut, Window, WindowMut};
+use crate::{
+    containers::absolute_bounds_to_abs_range, DataRef, Grid, GridMut, Window,
+    WindowMut,
+};
 use inherent::inherent;
 use std::{
     fmt::Debug,
-    ops::Range,
+    ops::RangeBounds,
     slice::{Iter, IterMut},
 };
 
@@ -320,9 +323,11 @@ impl<T: Value> ValueGrid<T> {
     /// Returns None in case the window does not fit.
     pub fn window(
         &self,
-        xs: Range<usize>,
-        ys: Range<usize>,
+        xs: impl RangeBounds<usize>,
+        ys: impl RangeBounds<usize>,
     ) -> Option<Window<T, Self>> {
+        let xs = absolute_bounds_to_abs_range(xs, self.width)?;
+        let ys = absolute_bounds_to_abs_range(ys, self.height)?;
         Window::new(self, xs, ys)
     }
 
@@ -331,9 +336,11 @@ impl<T: Value> ValueGrid<T> {
     /// Returns None in case the window does not fit.
     pub fn window_mut(
         &mut self,
-        xs: Range<usize>,
-        ys: Range<usize>,
+        xs: impl RangeBounds<usize>,
+        ys: impl RangeBounds<usize>,
     ) -> Option<WindowMut<T, Self>> {
+        let xs = absolute_bounds_to_abs_range(xs, self.width)?;
+        let ys = absolute_bounds_to_abs_range(ys, self.height)?;
         WindowMut::new(self, xs, ys)
     }
 }

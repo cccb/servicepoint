@@ -1,10 +1,10 @@
 use crate::{
-    DataRef, DisplayBitVec, Grid, GridMut, Payload, ValueGrid, Window,
-    WindowMut, PIXEL_HEIGHT, PIXEL_WIDTH,
+    containers::absolute_bounds_to_abs_range, DataRef, DisplayBitVec, Grid,
+    GridMut, Payload, ValueGrid, Window, WindowMut, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 use inherent::inherent;
-use std::ops::{Index, Range};
+use std::ops::RangeBounds;
 
 /// A fixed-size 2D grid of booleans.
 ///
@@ -184,9 +184,11 @@ impl Bitmap {
     #[must_use]
     pub fn window(
         &self,
-        xs: Range<usize>,
-        ys: Range<usize>,
+        xs: impl RangeBounds<usize>,
+        ys: impl RangeBounds<usize>,
     ) -> Option<Window<bool, Self>> {
+        let xs = absolute_bounds_to_abs_range(xs, self.width)?;
+        let ys = absolute_bounds_to_abs_range(ys, self.height)?;
         Window::new(self, xs, ys)
     }
 
@@ -195,9 +197,11 @@ impl Bitmap {
     /// Returns None in case the window does not fit.
     pub fn window_mut(
         &mut self,
-        xs: Range<usize>,
-        ys: Range<usize>,
+        xs: impl RangeBounds<usize>,
+        ys: impl RangeBounds<usize>,
     ) -> Option<WindowMut<bool, Self>> {
+        let xs = absolute_bounds_to_abs_range(xs, self.width)?;
+        let ys = absolute_bounds_to_abs_range(ys, self.height)?;
         WindowMut::new(self, xs, ys)
     }
 }
