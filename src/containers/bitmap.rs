@@ -4,6 +4,7 @@ use crate::{
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
 use inherent::inherent;
+use std::ops::{Index, Range};
 
 /// A fixed-size 2D grid of booleans.
 ///
@@ -183,12 +184,10 @@ impl Bitmap {
     #[must_use]
     pub fn window(
         &self,
-        x: usize,
-        y: usize,
-        width: usize,
-        height: usize,
+        xs: Range<usize>,
+        ys: Range<usize>,
     ) -> Option<Window<bool, Self>> {
-        Window::new(self, x, y, width, height)
+        Window::new(self, xs, ys)
     }
 
     /// Creates a mutable window into the bitmap.
@@ -196,12 +195,10 @@ impl Bitmap {
     /// Returns None in case the window does not fit.
     pub fn window_mut(
         &mut self,
-        x: usize,
-        y: usize,
-        width: usize,
-        height: usize,
+        xs: Range<usize>,
+        ys: Range<usize>,
     ) -> Option<WindowMut<bool, Self>> {
-        WindowMut::new(self, x, y, width, height)
+        WindowMut::new(self, xs, ys)
     }
 }
 

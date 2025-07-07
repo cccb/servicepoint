@@ -1,7 +1,10 @@
 use crate::{DataRef, Grid, GridMut, Window, WindowMut};
 use inherent::inherent;
-use std::fmt::Debug;
-use std::slice::{Iter, IterMut};
+use std::{
+    fmt::Debug,
+    ops::Range,
+    slice::{Iter, IterMut},
+};
 
 /// A type that can be stored in a [`ValueGrid`], e.g. [char], [u8].
 pub trait Value: Sized + Default + Copy + Clone + Debug {}
@@ -317,12 +320,10 @@ impl<T: Value> ValueGrid<T> {
     /// Returns None in case the window does not fit.
     pub fn window(
         &self,
-        x: usize,
-        y: usize,
-        width: usize,
-        height: usize,
+        xs: Range<usize>,
+        ys: Range<usize>,
     ) -> Option<Window<T, Self>> {
-        Window::new(self, x, y, width, height)
+        Window::new(self, xs, ys)
     }
 
     /// Creates a mutable window into the grid.
@@ -330,12 +331,10 @@ impl<T: Value> ValueGrid<T> {
     /// Returns None in case the window does not fit.
     pub fn window_mut(
         &mut self,
-        x: usize,
-        y: usize,
-        width: usize,
-        height: usize,
+        xs: Range<usize>,
+        ys: Range<usize>,
     ) -> Option<WindowMut<T, Self>> {
-        WindowMut::new(self, x, y, width, height)
+        WindowMut::new(self, xs, ys)
     }
 }
 
