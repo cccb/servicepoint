@@ -33,9 +33,6 @@ macro_rules! define_window {
                 width: usize,
                 height: usize,
             ) -> Option<Self> {
-                if width == 0 || height == 0 {
-                    return None;
-                }
                 if !grid.is_in_bounds(x + width - 1, y + height - 1) {
                     return None;
                 }
@@ -167,9 +164,7 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> GridMut<TElement>
 #[inherent::inherent]
 impl<TGrid: GridMut<char>> CharGridMutExt for WindowMut<'_, char, TGrid> {}
 
-impl<TElement: Copy, TGrid: GridMut<TElement>>
-    WindowMut<'_, TElement, TGrid>
-{
+impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
     /// Creates a mutable window into the grid.
     ///
     /// Returns None in case the window does not fit.
@@ -245,7 +240,7 @@ impl<TElement: Copy, TGrid: GridMut<TElement>>
 #[cfg(test)]
 mod tests {
     use super::{Window, WindowMut};
-    use crate::{Bitmap, ByteGrid, CharGrid, DataRef, GridMut};
+    use crate::{Bitmap, ByteGrid, CharGrid, DataRef, Grid, GridMut};
 
     #[test]
     fn grid_view_bitmap() {
@@ -262,9 +257,10 @@ mod tests {
         // full size view works
         bitmap.window(0, 0, 8, 4).unwrap();
 
-        // zero size view does not work
-        assert!(Window::new(&mut bitmap, 1, 2, 3, 0).is_none());
-        assert!(WindowMut::new(&mut bitmap, 1, 2, 0, 1).is_none());
+        // zero size view works
+        assert!(Window::new(&mut bitmap, 1, 2, 3, 0).is_some());
+        assert!(WindowMut::new(&mut bitmap, 1, 2, 0, 1)
+            .is_some_and(|w| w.get_optional(0, 0).is_none()));
 
         // oob does not work
         assert!(Window::new(&mut bitmap, 30, 43, 3, 1).is_none());
@@ -289,9 +285,11 @@ mod tests {
         // full size view works
         _ = grid.window(0, 0, 3, 4).unwrap();
 
-        // zero size view does not work
-        assert!(grid.window(1, 2, 2, 0).is_none());
-        assert!(grid.window(1, 2, 0, 1).is_none());
+        // zero size view works
+        assert!(grid
+            .window(1, 2, 2, 0)
+            .is_some_and(|w| w.get_optional(0, 0).is_none()));
+        assert!(grid.window(1, 2, 0, 1).is_some());
     }
 
     #[test]
