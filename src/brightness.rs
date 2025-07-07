@@ -106,10 +106,15 @@ mod tests {
     #[cfg(feature = "rand")]
     fn test() {
         let mut rng = rand::rng();
-        // two so test failure is less likely
+        // more so random failure is less likely
         assert_ne!(
-            [rng.random::<Brightness>(), rng.random()],
-            [rng.random(), rng.random()]
+            [
+                rng.random::<Brightness>(),
+                rng.random(),
+                rng.random(),
+                rng.random()
+            ],
+            [rng.random(), rng.random(), rng.random(), rng.random()]
         );
     }
 }
