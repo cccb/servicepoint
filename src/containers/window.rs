@@ -68,6 +68,7 @@ macro_rules! define_window {
                 Window<'t, TElement, TGrid>,
                 Window<'t, TElement, TGrid>,
             )> {
+                assert!(left_width <= self.width());
                 let middle_abs = self.xs.start + left_width;
                 let left = Window::new(
                     self.grid,
@@ -87,6 +88,7 @@ macro_rules! define_window {
                 Window<'t, TElement, TGrid>,
                 Window<'t, TElement, TGrid>,
             )> {
+                assert!(top_height <= self.height());
                 let middle_abs = self.ys.start + top_height;
                 let top = Window::new(
                     self.grid,
@@ -167,10 +169,12 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
     }
 
     pub fn deref_assign<O: Grid<TElement>>(&mut self, other: &O) {
-        assert_eq!(self.width(), other.width());
-        assert_eq!(self.height(), other.height());
-        for y in self.ys.clone() {
-            for x in self.xs.clone() {
+        let width = self.width();
+        let height = self.height();
+        assert_eq!(width, other.width(), "Cannot assign grid of width {} to a window of width {}", other.width(), self.width());
+        assert_eq!(height, other.height(), "Cannot assign grid of height {} to a height of width {}", other.height(), self.height());
+        for y in 0..height {
+            for x in 0..width {
                 self.set(x, y, other.get(x, y));
             }
         }
@@ -181,6 +185,7 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
         self,
         left_width: usize,
     ) -> Option<(Self, Self)> {
+        assert!(left_width <= self.width());
         let (grid1, grid2) = unsafe { Self::duplicate_mutable_ref(self.grid) };
         let middle_abs = self.xs.start + left_width;
         let left =
@@ -191,6 +196,7 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
 
     #[must_use]
     pub fn split_vertical_mut(self, top_height: usize) -> Option<(Self, Self)> {
+        assert!(top_height <= self.height());
         let (grid1, grid2) = unsafe { Self::duplicate_mutable_ref(self.grid) };
         let middle_abs = self.ys.start + top_height;
         let top =
