@@ -1,4 +1,4 @@
-use crate::ValueGrid;
+use crate::{GridMut, ValueGrid};
 
 /// A grid containing codepage 437 characters.
 ///

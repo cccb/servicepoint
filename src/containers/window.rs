@@ -119,8 +119,12 @@ macro_rules! define_window {
         {
             #[must_use]
             #[allow(unused, reason = "False positive because of #[inherent]")]
-            pub fn get(&self, x: usize, y: usize) -> TElement {
-                self.grid.get(self.xs.start + x, self.ys.start + y)
+            pub fn get_optional(&self, x: usize, y: usize) -> Option<TElement> {
+                if self.is_in_bounds(x, y) {
+                    Some(self.grid.get(self.xs.start + x, self.ys.start + y))
+                } else {
+                    None
+                }
             }
 
             #[must_use]
@@ -146,8 +150,18 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> GridMut<TElement>
     for WindowMut<'_, TElement, TGrid>
 {
     #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn set(&mut self, x: usize, y: usize, value: TElement) {
-        self.grid.set(self.xs.start + x, self.ys.start + y, value);
+    pub fn set_optional(
+        &mut self,
+        x: usize,
+        y: usize,
+        value: TElement,
+    ) -> bool {
+        if self.is_in_bounds(x, y) {
+            self.grid.set(self.xs.start + x, self.ys.start + y, value);
+            true
+        } else {
+            false
+        }
     }
 
     #[allow(unused, reason = "False positive because of #[inherent]")]

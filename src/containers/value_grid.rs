@@ -273,20 +273,14 @@ pub enum TryLoadValueGridError {
 
 #[inherent]
 impl<T: Value> Grid<T> for ValueGrid<T> {
-    /// Gets the current value at the specified position.
-    ///
-    /// # Arguments
-    ///
-    /// - `x` and `y`: position of the cell to read
-    ///
-    /// # Panics
-    ///
-    /// When accessing `x` or `y` out of bounds.
     #[must_use]
     #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn get(&self, x: usize, y: usize) -> T {
-        self.assert_in_bounds(x, y);
-        self.data[x + y * self.width]
+    pub fn get_optional(&self, x: usize, y: usize) -> Option<T> {
+        if self.is_in_bounds(x, y) {
+            Some(self.data[x + y * self.width])
+        } else {
+            None
+        }
     }
 
     #[must_use]
@@ -313,9 +307,13 @@ impl<T: Value> GridMut<T> for ValueGrid<T> {
     ///
     /// When accessing `x` or `y` out of bounds.
     #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn set(&mut self, x: usize, y: usize, value: T) {
-        self.assert_in_bounds(x, y);
-        self.data[x + y * self.width] = value;
+    pub fn set_optional(&mut self, x: usize, y: usize, value: T) -> bool {
+        if self.is_in_bounds(x, y) {
+            self.data[x + y * self.width] = value;
+            true
+        } else {
+            false
+        }
     }
 
     #[allow(unused, reason = "False positive because of #[inherent]")]
@@ -410,7 +408,7 @@ impl<T: Value> Iterator for EnumerateGrid<'_, T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{SetValueSeriesError, ValueGrid, *};
+    use crate::{DataRef, Grid, GridMut, ValueGrid};
 
     #[test]
     fn fill() {

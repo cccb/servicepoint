@@ -145,7 +145,7 @@ impl Bitmap {
     ///
     /// Order is equivalent to the following loop:
     /// ```
-    /// # use servicepoint::{Bitmap, Grid};
+    /// # use servicepoint::{Bitmap, Grid, GridMut};
     /// # let mut grid = Bitmap::new(8, 2).unwrap();
     /// # let value = false;
     /// for y in 0..grid.height() {
@@ -210,9 +210,13 @@ impl Bitmap {
 impl Grid<bool> for Bitmap {
     #[must_use]
     #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn get(&self, x: usize, y: usize) -> bool {
-        self.assert_in_bounds(x, y);
-        self.bit_vec[x + y * self.width]
+    pub fn get_optional(&self, x: usize, y: usize) -> Option<bool> {
+        let index = x + y * self.width;
+        if self.is_in_bounds(x, y) {
+            Some(self.bit_vec[index])
+        } else {
+            None
+        }
     }
 
     #[must_use]
@@ -241,9 +245,13 @@ impl GridMut<bool> for Bitmap {
     ///
     /// When accessing `x` or `y` out of bounds.
     #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn set(&mut self, x: usize, y: usize, value: bool) {
-        self.assert_in_bounds(x, y);
-        self.bit_vec.set(x + y * self.width, value);
+    pub fn set_optional(&mut self, x: usize, y: usize, value: bool) -> bool {
+        if self.is_in_bounds(x, y) {
+            self.bit_vec.set(x + y * self.width, value);
+            true
+        } else {
+            false
+        }
     }
 
     /// Sets the state of all pixels in the [Bitmap].
@@ -344,7 +352,10 @@ pub enum LoadBitmapError {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Bitmap, DataRef, DisplayBitVec, LoadBitmapError, ValueGrid};
+    use crate::{
+        Bitmap, DataRef, DisplayBitVec, Grid, GridMut, LoadBitmapError,
+        ValueGrid,
+    };
 
     #[test]
     fn fill() {

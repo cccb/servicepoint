@@ -12,7 +12,11 @@ pub trait Grid<T> {
     ///
     /// When accessing `x` or `y` out of bounds.
     #[must_use]
-    fn get(&self, x: usize, y: usize) -> T;
+    fn get(&self, x: usize, y: usize) -> T {
+        #[allow(clippy::panic, reason = "This is the version that panics - _optional does not")]
+        self.get_optional(x, y)
+            .unwrap_or_else(|| panic!("Cannot access index ({x}, {y}) because it is out of bounds for a grid of dimension {}x{}", self.width(), self.height()))
+    }
 
     /// Get the current value at the specified position if the position is inside of bounds
     ///
@@ -22,13 +26,7 @@ pub trait Grid<T> {
     ///
     /// returns: Value at position or None
     #[must_use]
-    fn get_optional(&self, x: usize, y: usize) -> Option<T> {
-        if self.is_in_bounds(x, y) {
-            Some(self.get(x, y))
-        } else {
-            None
-        }
-    }
+    fn get_optional(&self, x: usize, y: usize) -> Option<T>;
 
     /// the size in x-direction
     #[must_use]
@@ -102,7 +100,14 @@ pub trait GridMut<T: Clone>: Grid<T> {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    fn set(&mut self, x: usize, y: usize, value: T);
+    fn set(&mut self, x: usize, y: usize, value: T) {
+        #[allow(
+            clippy::expect_used,
+            reason = "This is the version that panics - _optional does not"
+        )]
+        let worked = self.set_optional(x, y, value);
+        assert!(worked, "Cannot access index ({x}, {y}) because it is out of bounds for a grid of dimension {}x{}", self.width(), self.height());
+    }
 
     /// Sets the value at the specified position if the position is inside of bounds
     ///
@@ -112,14 +117,7 @@ pub trait GridMut<T: Clone>: Grid<T> {
     ///
     /// returns: true if the value has been set
     #[must_use]
-    fn set_optional(&mut self, x: usize, y: usize, value: T) -> bool {
-        if self.is_in_bounds(x, y) {
-            self.set(x, y, value);
-            true
-        } else {
-            false
-        }
-    }
+    fn set_optional(&mut self, x: usize, y: usize, value: T) -> bool;
 
     /// Sets all cells in the grid to the specified value
     fn fill(&mut self, value: T);

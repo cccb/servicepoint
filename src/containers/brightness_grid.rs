@@ -93,7 +93,7 @@ impl TryFrom<ByteGrid> for BrightnessGrid {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Brightness, BrightnessGrid, DataRef, ValueGrid};
+    use crate::{Brightness, BrightnessGrid, DataRef, GridMut, ValueGrid};
 
     #[test]
     fn to_u8_grid() {
