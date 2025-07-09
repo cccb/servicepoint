@@ -1,9 +1,5 @@
 use crate::{
-    containers::{
-        absolute_bounds_to_abs_range,
-        char_grid::{CharGridExt, CharGridMutExt},
-        relative_bounds_to_abs_range,
-    },
+    containers::{absolute_bounds_to_abs_range, relative_bounds_to_abs_range},
     Grid, GridMut,
 };
 use std::{
@@ -62,7 +58,7 @@ macro_rules! define_window {
 
             #[must_use]
             pub fn split_horizontal(
-                self,
+                &'t self,
                 left_width: usize,
             ) -> Option<(
                 Window<'t, TElement, TGrid>,
@@ -75,14 +71,17 @@ macro_rules! define_window {
                     self.xs.start..middle_abs,
                     self.ys.clone(),
                 )?;
-                let right =
-                    Window::new(self.grid, middle_abs..self.xs.end, self.ys)?;
+                let right = Window::new(
+                    self.grid,
+                    middle_abs..self.xs.end,
+                    self.ys.clone(),
+                )?;
                 Some((left, right))
             }
 
             #[must_use]
             pub fn split_vertical(
-                self,
+                &'t self,
                 top_height: usize,
             ) -> Option<(
                 Window<'t, TElement, TGrid>,
@@ -95,8 +94,11 @@ macro_rules! define_window {
                     self.xs.clone(),
                     self.ys.start..middle_abs,
                 )?;
-                let bottom =
-                    Window::new(self.grid, self.xs, middle_abs..self.ys.end)?;
+                let bottom = Window::new(
+                    self.grid,
+                    self.xs.clone(),
+                    middle_abs..self.ys.end,
+                )?;
                 Some((top, bottom))
             }
         }
@@ -123,9 +125,6 @@ macro_rules! define_window {
                 self.ys.len()
             }
         }
-
-        #[inherent::inherent]
-        impl<TGrid: Grid<char>> CharGridExt for $name<'_, char, TGrid> {}
     };
 }
 
@@ -151,9 +150,6 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> GridMut<TElement>
     }
 }
 
-#[inherent::inherent]
-impl<TGrid: GridMut<char>> CharGridMutExt for WindowMut<'_, char, TGrid> {}
-
 impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
     /// Creates a mutable window into the grid.
     ///
@@ -168,40 +164,47 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
         WindowMut::new(self.grid, xs, ys)
     }
 
-    pub fn deref_assign<O: Grid<TElement>>(&mut self, other: &O) {
-        let width = self.width();
-        let height = self.height();
-        assert_eq!(width, other.width(), "Cannot assign grid of width {} to a window of width {}", other.width(), self.width());
-        assert_eq!(height, other.height(), "Cannot assign grid of height {} to a height of width {}", other.height(), self.height());
-        for y in 0..height {
-            for x in 0..width {
-                self.set(x, y, other.get(x, y));
-            }
-        }
-    }
-
     #[must_use]
-    pub fn split_horizontal_mut(
-        self,
+    pub fn split_horizontal_mut<'t>(
+        &'t mut self,
         left_width: usize,
-    ) -> Option<(Self, Self)> {
+    ) -> Option<(
+        WindowMut<'t, TElement, TGrid>,
+        WindowMut<'t, TElement, TGrid>,
+    )> {
         assert!(left_width <= self.width());
-        let (grid1, grid2) = unsafe { Self::duplicate_mutable_ref(self.grid) };
+        let (grid1, grid2): (&'t mut TGrid, &'t mut TGrid) =
+            unsafe { Self::duplicate_mutable_ref(self.grid) };
         let middle_abs = self.xs.start + left_width;
         let left =
             WindowMut::new(grid1, self.xs.start..middle_abs, self.ys.clone())?;
-        let right = WindowMut::new(grid2, middle_abs..self.xs.end, self.ys)?;
+        let right =
+            WindowMut::new(grid2, middle_abs..self.xs.end, self.ys.clone())?;
         Some((left, right))
     }
 
     #[must_use]
-    pub fn split_vertical_mut(self, top_height: usize) -> Option<(Self, Self)> {
+    pub fn split_vertical_mut<'t>(
+        &'t mut self,
+        top_height: usize,
+    ) -> Option<(
+        WindowMut<'t, TElement, TGrid>,
+        WindowMut<'t, TElement, TGrid>,
+    )> {
         assert!(top_height <= self.height());
-        let (grid1, grid2) = unsafe { Self::duplicate_mutable_ref(self.grid) };
+        let (grid1, grid2): (&'t mut TGrid, &'t mut TGrid) =
+            unsafe { Self::duplicate_mutable_ref(self.grid) };
         let middle_abs = self.ys.start + top_height;
-        let top =
-            WindowMut::new(grid1, self.xs.clone(), self.ys.start..middle_abs)?;
-        let bottom = WindowMut::new(grid2, self.xs, middle_abs..self.ys.end)?;
+        let top = WindowMut::<'t>::new(
+            grid1,
+            self.xs.clone(),
+            self.ys.start..middle_abs,
+        )?;
+        let bottom = WindowMut::<'t>::new(
+            grid2,
+            self.xs.clone(),
+            middle_abs..self.ys.end,
+        )?;
         Some((top, bottom))
     }
 
@@ -361,7 +364,23 @@ mod tests {
         let mut grid = ByteGrid::new(5, 5);
         grid.fill(1);
 
-        assert_eq!((0..5).len(), 5);
-        //let mut w1 = grid
+        let mut win = grid.window_mut(.., ..).unwrap();
+        let (mut top, mut bottom) = win.split_vertical_mut(2).unwrap();
+        let (mut left, mut right) = bottom.split_horizontal_mut(2).unwrap();
+
+        top.fill(2);
+        left.fill(3);
+        right.fill(4);
+
+        let grid2 = ByteGrid::from(&win.window(1..4, 1..4).unwrap());
+
+        assert_eq!(grid2.data_ref(), &[2, 2, 2, 3, 4, 4, 3, 4, 4,]);
+        assert_eq!(
+            grid.data_ref(),
+            &[
+                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 4, 4, 4, 3, 3, 4, 4, 4, 3,
+                3, 4, 4, 4,
+            ]
+        );
     }
 }

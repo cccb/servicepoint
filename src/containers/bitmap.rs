@@ -285,40 +285,20 @@ impl From<Bitmap> for DisplayBitVec {
 impl TryFrom<&ValueGrid<bool>> for Bitmap {
     type Error = ();
 
-    /// Converts a grid of [bool]s into a [Bitmap].
-    ///
-    /// Returns Err if the width of `value` is not dividable by 8
     fn try_from(value: &ValueGrid<bool>) -> Result<Self, Self::Error> {
         let mut result = Self::new(value.width(), value.height()).ok_or(())?;
-        for (mut to, from) in result.iter_mut().zip(value.iter()) {
-            *to = *from;
-        }
+        result.deref_assign(value);
         Ok(result)
     }
 }
 
-impl<G: Grid<bool>> TryFrom<&Window<'_, bool, G>> for Bitmap {
+impl<T: Grid<bool>> TryFrom<&Window<'_, bool, T>> for Bitmap {
     type Error = ();
 
-    fn try_from(value: &Window<'_, bool, G>) -> Result<Self, Self::Error> {
+    fn try_from(value: &Window<bool, T>) -> Result<Self, Self::Error> {
         let mut result = Self::new(value.width(), value.height()).ok_or(())?;
-        for y in 0..value.height() {
-            for x in 0..value.width() {
-                result.set(x, y, value.get(x, y));
-            }
-        }
+        result.deref_assign(value);
         Ok(result)
-    }
-}
-
-impl From<&Bitmap> for ValueGrid<bool> {
-    /// Converts a [Bitmap] into a grid of [bool]s.
-    fn from(value: &Bitmap) -> Self {
-        let mut result = Self::new(value.width(), value.height());
-        for (to, from) in result.iter_mut().zip(value.iter()) {
-            *to = *from;
-        }
-        result
     }
 }
 

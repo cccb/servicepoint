@@ -145,7 +145,7 @@ impl<T: Value> ValueGrid<T> {
     }
 
     /// Iterate over all rows in [`ValueGrid`] top to bottom.
-    pub fn iter_rows(&self) -> IterGridRows<T> {
+    pub fn iter_rows(&self) -> impl Iterator<Item = Iter<T>> + use<'_, T> {
         IterGridRows { grid: self, row: 0 }
     }
 
@@ -222,28 +222,6 @@ impl<T: Value> ValueGrid<T> {
             height: self.height(),
             data,
         }
-    }
-
-    /// Copies a row from the grid.
-    ///
-    /// Returns [None] if y is out of bounds.
-    #[must_use]
-    pub fn get_row(&self, y: usize) -> Option<Vec<T>> {
-        self.data
-            .chunks_exact(self.width())
-            .nth(y)
-            .map(<[T]>::to_vec)
-    }
-
-    /// Copies a column from the grid.
-    ///
-    /// Returns [None] if x is out of bounds.
-    #[must_use]
-    pub fn get_col(&self, x: usize) -> Option<Vec<T>> {
-        self.data
-            .chunks_exact(self.width())
-            .map(|row| row.get(x).copied())
-            .collect()
     }
 
     /// Overwrites a column in the grid.
@@ -432,9 +410,19 @@ impl<T: Value> From<&ValueGrid<T>> for Vec<T> {
     }
 }
 
+impl<T: Value, G: Grid<T>> From<&G> for ValueGrid<T> {
+    fn from(grid: &G) -> Self {
+        let width = grid.width();
+        let height = grid.height();
+        let mut result = Self::new(width, height);
+        result.deref_assign(grid);
+        result
+    }
+}
+
 /// An iterator iver the rows in a [`ValueGrid`]
 #[must_use]
-pub struct IterGridRows<'t, T: Value> {
+struct IterGridRows<'t, T: Value> {
     grid: &'t ValueGrid<T>,
     row: usize,
 }
@@ -455,7 +443,7 @@ impl<'t, T: Value> Iterator for IterGridRows<'t, T> {
     }
 }
 
-pub struct EnumerateGrid<'t, T: Value> {
+struct EnumerateGrid<'t, T: Value> {
     grid: &'t ValueGrid<T>,
     row: usize,
     column: usize,
@@ -475,18 +463,6 @@ impl<T: Value> Iterator for EnumerateGrid<'_, T> {
         if self.column == self.grid.width {
             self.column = 0;
             self.row += 1;
-        }
-        result
-    }
-}
-
-impl<E: Value> From<&Window<'_, E, Self>> for ValueGrid<E> {
-    fn from(value: &Window<'_, E, Self>) -> Self {
-        let mut result = Self::new(value.width(), value.height());
-        for y in 0..value.height() {
-            for x in 0..value.width() {
-                result.set(x, y, value.get(x, y));
-            }
         }
         result
     }

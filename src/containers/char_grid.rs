@@ -1,6 +1,4 @@
-use crate::{
-    Grid, GridMut, SetValueSeriesError, TryLoadValueGridError, ValueGrid,
-};
+use crate::{CharGridMutExt, TryLoadValueGridError, ValueGrid};
 use std::string::FromUtf8Error;
 
 /// A grid containing UTF-8 characters.
@@ -60,183 +58,6 @@ impl CharGrid {
         }
         result
     }
-
-    /// Loads a [`CharGrid`] with the specified dimensions from the provided UTF-8 bytes.
-    ///
-    /// returns: [`CharGrid`] that contains the provided data, or [`FromUtf8Error`] if the data is invalid.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use servicepoint::CharGrid;
-    /// let grid = CharGrid::load_utf8(2, 2, [97u8, 98, 99, 100].to_vec());
-    /// ```
-    pub fn load_utf8(
-        width: usize,
-        height: usize,
-        bytes: Vec<u8>,
-    ) -> Result<CharGrid, LoadUtf8Error> {
-        let s: Vec<char> = String::from_utf8(bytes)?.chars().collect();
-        CharGrid::load(width, height, &s).ok_or(LoadUtf8Error::TryLoadError(
-            TryLoadValueGridError::InvalidDimensions,
-        ))
-    }
-}
-
-pub trait CharGridExt: Grid<char> {
-    /// Copies a column from the grid as a String.
-    ///
-    /// Returns [None] if x is out of bounds.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use servicepoint::CharGrid;
-    /// let grid = CharGrid::from("ab\ncd");
-    /// let col = grid.get_col_str(0).unwrap(); // "ac"
-    /// ```
-    #[must_use]
-    fn get_col_str(&self, x: usize) -> Option<String> {
-        Some((0..self.height()).map(|y| self.get(x, y)).collect())
-    }
-
-    /// Copies a row from the grid as a String.
-    ///
-    /// Returns [None] if y is out of bounds.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use servicepoint::CharGrid;
-    /// let grid = CharGrid::from("ab\ncd");
-    /// let row = grid.get_row_str(0).unwrap(); // "ab"
-    /// ```
-    #[must_use]
-    fn get_row_str(&self, y: usize) -> Option<String> {
-        Some((0..self.width()).map(|x| self.get(x, y)).collect())
-    }
-}
-
-#[inherent::inherent]
-impl CharGridExt for CharGrid {
-    #[must_use]
-    pub fn get_col_str(&self, x: usize) -> Option<String> {
-        Some(String::from_iter(self.get_col(x)?))
-    }
-
-    #[must_use]
-    pub fn get_row_str(&self, y: usize) -> Option<String> {
-        Some(String::from_iter(self.get_row(y)?))
-    }
-}
-
-pub trait CharGridMutExt: GridMut<char> {
-    /// Overwrites a row in the grid with a str.
-    ///
-    /// Returns [`SetValueSeriesError`] if y is out of bounds or `row` is not of the correct size.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use servicepoint::{CharGrid, CharGridMutExt};
-    /// let mut grid = CharGrid::from("ab\ncd");
-    /// grid.set_row_str(0, "ef").unwrap();
-    /// ```
-    fn set_row_str(
-        &mut self,
-        y: usize,
-        value: &str,
-    ) -> Result<(), SetValueSeriesError> {
-        let width = self.width();
-
-        let len = value.len();
-        if len > width {
-            return Err(SetValueSeriesError::InvalidLength {
-                actual: len,
-                expected: width,
-            });
-        }
-
-        let height = self.height();
-        if y >= height {
-            return Err(SetValueSeriesError::OutOfBounds {
-                index: y,
-                size: height,
-            });
-        }
-
-        let chars = value.chars().take(width);
-        for (x, c) in chars.enumerate() {
-            self.set(x, y, c);
-        }
-
-        Ok(())
-    }
-
-    /// Overwrites a column in the grid with a str.
-    ///
-    /// Returns [`SetValueSeriesError`] if y is out of bounds or `row` is not of the correct size.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use servicepoint::CharGrid;
-    /// let mut grid = CharGrid::from("ab\ncd");
-    /// grid.set_col_str(0, "ef").unwrap();
-    /// ```
-    fn set_col_str(
-        &mut self,
-        x: usize,
-        value: &str,
-    ) -> Result<(), SetValueSeriesError> {
-        let height = self.height();
-
-        let len = value.len();
-        if len > height {
-            return Err(SetValueSeriesError::InvalidLength {
-                actual: len,
-                expected: height,
-            });
-        }
-
-        let width = self.width();
-        if x >= width {
-            return Err(SetValueSeriesError::OutOfBounds {
-                index: x,
-                size: width,
-            });
-        }
-
-        let chars = value.chars().take(height);
-        for (y, c) in chars.enumerate() {
-            self.set(x, y, c);
-        }
-
-        Ok(())
-    }
-}
-
-#[inherent::inherent]
-impl CharGridMutExt for CharGrid {
-    pub fn set_col_str(
-        &mut self,
-        x: usize,
-        value: &str,
-    ) -> Result<(), SetValueSeriesError>;
-
-    pub fn set_row_str(
-        &mut self,
-        y: usize,
-        value: &str,
-    ) -> Result<(), SetValueSeriesError>;
-}
-
-#[derive(Debug, thiserror::Error)]
-pub enum LoadUtf8Error {
-    #[error(transparent)]
-    FromUtf8Error(#[from] FromUtf8Error),
-    #[error(transparent)]
-    TryLoadError(#[from] TryLoadValueGridError),
 }
 
 impl From<&str> for CharGrid {
@@ -308,7 +129,7 @@ impl From<&CharGrid> for Vec<u8> {
     /// let grid = CharGrid::from("ab\ncd");
     /// let height = grid.height();
     /// let width = grid.width();
-    /// let grid = CharGrid::load_utf8(width, height, grid.into());
+    /// let bytes = Vec::<u8>::from(grid);
     /// ```
     fn from(value: &CharGrid) -> Self {
         value.iter().collect::<String>().into_bytes()
@@ -325,6 +146,8 @@ impl From<CharGrid> for Vec<u8> {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::{CharGridExt, SetValueSeriesError};
+
     #[test]
     fn col_str() {
         let mut grid = CharGrid::new(2, 3);
@@ -364,8 +187,15 @@ mod test {
     fn round_trip_bytes() {
         let grid = CharGrid::from("Hello\0\nWorld!\n...\0\0\0");
         let bytes: Vec<u8> = grid.clone().into();
-        let copy =
-            CharGrid::load_utf8(grid.width(), grid.height(), bytes).unwrap();
+        let copy = CharGrid::load(
+            grid.width(),
+            grid.height(),
+            &String::from_utf8(bytes)
+                .unwrap()
+                .chars()
+                .collect::<Vec<_>>(),
+        )
+        .unwrap();
         assert_eq!(grid, copy);
     }
 

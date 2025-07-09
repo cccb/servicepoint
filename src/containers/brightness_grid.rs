@@ -100,7 +100,7 @@ mod tests {
         let mut grid = BrightnessGrid::new(2, 2);
         grid.set(1, 0, Brightness::MIN);
         grid.set(0, 1, Brightness::MAX);
-        let actual = ValueGrid::from(&grid);
+        let actual: ValueGrid<u8> = ValueGrid::from(&grid);
         assert_eq!(actual.data_ref(), &[11, 0, 11, 11]);
     }
 

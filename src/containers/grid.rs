@@ -53,6 +53,40 @@ pub trait Grid<T> {
         let height = self.height();
         assert!(y < height, "cannot access index [{x}, {y}] because y is outside of bounds [0..{height})");
     }
+
+    /// Copies a row from the grid.
+    ///
+    /// Returns [None] if y is out of bounds.
+    #[must_use]
+    fn get_row(&self, y: usize) -> Option<Vec<T>> {
+        if y >= self.height() {
+            return None;
+        }
+
+        let width = self.width();
+        let mut row = Vec::with_capacity(width);
+        for x in 0..width {
+            row.push(self.get(x, y));
+        }
+        Some(row)
+    }
+
+    /// Copies a column from the grid.
+    ///
+    /// Returns [None] if x is out of bounds.
+    #[must_use]
+    fn get_col(&self, x: usize) -> Option<Vec<T>> {
+        if x >= self.width() {
+            return None;
+        }
+
+        let height = self.height();
+        let mut col = Vec::with_capacity(height);
+        for y in 0..height {
+            col.push(self.get(x, y));
+        }
+        Some(col)
+    }
 }
 
 /// A two-dimensional mutable grid of `T`
@@ -87,4 +121,33 @@ pub trait GridMut<T>: Grid<T> {
 
     /// Sets all cells in the grid to the specified value
     fn fill(&mut self, value: T);
+
+    /// Fills the grid with the values from the provided grid.
+    ///
+    /// The grids have to match in size exactly.
+    ///
+    /// For 1D slices the equivalent would be `*slice = other_slice`.
+    fn deref_assign<O: Grid<T>>(&mut self, other: &O) {
+        let width = self.width();
+        let height = self.height();
+        assert_eq!(
+            width,
+            other.width(),
+            "Cannot assign grid of width {} to a window of width {}",
+            other.width(),
+            self.width()
+        );
+        assert_eq!(
+            height,
+            other.height(),
+            "Cannot assign grid of height {} to a height of width {}",
+            other.height(),
+            self.height()
+        );
+        for y in 0..height {
+            for x in 0..width {
+                self.set(x, y, other.get(x, y));
+            }
+        }
+    }
 }
