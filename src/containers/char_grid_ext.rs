@@ -143,3 +143,33 @@ impl<G: GridMut<char>> CharGridMutExt for G {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::{CharGrid, CharGridExt, CharGridMutExt, SetValueSeriesError};
+
+    #[test]
+    fn col_str() {
+        let mut grid = CharGrid::new(2, 3);
+        assert_eq!(grid.get_col_str(2), None);
+        assert_eq!(grid.get_col_str(1), Some(String::from("\0\0\0")));
+        assert_eq!(grid.set_col_str(1, "abc"), Ok(()));
+        assert_eq!(grid.get_col_str(1), Some(String::from("abc")));
+    }
+
+    #[test]
+    fn row_str() {
+        let mut grid = CharGrid::new(2, 3);
+        assert_eq!(grid.get_row_str(3), None);
+        assert_eq!(grid.get_row_str(1), Some(String::from("\0\0")));
+        assert_eq!(
+            grid.set_row_str(1, "abc"),
+            Err(SetValueSeriesError::InvalidLength {
+                expected: 2,
+                actual: 3
+            })
+        );
+        assert_eq!(grid.set_row_str(1, "ab"), Ok(()));
+        assert_eq!(grid.get_row_str(1), Some(String::from("ab")));
+    }
+}

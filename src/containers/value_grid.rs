@@ -224,66 +224,6 @@ impl<T: Value> ValueGrid<T> {
         }
     }
 
-    /// Overwrites a column in the grid.
-    ///
-    /// Returns [Err] if x is out of bounds or `col` is not of the correct size.
-    pub fn set_col(
-        &mut self,
-        x: usize,
-        col: &[T],
-    ) -> Result<(), SetValueSeriesError> {
-        if col.len() != self.height() {
-            return Err(SetValueSeriesError::InvalidLength {
-                expected: self.height(),
-                actual: col.len(),
-            });
-        }
-        let width = self.width();
-        if self
-            .data
-            .chunks_exact_mut(width)
-            .zip(col.iter())
-            .map(|(row, column_value)| {
-                row.get_mut(x).map(move |cell| *cell = *column_value)
-            })
-            .all(|cell| cell.is_some())
-        {
-            Ok(())
-        } else {
-            Err(SetValueSeriesError::OutOfBounds {
-                index: x,
-                size: width,
-            })
-        }
-    }
-
-    /// Overwrites a row in the grid.
-    ///
-    /// Returns [Err] if y is out of bounds or `row` is not of the correct size.
-    pub fn set_row(
-        &mut self,
-        y: usize,
-        row: &[T],
-    ) -> Result<(), SetValueSeriesError> {
-        let width = self.width();
-        if row.len() != width {
-            return Err(SetValueSeriesError::InvalidLength {
-                expected: width,
-                actual: row.len(),
-            });
-        }
-
-        let Some(chunk) = self.data.chunks_exact_mut(width).nth(y) else {
-            return Err(SetValueSeriesError::OutOfBounds {
-                size: self.height(),
-                index: y,
-            });
-        };
-
-        chunk.copy_from_slice(row);
-        Ok(())
-    }
-
     /// Enumerates all values in the grid.
     pub fn enumerate(
         &self,
@@ -585,59 +525,6 @@ mod tests {
         assert_eq!(Some(&mut 5), vec.get_ref_mut_optional(0, 0));
         assert_eq!(Some(&mut 42), vec.get_ref_mut_optional(2, 1));
         assert_eq!(Some(&mut 8), vec.get_ref_mut_optional(2, 2));
-    }
-
-    #[test]
-    fn optional() {
-        let mut grid = ValueGrid::load(2, 2, &[0, 1, 2, 3]).unwrap();
-        assert!(grid.set_optional(0, 0, 5));
-        assert!(!grid.set_optional(0, 8, 42));
-        assert_eq!(grid.data, [5, 1, 2, 3]);
-
-        assert_eq!(grid.get_optional(0, 0), Some(5));
-        assert_eq!(grid.get_optional(0, 8), None);
-    }
-
-    #[test]
-    fn col() {
-        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]).unwrap();
-        assert_eq!(grid.get_col(0), Some(vec![0, 2, 4]));
-        assert_eq!(grid.get_col(1), Some(vec![1, 3, 5]));
-        assert_eq!(grid.get_col(2), None);
-        assert_eq!(grid.set_col(0, &[5, 7, 9]), Ok(()));
-        assert_eq!(
-            grid.set_col(2, &[5, 7, 9]),
-            Err(SetValueSeriesError::OutOfBounds { size: 2, index: 2 })
-        );
-        assert_eq!(
-            grid.set_col(0, &[5, 7]),
-            Err(SetValueSeriesError::InvalidLength {
-                expected: 3,
-                actual: 2
-            })
-        );
-        assert_eq!(grid.get_col(0), Some(vec![5, 7, 9]));
-    }
-
-    #[test]
-    fn row() {
-        let mut grid = ValueGrid::load(2, 3, &[0, 1, 2, 3, 4, 5]).unwrap();
-        assert_eq!(grid.get_row(0), Some(vec![0, 1]));
-        assert_eq!(grid.get_row(2), Some(vec![4, 5]));
-        assert_eq!(grid.get_row(3), None);
-        assert_eq!(grid.set_row(0, &[5, 7]), Ok(()));
-        assert_eq!(grid.get_row(0), Some(vec![5, 7]));
-        assert_eq!(
-            grid.set_row(3, &[5, 7]),
-            Err(SetValueSeriesError::OutOfBounds { size: 3, index: 3 })
-        );
-        assert_eq!(
-            grid.set_row(2, &[5, 7, 3]),
-            Err(SetValueSeriesError::InvalidLength {
-                expected: 2,
-                actual: 3
-            })
-        );
     }
 
     #[test]

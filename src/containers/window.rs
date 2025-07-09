@@ -56,6 +56,11 @@ macro_rules! define_window {
                 Window::new(self.grid, xs, ys)
             }
 
+            /// Splits the window horizontally, returning windows to the left and right parts.
+            ///
+            /// The right window fills the remaining width, which may be zero.
+            ///
+            /// Returns None for out-of-bounds.
             #[must_use]
             pub fn split_horizontal(
                 &'t self,
@@ -79,6 +84,11 @@ macro_rules! define_window {
                 Some((left, right))
             }
 
+            /// Splits the window vertically, returning windows to the top and bottom parts.
+            ///
+            /// The bottom window fills the remaining height, which may be zero.
+            ///
+            /// Returns None for out-of-bounds.
             #[must_use]
             pub fn split_vertical(
                 &'t self,
@@ -164,6 +174,11 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
         WindowMut::new(self.grid, xs, ys)
     }
 
+    /// Splits the window horizontally, returning windows to the left and right parts.
+    ///
+    /// The right window fills the remaining width, which may be zero.
+    ///
+    /// Returns None for out-of-bounds.
     #[must_use]
     pub fn split_horizontal_mut<'t>(
         &'t mut self,
@@ -183,6 +198,11 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
         Some((left, right))
     }
 
+    /// Splits the window vertically, returning windows to the top and bottom parts.
+    ///
+    /// The bottom window fills the remaining height, which may be zero.
+    ///
+    /// Returns None for out-of-bounds.
     #[must_use]
     pub fn split_vertical_mut<'t>(
         &'t mut self,
