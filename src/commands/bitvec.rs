@@ -414,4 +414,18 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn invalid_offset() {
+        let command = BitVecCommand {
+            bitvec: DisplayBitVec::repeat(false, 16),
+            offset: u16::MAX as usize + 1,
+            operation: BinaryOperation::Or,
+            compression: CompressionCode::Uncompressed,
+        };
+        assert!(matches!(
+            Packet::try_from(command),
+            Err(TryIntoPacketError::ConversionError(_)),
+        ))
+    }
 }

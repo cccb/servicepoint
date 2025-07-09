@@ -146,6 +146,7 @@ impl From<CharGrid> for Vec<u8> {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::Grid;
     #[test]
     fn str_to_char_grid() {
         // conversion with .to_string() covers one more line

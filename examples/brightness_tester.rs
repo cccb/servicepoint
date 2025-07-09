@@ -3,7 +3,7 @@
 use clap::Parser;
 use servicepoint::{
     Bitmap, BitmapCommand, Brightness, BrightnessGrid, BrightnessGridCommand,
-    DataRef, UdpSocketExt, TILE_HEIGHT, TILE_WIDTH,
+    DataRef, GridMut, UdpSocketExt, TILE_HEIGHT, TILE_WIDTH,
 };
 use std::net::UdpSocket;
 

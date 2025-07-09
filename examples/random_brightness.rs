@@ -5,7 +5,7 @@ use clap::Parser;
 use rand::Rng;
 use servicepoint::{
     Bitmap, BitmapCommand, Brightness, BrightnessGrid, BrightnessGridCommand,
-    GlobalBrightnessCommand, Grid, GridMut, Origin, UdpSocketExt, TILE_HEIGHT,
+    GlobalBrightnessCommand, GridMut, Origin, UdpSocketExt, TILE_HEIGHT,
     TILE_WIDTH,
 };
 use std::{net::UdpSocket, time::Duration};

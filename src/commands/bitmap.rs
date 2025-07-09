@@ -2,7 +2,7 @@ use crate::{
     command_code::{CommandCode, InvalidCommandCodeError},
     commands::errors::{TryFromPacketError, TryIntoPacketError},
     compression::{compress, decompress, CompressionError},
-    Bitmap, CompressionCode, DataRef, Header, Origin, Packet, Pixels,
+    Bitmap, CompressionCode, DataRef, Grid, Header, Origin, Packet, Pixels,
     TypedCommand, TILE_SIZE,
 };
 
@@ -183,6 +183,7 @@ mod tests {
     use super::*;
     use crate::{
         command_code::CommandCode, commands::tests::TestImplementsCommand,
+        GridMut,
     };
 
     impl TestImplementsCommand for BitmapCommand {}
@@ -324,5 +325,18 @@ mod tests {
                 .into(),
             );
         }
+    }
+
+    #[test]
+    fn invalid_y() {
+        let command = BitmapCommand {
+            bitmap: Bitmap::new(8, 3).unwrap(),
+            origin: Origin::new(4, u16::MAX as usize + 1),
+            compression: CompressionCode::Uncompressed,
+        };
+        assert!(matches!(
+            Packet::try_from(command),
+            Err(TryIntoPacketError::ConversionError(_)),
+        ))
     }
 }

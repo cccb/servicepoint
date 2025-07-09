@@ -2,7 +2,6 @@ use crate::{
     containers::absolute_bounds_to_abs_range, DataRef, Grid, GridMut, Window,
     WindowMut,
 };
-use inherent::inherent;
 use std::{
     fmt::Debug,
     ops::RangeBounds,
@@ -271,11 +270,9 @@ pub enum TryLoadValueGridError {
     InvalidDimensions,
 }
 
-#[inherent]
 impl<T: Value> Grid<T> for ValueGrid<T> {
     #[must_use]
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn get_optional(&self, x: usize, y: usize) -> Option<T> {
+    fn get_optional(&self, x: usize, y: usize) -> Option<T> {
         if self.is_in_bounds(x, y) {
             Some(self.data[x + y * self.width])
         } else {
@@ -284,17 +281,16 @@ impl<T: Value> Grid<T> for ValueGrid<T> {
     }
 
     #[must_use]
-    pub fn width(&self) -> usize {
+    fn width(&self) -> usize {
         self.width
     }
 
     #[must_use]
-    pub fn height(&self) -> usize {
+    fn height(&self) -> usize {
         self.height
     }
 }
 
-#[inherent]
 impl<T: Value> GridMut<T> for ValueGrid<T> {
     /// Sets the value of the cell at the specified position in the grid.
     ///
@@ -306,8 +302,7 @@ impl<T: Value> GridMut<T> for ValueGrid<T> {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn set_optional(&mut self, x: usize, y: usize, value: T) -> bool {
+    fn set_optional(&mut self, x: usize, y: usize, value: T) -> bool {
         if self.is_in_bounds(x, y) {
             self.data[x + y * self.width] = value;
             true
@@ -316,8 +311,7 @@ impl<T: Value> GridMut<T> for ValueGrid<T> {
         }
     }
 
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn fill(&mut self, value: T) {
+    fn fill(&mut self, value: T) {
         self.data.fill(value);
     }
 }

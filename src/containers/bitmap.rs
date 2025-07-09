@@ -3,7 +3,6 @@ use crate::{
     GridMut, Payload, ValueGrid, Window, WindowMut, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
-use inherent::inherent;
 use std::ops::RangeBounds;
 
 /// A fixed-size 2D grid of booleans.
@@ -206,11 +205,9 @@ impl Bitmap {
     }
 }
 
-#[inherent]
 impl Grid<bool> for Bitmap {
     #[must_use]
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn get_optional(&self, x: usize, y: usize) -> Option<bool> {
+    fn get_optional(&self, x: usize, y: usize) -> Option<bool> {
         let index = x + y * self.width;
         if self.is_in_bounds(x, y) {
             Some(self.bit_vec[index])
@@ -220,17 +217,16 @@ impl Grid<bool> for Bitmap {
     }
 
     #[must_use]
-    pub fn width(&self) -> usize {
+    fn width(&self) -> usize {
         self.width
     }
 
     #[must_use]
-    pub fn height(&self) -> usize {
+    fn height(&self) -> usize {
         self.height
     }
 }
 
-#[inherent]
 impl GridMut<bool> for Bitmap {
     /// Sets the value of the specified position in the [Bitmap].
     ///
@@ -244,8 +240,7 @@ impl GridMut<bool> for Bitmap {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn set_optional(&mut self, x: usize, y: usize, value: bool) -> bool {
+    fn set_optional(&mut self, x: usize, y: usize, value: bool) -> bool {
         if self.is_in_bounds(x, y) {
             self.bit_vec.set(x + y * self.width, value);
             true
@@ -260,8 +255,7 @@ impl GridMut<bool> for Bitmap {
     ///
     /// - `this`: instance to write to
     /// - `value`: the value to set all pixels to
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn fill(&mut self, value: bool) {
+    fn fill(&mut self, value: bool) {
         self.bit_vec.fill(value);
     }
 }

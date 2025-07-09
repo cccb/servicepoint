@@ -26,7 +26,6 @@ macro_rules! define_window {
         {
             /// Create a new window into `grid`.
             #[must_use]
-            #[allow(unused, reason = "False positive because of #[inherent]")]
             pub fn new(
                 grid: $grid,
                 xs: impl RangeBounds<usize>,
@@ -113,13 +112,11 @@ macro_rules! define_window {
             }
         }
 
-        #[inherent::inherent]
         impl<TElement: Copy, TGrid: Grid<TElement>> Grid<TElement>
             for $name<'_, TElement, TGrid>
         {
             #[must_use]
-            #[allow(unused, reason = "False positive because of #[inherent]")]
-            pub fn get_optional(&self, x: usize, y: usize) -> Option<TElement> {
+            fn get_optional(&self, x: usize, y: usize) -> Option<TElement> {
                 if self.is_in_bounds(x, y) {
                     Some(self.grid.get(self.xs.start + x, self.ys.start + y))
                 } else {
@@ -128,14 +125,12 @@ macro_rules! define_window {
             }
 
             #[must_use]
-            #[allow(unused, reason = "False positive because of #[inherent]")]
-            pub fn width(&self) -> usize {
+            fn width(&self) -> usize {
                 self.xs.len()
             }
 
             #[must_use]
-            #[allow(unused, reason = "False positive because of #[inherent]")]
-            pub fn height(&self) -> usize {
+            fn height(&self) -> usize {
                 self.ys.len()
             }
         }
@@ -145,17 +140,10 @@ macro_rules! define_window {
 define_window!(Window, &'t TGrid);
 define_window!(WindowMut, &'t mut TGrid);
 
-#[inherent::inherent]
 impl<TElement: Copy, TGrid: GridMut<TElement>> GridMut<TElement>
     for WindowMut<'_, TElement, TGrid>
 {
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn set_optional(
-        &mut self,
-        x: usize,
-        y: usize,
-        value: TElement,
-    ) -> bool {
+    fn set_optional(&mut self, x: usize, y: usize, value: TElement) -> bool {
         if self.is_in_bounds(x, y) {
             self.grid.set(self.xs.start + x, self.ys.start + y, value);
             true
@@ -164,8 +152,7 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> GridMut<TElement>
         }
     }
 
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    pub fn fill(&mut self, value: TElement) {
+    fn fill(&mut self, value: TElement) {
         for y in self.ys.clone() {
             for x in self.xs.clone() {
                 self.grid.set(x, y, value);
