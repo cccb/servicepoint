@@ -126,8 +126,7 @@
           default = pkgs.mkShell rec {
             inputsFrom = [ self.packages.${system}.servicepoint ];
             packages = with pkgs; [
-              (pkgs.symlinkJoin
-              {
+              (pkgs.symlinkJoin {
                 name = "rust-toolchain";
                 paths = with pkgs; [
                   rustc
@@ -145,7 +144,7 @@
             ];
             LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath (builtins.concatMap (d: d.buildInputs) inputsFrom)}";
             RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
-            RUST_LOG="all";
+            RUST_LOG = "all";
             RUST_BACKTRACE = "1";
           };
         }

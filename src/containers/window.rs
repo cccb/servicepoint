@@ -49,7 +49,7 @@ macro_rules! define_window {
                 &self,
                 xs: impl RangeBounds<usize>,
                 ys: impl RangeBounds<usize>,
-            ) -> Option<Window<TElement, TGrid>> {
+            ) -> Option<Window<'_, TElement, TGrid>> {
                 let xs = relative_bounds_to_abs_range(xs, self.xs.clone())?;
                 let ys = relative_bounds_to_abs_range(ys, self.ys.clone())?;
                 Window::new(self.grid, xs, ys)
@@ -115,7 +115,6 @@ macro_rules! define_window {
         impl<TElement: Copy, TGrid: Grid<TElement>> Grid<TElement>
             for $name<'_, TElement, TGrid>
         {
-            #[must_use]
             fn get_optional(&self, x: usize, y: usize) -> Option<TElement> {
                 if self.is_in_bounds(x, y) {
                     Some(self.grid.get(self.xs.start + x, self.ys.start + y))
@@ -124,12 +123,10 @@ macro_rules! define_window {
                 }
             }
 
-            #[must_use]
             fn width(&self) -> usize {
                 self.xs.len()
             }
 
-            #[must_use]
             fn height(&self) -> usize {
                 self.ys.len()
             }
@@ -169,7 +166,7 @@ impl<TElement: Copy, TGrid: GridMut<TElement>> WindowMut<'_, TElement, TGrid> {
         &mut self,
         xs: impl RangeBounds<usize>,
         ys: impl RangeBounds<usize>,
-    ) -> Option<WindowMut<TElement, TGrid>> {
+    ) -> Option<WindowMut<'_, TElement, TGrid>> {
         let xs = relative_bounds_to_abs_range(xs, self.xs.clone())?;
         let ys = relative_bounds_to_abs_range(ys, self.ys.clone())?;
         WindowMut::new(self.grid, xs, ys)

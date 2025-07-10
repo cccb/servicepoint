@@ -165,7 +165,7 @@ impl Bitmap {
     /// ```
     #[must_use]
     #[allow(clippy::iter_without_into_iter)]
-    pub fn iter_mut(&mut self) -> IterMut<u8, Msb0> {
+    pub fn iter_mut(&mut self) -> IterMut<'_, u8, Msb0> {
         self.bit_vec.iter_mut()
     }
 
@@ -185,7 +185,7 @@ impl Bitmap {
         &self,
         xs: impl RangeBounds<usize>,
         ys: impl RangeBounds<usize>,
-    ) -> Option<Window<bool, Self>> {
+    ) -> Option<Window<'_, bool, Self>> {
         let xs = absolute_bounds_to_abs_range(xs, self.width)?;
         let ys = absolute_bounds_to_abs_range(ys, self.height)?;
         Window::new(self, xs, ys)
@@ -198,7 +198,7 @@ impl Bitmap {
         &mut self,
         xs: impl RangeBounds<usize>,
         ys: impl RangeBounds<usize>,
-    ) -> Option<WindowMut<bool, Self>> {
+    ) -> Option<WindowMut<'_, bool, Self>> {
         let xs = absolute_bounds_to_abs_range(xs, self.width)?;
         let ys = absolute_bounds_to_abs_range(ys, self.height)?;
         WindowMut::new(self, xs, ys)
@@ -206,7 +206,6 @@ impl Bitmap {
 }
 
 impl Grid<bool> for Bitmap {
-    #[must_use]
     fn get_optional(&self, x: usize, y: usize) -> Option<bool> {
         let index = x + y * self.width;
         if self.is_in_bounds(x, y) {
@@ -216,12 +215,10 @@ impl Grid<bool> for Bitmap {
         }
     }
 
-    #[must_use]
     fn width(&self) -> usize {
         self.width
     }
 
-    #[must_use]
     fn height(&self) -> usize {
         self.height
     }

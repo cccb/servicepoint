@@ -69,12 +69,10 @@ pub trait CharGridMutExt {
 }
 
 impl<G: Grid<char>> CharGridExt for G {
-    #[must_use]
     fn get_col_str(&self, x: usize) -> Option<String> {
         Some(String::from_iter(self.get_col(x)?))
     }
 
-    #[must_use]
     fn get_row_str(&self, y: usize) -> Option<String> {
         Some(String::from_iter(self.get_row(y)?))
     }

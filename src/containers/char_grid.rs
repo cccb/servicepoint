@@ -1,5 +1,4 @@
-use crate::{CharGridMutExt, GridMut, TryLoadValueGridError, ValueGrid};
-use std::string::FromUtf8Error;
+use crate::{CharGridMutExt, GridMut, ValueGrid};
 
 /// A grid containing UTF-8 characters.
 ///

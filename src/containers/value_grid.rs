@@ -144,14 +144,14 @@ impl<T: Value> ValueGrid<T> {
     }
 
     /// Iterate over all rows in [`ValueGrid`] top to bottom.
-    pub fn iter_rows(&self) -> impl Iterator<Item = Iter<T>> + use<'_, T> {
+    pub fn iter_rows(&self) -> impl Iterator<Item = Iter<'_, T>> {
         IterGridRows { grid: self, row: 0 }
     }
 
     /// Returns an iterator that allows modifying each value.
     ///
     /// The iterator yields all cells from top left to bottom right.
-    pub fn iter_mut(&mut self) -> IterMut<T> {
+    pub fn iter_mut(&mut self) -> IterMut<'_, T> {
         self.data.iter_mut()
     }
 
@@ -242,7 +242,7 @@ impl<T: Value> ValueGrid<T> {
         &self,
         xs: impl RangeBounds<usize>,
         ys: impl RangeBounds<usize>,
-    ) -> Option<Window<T, Self>> {
+    ) -> Option<Window<'_, T, Self>> {
         let xs = absolute_bounds_to_abs_range(xs, self.width)?;
         let ys = absolute_bounds_to_abs_range(ys, self.height)?;
         Window::new(self, xs, ys)
@@ -255,7 +255,7 @@ impl<T: Value> ValueGrid<T> {
         &mut self,
         xs: impl RangeBounds<usize>,
         ys: impl RangeBounds<usize>,
-    ) -> Option<WindowMut<T, Self>> {
+    ) -> Option<WindowMut<'_, T, Self>> {
         let xs = absolute_bounds_to_abs_range(xs, self.width)?;
         let ys = absolute_bounds_to_abs_range(ys, self.height)?;
         WindowMut::new(self, xs, ys)
@@ -271,7 +271,6 @@ pub enum TryLoadValueGridError {
 }
 
 impl<T: Value> Grid<T> for ValueGrid<T> {
-    #[must_use]
     fn get_optional(&self, x: usize, y: usize) -> Option<T> {
         if self.is_in_bounds(x, y) {
             Some(self.data[x + y * self.width])
@@ -280,12 +279,10 @@ impl<T: Value> Grid<T> for ValueGrid<T> {
         }
     }
 
-    #[must_use]
     fn width(&self) -> usize {
         self.width
     }
 
-    #[must_use]
     fn height(&self) -> usize {
         self.height
     }
