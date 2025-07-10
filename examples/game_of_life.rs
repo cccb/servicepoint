@@ -2,7 +2,9 @@
 
 use clap::Parser;
 use rand::Rng;
-use servicepoint::{Bitmap, BitmapCommand, Grid, UdpSocketExt, FRAME_PACING};
+use servicepoint::{
+    Bitmap, BitmapCommand, Grid, GridMut, UdpSocketExt, FRAME_PACING,
+};
 use std::{net::UdpSocket, thread};
 
 #[derive(Parser, Debug)]

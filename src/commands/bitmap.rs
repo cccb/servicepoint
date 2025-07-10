@@ -183,6 +183,7 @@ mod tests {
     use super::*;
     use crate::{
         command_code::CommandCode, commands::tests::TestImplementsCommand,
+        GridMut,
     };
 
     impl TestImplementsCommand for BitmapCommand {}
@@ -304,7 +305,7 @@ mod tests {
             crate::commands::tests::round_trip(
                 BitmapCommand {
                     origin: Origin::ZERO,
-                    bitmap: Bitmap::max_sized(),
+                    bitmap: Bitmap::new(8, 2).unwrap(),
                     compression: *compression,
                 }
                 .into(),
@@ -324,5 +325,18 @@ mod tests {
                 .into(),
             );
         }
+    }
+
+    #[test]
+    fn invalid_y() {
+        let command = BitmapCommand {
+            bitmap: Bitmap::new(8, 3).unwrap(),
+            origin: Origin::new(4, u16::MAX as usize + 1),
+            compression: CompressionCode::Uncompressed,
+        };
+        assert!(matches!(
+            Packet::try_from(command),
+            Err(TryIntoPacketError::ConversionError(_)),
+        ))
     }
 }

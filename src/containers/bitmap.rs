@@ -1,8 +1,9 @@
 use crate::{
-    DataRef, DisplayBitVec, Grid, Payload, ValueGrid, PIXEL_HEIGHT, PIXEL_WIDTH,
+    containers::absolute_bounds_to_abs_range, DataRef, DisplayBitVec, Grid,
+    GridMut, Payload, ValueGrid, Window, WindowMut, PIXEL_HEIGHT, PIXEL_WIDTH,
 };
 use ::bitvec::{order::Msb0, prelude::BitSlice, slice::IterMut};
-use inherent::inherent;
+use std::ops::RangeBounds;
 
 /// A fixed-size 2D grid of booleans.
 ///
@@ -143,7 +144,7 @@ impl Bitmap {
     ///
     /// Order is equivalent to the following loop:
     /// ```
-    /// # use servicepoint::{Bitmap, Grid};
+    /// # use servicepoint::{Bitmap, Grid, GridMut};
     /// # let mut grid = Bitmap::new(8, 2).unwrap();
     /// # let value = false;
     /// for y in 0..grid.height() {
@@ -164,7 +165,7 @@ impl Bitmap {
     /// ```
     #[must_use]
     #[allow(clippy::iter_without_into_iter)]
-    pub fn iter_mut(&mut self) -> IterMut<u8, Msb0> {
+    pub fn iter_mut(&mut self) -> IterMut<'_, u8, Msb0> {
         self.bit_vec.iter_mut()
     }
 
@@ -175,10 +176,55 @@ impl Bitmap {
             row: 0,
         }
     }
+
+    /// Creates a window into the bitmap.
+    ///
+    /// Returns None in case the window does not fit.
+    #[must_use]
+    pub fn window(
+        &self,
+        xs: impl RangeBounds<usize>,
+        ys: impl RangeBounds<usize>,
+    ) -> Option<Window<'_, bool, Self>> {
+        let xs = absolute_bounds_to_abs_range(xs, self.width)?;
+        let ys = absolute_bounds_to_abs_range(ys, self.height)?;
+        Window::new(self, xs, ys)
+    }
+
+    /// Creates a mutable window into the bitmap.
+    ///
+    /// Returns None in case the window does not fit.
+    pub fn window_mut(
+        &mut self,
+        xs: impl RangeBounds<usize>,
+        ys: impl RangeBounds<usize>,
+    ) -> Option<WindowMut<'_, bool, Self>> {
+        let xs = absolute_bounds_to_abs_range(xs, self.width)?;
+        let ys = absolute_bounds_to_abs_range(ys, self.height)?;
+        WindowMut::new(self, xs, ys)
+    }
 }
 
-#[inherent]
 impl Grid<bool> for Bitmap {
+    fn get_optional(&self, x: usize, y: usize) -> Option<bool> {
+        let index = x + y * self.width;
+        if self.is_in_bounds(x, y) {
+            Some(self.bit_vec[index])
+        } else {
+            None
+        }
+    }
+
+    fn width(&self) -> usize {
+        self.width
+    }
+
+    fn height(&self) -> usize {
+        self.height
+    }
+}
+
+impl GridMut<bool> for Bitmap {
     /// Sets the value of the specified position in the [Bitmap].
     ///
     /// # Arguments
@@ -191,16 +237,13 @@ impl Grid<bool> for Bitmap {
     /// # Panics
     ///
     /// When accessing `x` or `y` out of bounds.
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    fn set(&mut self, x: usize, y: usize, value: bool) {
-        self.assert_in_bounds(x, y);
-        self.bit_vec.set(x + y * self.width, value);
-    }
-
-    #[allow(unused, reason = "False positive because of #[inherent]")]
-    fn get(&self, x: usize, y: usize) -> bool {
-        self.assert_in_bounds(x, y);
-        self.bit_vec[x + y * self.width]
+    fn set_optional(&mut self, x: usize, y: usize, value: bool) -> bool {
+        if self.is_in_bounds(x, y) {
+            self.bit_vec.set(x + y * self.width, value);
+            true
+        } else {
+            false
+        }
     }
 
     /// Sets the state of all pixels in the [Bitmap].
@@ -209,17 +252,8 @@ impl Grid<bool> for Bitmap {
     ///
     /// - `this`: instance to write to
     /// - `value`: the value to set all pixels to
-    #[allow(unused, reason = "False positive because of #[inherent]")]
     fn fill(&mut self, value: bool) {
         self.bit_vec.fill(value);
-    }
-
-    fn width(&self) -> usize {
-        self.width
-    }
-
-    fn height(&self) -> usize {
-        self.height
     }
 }
 
@@ -250,26 +284,20 @@ impl From<Bitmap> for DisplayBitVec {
 impl TryFrom<&ValueGrid<bool>> for Bitmap {
     type Error = ();
 
-    /// Converts a grid of [bool]s into a [Bitmap].
-    ///
-    /// Returns Err if the width of `value` is not dividable by 8
     fn try_from(value: &ValueGrid<bool>) -> Result<Self, Self::Error> {
         let mut result = Self::new(value.width(), value.height()).ok_or(())?;
-        for (mut to, from) in result.iter_mut().zip(value.iter()) {
-            *to = *from;
-        }
+        result.deref_assign(value);
         Ok(result)
     }
 }
 
-impl From<&Bitmap> for ValueGrid<bool> {
-    /// Converts a [Bitmap] into a grid of [bool]s.
-    fn from(value: &Bitmap) -> Self {
-        let mut result = Self::new(value.width(), value.height());
-        for (to, from) in result.iter_mut().zip(value.iter()) {
-            *to = *from;
-        }
-        result
+impl<T: Grid<bool>> TryFrom<&Window<'_, bool, T>> for Bitmap {
+    type Error = ();
+
+    fn try_from(value: &Window<bool, T>) -> Result<Self, Self::Error> {
+        let mut result = Self::new(value.width(), value.height()).ok_or(())?;
+        result.deref_assign(value);
+        Ok(result)
     }
 }
 
@@ -316,7 +344,8 @@ pub enum LoadBitmapError {
 #[cfg(test)]
 mod tests {
     use crate::{
-        Bitmap, DataRef, DisplayBitVec, LoadBitmapError, ValueGrid,
+        Bitmap, DataRef, DisplayBitVec, Grid, GridMut, LoadBitmapError,
+        ValueGrid,
     };
 
     #[test]
@@ -367,7 +396,7 @@ mod tests {
     #[should_panic]
     fn out_of_bounds_x() {
         let vec = Bitmap::new(8, 2).unwrap();
-        vec.get(8, 1);
+        _ = vec.get(8, 1);
     }
 
     #[test]

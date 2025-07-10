@@ -93,14 +93,14 @@ impl TryFrom<ByteGrid> for BrightnessGrid {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Brightness, BrightnessGrid, DataRef, Grid, ValueGrid};
+    use crate::{Brightness, BrightnessGrid, DataRef, GridMut, ValueGrid};
 
     #[test]
     fn to_u8_grid() {
         let mut grid = BrightnessGrid::new(2, 2);
         grid.set(1, 0, Brightness::MIN);
         grid.set(0, 1, Brightness::MAX);
-        let actual = ValueGrid::from(&grid);
+        let actual: ValueGrid<u8> = ValueGrid::from(&grid);
         assert_eq!(actual.data_ref(), &[11, 0, 11, 11]);
     }
 
